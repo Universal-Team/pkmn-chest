@@ -6,42 +6,37 @@
 #include <iostream>
 #include <nds.h>
 #include <string>
+#include <unistd.h>
 #include <vector>
 
 #include "fileBrowse.h"
-
-PrintConsole topScreen;
-PrintConsole touchScreen;
-
-void printLine(std::string text, bool onTopScreen) {
-	consoleSelect(onTopScreen ? &topScreen : &touchScreen);
-	std::cout << text.c_str() << std::endl;
-}
+#include "graphics/graphics.h"
 
 int main() {
-	touchScreen = *consoleDemoInit();
-	videoSetMode(MODE_0_2D);
-	vramSetBankA(VRAM_A_MAIN_BG);
-	consoleInit(&topScreen, 3, BgType_Text4bpp, BgSize_T_256x256, 31, 0, true, true);
-	
-	
-	printLine("pkmn-chest", true);
-	printLine("by: Universal Team", true);
-	printLine("[Very early WIP]", true);
+	initGraphics();
+	keysSetRepeat(25,5);
 
 	if(!fatInitDefault()) {
-		consoleSelect(&touchScreen);
-		printLine("SD init failed", false);
+		// Draws the bottom screen red if fatInitDefault() fails
+		drawRectange(0, 0, 256, 192, RGB15(0xff, 0, 0), false);
 		while(1) swiWaitForVBlank();
 	}
 
-	consoleSelect(&touchScreen);
+	// Some test rectangles
+	drawRectange(10, 0, 100, 100, RGB15(0xff, 0xff, 0xff), true);
+	drawRectange(50, 50, 10, 10, RGB15(0xff, 0xff, 0), true);
 
-	printLine("Test", false);
+	std::vector<u16> testPng;
+	ImageData pngData = loadPng("sd:/test.png", testPng);
+	std::vector<u16> testBmp;
+	ImageData bmpData = loadBmp("sd:/test.bmp", testBmp);
 
-	std::vector<std::string> extensionList;
-	extensionList.push_back(".sav");
-	browseForFile(extensionList);
+	drawImage(10, 50, pngData.width, pngData.height, testPng, false);
+	drawImage(70, 30, bmpData.width, bmpData.height, testBmp, true);
+
+	// std::vector<std::string> extensionList;
+	// extensionList.push_back(".sav");
+	// browseForFile(extensionList);
 
 	while(1) {
 

@@ -25,6 +25,12 @@
 #include <string>
 #include <vector>
 
-std::string browseForFile (const std::vector<std::string>& extensionList);
+/*
+ * *Currently broken as there is no console text*
+ * Browse for a file with console displayed text
+ * const std::vector<std::string>& extensionList is the extensions to show
+ * Returns the selected file
+ */
+std::string browseForFile(const std::vector<std::string>& extensionList);
 
 #endif //FILE_BROWSE_H
