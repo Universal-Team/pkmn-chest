@@ -55,7 +55,7 @@ ImageData loadBmp(std::string path, std::vector<u16>& imageBuffer) {
 		fseek(file, pixelStart, SEEK_SET);
 		u16 bmpImageBuffer[imageData.width*imageData.height];
 		fread(bmpImageBuffer, 2, imageData.width*imageData.height, file);
-		for(uint y=imageData.height; y>0; y--) {
+		for(uint y=imageData.height-1; y>0; y--) {
 			u16* src = bmpImageBuffer+y*imageData.width;
 			for(uint x=0;x<imageData.width;x++) {
 				u16 val = *(src++);
@@ -81,15 +81,28 @@ ImageData loadPng(std::string path, std::vector<u16>& imageBuffer) {
     return imageData;
 }
 
-void drawRectange(int x, int y, int w, int h, int color, bool top) {
-	h+=y;
-    for(;y<h;y++) {
-        dmaFillHalfWords(((color>>10)&0x1f) | ((color)&(0x1f<<5)) | (color&0x1f)<<10 | BIT(15), (top ? BG_GFX : BG_GFX_SUB)+((y+32)*256+x), w*2);
-	}
-}
-
 void drawImage(int x, int y, int w, int h, std::vector<u16> imageBuffer, bool top) {
 	for(int i=0;i<h;i++) {
 		dmaCopyWords(0, (u16*)imageBuffer.data()+(i*w), (u16*)(top ? BG_GFX : BG_GFX_SUB)+((y+i+32)*256+x), w*2);	
+	}
+}
+
+void drawImageScaled(int x, int y, int w, int h, double scale, std::vector<u16> imageBuffer, bool top) {
+	scale = 1/scale;
+	for(double i=0;i<h;i+=scale) {
+		u16 ii = (u16)i;
+		u16 is=(u16)(i/scale);
+		for(double j=0;j<w;j+=scale) {
+			u16 jj=(u16)j;
+			u16 js=(u16)(j/scale);
+			(top ? BG_GFX : BG_GFX_SUB)[(y+is+32)*256+js+x] = imageBuffer[(ii*w)+jj];	
+		}
+	}
+}
+
+void drawRectangle(int x, int y, int w, int h, int color, bool top) {
+	h+=y;
+    for(;y<h;y++) {
+        dmaFillHalfWords(((color>>10)&0x1f) | ((color)&(0x1f<<5)) | (color&0x1f)<<10 | BIT(15), (top ? BG_GFX : BG_GFX_SUB)+((y+32)*256+x), w*2);
 	}
 }
