@@ -72,7 +72,11 @@ ImageData loadPng(std::string path, std::vector<u16>& imageBuffer) {
 	unsigned width, height;
 	lodepng::decode(image, width, height, path);
 	for(unsigned i=0;i<image.size()/4;i++) {
+		if(image[(i*4)+3] == 0) {
+			imageBuffer.push_back(0xfc1f);
+		} else {
   		imageBuffer.push_back(image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15));
+		}
 	}
 
     ImageData imageData;
