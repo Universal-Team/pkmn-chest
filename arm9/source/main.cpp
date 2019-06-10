@@ -18,21 +18,21 @@ int main() {
 
 	if(!fatInitDefault()) {
 		// Draws the bottom screen red if fatInitDefault() fails
-		drawRectangle(0, 0, 256, 192, toRGB15(0xff, 0, 0), false);
+		drawRectangle(0, 0, 256, 192, BGR15(0, 0, 0xff), false);
 		while(1) swiWaitForVBlank();
 	}
 
 	// Some test rectangles
-	drawRectangle(10, 0, 100, 100, toRGB15(0xff, 0xff, 0xff), true);
-	drawRectangle(50, 50, 10, 10, toRGB15(0xff, 0xff, 0), true);
+	drawRectangle(10, 0, 100, 100, BGR15(0xff, 0xff, 0xff), true);
+	drawRectangle(50, 50, 10, 10, BGR15(0, 0xff, 0xff), true);
 
 	std::vector<u16> testPng;
 	ImageData pngData = loadPng("sd:/test.png", testPng);
 	std::vector<u16> testBmp;
 	ImageData bmpData = loadBmp("sd:/test.bmp", testBmp);
 
-	drawImageScaled(100, 150, pngData.width, pngData.height, 1, testPng, false);
-	drawImageScaled(10, 50, pngData.width, pngData.height, 1, testPng, false);
+	drawImageScaled(10, 50, pngData.width, pngData.height, 2, testPng, true);
+	drawImageTinted(100, 150, pngData.width, pngData.height, 0x83ff, testPng, false);
 	double scale = 1;
 	int x = 0;
 	int y = 0;

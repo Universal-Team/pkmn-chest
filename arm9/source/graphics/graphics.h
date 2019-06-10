@@ -5,8 +5,8 @@
 #include <string>
 #include <vector>
 
-// The stock libnds definition was doing BGR
-#define toRGB15(r, g, b)   ((b)|((g)<<5)|((r)<<10))
+// Converts 3 0-255 (0x0-0xff) values to a BGR15 value
+#define BGR15(b, g, r)   ((b)|((g)<<5)|((r)<<10))
 
 struct ImageData {
     uint width;
@@ -55,6 +55,18 @@ void drawImage(int x, int y, int w, int h, std::vector<u16> imageBuffer, bool to
  * bool top is whether to draw on the top or bottom screen
  */
 void drawImageScaled(int x, int y, int w, int h, double scale, std::vector<u16> imageBuffer, bool top);
+
+/*
+ * Draws a scaled image to the screen from a vector of raw pixel data
+ * int x is the X position
+ * int y is the Y position
+ * int w is the Width
+ * int h is the Height
+ * u16 color is the color to tint the image
+ * std::vector<u16> imageBuffer is the raw pixel data
+ * bool top is whether to draw on the top or bottom screen
+ */
+void drawImageTinted(int x, int y, int w, int h, u16 color, std::vector<u16> imageBuffer, bool top);
 
 /*
  * Draws a rectangle of a given size at a given position

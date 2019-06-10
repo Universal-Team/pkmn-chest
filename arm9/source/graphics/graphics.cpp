@@ -87,7 +87,11 @@ ImageData loadPng(std::string path, std::vector<u16>& imageBuffer) {
 
 void drawImage(int x, int y, int w, int h, std::vector<u16> imageBuffer, bool top) {
 	for(int i=0;i<h;i++) {
-		dmaCopyWords(0, (u16*)imageBuffer.data()+(i*w), (u16*)(top ? BG_GFX : BG_GFX_SUB)+((y+i+32)*256+x), w*2);	
+		for(int j=0;j<w;j++) {
+			if(imageBuffer[(i*w)+j] != 0xfc1f) {
+				(top ? BG_GFX : BG_GFX_SUB)[(y+i+32)*256+j+x] = imageBuffer[(i*w)+j];	
+			}
+		}
 	}
 }
 
@@ -98,8 +102,20 @@ void drawImageScaled(int x, int y, int w, int h, double scale, std::vector<u16> 
 		u16 is=(u16)(i/scale);
 		for(double j=0;j<w;j+=scale) {
 			u16 jj=(u16)j;
-			u16 js=(u16)(j/scale);
-			(top ? BG_GFX : BG_GFX_SUB)[(y+is+32)*256+js+x] = imageBuffer[(ii*w)+jj];	
+			if(imageBuffer[(ii*w)+jj] != 0xfc1f) {
+				u16 js=(u16)(j/scale);
+				(top ? BG_GFX : BG_GFX_SUB)[(y+is+32)*256+js+x] = imageBuffer[(ii*w)+jj];	
+			}
+		}
+	}
+}
+
+void drawImageTinted(int x, int y, int w, int h, u16 color, std::vector<u16> imageBuffer, bool top) {
+	for(int i=0;i<h;i++) {
+		for(int j=0;j<w;j++) {
+			if(imageBuffer[(i*w)+j] != 0xfc1f) {
+				(top ? BG_GFX : BG_GFX_SUB)[(y+i+32)*256+j+x] = imageBuffer[(i*w)+j] & color;	
+			}
 		}
 	}
 }
