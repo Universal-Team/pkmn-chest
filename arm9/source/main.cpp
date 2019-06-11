@@ -51,7 +51,7 @@ int main() {
 	// Arrow.
 	drawImageScaled(7, 30, arrowData.width, arrowData.height, 1, arrow, true);
 	// The Button.
-	drawRectangle(180, 120, 68, 30, BGR15(0x73, 0x65, 0x63), false);
+	drawRectangle(180, 120, 68, 30, BGR15(0x63, 0x65, 0x73), false);
 	
 	double scale = 1;
 	int x = 0;
