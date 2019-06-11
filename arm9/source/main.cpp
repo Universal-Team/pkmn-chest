@@ -22,17 +22,37 @@ int main() {
 		while(1) swiWaitForVBlank();
 	}
 
-	// Some test rectangles
-	drawRectangle(10, 0, 100, 100, BGR15(0xff, 0xff, 0xff), true);
-	drawRectangle(50, 50, 10, 10, BGR15(0, 0xff, 0xff), true);
+	// Draw the BG Color as Rectangles.
+	drawRectangle(0, 0, 256, 192, BGR15(0xff, 0x00, 0x00), true);
+	drawRectangle(0, 0, 256, 192, BGR15(0xff, 0x00, 0x00), false);
+	//drawRectangle(50, 50, 10, 10, BGR15(0, 0xff, 0xff), true);
 
-	std::vector<u16> testPng;
+	std::vector<u16> testPng, bankBox, stripes, boxName, arrow;
 	ImageData pngData = loadPng("sd:/test.png", testPng);
+	ImageData bankBoxData = loadPng("sd:/pkmn-chest/bankBox.png", bankBox);
+	ImageData stripesData = loadPng("sd:/pkmn-chest/stripes.png", stripes);
+	ImageData boxNameData = loadPng("sd:/pkmn-chest/boxName.png", boxName);
+	ImageData arrowData = loadPng("sd:/pkmn-chest/arrow.png", arrow);
+
 	std::vector<u16> testBmp;
 	ImageData bmpData = loadBmp("sd:/test.bmp", testBmp);
 
-	drawImageScaled(10, 50, pngData.width, pngData.height, 2, testPng, true);
-	drawImageTinted(100, 150, pngData.width, pngData.height, 0x83ff, testPng, false);
+	//drawImageScaled(10, 50, pngData.width, pngData.height, 2, testPng, true);  // That was for test purpose.
+	drawImageScaled(5, 30, bankBoxData.width, bankBoxData.height, 1, bankBox, false);
+	//drawImageTinted(100, 150, pngData.width, pngData.height, 0x83ff, testPng, false); // That was for test purpose too.
+	drawImageScaled(5, 30, bankBoxData.width, bankBoxData.height, 1, bankBox, true);
+	// Stripes for the Text later.
+	drawImageScaled(180, 30, stripesData.width, stripesData.height, 1, stripes, true);
+	drawImageScaled(180, 60, stripesData.width, stripesData.height, 1, stripes, true);
+	drawImageScaled(180, 90, stripesData.width, stripesData.height, 1, stripes, true);
+	// Box Bars for the Bank Name.
+	drawImageScaled(5, 10, boxNameData.width, boxNameData.height, 1, boxName, true);
+	drawImageScaled(5, 10, boxNameData.width, boxNameData.height, 1, boxName, false);
+	// Arrow.
+	drawImageScaled(7, 30, arrowData.width, arrowData.height, 1, arrow, true);
+	// The Button.
+	drawRectangle(180, 120, 68, 30, BGR15(0x73, 0x65, 0x63), false);
+	
 	double scale = 1;
 	int x = 0;
 	int y = 0;
