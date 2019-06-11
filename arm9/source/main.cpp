@@ -29,17 +29,20 @@ int main(int argc, char **argv) {
 		while(1) swiWaitForVBlank();
 	}
 
-	std::vector<u16> /*testPng,*/ bankBox, stripes, boxName, arrow;
-	// ImageData pngData = loadPng("sd:/test.png", testPng);
+	std::vector<u16> testPng, bankBox, stripes, boxName, arrow, shiny;
+	 ImageData pngData = loadPng("nitro:/pkmn-chest/test.png", testPng);
 	ImageData bankBoxData = loadPng("nitro:/pkmn-chest/bankBox.png", bankBox);
 	ImageData stripesData = loadPng("nitro:/pkmn-chest/stripes.png", stripes);
 	ImageData boxNameData = loadPng("nitro:/pkmn-chest/boxName.png", boxName);
 	ImageData arrowData = loadPng("nitro:/pkmn-chest/arrow.png", arrow);
+	ImageData shinyData = loadPng("nitro:/pkmn-chest/shiny.png", shiny);
 
 	// std::vector<u16> testBmp;
 	// ImageData bmpData = loadBmp("sd:/test.bmp", testBmp);
 
-	//drawImageScaled(10, 50, pngData.width, pngData.height, 2, testPng, true);  // That was for test purpose.
+	// Draws the BG's.
+	drawRectangle(0, 0, 256, 192, BGR15(0xff, 0, 0), true);
+	drawRectangle(0, 0, 256, 192, BGR15(0xff, 0, 0), false);
 	drawImageScaled(5, 30, bankBoxData.width, bankBoxData.height, 1, bankBox, false);
 	//drawImageTinted(100, 150, pngData.width, pngData.height, 0x83ff, testPng, false); // That was for test purpose too.
 	drawImageScaled(5, 30, bankBoxData.width, bankBoxData.height, 1, bankBox, true);
@@ -54,7 +57,16 @@ int main(int argc, char **argv) {
 	drawImageScaled(7, 30, arrowData.width, arrowData.height, 1, arrow, true);
 	// The Button.
 	drawRectangle(180, 120, 68, 30, BGR15(0x63, 0x65, 0x73), false);
-	
+	// Shiny Icon.
+	drawImageScaled(180, 120, shinyData.width, shinyData.height, 1, shiny, true);
+	// First Row.
+	drawImageScaled(0, 40, pngData.width, pngData.height, 1, testPng, true);  // That was for test purpose.
+	drawImageScaled(27, 40, pngData.width, pngData.height, 1, testPng, true);  // That was for test purpose.
+	drawImageScaled(54, 40, pngData.width, pngData.height, 1, testPng, true);  // That was for test purpose.
+	drawImageScaled(81, 40, pngData.width, pngData.height, 1, testPng, true);  // That was for test purpose.
+	drawImageScaled(108, 40, pngData.width, pngData.height, 1, testPng, true);  // That was for test purpose.
+	drawImageScaled(135, 40, pngData.width, pngData.height, 1, testPng, true);  // That was for test purpose.
+
 	double scale = 1;
 	int x = 0;
 	int y = 0;
