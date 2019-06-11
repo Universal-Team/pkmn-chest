@@ -11,8 +11,9 @@
 
 #include "fileBrowse.h"
 #include "graphics/graphics.h"
+#include "nitrofs.h"
 
-int main() {
+int main(int argc, char **argv) {
 	initGraphics();
 	keysSetRepeat(25,5);
 
@@ -22,20 +23,21 @@ int main() {
 		while(1) swiWaitForVBlank();
 	}
 
-	// Draw the BG Color as Rectangles.
-	drawRectangle(0, 0, 256, 192, BGR15(0xff, 0x00, 0x00), true);
-	drawRectangle(0, 0, 256, 192, BGR15(0xff, 0x00, 0x00), false);
-	//drawRectangle(50, 50, 10, 10, BGR15(0, 0xff, 0xff), true);
+	if(!nitroFSInit(argv[0])) {
+		// Draws the bottom screen blue if nitroFSInit() fails
+		drawRectangle(0, 0, 256, 192, BGR15(0xff, 0, 0), false);
+		while(1) swiWaitForVBlank();
+	}
 
-	std::vector<u16> testPng, bankBox, stripes, boxName, arrow;
-	ImageData pngData = loadPng("sd:/test.png", testPng);
-	ImageData bankBoxData = loadPng("sd:/pkmn-chest/bankBox.png", bankBox);
-	ImageData stripesData = loadPng("sd:/pkmn-chest/stripes.png", stripes);
-	ImageData boxNameData = loadPng("sd:/pkmn-chest/boxName.png", boxName);
-	ImageData arrowData = loadPng("sd:/pkmn-chest/arrow.png", arrow);
+	std::vector<u16> /*testPng,*/ bankBox, stripes, boxName, arrow;
+	// ImageData pngData = loadPng("sd:/test.png", testPng);
+	ImageData bankBoxData = loadPng("nitro:/pkmn-chest/bankBox.png", bankBox);
+	ImageData stripesData = loadPng("nitro:/pkmn-chest/stripes.png", stripes);
+	ImageData boxNameData = loadPng("nitro:/pkmn-chest/boxName.png", boxName);
+	ImageData arrowData = loadPng("nitro:/pkmn-chest/arrow.png", arrow);
 
-	std::vector<u16> testBmp;
-	ImageData bmpData = loadBmp("sd:/test.bmp", testBmp);
+	// std::vector<u16> testBmp;
+	// ImageData bmpData = loadBmp("sd:/test.bmp", testBmp);
 
 	//drawImageScaled(10, 50, pngData.width, pngData.height, 2, testPng, true);  // That was for test purpose.
 	drawImageScaled(5, 30, bankBoxData.width, bankBoxData.height, 1, bankBox, false);
@@ -81,7 +83,7 @@ int main() {
 			x--;
 		}
 		drawRectangle(0, 0, 256, 192, 0, true);
-		drawImageScaled(x, y, bmpData.width, bmpData.height, scale, testBmp, true);
+		// drawImageScaled(x, y, bmpData.width, bmpData.height, scale, testBmp, true);
 	}
 
 	// std::vector<std::string> extensionList;
