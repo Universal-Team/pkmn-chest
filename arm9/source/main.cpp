@@ -16,6 +16,7 @@
 int main(int argc, char **argv) {
 	initGraphics();
 	keysSetRepeat(25,5);
+	srand(time(NULL));
 
 	if(!fatInitDefault()) {
 		// Draws the bottom screen red if fatInitDefault() fails
@@ -29,15 +30,27 @@ int main(int argc, char **argv) {
 		while(1) swiWaitForVBlank();
 	}
 
-	std::vector<u16> /*testPng,*/ bankBox, stripes, boxName, arrow;
-	// ImageData pngData = loadPng("sd:/test.png", testPng);
-	ImageData bankBoxData = loadPng("nitro:/pkmn-chest/bankBox.png", bankBox);
-	ImageData stripesData = loadPng("nitro:/pkmn-chest/stripes.png", stripes);
-	ImageData boxNameData = loadPng("nitro:/pkmn-chest/boxName.png", boxName);
-	ImageData arrowData = loadPng("nitro:/pkmn-chest/arrow.png", arrow);
+	std::vector<u16> bankBox, stripes, boxName, arrow;
+	ImageData bankBoxData = loadPng("nitro:/graphics/bankBox.png", bankBox);
+	ImageData stripesData = loadPng("nitro:/graphics/stripes.png", stripes);
+	ImageData boxNameData = loadPng("nitro:/graphics/boxName.png", boxName);
+	ImageData arrowData = loadPng("nitro:/graphics/arrow.png", arrow);
 
-	// std::vector<u16> testBmp;
-	// ImageData bmpData = loadBmp("sd:/test.bmp", testBmp);
+	std::vector<u16> testSprite;
+	loadPng("nitro:/graphics/icon.png", testSprite);
+
+	for(int i=0;i<33;i++) {
+		int testSpriteId = initSprite(SpriteSize_32x32, false);
+		// fillSpriteImage(testSpriteId, testSprite);
+		fillSpriteColor(testSpriteId, BGR15(rand() % 0xff, rand() % 0xff, rand() % 0xff));
+		prepareSprite(testSpriteId, rand() % 200, rand() % 150, 0);
+	}
+	for(int i=0;i<33;i++) {
+		int testSpriteId = initSprite(SpriteSize_32x32, true);
+		fillSpriteImage(testSpriteId, testSprite);
+		prepareSprite(testSpriteId, rand() % 200, rand() % 150, 0);
+	}
+	updateOam();
 
 	//drawImageScaled(10, 50, pngData.width, pngData.height, 2, testPng, true);  // That was for test purpose.
 	drawImageScaled(5, 30, bankBoxData.width, bankBoxData.height, 1, bankBox, false);
@@ -54,6 +67,22 @@ int main(int argc, char **argv) {
 	drawImageScaled(7, 30, arrowData.width, arrowData.height, 1, arrow, true);
 	// The Button.
 	drawRectangle(180, 120, 68, 30, BGR15(0x63, 0x65, 0x73), false);
+
+	while(1) {
+		for(uint i=0;i<getSpriteAmount();i++) {
+			setSpritePosition(i, getSpriteInfo(i).x+(rand() % 5)-2, getSpriteInfo(i).y+(rand() % 5)-2);
+		}
+		swiWaitForVBlank();
+		updateOam();
+		scanKeys();
+		if(keysDown()) {
+			for(uint i=0;i<getSpriteAmount();i++) {
+				setSpriteVisibility(i, false);
+			}
+			updateOam();
+			break;
+		}
+	}
 	
 	double scale = 1;
 	int x = 0;
