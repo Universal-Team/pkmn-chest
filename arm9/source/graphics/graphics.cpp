@@ -24,7 +24,7 @@ void initGraphics(void) {
 	oamInit(&oamMain, SpriteMapping_Bmp_1D_128, false);
 
 	// Init for background
-	REG_BG3CNT = BG_MAP_BASE(1) | BG_BMP16_256x256 | BG_PRIORITY(0);
+	REG_BG3CNT = BG_MAP_BASE(1) | BG_BMP16_256x256 | BG_PRIORITY(3);
 	REG_BG3X = 0;
 	REG_BG3Y = 0;
 	REG_BG3PA = 1<<8;
@@ -32,7 +32,7 @@ void initGraphics(void) {
 	REG_BG3PC = 0;
 	REG_BG3PD = 1<<8;
 
-	REG_BG3CNT_SUB = BG_MAP_BASE(1) | BG_BMP16_256x256 | BG_PRIORITY(0);
+	REG_BG3CNT_SUB = BG_MAP_BASE(1) | BG_BMP16_256x256 | BG_PRIORITY(3);
 	REG_BG3X_SUB = 0;
 	REG_BG3Y_SUB = 0;
 	REG_BG3PA_SUB = 1<<8;
@@ -91,7 +91,7 @@ void drawImage(int x, int y, int w, int h, std::vector<u16> imageBuffer, bool to
 	for(int i=0;i<h;i++) {
 		for(int j=0;j<w;j++) {
 			if(imageBuffer[(i*w)+j] != 0xfc1f && imageBuffer[(i*w)+j]>>15 != 0) {
-				(top ? BG_GFX : BG_GFX_SUB)[(y+i+32)*256+j+x] = imageBuffer[(i*w)+j];	
+				(top ? BG_GFX : BG_GFX_SUB)[(y+i+32)*256+j+x] = imageBuffer[(i*w)+j];
 			}
 		}
 	}
@@ -147,6 +147,14 @@ void fillSpriteColor(int id, u16 color) {
 
 void fillSpriteImage(int id, std::vector<u16> imageBuffer) {
 	dmaCopyWords(0, imageBuffer.data(), sprites[id].gfx, sprites[id].size*2);
+}
+
+void fillSpriteFromSheet(int id, std::vector<u16> imageBuffer, int w, int h, int imageWidth, int xOffset, int yOffset) {
+	for(int i=0;i<h;i++) {
+		for(int j=0;j<w;j++) {
+			sprites[id].gfx[(i*w)+j] = imageBuffer[((i+yOffset)*imageWidth)+j+xOffset];
+		}
+	}
 }
 
 void prepareSprite(int id, int x, int y, int priority) {

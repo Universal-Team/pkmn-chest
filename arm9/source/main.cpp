@@ -16,7 +16,6 @@
 int main(int argc, char **argv) {
 	initGraphics();
 	keysSetRepeat(25,5);
-	srand(time(NULL));
 
 	if(!fatInitDefault()) {
 		// Draws the bottom screen red if fatInitDefault() fails
@@ -30,103 +29,106 @@ int main(int argc, char **argv) {
 		while(1) swiWaitForVBlank();
 	}
 
-	std::vector<u16> testPng, bankBox, stripes, boxName, arrow, shiny;
-	 ImageData pngData = loadPng("nitro:/graphics/test.png", testPng);
+	std::vector<u16> spriteSheet, bankBox, stripes, boxName, arrow, shiny;
+	ImageData spriteSheetData = loadPng("nitro:/graphics/spriteSheet.png", spriteSheet);
 	ImageData bankBoxData = loadPng("nitro:/graphics/bankBox.png", bankBox);
 	ImageData stripesData = loadPng("nitro:/graphics/stripes.png", stripes);
 	ImageData boxNameData = loadPng("nitro:/graphics/boxName.png", boxName);
-	ImageData arrowData = loadPng("nitro:/graphics/arrow.png", arrow);
 	ImageData shinyData = loadPng("nitro:/graphics/shiny.png", shiny);
-
-	std::vector<u16> testSprite;
-	loadPng("nitro:/graphics/icon.png", testSprite);
-
-	for(int i=0;i<33;i++) {
-		int testSpriteId = initSprite(SpriteSize_32x32, false);
-		// fillSpriteImage(testSpriteId, testSprite);
-		fillSpriteColor(testSpriteId, BGR15(rand() % 0xff, rand() % 0xff, rand() % 0xff));
-		prepareSprite(testSpriteId, rand() % 200, rand() % 150, 0);
-	}
-	for(int i=0;i<33;i++) {
-		int testSpriteId = initSprite(SpriteSize_32x32, true);
-		fillSpriteImage(testSpriteId, testSprite);
-		prepareSprite(testSpriteId, rand() % 200, rand() % 150, 0);
-	}
-	updateOam();
+	loadPng("nitro:/graphics/arrow.png", arrow);
 
 	// Draws the BG's.
 	drawRectangle(0, 0, 256, 192, BGR15(0xff, 0, 0), true);
 	drawRectangle(0, 0, 256, 192, BGR15(0xff, 0, 0), false);
-	drawImageScaled(5, 30, bankBoxData.width, bankBoxData.height, 1, bankBox, false);
+	drawImage(5, 15, bankBoxData.width, bankBoxData.height, bankBox, false);
 	//drawImageTinted(100, 150, pngData.width, pngData.height, 0x83ff, testPng, false); // That was for test purpose too.
-	drawImageScaled(5, 30, bankBoxData.width, bankBoxData.height, 1, bankBox, true);
+	drawImage(5, 15, bankBoxData.width, bankBoxData.height, bankBox, true);
 	// Stripes for the Text later.
-	drawImageScaled(180, 30, stripesData.width, stripesData.height, 1, stripes, true);
-	drawImageScaled(180, 60, stripesData.width, stripesData.height, 1, stripes, true);
-	drawImageScaled(180, 90, stripesData.width, stripesData.height, 1, stripes, true);
+	drawImage(180, 30, stripesData.width, stripesData.height, stripes, true);
+	drawImage(180, 60, stripesData.width, stripesData.height, stripes, true);
+	drawImage(180, 90, stripesData.width, stripesData.height, stripes, true);
 	// Box Bars for the Bank Name.
-	drawImageScaled(5, 10, boxNameData.width, boxNameData.height, 1, boxName, true);
-	drawImageScaled(5, 10, boxNameData.width, boxNameData.height, 1, boxName, false);
-	// Arrow.
-	drawImageScaled(7, 30, arrowData.width, arrowData.height, 1, arrow, true);
+	drawImage(5, 10, boxNameData.width, boxNameData.height, boxName, true);
+	drawImage(5, 10, boxNameData.width, boxNameData.height, boxName, false);
 	// The Button.
 	drawRectangle(180, 120, 68, 30, BGR15(0x63, 0x65, 0x73), false);
 	
 	// Shiny Icon.
-	drawImageScaled(180, 120, shinyData.width, shinyData.height, 1, shiny, true);
+	drawImage(180, 120, shinyData.width, shinyData.height, shiny, true);
 	// First Row.
-	drawImageScaled(0, 40, pngData.width, pngData.height, 1, testPng, true);  // That was for test purpose.
-	drawImageScaled(27, 40, pngData.width, pngData.height, 1, testPng, true);  // That was for test purpose.
-	drawImageScaled(54, 40, pngData.width, pngData.height, 1, testPng, true);  // That was for test purpose.
-	drawImageScaled(81, 40, pngData.width, pngData.height, 1, testPng, true);  // That was for test purpose.
-	drawImageScaled(108, 40, pngData.width, pngData.height, 1, testPng, true);  // That was for test purpose.
-	drawImageScaled(135, 40, pngData.width, pngData.height, 1, testPng, true);  // That was for test purpose.
+	// drawImage(0, 40, 32, 32, spriteSheet, true);  // That was for test purpose.
 
-	while(1) {
-		for(uint i=0;i<getSpriteAmount();i++) {
-			setSpritePosition(i, getSpriteInfo(i).x+(rand() % 5)-2, getSpriteInfo(i).y+(rand() % 5)-2);
-		}
-		swiWaitForVBlank();
-		updateOam();
-		scanKeys();
-		if(keysDown()) {
-			for(uint i=0;i<getSpriteAmount();i++) {
-				setSpriteVisibility(i, false);
-			}
-			updateOam();
-			break;
+
+	// Pokémon Sprites
+	for(int i=0;i<30;i++)	initSprite(SpriteSize_32x32, false);
+	for(int i=0;i<30;i++)	initSprite(SpriteSize_32x32, true);
+	int arrowID = initSprite(SpriteSize_16x16, false);
+
+	for(int y=0;y<5;y++) {
+		for(int x=0;x<6;x++) {
+			prepareSprite((y*6)+x, 8+(x*24), 32+(y*24), 2);
+			prepareSprite(((y*6)+x)+30, 8+(x*24), 32+(y*24), 2);
 		}
 	}
 
-	double scale = 1;
-	int x = 0;
-	int y = 0;
-	u16 hHeld = 0;
+	int ixo=32, iyo=0;
+	for(int i=0;i<30;i++) {
+		fillSpriteFromSheet(i, spriteSheet, 32, 32, spriteSheetData.width, ixo, iyo);
+		fillSpriteFromSheet(i+30, spriteSheet, 32, 32, spriteSheetData.width, ixo, iyo);
+		if(ixo == 480) {
+			ixo = 0;
+			iyo += 32;
+		} else {
+			ixo += 32;
+		}
+		updateOam();
+	}
+
+	// Arrow
+	fillSpriteImage(arrowID, arrow);
+	prepareSprite(arrowID, 8, 32, 0);
+
+	updateOam();
+
+	int arrowX = 0, arrowY = 0, heldPokemon = -1, heldPokemonX = 0, heldPokemonY = 0;
+	u16 hDown = 0;
 	while(1) {
 		do {
 		swiWaitForVBlank();
 		scanKeys();
-		hHeld = keysHeld();
-		} while(!hHeld);
-		if(hHeld & KEY_X) {
-			scale += .1;
-		} else if(hHeld & KEY_Y) {
-			scale -= .1;
-		} else if(hHeld & KEY_A) {
-			scale = 1;
+		hDown = keysDownRepeat();
+		} while(!hDown);
+
+		if(hDown & KEY_UP) {
+			if(arrowY > 0)	arrowY--;
+		} else if(hDown & KEY_DOWN) {
+			if(arrowY < 4)	arrowY++;
 		}
-		if(hHeld & KEY_UP) {
-			y--;
-		} else if(hHeld & KEY_DOWN) {
-			y++;
+		if(hDown & KEY_LEFT) {
+			if(arrowX > 0)	arrowX--;
+		} else if(hDown & KEY_RIGHT) {
+			if(arrowX < 5)	arrowX++;
 		}
-		if(hHeld & KEY_RIGHT) {
-			x++;
-		} else if(hHeld & KEY_LEFT) {
-			x--;
+		if(hDown & KEY_A) {
+			if(heldPokemon != -1) {
+				setSpritePosition(heldPokemon, heldPokemonX, heldPokemonY);
+				setSpritePriority(heldPokemon, 2);
+			}
+			
+			if(heldPokemon == (arrowY*6)+arrowX) {
+				setSpritePriority(heldPokemon, 2);
+				heldPokemon = -1;
+			} else {
+				heldPokemon = (arrowY*6)+arrowX;
+				heldPokemonX = getSpriteInfo(heldPokemon).x;
+				heldPokemonY = getSpriteInfo(heldPokemon).y;
+				setSpritePriority(heldPokemon, 1);
+			}
 		}
-		drawRectangle(0, 0, 256, 192, 0, true);
-		// drawImageScaled(x, y, bmpData.width, bmpData.height, scale, testBmp, true);
+		
+		if(heldPokemon != -1)	setSpritePosition(heldPokemon, (arrowX*24)+16, (arrowY*24)+32);
+		setSpritePosition(arrowID, (arrowX*24)+32, (arrowY*24)+32);
+		updateOam();
 	}
 
 	// std::vector<std::string> extensionList;
