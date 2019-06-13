@@ -43,6 +43,8 @@ int main(int argc, char **argv) {
 		while(1) swiWaitForVBlank();
 	}
 
+	loadFont();
+
 	if(load("sd:/B2.sav")) {
 		drawRectangle(0, 0, 256, 192, BGR15(0, 255, 0), true);
 	} else {
@@ -76,7 +78,7 @@ int main(int argc, char **argv) {
 	ImageData shinyData = loadPng("nitro:/graphics/shiny.png", shiny);
 	loadPng("nitro:/graphics/arrow.png", arrow);
 
-	// Draws the BG's.
+	// Draws the BGs.
 	drawRectangle(0, 0, 256, 192, BGR15(0xff, 0, 0), true);
 	drawRectangle(0, 0, 256, 192, BGR15(0xff, 0, 0), false);
 	drawImage(5, 15, bankBoxData.width, bankBoxData.height, bankBox, false);
@@ -96,6 +98,10 @@ int main(int argc, char **argv) {
 	drawImage(180, 120, shinyData.width, shinyData.height, shiny, true);
 	// First Row.
 	// drawImage(0, 40, 32, 32, spriteSheet, true);  // That was for test purpose.
+
+	printText(save->pkm(0)->nickname(), 180, 15, true);
+	printText(save->boxName(save->currentBox()), 50, 15, true);
+	printText(save->boxName(save->currentBox()), 50, 15, false);
 
 
 	// Pokémon Sprites

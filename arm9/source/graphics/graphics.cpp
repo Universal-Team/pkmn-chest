@@ -1,7 +1,10 @@
 #include "graphics.h"
 #include "lodepng.h"
 
+#include <fstream>
+
 std::vector<Sprite> sprites;
+std::vector<u16> font;
 
 void initGraphics(void) {
     // Initialize video mode
@@ -41,6 +44,10 @@ void initGraphics(void) {
 	REG_BG3PD_SUB = 1<<8;
 }
 
+void loadFont(void) {
+	loadPng("nitro:/graphics/font.png", font);
+}
+
 ImageData loadBmp(std::string path, std::vector<u16>& imageBuffer) {
     FILE* file = fopen(path.c_str(), "rb");
 
@@ -65,7 +72,11 @@ ImageData loadBmp(std::string path, std::vector<u16>& imageBuffer) {
 			u16* src = bmpImageBuffer+y*imageData.width;
 			for(uint x=0;x<imageData.width;x++) {
 				u16 val = *(src++);
-				imageBuffer.push_back(((val>>10)&31) | (val&(31)<<5) | (val&(31))<<10 | BIT(15));
+				if(val == 0xfc1f) { // If a pixel is magenta (#ff00ff)
+					imageBuffer.push_back(0<<15); // Save it as a transparent pixel
+				} else {
+					imageBuffer.push_back(((val>>10)&31) | (val&(31)<<5) | (val&(31))<<10 | BIT(15));
+				}
 			}
 		}
 	}
@@ -90,7 +101,7 @@ ImageData loadPng(std::string path, std::vector<u16>& imageBuffer) {
 void drawImage(int x, int y, int w, int h, std::vector<u16> imageBuffer, bool top) {
 	for(int i=0;i<h;i++) {
 		for(int j=0;j<w;j++) {
-			if(imageBuffer[(i*w)+j] != 0xfc1f && imageBuffer[(i*w)+j]>>15 != 0) {
+			if(imageBuffer[(i*w)+j]>>15 != 0) { // Do not render transparent pixel
 				(top ? BG_GFX : BG_GFX_SUB)[(y+i+32)*256+j+x] = imageBuffer[(i*w)+j];
 			}
 		}
@@ -104,7 +115,7 @@ void drawImageScaled(int x, int y, int w, int h, double scale, std::vector<u16> 
 		u16 is=(u16)(i/scale);
 		for(double j=0;j<w;j+=scale) {
 			u16 jj=(u16)j;
-			if(imageBuffer[(ii*w)+jj] != 0xfc1f && imageBuffer[(ii*w)+jj]>>15 != 0) {
+			if(imageBuffer[(ii*w)+jj]>>15 != 0) { // Do not render transparent pixel
 				u16 js=(u16)(j/scale);
 				(top ? BG_GFX : BG_GFX_SUB)[(y+is+32)*256+js+x] = imageBuffer[(ii*w)+jj];	
 			}
@@ -115,7 +126,7 @@ void drawImageScaled(int x, int y, int w, int h, double scale, std::vector<u16> 
 void drawImageTinted(int x, int y, int w, int h, u16 color, std::vector<u16> imageBuffer, bool top) {
 	for(int i=0;i<h;i++) {
 		for(int j=0;j<w;j++) {
-			if(imageBuffer[(i*w)+j] != 0xfc1f && imageBuffer[(i*w)+j]>>15 != 0) {
+			if(imageBuffer[(i*w)+j]>>15 != 0) { // Do not render transparent pixel
 				(top ? BG_GFX : BG_GFX_SUB)[(y+i+32)*256+j+x] = imageBuffer[(i*w)+j] & color;	
 			}
 		}
@@ -192,3 +203,53 @@ void setSpritePriority(int id, int priority) { oamSetPriority((sprites[id].top ?
 void setSpriteVisibility(int id, int show) { oamSetHidden((sprites[id].top ? &oamMain : &oamSub), id, !show); }
 Sprite getSpriteInfo(int id) { return sprites[id]; }
 uint getSpriteAmount(void) { return sprites.size(); }
+
+/**
+ * Get the index in the UV coordinate array where the letter appears
+ */
+unsigned int getTopFontSpriteIndex(const u16 letter) {
+	unsigned int spriteIndex = 0;
+	long int left = 0;
+	long int right = FONT_NUM_IMAGES;
+	long int mid = 0;
+
+	while (left <= right) {
+		mid = left + ((right - left) / 2);
+		if (fontUtf16LookupTable[mid] == letter) {
+			spriteIndex = mid;
+			break;
+		}
+
+		if (fontUtf16LookupTable[mid] < letter) {
+			left = mid + 1;
+		} else {
+			right = mid - 1;
+		}
+	}
+	return spriteIndex;
+}
+void printText(std::string text, int xPos, int yPos, bool top) {
+	printText(StringUtils::UTF8toUTF16(text), xPos, yPos, top);
+}
+
+void printText(std::u16string text, int xPos, int yPos, bool top) {
+	int x = 0;
+
+	std::ofstream os("sd:/test.log");
+	for (uint c = 0; c < text.length(); c++) {
+		unsigned int charIndex = getTopFontSpriteIndex(text[c]);
+
+		for (int y = 0; y < 16; y++) {
+			int currentCharIndex = ((512*(fontTexcoords[1+(4*charIndex)]+y))+fontTexcoords[0+(4*charIndex)]);
+			os << std::hex << text[c] << std::dec << " || " << charIndex << "u" << fontTexcoords[0+(4*charIndex)] << "v" << fontTexcoords[1+(4*charIndex)] << std::endl;
+
+			for (u16 i = 0; i < fontTexcoords[2 + (4 * charIndex)]; i++) {
+				if (font[currentCharIndex+i]>>15 != 0) { // Do not render transparent pixel
+					(top ? BG_GFX : BG_GFX_SUB)[(y+32+yPos)*256+(i+x+xPos)] = font[currentCharIndex+i];
+				}
+			}
+		}
+		x += fontTexcoords[2 + (4 * charIndex)];
+	}
+	os.close();
+}

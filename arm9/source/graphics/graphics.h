@@ -5,6 +5,9 @@
 #include <string>
 #include <vector>
 
+#include "utils.hpp"
+#include "uvcoordFont.h"
+
 // Converts 3 0-255 (0x0-0xff) values to a BGR15 value
 #define BGR15(b, g, r)   ((b)|((g)<<5)|((r)<<10))
 
@@ -26,6 +29,9 @@ struct Sprite {
 
 // Initializes the screens for drawing
 void initGraphics(void);
+
+// Loads the font into RAM
+void loadFont(void);
 
 /*
  * Loads a .bmp image into a vector of raw pixel data
@@ -170,5 +176,23 @@ Sprite getSpriteInfo(int id);
  * returns the total amount of sprites
  */
 uint getSpriteAmount(void);
+
+/**
+ * Prints texts to the a screen
+ * std::string test is the text that will be printed 
+ * int x is the X position to print at
+ * int y is the Y position to print at
+ * bool top is whether to draw on the top or bottom screen
+ */
+void printText(std::string text, int xPos, int yPos, bool top);
+
+/**
+ * Prints texts to the a screen
+ * std::u16string test is the text that will be printed 
+ * int x is the X position to print at
+ * int y is the Y position to print at
+ * bool top is whether to draw on the top or bottom screen
+ */
+void printText(std::u16string text, int x, int y, bool top);
 
 #endif //GRAPHICS_H
