@@ -13,6 +13,20 @@
 #include "graphics/graphics.h"
 #include "nitrofs.h"
 
+#include "loader.h"
+
+struct XYCoords {
+	int x;
+	int y;
+};
+
+XYCoords getPokemonPosition(int dexNumber) {
+	XYCoords xy;
+	xy.y = (dexNumber/16)*32;
+	xy.x = (dexNumber-((dexNumber/16)*16))*32;
+	return xy;
+}
+
 int main(int argc, char **argv) {
 	initGraphics();
 	keysSetRepeat(25,5);
@@ -28,6 +42,31 @@ int main(int argc, char **argv) {
 		drawRectangle(0, 0, 256, 192, BGR15(0xff, 0, 0), false);
 		while(1) swiWaitForVBlank();
 	}
+
+	if(load("sd:/B2.sav")) {
+		drawRectangle(0, 0, 256, 192, BGR15(0, 255, 0), true);
+	} else {
+		drawRectangle(0, 0, 256, 192, BGR15(0, 0, 255), true);
+	}
+
+	std:: ofstream os("sd:/test.log");
+	os << "Badges:		" << save->badges() << std::endl;
+	os << "Boxes:		" << save->boxes << std::endl;
+	os << "Box Name:	" << save->boxName(0) << std::endl;
+	os << "BP:			" << save->BP() << std::endl;
+	os << "Current Box: " << save->currentBox() << std::endl;
+	os << "Dex Caught:	" << save->dexCaught() << std::endl;
+	os << "Dex Seen:	" << save->dexSeen() << std::endl;
+	os << "Gender:		" << save->gender() << std::endl;
+	os << "Money:		" << save->money() << std::endl;
+	os << "Hours:		" << save->playedHours() << std::endl;
+	os << "Minutes:		" << save->playedMinutes() << std::endl;
+	os << "Seconds:		" << save->playedSeconds() << std::endl;
+	for(int i=0;i<6;i++) {
+		os << "Pkm " << i << ":	"<< save->pkm(i)->species() << "	" << save->pkm(i)->nickname() << std::endl;
+	}
+
+	os.close();
 
 	std::vector<u16> spriteSheet, bankBox, stripes, boxName, arrow, shiny;
 	ImageData spriteSheetData = loadPng("nitro:/graphics/spriteSheet.png", spriteSheet);
@@ -71,16 +110,10 @@ int main(int argc, char **argv) {
 		}
 	}
 
-	int ixo=32, iyo=0;
-	for(int i=0;i<30;i++) {
-		fillSpriteFromSheet(i, spriteSheet, 32, 32, spriteSheetData.width, ixo, iyo);
-		fillSpriteFromSheet(i+30, spriteSheet, 32, 32, spriteSheetData.width, ixo, iyo);
-		if(ixo == 480) {
-			ixo = 0;
-			iyo += 32;
-		} else {
-			ixo += 32;
-		}
+	for(int i=0;i<6;i++) {
+		XYCoords xy = getPokemonPosition(save->pkm(i)->species());
+		fillSpriteFromSheet(i, spriteSheet, 32, 32, spriteSheetData.width, xy.x, xy.y);
+		fillSpriteFromSheet(i+30, spriteSheet, 32, 32, spriteSheetData.width, xy.x, xy.y);
 		updateOam();
 	}
 
