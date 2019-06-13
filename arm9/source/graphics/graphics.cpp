@@ -228,11 +228,11 @@ unsigned int getTopFontSpriteIndex(const u16 letter) {
 	}
 	return spriteIndex;
 }
-void printText(std::string text, int xPos, int yPos, bool top) {
-	printText(StringUtils::UTF8toUTF16(text), xPos, yPos, top);
-}
+void printText(std::string text, int xPos, int yPos, bool top) { printTextTinted(StringUtils::UTF8toUTF16(text), WHITE, xPos, yPos, top); }
+void printText(std::u16string text, int xPos, int yPos, bool top) { printTextTinted(text, WHITE, xPos, yPos, top); }
+void printTextTinted(std::string text, u16 color, int xPos, int yPos, bool top) { printTextTinted(StringUtils::UTF8toUTF16(text), color, xPos, yPos, top); }
 
-void printText(std::u16string text, int xPos, int yPos, bool top) {
+void printTextTinted(std::u16string text, u16 color, int xPos, int yPos, bool top) {
 	int x = 0;
 
 	std::ofstream os("sd:/test.log");
@@ -245,7 +245,7 @@ void printText(std::u16string text, int xPos, int yPos, bool top) {
 
 			for (u16 i = 0; i < fontTexcoords[2 + (4 * charIndex)]; i++) {
 				if (font[currentCharIndex+i]>>15 != 0) { // Do not render transparent pixel
-					(top ? BG_GFX : BG_GFX_SUB)[(y+32+yPos)*256+(i+x+xPos)] = font[currentCharIndex+i];
+					(top ? BG_GFX : BG_GFX_SUB)[(y+32+yPos)*256+(i+x+xPos)] = font[currentCharIndex+i] & color;
 				}
 			}
 		}

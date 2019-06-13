@@ -70,11 +70,10 @@ int main(int argc, char **argv) {
 
 	os.close();
 
-	std::vector<u16> spriteSheet, bankBox, stripes, boxName, arrow, shiny;
+	std::vector<u16> spriteSheet, bankBox, stripes, arrow, shiny;
 	ImageData spriteSheetData = loadPng("nitro:/graphics/spriteSheet.png", spriteSheet);
 	ImageData bankBoxData = loadPng("nitro:/graphics/bankBox.png", bankBox);
 	ImageData stripesData = loadPng("nitro:/graphics/stripes.png", stripes);
-	ImageData boxNameData = loadPng("nitro:/graphics/boxName.png", boxName);
 	ImageData shinyData = loadPng("nitro:/graphics/shiny.png", shiny);
 	loadPng("nitro:/graphics/arrow.png", arrow);
 
@@ -82,15 +81,11 @@ int main(int argc, char **argv) {
 	drawRectangle(0, 0, 256, 192, BGR15(0xff, 0, 0), true);
 	drawRectangle(0, 0, 256, 192, BGR15(0xff, 0, 0), false);
 	drawImage(5, 15, bankBoxData.width, bankBoxData.height, bankBox, false);
-	//drawImageTinted(100, 150, pngData.width, pngData.height, 0x83ff, testPng, false); // That was for test purpose too.
 	drawImage(5, 15, bankBoxData.width, bankBoxData.height, bankBox, true);
 	// Stripes for the Text later.
 	drawImage(180, 30, stripesData.width, stripesData.height, stripes, true);
 	drawImage(180, 60, stripesData.width, stripesData.height, stripes, true);
 	drawImage(180, 90, stripesData.width, stripesData.height, stripes, true);
-	// Box Bars for the Bank Name.
-	drawImage(5, 10, boxNameData.width, boxNameData.height, boxName, true);
-	drawImage(5, 10, boxNameData.width, boxNameData.height, boxName, false);
 	// The Button.
 	drawRectangle(180, 120, 68, 30, BGR15(0x63, 0x65, 0x73), false);
 	
@@ -100,8 +95,8 @@ int main(int argc, char **argv) {
 	// drawImage(0, 40, 32, 32, spriteSheet, true);  // That was for test purpose.
 
 	printText(save->pkm(0)->nickname(), 180, 15, true);
-	printText(save->boxName(save->currentBox()), 50, 15, true);
-	printText(save->boxName(save->currentBox()), 50, 15, false);
+	printTextTinted(save->boxName(save->currentBox()), DARK_GRAY, 60, 20, true);
+	printTextTinted(save->boxName(save->currentBox()), DARK_GRAY, 60, 20, false);
 
 
 	// Pokémon Sprites
@@ -125,7 +120,7 @@ int main(int argc, char **argv) {
 
 	// Arrow
 	fillSpriteImage(arrowID, arrow);
-	prepareSprite(arrowID, 8, 32, 0);
+	prepareSprite(arrowID, 24, 36, 0);
 
 	updateOam();
 
@@ -166,7 +161,7 @@ int main(int argc, char **argv) {
 		}
 		
 		if(heldPokemon != -1)	setSpritePosition(heldPokemon, (arrowX*24)+16, (arrowY*24)+32);
-		setSpritePosition(arrowID, (arrowX*24)+32, (arrowY*24)+32);
+		setSpritePosition(arrowID, (arrowX*24)+24, (arrowY*24)+36);
 		updateOam();
 	}
 
