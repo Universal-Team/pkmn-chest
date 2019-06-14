@@ -1,19 +1,10 @@
-#include <cstdio>
-#include <ctype.h>
-#include <dirent.h>
 #include <fat.h>
-#include <fstream>
-#include <iostream>
-#include <nds.h>
-#include <string>
-#include <unistd.h>
-#include <vector>
 
 #include "fileBrowse.h"
 #include "graphics/graphics.h"
+#include "loader.h"
 #include "nitrofs.h"
 
-#include "loader.h"
 
 struct XYCoords {
 	int x;
@@ -42,33 +33,15 @@ int main(int argc, char **argv) {
 		drawRectangle(0, 0, 256, 192, BGR15(0xff, 0, 0), false);
 		while(1) swiWaitForVBlank();
 	}
-
 	loadFont();
 
-	if(load("sd:/B2.sav")) {
+	std::vector<std::string> extensionList;
+	extensionList.push_back(".sav");
+	if(load(browseForFile(extensionList))) {
 		drawRectangle(0, 0, 256, 192, BGR15(0, 255, 0), true);
 	} else {
 		drawRectangle(0, 0, 256, 192, BGR15(0, 0, 255), true);
 	}
-
-	std:: ofstream os("sd:/test.log");
-	os << "Badges:		" << save->badges() << std::endl;
-	os << "Boxes:		" << save->boxes << std::endl;
-	os << "Box Name:	" << save->boxName(0) << std::endl;
-	os << "BP:			" << save->BP() << std::endl;
-	os << "Current Box: " << save->currentBox() << std::endl;
-	os << "Dex Caught:	" << save->dexCaught() << std::endl;
-	os << "Dex Seen:	" << save->dexSeen() << std::endl;
-	os << "Gender:		" << save->gender() << std::endl;
-	os << "Money:		" << save->money() << std::endl;
-	os << "Hours:		" << save->playedHours() << std::endl;
-	os << "Minutes:		" << save->playedMinutes() << std::endl;
-	os << "Seconds:		" << save->playedSeconds() << std::endl;
-	for(int i=0;i<6;i++) {
-		os << "Pkm " << i << ":	"<< save->pkm(i)->species() << "	" << save->pkm(i)->nickname() << std::endl;
-	}
-
-	os.close();
 
 	std::vector<u16> spriteSheet, bankBox, stripes, arrow, shiny;
 	ImageData spriteSheetData = loadPng("nitro:/graphics/spriteSheet.png", spriteSheet);
@@ -97,6 +70,9 @@ int main(int argc, char **argv) {
 	printText(save->pkm(0)->nickname(), 180, 15, true);
 	printTextTinted(save->boxName(save->currentBox()), DARK_GRAY, 60, 20, true);
 	printTextTinted(save->boxName(save->currentBox()), DARK_GRAY, 60, 20, false);
+
+	// drawImage(5, 15, bankBoxData.width, bankBoxData.height, bankBox, false);
+	drawImage(5, 15, bankBoxData.width, bankBoxData.height, bankBox, true);
 
 
 	// Pokémon Sprites
@@ -164,10 +140,6 @@ int main(int argc, char **argv) {
 		setSpritePosition(arrowID, (arrowX*24)+24, (arrowY*24)+36);
 		updateOam();
 	}
-
-	// std::vector<std::string> extensionList;
-	// extensionList.push_back(".sav");
-	// browseForFile(extensionList);
 
 	while(1) {
 

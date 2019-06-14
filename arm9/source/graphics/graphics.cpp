@@ -1,8 +1,6 @@
 #include "graphics.h"
 #include "lodepng.h"
 
-#include <fstream>
-
 std::vector<Sprite> sprites;
 std::vector<u16> font;
 
@@ -12,22 +10,22 @@ void initGraphics(void) {
 	videoSetModeSub(MODE_5_2D | DISPLAY_BG3_ACTIVE);
 
 	// initialize all the VRAM banks
-	vramSetBankA(VRAM_A_MAIN_BG);
-	vramSetBankB(VRAM_B_MAIN_SPRITE);
-	vramSetBankC(VRAM_C_SUB_BG);
-	vramSetBankD(VRAM_D_SUB_SPRITE);
-	vramSetBankE(VRAM_E_TEX_PALETTE);
-	vramSetBankF(VRAM_F_TEX_PALETTE_SLOT4);
-	vramSetBankG(VRAM_G_TEX_PALETTE_SLOT5); // 16Kb of palette ram, and font textures take up 8*16 bytes.
-	vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
-	vramSetBankI(VRAM_I_SUB_SPRITE_EXT_PALETTE);
+	vramSetPrimaryBanks(VRAM_A_MAIN_BG,
+						VRAM_B_MAIN_SPRITE,
+						VRAM_C_SUB_BG,
+						VRAM_D_SUB_SPRITE);
+	// vramSetBankE(VRAM_E_TEX_PALETTE);
+	// vramSetBankF(VRAM_F_TEX_PALETTE_SLOT4);
+	// vramSetBankG(VRAM_G_TEX_PALETTE_SLOT5); // 16Kb of palette ram, and font textures take up 8*16 bytes.
+	// vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+	// vramSetBankI(VRAM_I_SUB_SPRITE_EXT_PALETTE);
 
 	// Init oam with 1D mapping 128 byte boundary and no external palette support
 	oamInit(&oamSub, SpriteMapping_Bmp_1D_128, false);
 	oamInit(&oamMain, SpriteMapping_Bmp_1D_128, false);
 
 	// Init for background
-	REG_BG3CNT = BG_MAP_BASE(1) | BG_BMP16_256x256 | BG_PRIORITY(3);
+	REG_BG3CNT = BG_MAP_BASE(0) | BG_BMP16_256x256 | BG_PRIORITY(3);
 	REG_BG3X = 0;
 	REG_BG3Y = 0;
 	REG_BG3PA = 1<<8;
@@ -35,7 +33,7 @@ void initGraphics(void) {
 	REG_BG3PC = 0;
 	REG_BG3PD = 1<<8;
 
-	REG_BG3CNT_SUB = BG_MAP_BASE(1) | BG_BMP16_256x256 | BG_PRIORITY(3);
+	REG_BG3CNT_SUB = BG_MAP_BASE(0) | BG_BMP16_256x256 | BG_PRIORITY(3);
 	REG_BG3X_SUB = 0;
 	REG_BG3Y_SUB = 0;
 	REG_BG3PA_SUB = 1<<8;
@@ -102,7 +100,7 @@ void drawImage(int x, int y, int w, int h, std::vector<u16> imageBuffer, bool to
 	for(int i=0;i<h;i++) {
 		for(int j=0;j<w;j++) {
 			if(imageBuffer[(i*w)+j]>>15 != 0) { // Do not render transparent pixel
-				(top ? BG_GFX : BG_GFX_SUB)[(y+i+32)*256+j+x] = imageBuffer[(i*w)+j];
+				(top ? BG_GFX : BG_GFX_SUB)[(y+i)*256+j+x] = imageBuffer[(i*w)+j];
 			}
 		}
 	}
@@ -117,7 +115,7 @@ void drawImageScaled(int x, int y, int w, int h, double scale, std::vector<u16> 
 			u16 jj=(u16)j;
 			if(imageBuffer[(ii*w)+jj]>>15 != 0) { // Do not render transparent pixel
 				u16 js=(u16)(j/scale);
-				(top ? BG_GFX : BG_GFX_SUB)[(y+is+32)*256+js+x] = imageBuffer[(ii*w)+jj];	
+				(top ? BG_GFX : BG_GFX_SUB)[(y+is)*256+js+x] = imageBuffer[(ii*w)+jj];	
 			}
 		}
 	}
@@ -127,7 +125,7 @@ void drawImageTinted(int x, int y, int w, int h, u16 color, std::vector<u16> ima
 	for(int i=0;i<h;i++) {
 		for(int j=0;j<w;j++) {
 			if(imageBuffer[(i*w)+j]>>15 != 0) { // Do not render transparent pixel
-				(top ? BG_GFX : BG_GFX_SUB)[(y+i+32)*256+j+x] = imageBuffer[(i*w)+j] & color;	
+				(top ? BG_GFX : BG_GFX_SUB)[(y+i)*256+j+x] = imageBuffer[(i*w)+j] & color;	
 			}
 		}
 	}
@@ -136,7 +134,7 @@ void drawImageTinted(int x, int y, int w, int h, u16 color, std::vector<u16> ima
 void drawRectangle(int x, int y, int w, int h, int color, bool top) {
 	h+=y;
     for(;y<h;y++) {
-        dmaFillHalfWords(((color>>10)&0x1f) | ((color)&(0x1f<<5)) | (color&0x1f)<<10 | BIT(15), (top ? BG_GFX : BG_GFX_SUB)+((y+32)*256+x), w*2);
+        dmaFillHalfWords(((color>>10)&0x1f) | ((color)&(0x1f<<5)) | (color&0x1f)<<10 | BIT(15), (top ? BG_GFX : BG_GFX_SUB)+((y)*256+x), w*2);
 	}
 }
 
@@ -235,21 +233,29 @@ void printTextTinted(std::string text, u16 color, int xPos, int yPos, bool top) 
 void printTextTinted(std::u16string text, u16 color, int xPos, int yPos, bool top) {
 	int x = 0;
 
-	std::ofstream os("sd:/test.log");
 	for (uint c = 0; c < text.length(); c++) {
 		unsigned int charIndex = getTopFontSpriteIndex(text[c]);
 
 		for (int y = 0; y < 16; y++) {
 			int currentCharIndex = ((512*(fontTexcoords[1+(4*charIndex)]+y))+fontTexcoords[0+(4*charIndex)]);
-			os << std::hex << text[c] << std::dec << " || " << charIndex << "u" << fontTexcoords[0+(4*charIndex)] << "v" << fontTexcoords[1+(4*charIndex)] << std::endl;
 
 			for (u16 i = 0; i < fontTexcoords[2 + (4 * charIndex)]; i++) {
 				if (font[currentCharIndex+i]>>15 != 0) { // Do not render transparent pixel
-					(top ? BG_GFX : BG_GFX_SUB)[(y+32+yPos)*256+(i+x+xPos)] = font[currentCharIndex+i] & color;
+					(top ? BG_GFX : BG_GFX_SUB)[(y+yPos)*256+(i+x+xPos)] = font[currentCharIndex+i] & color;
 				}
 			}
 		}
 		x += fontTexcoords[2 + (4 * charIndex)];
 	}
-	os.close();
+}
+
+int getTextWidth(std::u16string text) {
+	int textWidth = 0;
+
+	for (uint c = 0; c < text.length(); c++) {
+		unsigned int charIndex = getTopFontSpriteIndex(text[c]);
+		textWidth += fontTexcoords[2+(4*charIndex)];
+	}
+
+	return textWidth;
 }

@@ -8,8 +8,9 @@
 #include "utils.hpp"
 #include "uvcoordFont.h"
 
-#define WHITE 0xFFFF
+#define BLACK 0
 #define DARK_GRAY 0x98C6
+#define WHITE 0xFFFF
 
 // Converts 3 0-255 (0x0-0xff) values to a BGR15 value
 #define BGR15(b, g, r)   ((b)|((g)<<5)|((r)<<10))
@@ -201,5 +202,7 @@ void printText(std::u16string text, int x, int y, bool top);
 void printTextTinted(std::string text, u16 color, int xPos, int yPos, bool top);
 
 void printTextTinted(std::u16string text, u16 color, int xPos, int yPos, bool top);
+
+int getTextWidth(std::u16string text);
 
 #endif //GRAPHICS_H

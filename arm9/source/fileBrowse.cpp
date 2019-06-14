@@ -22,16 +22,12 @@
 
 #include "fileBrowse.h"
 #include <algorithm>
-#include <cstdio>
 #include <dirent.h>
-#include <nds.h>
-#include <string>
-#include <unistd.h>
-#include <vector>
 
-#define SCREEN_COLS 32
-#define ENTRIES_PER_SCREEN 22
-#define ENTRIES_START_ROW 2
+#include "graphics/graphics.h"
+#include "utils.hpp"
+
+#define ENTRIES_PER_SCREEN 11
 #define ENTRY_PAGE_LENGTH 10
 
 struct DirEntry {
@@ -69,7 +65,7 @@ void getDirectoryContents(std::vector<DirEntry>& dirContents, const std::vector<
 	DIR *pdir = opendir(".");
 
 	if(pdir == NULL) {
-		iprintf("Unable to open the directory.\n");
+		printText("Unable to open the directory.", 0, 0, false);
 	} else {
 		while(true) {
 			DirEntry dirEntry;
@@ -97,40 +93,29 @@ void getDirectoryContents(std::vector<DirEntry>& dirContents) {
 
 void showDirectoryContents(const std::vector<DirEntry>& dirContents, int startRow) {
 	char path[PATH_MAX];
-
 	getcwd(path, PATH_MAX);
 
-	// Clear the screen
-	iprintf("\x1b[2J");
-
-	// Print the path
-	if(strlen(path) < SCREEN_COLS) {
-		iprintf("%s", path);
-	} else {
-		iprintf("%s", path + strlen(path) - SCREEN_COLS);
-	}
+	// Clear screen
+	drawRectangle(0, 0, 256, 192, BLACK, false);
+	// Print path
+	printText(path, 0, 0, false);
 
 	// Move to 2nd row and print line of dashes
-	iprintf("\x1b[1;0H");
-	iprintf("--------------------------------");
+	drawRectangle(0, 16, 256, 1, WHITE, false);
 
 	// Print directory listing
 	for(int i=0;i < ((int)dirContents.size() - startRow) && i < ENTRIES_PER_SCREEN; i++) {
-		const DirEntry* entry = &dirContents.at(i + startRow);
-		char entryName[SCREEN_COLS + 1];
+		std::u16string name = StringUtils::UTF8toUTF16(dirContents[i + startRow].name);
 
-		// Set row
-		iprintf("\x1b[%d;0H", i + ENTRIES_START_ROW);
-
-		if(entry->isDirectory) {
-			strncpy(entryName, entry->name.c_str(), SCREEN_COLS);
-			entryName[SCREEN_COLS - 3] = '\0';
-			iprintf(" [%s]", entryName);
-		} else {
-			strncpy(entryName, entry->name.c_str(), SCREEN_COLS);
-			entryName[SCREEN_COLS - 1] = '\0';
-			iprintf(" %s", entryName);
+		// Trim to fit on screen
+		bool addEllipsis = false;
+		while(getTextWidth(name) > 227) {
+			name = name.substr(0, name.length()-1);
+			addEllipsis = true;
 		}
+		if(addEllipsis)	name += StringUtils::UTF8toUTF16("...");
+
+		printText(name, 10, i*16+16, false);
 	}
 }
 
@@ -138,6 +123,7 @@ std::string browseForFile(const std::vector<std::string>& extensionList) {
 	int pressed = 0;
 	int screenOffset = 0;
 	int fileOffset = 0;
+	bool drawFullScreen = false;
 	std::vector<DirEntry> dirContents;
 
 	getDirectoryContents(dirContents, extensionList);
@@ -145,11 +131,11 @@ std::string browseForFile(const std::vector<std::string>& extensionList) {
 
 	while(true) {
 		// Clear old cursors
-		for(int i = ENTRIES_START_ROW; i < ENTRIES_PER_SCREEN + ENTRIES_START_ROW; i++) {
-			iprintf("\x1b[%d;0H ", i);
-		}
+		drawRectangle(0, 17, 10, 175, BLACK, false);
+		
 		// Show cursor
-		iprintf("\x1b[%d;0H*", fileOffset - screenOffset + ENTRIES_START_ROW);
+		drawRectangle(3, (fileOffset-screenOffset)*16+24, 4, 3, WHITE, false);
+
 
 		// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
 		do {
@@ -159,27 +145,82 @@ std::string browseForFile(const std::vector<std::string>& extensionList) {
 		} while(!pressed);
 
 		if(pressed & KEY_UP)	fileOffset -= 1;
-		if(pressed & KEY_DOWN)	fileOffset += 1;
-		if(pressed & KEY_LEFT)	fileOffset -= ENTRY_PAGE_LENGTH;
-		if(pressed & KEY_RIGHT)	fileOffset += ENTRY_PAGE_LENGTH;
+		else if(pressed & KEY_DOWN)	fileOffset += 1;
+		else if(pressed & KEY_LEFT) {
+			fileOffset -= ENTRY_PAGE_LENGTH;
+			drawFullScreen = true;
+		} else if(pressed & KEY_RIGHT) {
+			fileOffset += ENTRY_PAGE_LENGTH;
+			drawFullScreen = true;
+		}
 
-		if(fileOffset < 0) 	fileOffset = dirContents.size() - 1;		// Wrap around to bottom of list
-		if(fileOffset >((int)dirContents.size() - 1))		fileOffset = 0;		// Wrap around to top of list
+		if(fileOffset < 0) {
+			// Wrap around to bottom of list unless left was pressed
+			fileOffset = drawFullScreen ? 0 : dirContents.size()-1;
+			drawFullScreen = true;
+		} else if(fileOffset >((int)dirContents.size() - 1)) {
+			// Wrap around to top of list unless right was pressed
+			fileOffset = drawFullScreen ? dirContents.size()-1 : 0;
+			drawFullScreen = true;
+		}
 
 		// Scroll screen if needed
 		if(fileOffset < screenOffset) {
 			screenOffset = fileOffset;
-			showDirectoryContents(dirContents, screenOffset);
+			if(drawFullScreen) {
+				showDirectoryContents(dirContents, screenOffset);
+			} else {
+				// Copy old entries down
+				for(int i=ENTRIES_PER_SCREEN-1;i>0;i--) {
+					dmaCopyWords(0, BG_GFX_SUB+(((i*16)+1)*256), BG_GFX_SUB+((((i+1)*16)+1)*256), 16*256*2);
+				}
+				drawRectangle(10, 17, 246, 16, BLACK, false); // Black out previous top entry
+				drawRectangle(3, 40, 4, 3, BLACK, false); // Black out previous cursor mark
+			
+				std::u16string name = StringUtils::UTF8toUTF16(dirContents[screenOffset].name);
+
+				// Trim to fit on screen
+				bool addEllipsis = false;
+				while(getTextWidth(name) > 227) {
+					name = name.substr(0, name.length()-1);
+					addEllipsis = true;
+				}
+				if(addEllipsis)	name += StringUtils::UTF8toUTF16("...");
+
+				// Draw new entry
+				printText(name, 10, 16, false);
+			}
 		}
 		if(fileOffset > screenOffset + ENTRIES_PER_SCREEN - 1) {
 			screenOffset = fileOffset - ENTRIES_PER_SCREEN + 1;
-			showDirectoryContents(dirContents, screenOffset);
+			if(drawFullScreen) {
+				showDirectoryContents(dirContents, screenOffset);
+			} else {
+				dmaCopyWords(0, BG_GFX_SUB+(33*256), BG_GFX_SUB+(17*256), 160*256*2); // Copy old entries up
+				drawRectangle(10, ENTRIES_PER_SCREEN*16, 246, 16, BLACK, false); // Black out previous bottom entry
+				drawRectangle(3, 168, 4, 3, BLACK, false); // Black out previous cursor mark
+				drawRectangle(3, (fileOffset-screenOffset)*16+24, 4, 3, WHITE, false); // Draw new cursor mark
+
+				std::u16string name = StringUtils::UTF8toUTF16(dirContents[screenOffset+ENTRIES_PER_SCREEN-1].name);
+
+				// Trim to fit on screen
+				bool addEllipsis = false;
+				while(getTextWidth(name) > 227) {
+					name = name.substr(0, name.length()-1);
+					addEllipsis = true;
+				}
+				if(addEllipsis)	name += StringUtils::UTF8toUTF16("...");
+
+				// Draw new entry
+				printText(name, 10, ENTRIES_PER_SCREEN*16, false);
+			}
 		}
+
+		drawFullScreen = false;
 
 		if(pressed & KEY_A) {
 			DirEntry* entry = &dirContents.at(fileOffset);
 			if(entry->isDirectory) {
-				iprintf("Entering directory\n");
 				// Enter selected directory
 				chdir(entry->name.c_str());
 				getDirectoryContents(dirContents, extensionList);
@@ -187,8 +228,6 @@ std::string browseForFile(const std::vector<std::string>& extensionList) {
 				fileOffset = 0;
 				showDirectoryContents(dirContents, screenOffset);
 			} else {
-				// Clear the screen
-				iprintf("\x1b[2J");
 				// Return the chosen file
 				return entry->name;
 			}

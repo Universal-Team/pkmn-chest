@@ -26,8 +26,7 @@
 #include <vector>
 
 /*
- * *Currently broken as there is no console text*
- * Browse for a file with console displayed text
+ * Browse for a file
  * const std::vector<std::string>& extensionList is the extensions to show
  * Returns the selected file
  */
