@@ -1,5 +1,5 @@
 /*
-	nitrofs.h - eris's wai ossum nitro filesystem device driver header  
+	nitrofs.h - eris's wai ossum nitro filesystem device driver header
 		Based on information found at http://frangoassado.org/ds/rom_spec.txt and from the #dsdev ppls
 		Kallisti (K) 2008-01-26 All rights reversed.
 
@@ -17,19 +17,19 @@
 
 	2008-05-30  v0.5.Turbo - major speed improvement
 		* This version uses a single filehandle to access the .nds file when not in GBA mode
-		  improving the speed it takes to open a .nds file by around 106ms. This is great for 
+		  improving the speed it takes to open a .nds file by around 106ms. This is great for
 		  situations requiring reading alot of seperate small files. However it does take a little
-		  bit longer when reading from multiple files simultainously 
+		  bit longer when reading from multiple files simultainously
 		  (around 122ms over 10,327 0x100 byte reads between 2 files).
-	2008-06-09  
-		* Fixed bug with SEEK_END where it wouldnt utilize the submitted position.. 
+	2008-06-09
+		* Fixed bug with SEEK_END where it wouldnt utilize the submitted position..
 		  (now can fseek(f,-128,SEEK_END) to read from end of file :D)
 
 	2008-06-18 v0.6.Turbo - . and .. :D
 		* Today i have added full "." and ".." support.
-		  dirnext() will return . and .. first, and all relevent operations will 
-		  support . and .. in pathnames. 
-    
+		  dirnext() will return . and .. first, and all relevent operations will
+		  support . and .. in pathnames.
+
     2018-09-05 v0.9 - modernize devoptab (by RonnChyran)
         * Updated for libsysbase change in devkitARM r46 and above.
 */

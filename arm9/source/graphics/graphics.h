@@ -16,19 +16,19 @@
 #define BGR15(b, g, r)   ((b)|((g)<<5)|((r)<<10))
 
 struct ImageData {
-    uint width;
-    uint height;
+	uint width;
+	uint height;
 };
 
 struct Sprite {
-   u16* gfx;
-   SpriteSize size;
-   SpriteColorFormat format;
-   int rotationIndex;
-   int paletteAlpha;
-   int x;
-   int y;
-   bool top;
+	u16* gfx;
+	SpriteSize size;
+	SpriteColorFormat format;
+	int rotationIndex;
+	int paletteAlpha;
+	int x;
+	int y;
+	bool top;
 };
 
 // Initializes the screens for drawing
@@ -63,6 +63,20 @@ ImageData loadPng(std::string path, std::vector<u16>& imageBuffer);
  * bool top is whether to draw on the top or bottom screen
  */
 void drawImage(int x, int y, int w, int h, std::vector<u16> imageBuffer, bool top);
+
+/*
+ * Draws an image to the screen from a portion of a vector of raw pixel data
+ * int x is the X position
+ * int y is the Y position
+ * int w is the Width
+ * int h is the Height
+ * std::vector<u16> imageBuffer is the raw pixel data
+ * int imageWidth is the width of the spritesheet
+ * int xOffset is the X position in the sheet to start at
+ * int yOffset is the Y position in the sheet to start at
+ * bool top is whether to draw on the top or bottom screen
+ */
+void drawImageFromSheet(int x, int y, int w, int h, std::vector<u16> imageBuffer, int imageWidth, int xOffset, int yOffset, bool top);
 
 /*
  * Draws a scaled image to the screen from a vector of raw pixel data
@@ -182,8 +196,8 @@ Sprite getSpriteInfo(int id);
 uint getSpriteAmount(void);
 
 /**
- * Prints texts to the a screen
- * std::string test is the text that will be printed 
+ * Prints text to the a screen
+ * std::string test is the text that will be printed
  * int x is the X position to print at
  * int y is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
@@ -191,18 +205,39 @@ uint getSpriteAmount(void);
 void printText(std::string text, int xPos, int yPos, bool top);
 
 /**
- * Prints texts to the a screen
- * std::u16string test is the text that will be printed 
+ * Prints text to the a screen
+ * std::u16string test is the text that will be printed
  * int x is the X position to print at
  * int y is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
  */
 void printText(std::u16string text, int x, int y, bool top);
 
+/**
+ * Prints colored text to the a screen
+ * u16 color is the color to tint the text
+ * std::string test is the text that will be printed
+ * int x is the X position to print at
+ * int y is the Y position to print at
+ * bool top is whether to draw on the top or bottom screen
+ */
 void printTextTinted(std::string text, u16 color, int xPos, int yPos, bool top);
 
+/**
+ * Prints colored text to the a screen
+ * u16 color is the color to tint the text
+ * std::u16string test is the text that will be printed
+ * int x is the X position to print at
+ * int y is the Y position to print at
+ * bool top is whether to draw on the top or bottom screen
+ */
 void printTextTinted(std::u16string text, u16 color, int xPos, int yPos, bool top);
 
+/**
+ * Gets the width of a std::u16string of text
+ * std::u16string test is the text to get the width of
+ * returns the width of the text
+ */
 int getTextWidth(std::u16string text);
 
 #endif //GRAPHICS_H

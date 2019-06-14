@@ -8,7 +8,7 @@
 		* also thx to wintermute's input realized:
 			* if you dont give ndstool the -o wifilogo.bmp option it will run on emulators in gba mode
 			* you then dont need the gba's LOADEROFFSET, so it was set to 0x000
-	
+
 	2008-05-21  v0.3 - newer and more improved
 		* fixed some issues with ftell() (again was fseek's fault u_u;;)
 		* fixed possible error in detecting sc.gba files when using dldi
@@ -24,29 +24,29 @@
 
 	2008-05-30  v0.5.Turbo - major speed improvement
 		* This version uses a single filehandle to access the .nds file when not in GBA mode
-		  improving the speed it takes to open a .nds file by around 106ms. This is great for 
+		  improving the speed it takes to open a .nds file by around 106ms. This is great for
 		  situations requiring reading alot of seperate small files. However it does take a little
-		  bit longer when reading from multiple files simultainously 
+		  bit longer when reading from multiple files simultainously
 		  (around 122ms over 10,327 0x100 byte reads between 2 files).
-	2008-06-09  
-		* Fixed bug with SEEK_END where it wouldnt utilize the submitted position.. 
+	2008-06-09
+		* Fixed bug with SEEK_END where it wouldnt utilize the submitted position..
 		  (now can fseek(f,-128,SEEK_END) to read from end of file :D)
 
 	2008-06-18 v0.6.Turbo - . and .. :D
 		* Today i have added full "." and ".." support.
-		  dirnext() will return . and .. first, and all relevent operations will 
-		  support . and .. in pathnames. 
+		  dirnext() will return . and .. first, and all relevent operations will
+		  support . and .. in pathnames.
 
 	2009-05-10 v0.7.Turbo - small changes  @_@?!
 
 	2009-08-08 v0.8.Turbo - fix fix fix
-		* fixed problem with some cards where the header would be loaded to GBA ram even if running 
-                  in NDS mode causing nitroFSInit() to think it was a valid GBA cart header and attempt to 
+		* fixed problem with some cards where the header would be loaded to GBA ram even if running
+                  in NDS mode causing nitroFSInit() to think it was a valid GBA cart header and attempt to
            	  read from GBA SLOT instead of SLOT 1. Fixed this by making it check that filename is not NULL
  		  and then to try FAT/SLOT1 first. The NULL option allows forcing nitroFS to use gba.
-    
+
     2018-09-05 v0.9 - modernize devoptab (by RonnChyran)
-        * Updated for libsysbase change in devkitARM r46 and above. 
+        * Updated for libsysbase change in devkitARM r46 and above.
 
 */
 

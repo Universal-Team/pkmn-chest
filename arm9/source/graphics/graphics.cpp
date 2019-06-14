@@ -106,6 +106,14 @@ void drawImage(int x, int y, int w, int h, std::vector<u16> imageBuffer, bool to
 	}
 }
 
+void drawImageFromSheet(int x, int y, int w, int h, std::vector<u16> imageBuffer, int imageWidth, int xOffset, int yOffset, bool top) {
+	for(int i=0;i<h;i++) {
+		for(int j=0;j<w;j++) {
+			(top ? BG_GFX : BG_GFX_SUB)[((y+i)*256)+j+x] = imageBuffer[((i+yOffset)*imageWidth)+j+xOffset];
+		}
+	}
+}
+
 void drawImageScaled(int x, int y, int w, int h, double scale, std::vector<u16> imageBuffer, bool top) {
 	scale = 1/scale;
 	for(double i=0;i<h;i+=scale) {
@@ -115,7 +123,7 @@ void drawImageScaled(int x, int y, int w, int h, double scale, std::vector<u16> 
 			u16 jj=(u16)j;
 			if(imageBuffer[(ii*w)+jj]>>15 != 0) { // Do not render transparent pixel
 				u16 js=(u16)(j/scale);
-				(top ? BG_GFX : BG_GFX_SUB)[(y+is)*256+js+x] = imageBuffer[(ii*w)+jj];	
+				(top ? BG_GFX : BG_GFX_SUB)[(y+is)*256+js+x] = imageBuffer[(ii*w)+jj];
 			}
 		}
 	}
@@ -125,7 +133,7 @@ void drawImageTinted(int x, int y, int w, int h, u16 color, std::vector<u16> ima
 	for(int i=0;i<h;i++) {
 		for(int j=0;j<w;j++) {
 			if(imageBuffer[(i*w)+j]>>15 != 0) { // Do not render transparent pixel
-				(top ? BG_GFX : BG_GFX_SUB)[(y+i)*256+j+x] = imageBuffer[(i*w)+j] & color;	
+				(top ? BG_GFX : BG_GFX_SUB)[(y+i)*256+j+x] = imageBuffer[(i*w)+j] & color;
 			}
 		}
 	}
@@ -143,10 +151,10 @@ int initSprite(SpriteSize spriteSize, bool top) {
 	sprites.push_back(sprite);
 
 	int id = sprites.size()-1;
-   
+
 	// Allocate memory for graphics
 	sprites[id].gfx = oamAllocateGfx((top ? &oamMain : &oamSub), sprites[id].size, sprites[id].format);
-	
+
 	return id;
 }
 
@@ -168,9 +176,9 @@ void fillSpriteFromSheet(int id, std::vector<u16> imageBuffer, int w, int h, int
 
 void prepareSprite(int id, int x, int y, int priority) {
 	oamSet(
-	(sprites[id].top ? &oamMain : &oamSub),	// Main/Sub display 
+	(sprites[id].top ? &oamMain : &oamSub),	// Main/Sub display
 	id,	// Oam entry to set
-	x, y,	// Position 
+	x, y,	// Position
 	priority, // Priority
 	sprites[id].paletteAlpha, // Alpha for bmp sprite
 	sprites[id].size,
@@ -233,14 +241,14 @@ void printTextTinted(std::string text, u16 color, int xPos, int yPos, bool top) 
 void printTextTinted(std::u16string text, u16 color, int xPos, int yPos, bool top) {
 	int x = 0;
 
-	for (uint c = 0; c < text.length(); c++) {
+	for(uint c = 0; c < text.length(); c++) {
 		unsigned int charIndex = getTopFontSpriteIndex(text[c]);
 
-		for (int y = 0; y < 16; y++) {
+		for(int y = 0; y < 16; y++) {
 			int currentCharIndex = ((512*(fontTexcoords[1+(4*charIndex)]+y))+fontTexcoords[0+(4*charIndex)]);
 
-			for (u16 i = 0; i < fontTexcoords[2 + (4 * charIndex)]; i++) {
-				if (font[currentCharIndex+i]>>15 != 0) { // Do not render transparent pixel
+			for(u16 i = 0; i < fontTexcoords[2 + (4 * charIndex)]; i++) {
+				if(font[currentCharIndex+i]>>15 != 0) { // Do not render transparent pixel
 					(top ? BG_GFX : BG_GFX_SUB)[(y+yPos)*256+(i+x+xPos)] = font[currentCharIndex+i] & color;
 				}
 			}

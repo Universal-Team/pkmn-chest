@@ -132,7 +132,7 @@ std::string browseForFile(const std::vector<std::string>& extensionList) {
 	while(true) {
 		// Clear old cursors
 		drawRectangle(0, 17, 10, 175, BLACK, false);
-		
+
 		// Show cursor
 		drawRectangle(3, (fileOffset-screenOffset)*16+24, 4, 3, WHITE, false);
 
@@ -176,7 +176,7 @@ std::string browseForFile(const std::vector<std::string>& extensionList) {
 				}
 				drawRectangle(10, 17, 246, 16, BLACK, false); // Black out previous top entry
 				drawRectangle(3, 40, 4, 3, BLACK, false); // Black out previous cursor mark
-			
+
 				std::u16string name = StringUtils::UTF8toUTF16(dirContents[screenOffset].name);
 
 				// Trim to fit on screen
