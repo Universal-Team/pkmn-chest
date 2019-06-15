@@ -27,6 +27,8 @@
 #include "PK4.hpp"
 #include "random.hpp"
 
+static constexpr u16 banned[8] = {15, 19, 57, 70, 250, 249, 127, 431};
+
 void PK4::shuffleArray(u8 sv)
 {
     static const int blockLength = 32;
@@ -820,10 +822,10 @@ std::shared_ptr<PKX> PK4::next(void) const
 
     for (int i = 0; i < 4; i++)
     {
-        // if (std::find(banned, banned + 8, moves[i]) != banned + 8)
-        // {
-        //     moves[i] = 0;
-        // }
+        if (std::find(banned, banned + 8, moves[i]) != banned + 8)
+        {
+            moves[i] = 0;
+        }
         pk5->move(i, moves[i]);
     }
     pk5->fixMoves();

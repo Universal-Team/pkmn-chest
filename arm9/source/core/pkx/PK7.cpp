@@ -25,8 +25,10 @@
  */
 
 #include "PK7.hpp"
-// #include "loader.hpp"
 #include "random.hpp"
+#include "../../loader.h"
+
+static constexpr u16 hyperTrainLookup[6] = {0, 1, 2, 5, 3, 4};
 
 void PK7::shuffleArray(u8 sv)
 {
@@ -870,10 +872,10 @@ u16 PK7::stat(const u8 stat) const
     else if (stat == 5)
         basestat = baseSpd();
 
-    // if (stat == 0)
-    //     calc = 10 + ((2 * basestat) + ((((data[0xDE] >> hyperTrainLookup[stat]) & 1) == 1) ? 31 : iv(stat)) + ev(stat) / 4 + 100) * level() / 100;
-    // else
-    //     calc = 5 + (2 * basestat + ((((data[0xDE] >> hyperTrainLookup[stat]) & 1) == 1) ? 31 : iv(stat)) + ev(stat) / 4) * level() / 100;
+    if (stat == 0)
+        calc = 10 + ((2 * basestat) + ((((data[0xDE] >> hyperTrainLookup[stat]) & 1) == 1) ? 31 : iv(stat)) + ev(stat) / 4 + 100) * level() / 100;
+    else
+        calc = 5 + (2 * basestat + ((((data[0xDE] >> hyperTrainLookup[stat]) & 1) == 1) ? 31 : iv(stat)) + ev(stat) / 4) * level() / 100;
     if (nature() / 5 + 1 == stat)
         mult++;
     if (nature() % 5 + 1 == stat)
@@ -909,19 +911,19 @@ std::shared_ptr<PKX> PK7::previous(void) const
     pk6->htTextVar(0);
     pk6->htIntensity(1);
     pk6->htFeeling(randomNumbers() % 10);
-    // pk6->geoCountry(0, TitleLoader::save->country());
-    // pk6->geoRegion(0, TitleLoader::save->subRegion());
+    pk6->geoCountry(0, save->country());
+    pk6->geoRegion(0, save->subRegion());
 
     for (int i = 0; i < 4; i++)
     {
-        // if (pk6->move(i) > TitleLoader::save->maxMove())
-        // {
-        //     pk6->move(i, 0);
-        // }
-        // if (pk6->relearnMove(i) > TitleLoader::save->maxMove())
-        // {
-        //     pk6->relearnMove(i, 0);
-        // }
+        if (pk6->move(i) > save->maxMove())
+        {
+            pk6->move(i, 0);
+        }
+        if (pk6->relearnMove(i) > save->maxMove())
+        {
+            pk6->relearnMove(i, 0);
+        }
     }
     pk6->fixMoves();
 

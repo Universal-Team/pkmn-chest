@@ -33,8 +33,6 @@
 class PK7 : public PKX
 {
 protected:
-    // static constexpr u16 hyperTrainLookup[6] = {0, 1, 2, 5, 3, 4};
-
     void shuffleArray(u8 sv) override;
     void crypt(void) override;
     void reorderMoves(void) override;

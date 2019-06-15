@@ -25,8 +25,8 @@
  */
 
 #include "PK6.hpp"
-// #include "loader.hpp"
 #include "random.hpp"
+#include "../../loader.h"
 
 void PK6::shuffleArray(u8 sv)
 {
@@ -973,8 +973,8 @@ std::shared_ptr<PKX> PK6::next(void) const
     pk7->htTextVar(0);
     pk7->htIntensity(1);
     pk7->htFeeling(randomNumbers() % 10);
-    // pk7->geoCountry(0, TitleLoader::save->country());
-    // pk7->geoRegion(0, TitleLoader::save->subRegion());
+    pk7->geoCountry(0, save->country());
+    pk7->geoRegion(0, save->subRegion());
 
     pk7->currentHandler(1);
 
@@ -1089,10 +1089,10 @@ std::shared_ptr<PKX> PK6::previous(void) const
 
     for (int i = 0; i < 4; i++)
     {
-        // if (pk5->move(i) > TitleLoader::save->maxMove())
-        // {
-        //     pk5->move(i, 0);
-        // }
+        if (pk5->move(i) > save->maxMove())
+        {
+            pk5->move(i, 0);
+        }
     }
 
     pk5->refreshChecksum();

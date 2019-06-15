@@ -75,22 +75,63 @@ int main(int argc, char **argv) {
 				setSpriteVisibility(heldPokemon, false);
 		}
 		if(hDown & KEY_A) {
-			if(heldPokemon != -1) {
-				if(save->pkm(currentBox, (arrowY*6)+arrowX)->species() != 0)
-					setSpriteVisibility(heldPokemon, true);
-				setSpriteVisibility(topScreen ? topHeldPokemonID : bottomHeldPokemonID, false);
-			}
+			// if(heldPokemon != -1) {
+			// 	if(save->pkm(currentBox, (arrowY*6)+arrowX)->species() != 0)
+			// 		setSpriteVisibility(heldPokemon, true);
+			// 	setSpriteVisibility(topScreen ? topHeldPokemonID : bottomHeldPokemonID, false);
+			// }
 
-			if(heldPokemon == (arrowY*6)+arrowX) {
-				heldPokemon = -1;
-				heldPokemonBox = -1;
-			} else if(save->pkm(currentBox, (arrowY*6)+arrowX)->species() != 0) {
-				heldPokemon = (arrowY*6)+arrowX;
-				heldPokemonBox = currentBox;
-				setHeldPokemon(save->pkm(currentBox, heldPokemon)->species());
-				setSpriteVisibility(heldPokemon, false);
-				setSpriteVisibility((topScreen ? topHeldPokemonID : bottomHeldPokemonID), true);
-				drawPokemonInfo(save->pkm(currentBox, heldPokemon));
+			if(heldPokemon != -1) {
+				if(heldPokemon == (arrowY*6)+arrowX && heldPokemonBox == currentBox) {
+					// If in the held Pokémon's previous spot, just put it back down
+					setSpriteVisibility(heldPokemon, true);
+					setSpriteVisibility(topScreen ? topHeldPokemonID : bottomHeldPokemonID, false);
+					heldPokemon = -1;
+					heldPokemonBox = -1;
+				} else if(save->pkm(currentBox, (arrowY*6)+arrowX)->species() != 0) {
+					// If the new spot has a Pokémon, swap it with the held one
+					// Save the Pokémon at the cursor's postion to a temp variable
+					std::shared_ptr<PKX> heldPkm = save->pkm(heldPokemonBox, heldPokemon);
+					std::shared_ptr<PKX> tempPkm = save->pkm(currentBox, (arrowY*6)+arrowX);
+					heldPkm->decrypt();
+					tempPkm->decrypt();
+					// Write the held Pokémon to the cursor position
+					save->pkm(heldPkm, currentBox, (arrowY*6)+arrowX, false);
+					// Write the cursor position's previous Pokémon to the held Pokémon's old spot
+					save->pkm(tempPkm, heldPokemonBox, heldPokemon, false);
+
+					setSpriteVisibility(topScreen ? topHeldPokemonID : bottomHeldPokemonID, false);
+					heldPokemon = -1;
+					heldPokemonBox = -1;
+					
+					// Show the new held Pokémon and it's info
+					drawBox();
+					drawPokemonInfo(save->pkm(currentBox, (arrowY*6)+arrowX));
+				} else {
+					// If the spot is empty, write the held Pokémon there
+					// Write the held Pokémon to the cursor position
+					std::shared_ptr<PKX> heldPkm = save->pkm(heldPokemonBox, heldPokemon);
+					heldPkm->decrypt();
+
+					save->pkm(heldPkm, currentBox, (arrowY*6)+arrowX, false);
+					save->pkm(save->emptyPkm(), heldPokemonBox, heldPokemon, false);
+
+					setSpriteVisibility(topScreen ? topHeldPokemonID : bottomHeldPokemonID, false);
+					heldPokemon = -1;
+					heldPokemonBox = -1;
+
+					drawBox();
+				}
+			} else {
+				if(save->pkm(currentBox, (arrowY*6)+arrowX)->species() != 0) {
+					// If no pokemon is currently held and there is one at the cursor, pick it up
+					heldPokemon = (arrowY*6)+arrowX;
+					heldPokemonBox = currentBox;
+					setHeldPokemon(save->pkm(currentBox, heldPokemon)->species());
+					setSpriteVisibility(heldPokemon, false);
+					setSpriteVisibility((topScreen ? topHeldPokemonID : bottomHeldPokemonID), true);
+					drawPokemonInfo(save->pkm(currentBox, heldPokemon));
+				}
 			}
 		}
 

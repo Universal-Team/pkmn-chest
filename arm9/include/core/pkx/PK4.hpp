@@ -35,7 +35,6 @@ class PK4 : public PKX
 {
 protected:
     static constexpr u8 beasts[4]  = {251, 243, 244, 245};
-    static constexpr u16 banned[8] = {15, 19, 57, 70, 250, 249, 127, 431};
 
     void shuffleArray(u8 sv) override;
     void crypt(void) override;
