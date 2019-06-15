@@ -8,7 +8,8 @@ struct XYCoords {
 	int y;
 };
 
-extern int arrowID;
+extern int bottomArrowID;
+extern int topArrowID;
 extern int shinyID;
 extern int currentBox;
 

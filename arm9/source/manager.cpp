@@ -4,7 +4,8 @@
 
 std::vector<u16> arrow, bankBox, shiny, spriteSheet, stripes, types;
 ImageData bankBoxData, spriteSheetData, stripesData, typesData;
-int arrowID;
+int bottomArrowID;
+int topArrowID;
 int shinyID;
 int currentBox;
 
@@ -40,7 +41,8 @@ void drawBoxScreen(void) {
 	// Pokémon Sprites
 	for(int i=0;i<30;i++)	initSprite(SpriteSize_32x32, false);
 	for(int i=0;i<30;i++)	initSprite(SpriteSize_32x32, true);
-	arrowID = initSprite(SpriteSize_16x16, false);
+	bottomArrowID = initSprite(SpriteSize_16x16, false);
+	topArrowID = initSprite(SpriteSize_16x16, true);
 	shinyID = initSprite(SpriteSize_16x16, true); // 8x8 wasn't working
 
 	for(int y=0;y<5;y++) {
@@ -58,9 +60,14 @@ void drawBoxScreen(void) {
 		}
 	}
 
-	// Arrow & Shiny icon
-	fillSpriteImage(arrowID, arrow);
-	prepareSprite(arrowID, 24, 36, 0);
+	// Arrows & Shiny icon
+	fillSpriteImage(bottomArrowID, arrow);
+	prepareSprite(bottomArrowID, 24, 36, 0);
+
+	fillSpriteImage(topArrowID, arrow);
+	prepareSprite(topArrowID, 24, 36, 0);
+	setSpriteVisibility(topArrowID, false);
+
 	fillSpriteImage(shinyID, shiny);
 	prepareSprite(shinyID, 239, 52, 0);
 	setSpriteVisibility(shinyID, save->pkm(currentBox, 0)->shiny());

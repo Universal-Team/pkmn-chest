@@ -36,6 +36,7 @@ int main(int argc, char **argv) {
 
 	int arrowX = 0, arrowY = 0, heldPokemon = -1, heldPokemonX = 0, heldPokemonY = 0;
 	u16 hDown = 0;
+	bool topScreen = false;
 	while(1) {
 		do {
 		swiWaitForVBlank();
@@ -44,14 +45,23 @@ int main(int argc, char **argv) {
 		} while(!hDown);
 
 		if(hDown & KEY_UP) {
-			if(arrowY > 0)	arrowY--;
+			if(arrowY > (topScreen ? -1 : -2))	arrowY--;
 		} else if(hDown & KEY_DOWN) {
-			if(arrowY < 4)	arrowY++;
+			if(arrowY < (topScreen ? 5 : 4))	arrowY++;
 		}
-		if(hDown & KEY_LEFT) {
+		if(hDown & KEY_LEFT && arrowY != -1) {
 			if(arrowX > 0)	arrowX--;
-		} else if(hDown & KEY_RIGHT) {
+		} else if(hDown & KEY_RIGHT && arrowY != -1) {
 			if(arrowX < 5)	arrowX++;
+		}
+		if(hDown & KEY_LEFT && arrowY == -1) {
+			if(currentBox > 0)	currentBox--;
+			else currentBox = save->maxBoxes()-1;
+			drawBox();
+		} else if(hDown & KEY_RIGHT && arrowY == -1) {
+			if(currentBox < save->maxBoxes()-1)	currentBox++;
+			else currentBox = 0;
+			drawBox();
 		}
 		if(hDown & KEY_L) {
 			if(currentBox > 0)	currentBox--;
@@ -84,8 +94,25 @@ int main(int argc, char **argv) {
 			drawPokemonInfo(save->pkm(currentBox, (arrowY*6)+arrowX));
 		}
 
+		if(arrowY == -2) {
+			arrowY = 4;
+			topScreen = true;
+			setSpriteVisibility(bottomArrowID, false);
+			setSpriteVisibility(topArrowID, true);
+		} else if(arrowY == 5) {
+			arrowY = -1;
+			topScreen = false;
+			setSpriteVisibility(bottomArrowID, true);
+			setSpriteVisibility(topArrowID, false);
+
+		}
+
 		if(heldPokemon != -1)	setSpritePosition(heldPokemon, (arrowX*24)+16, (arrowY*24)+32);
-		setSpritePosition(arrowID, (arrowX*24)+24, (arrowY*24)+36);
+		if(arrowY == -1) {
+			setSpritePosition((topScreen ? topArrowID : bottomArrowID), 50, 16);
+		} else {
+			setSpritePosition((topScreen ? topArrowID : bottomArrowID), (arrowX*24)+24, (arrowY*24)+36);
+		}
 		updateOam();
 	}
 
