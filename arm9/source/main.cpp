@@ -34,7 +34,7 @@ int main(int argc, char **argv) {
 
 	drawBoxScreen();
 
-	int arrowX = 0, arrowY = 0, heldPokemon = -1, heldPokemonX = 0, heldPokemonY = 0;
+	int arrowX = 0, arrowY = 0, heldPokemon = -1, heldPokemonBox = -1;
 	u16 hDown = 0;
 	bool topScreen = false;
 	while(1) {
@@ -55,37 +55,41 @@ int main(int argc, char **argv) {
 			if(arrowX < 5)	arrowX++;
 		}
 		if(hDown & KEY_LEFT && arrowY == -1) {
-			if(currentBox > 0)	currentBox--;
-			else currentBox = save->maxBoxes()-1;
-			drawBox();
+			goto switchBoxLeft;
 		} else if(hDown & KEY_RIGHT && arrowY == -1) {
-			if(currentBox < save->maxBoxes()-1)	currentBox++;
-			else currentBox = 0;
-			drawBox();
+			goto switchBoxRight;
 		}
 		if(hDown & KEY_L) {
+			switchBoxLeft:
 			if(currentBox > 0)	currentBox--;
 			else currentBox = save->maxBoxes()-1;
 			drawBox();
+			if(currentBox == heldPokemonBox)
+				setSpriteVisibility(heldPokemon, false);
 		} else if(hDown & KEY_R) {
+			switchBoxRight:
 			if(currentBox < save->maxBoxes()-1)	currentBox++;
 			else currentBox = 0;
 			drawBox();
+			if(currentBox == heldPokemonBox)
+				setSpriteVisibility(heldPokemon, false);
 		}
 		if(hDown & KEY_A) {
 			if(heldPokemon != -1) {
-				setSpritePosition(heldPokemon, heldPokemonX, heldPokemonY);
-				setSpritePriority(heldPokemon, 2);
+				if(save->pkm(currentBox, (arrowY*6)+arrowX)->species() != 0)
+					setSpriteVisibility(heldPokemon, true);
+				setSpriteVisibility(topScreen ? topHeldPokemonID : bottomHeldPokemonID, false);
 			}
 
 			if(heldPokemon == (arrowY*6)+arrowX) {
-				setSpritePriority(heldPokemon, 2);
 				heldPokemon = -1;
-			} else {
+				heldPokemonBox = -1;
+			} else if(save->pkm(currentBox, (arrowY*6)+arrowX)->species() != 0) {
 				heldPokemon = (arrowY*6)+arrowX;
-				heldPokemonX = getSpriteInfo(heldPokemon).x;
-				heldPokemonY = getSpriteInfo(heldPokemon).y;
-				setSpritePriority(heldPokemon, 1);
+				heldPokemonBox = currentBox;
+				setHeldPokemon(save->pkm(currentBox, heldPokemon)->species());
+				setSpriteVisibility(heldPokemon, false);
+				setSpriteVisibility((topScreen ? topHeldPokemonID : bottomHeldPokemonID), true);
 				drawPokemonInfo(save->pkm(currentBox, heldPokemon));
 			}
 		}
@@ -99,19 +103,28 @@ int main(int argc, char **argv) {
 			topScreen = true;
 			setSpriteVisibility(bottomArrowID, false);
 			setSpriteVisibility(topArrowID, true);
+			if(heldPokemon != -1) {
+				setSpriteVisibility(bottomHeldPokemonID, false);
+				setSpriteVisibility(topHeldPokemonID, true);
+			}
 		} else if(arrowY == 5) {
 			arrowY = -1;
 			topScreen = false;
 			setSpriteVisibility(bottomArrowID, true);
 			setSpriteVisibility(topArrowID, false);
+			if(heldPokemon != -1) {
+				setSpriteVisibility(bottomHeldPokemonID, true);
+				setSpriteVisibility(topHeldPokemonID, false);
+			}
 
 		}
 
-		if(heldPokemon != -1)	setSpritePosition(heldPokemon, (arrowX*24)+16, (arrowY*24)+32);
 		if(arrowY == -1) {
-			setSpritePosition((topScreen ? topArrowID : bottomArrowID), 50, 16);
+			setSpritePosition((topScreen ? topArrowID : bottomArrowID), 90, 16);
+			if(heldPokemon != -1)	setSpritePosition((topScreen ? topHeldPokemonID : bottomHeldPokemonID), 82, 12);
 		} else {
 			setSpritePosition((topScreen ? topArrowID : bottomArrowID), (arrowX*24)+24, (arrowY*24)+36);
+			if(heldPokemon != -1)	setSpritePosition((topScreen ? topHeldPokemonID : bottomHeldPokemonID), (arrowX*24)+16, (arrowY*24)+32);
 		}
 		updateOam();
 	}

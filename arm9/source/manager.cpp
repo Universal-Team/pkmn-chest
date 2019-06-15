@@ -4,10 +4,7 @@
 
 std::vector<u16> arrow, bankBox, shiny, spriteSheet, stripes, types;
 ImageData bankBoxData, spriteSheetData, stripesData, typesData;
-int bottomArrowID;
-int topArrowID;
-int shinyID;
-int currentBox;
+int bottomArrowID, topArrowID, shinyID, currentBox, bottomHeldPokemonID, topHeldPokemonID;
 
 XYCoords getPokemonPosition(int dexNumber) {
 	XYCoords xy;
@@ -43,6 +40,8 @@ void drawBoxScreen(void) {
 	for(int i=0;i<30;i++)	initSprite(SpriteSize_32x32, true);
 	bottomArrowID = initSprite(SpriteSize_16x16, false);
 	topArrowID = initSprite(SpriteSize_16x16, true);
+	bottomHeldPokemonID = initSprite(SpriteSize_32x32, false);
+	topHeldPokemonID = initSprite(SpriteSize_32x32, true);
 	shinyID = initSprite(SpriteSize_16x16, true); // 8x8 wasn't working
 
 	for(int y=0;y<5;y++) {
@@ -60,14 +59,24 @@ void drawBoxScreen(void) {
 		}
 	}
 
-	// Arrows & Shiny icon
+	// Prepare bottom arrow sprite
 	fillSpriteImage(bottomArrowID, arrow);
 	prepareSprite(bottomArrowID, 24, 36, 0);
 
+	// Prepare top arrow sprite
 	fillSpriteImage(topArrowID, arrow);
 	prepareSprite(topArrowID, 24, 36, 0);
 	setSpriteVisibility(topArrowID, false);
 
+	// Prepare bottom sprite for moving pokemon
+	prepareSprite(bottomHeldPokemonID, 0, 0, 1);
+	setSpriteVisibility(bottomHeldPokemonID, false);
+
+	// Prepare top sprite for moving pokemon
+	prepareSprite(topHeldPokemonID, 0, 0, 1);
+	setSpriteVisibility(topHeldPokemonID, false);
+
+	// Prepare shiny sprite
 	fillSpriteImage(shinyID, shiny);
 	prepareSprite(shinyID, 239, 52, 0);
 	setSpriteVisibility(shinyID, save->pkm(currentBox, 0)->shiny());
@@ -136,5 +145,13 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 	} else {
 		// Hide shiny star
 		setSpriteVisibility(shinyID, false);
+	}
+}
+
+void setHeldPokemon(int id) {
+	if(id != 0) {
+		XYCoords xy = getPokemonPosition(id);
+		fillSpriteFromSheet(bottomHeldPokemonID, spriteSheet, 32, 32, spriteSheetData.width, xy.x, xy.y);
+		fillSpriteFromSheet(topHeldPokemonID, spriteSheet, 32, 32, spriteSheetData.width, xy.x, xy.y);
 	}
 }

@@ -8,15 +8,14 @@ struct XYCoords {
 	int y;
 };
 
-extern int bottomArrowID;
-extern int topArrowID;
-extern int shinyID;
-extern int currentBox;
+extern int bottomArrowID, topArrowID, shinyID, currentBox, bottomHeldPokemonID, topHeldPokemonID;
 
 void drawBoxScreen(void);
 
 void drawBox(void);
 
 void drawPokemonInfo(std::shared_ptr<PKX> pkm);
+
+void setHeldPokemon(int id);
 
 #endif
