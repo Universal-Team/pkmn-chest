@@ -80,7 +80,7 @@ int main(int argc, char **argv) {
 			}
 		}
 
-		if((hDown & KEY_UP || hDown & KEY_DOWN || hDown & KEY_LEFT || hDown & KEY_RIGHT) && heldPokemon == -1) {
+		if((hDown & KEY_UP || hDown & KEY_DOWN || hDown & KEY_LEFT || hDown & KEY_RIGHT || hDown & KEY_L || hDown & KEY_R) && heldPokemon == -1) {
 			drawPokemonInfo(save->pkm(currentBox, (arrowY*6)+arrowX));
 		}
 

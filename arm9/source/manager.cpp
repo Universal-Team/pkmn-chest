@@ -73,8 +73,7 @@ void drawBox(void) {
 	drawImage(5, 15, bankBoxData.width, bankBoxData.height, bankBox, false);
 	drawImage(5, 15, bankBoxData.width, bankBoxData.height, bankBox, true);
 
-	// Print Pokemon info and box names
-	drawPokemonInfo(save->pkm(currentBox, 0));
+	// Print box names
 	printTextTinted(save->boxName(currentBox), DARK_GRAY, 60, 20, true);
 	printTextTinted(save->boxName(currentBox), DARK_GRAY, 60, 20, false);
 
