@@ -6,6 +6,7 @@ std::vector<u16> arrow, bankBox, shiny, spriteSheet, stripes, types;
 ImageData bankBoxData, spriteSheetData, stripesData, typesData;
 int arrowID;
 int shinyID;
+int currentBox;
 
 XYCoords getPokemonPosition(int dexNumber) {
 	XYCoords xy;
@@ -23,8 +24,8 @@ void drawBoxScreen(void) {
 	loadPng("nitro:/graphics/shiny.png", shiny);
 
 	// Draws the BGs
-	drawRectangle(0, 0, 256, 192, BGR15(0x66, 0, 0), true);
-	drawRectangle(0, 0, 256, 192, BGR15(0x66, 0, 0), false);
+	drawRectangle(0, 0, 256, 192, DARK_BLUE, true);
+	drawRectangle(0, 0, 256, 192, DARK_BLUE, false);
 	drawImage(5, 15, bankBoxData.width, bankBoxData.height, bankBox, false);
 	drawImage(5, 15, bankBoxData.width, bankBoxData.height, bankBox, true);
 
@@ -32,9 +33,9 @@ void drawBoxScreen(void) {
 	drawRectangle(170, 120, 68, 30, BGR15(0x63, 0x65, 0x73), false);
 
 	// Print Pokemon info and box names
-	drawPokemonInfo(save->pkm(0));
-	printTextTinted(save->boxName(save->currentBox()), DARK_GRAY, 60, 20, true);
-	printTextTinted(save->boxName(save->currentBox()), DARK_GRAY, 60, 20, false);
+	drawPokemonInfo(save->pkm(currentBox, 0));
+	printTextTinted(save->boxName(currentBox), DARK_GRAY, 60, 20, true);
+	printTextTinted(save->boxName(currentBox), DARK_GRAY, 60, 20, false);
 
 	// Pokémon Sprites
 	for(int i=0;i<30;i++)	initSprite(SpriteSize_32x32, false);
@@ -49,11 +50,13 @@ void drawBoxScreen(void) {
 		}
 	}
 
-	for(int i=0;i<6;i++) {
-		XYCoords xy = getPokemonPosition(save->pkm(i)->species());
-		fillSpriteFromSheet(i, spriteSheet, 32, 32, spriteSheetData.width, xy.x, xy.y);
-		fillSpriteFromSheet(i+30, spriteSheet, 32, 32, spriteSheetData.width, xy.x, xy.y);
-		updateOam();
+	for(int i=0;i<30;i++) {
+		if(save->pkm(currentBox, i)->species() != 0) {
+			XYCoords xy = getPokemonPosition(save->pkm(currentBox, i)->species());
+			fillSpriteFromSheet(i, spriteSheet, 32, 32, spriteSheetData.width, xy.x, xy.y);
+			fillSpriteFromSheet(i+30, spriteSheet, 32, 32, spriteSheetData.width, xy.x, xy.y);
+			updateOam();
+		}
 	}
 
 	// Arrow & Shiny icon
@@ -61,17 +64,39 @@ void drawBoxScreen(void) {
 	prepareSprite(arrowID, 24, 36, 0);
 	fillSpriteImage(shinyID, shiny);
 	prepareSprite(shinyID, 239, 52, 0);
-	setSpriteVisibility(shinyID, save->pkm(0)->shiny());
+	setSpriteVisibility(shinyID, save->pkm(currentBox, 0)->shiny());
 
 	updateOam();
 }
 
-void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
-	// Show shiny star if applicable
-	setSpriteVisibility(shinyID, pkm->shiny());
+void drawBox(void) {
+	// Draws the BGs
+	drawImage(5, 15, bankBoxData.width, bankBoxData.height, bankBox, false);
+	drawImage(5, 15, bankBoxData.width, bankBoxData.height, bankBox, true);
 
+	// Print Pokemon info and box names
+	drawPokemonInfo(save->pkm(currentBox, 0));
+	printTextTinted(save->boxName(currentBox), DARK_GRAY, 60, 20, true);
+	printTextTinted(save->boxName(currentBox), DARK_GRAY, 60, 20, false);
+
+	for(int i=0;i<30;i++) {
+		if(save->pkm(currentBox, i)->species() != 0) {
+			XYCoords xy = getPokemonPosition(save->pkm(currentBox, i)->species());
+			fillSpriteFromSheet(i, spriteSheet, 32, 32, spriteSheetData.width, xy.x, xy.y);
+			fillSpriteFromSheet(i+30, spriteSheet, 32, 32, spriteSheetData.width, xy.x, xy.y);
+			setSpriteVisibility(i, true);
+			setSpriteVisibility(i+30, true);
+		} else {
+			setSpriteVisibility(i, false);
+			setSpriteVisibility(i+30, false);
+		}
+		updateOam();
+	}
+}
+
+void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 	// Clear previous draw
-	drawRectangle(170, 0, 86, 192, BGR15(0x66, 0, 0), true);
+	drawRectangle(170, 0, 86, 192, DARK_BLUE, true);
 
 	// Draw dashed lines
 	drawImage(170, 30, stripesData.width, stripesData.height, stripes, true);
@@ -79,6 +104,9 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 	drawImage(170, 90, stripesData.width, stripesData.height, stripes, true);
 
 	if(pkm->species() > 0 && pkm->species() < 650) {
+		// Show shiny star if applicable
+		setSpriteVisibility(shinyID, pkm->shiny());
+
 		// Print Pokédex number
 		char str[9];
 		snprintf(str, sizeof(str), "No.%.3i", pkm->species());
@@ -95,5 +123,8 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 		// Print Level
 		snprintf(str, sizeof(str), "Lv.%i", pkm->level());
 		printText(str, 170, 46, true);
+	} else {
+		// Hide shiny star
+		setSpriteVisibility(shinyID, false);
 	}
 }

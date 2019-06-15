@@ -96,7 +96,7 @@ void showDirectoryContents(const std::vector<DirEntry>& dirContents, int startRo
 	getcwd(path, PATH_MAX);
 
 	// Clear screen
-	drawRectangle(0, 0, 256, 192, BLACK, false);
+	drawRectangle(0, 0, 256, 192, DARK_BLUE, false);
 	// Print path
 	printText(path, 0, 0, false);
 
@@ -131,7 +131,7 @@ std::string browseForFile(const std::vector<std::string>& extensionList) {
 
 	while(true) {
 		// Clear old cursors
-		drawRectangle(0, 17, 10, 175, BLACK, false);
+		drawRectangle(0, 17, 10, 175, DARK_BLUE, false);
 
 		// Show cursor
 		drawRectangle(3, (fileOffset-screenOffset)*16+24, 4, 3, WHITE, false);
@@ -174,8 +174,8 @@ std::string browseForFile(const std::vector<std::string>& extensionList) {
 				for(int i=ENTRIES_PER_SCREEN-1;i>0;i--) {
 					dmaCopyWords(0, BG_GFX_SUB+(((i*16)+1)*256), BG_GFX_SUB+((((i+1)*16)+1)*256), 16*256*2);
 				}
-				drawRectangle(10, 17, 246, 16, BLACK, false); // Black out previous top entry
-				drawRectangle(3, 40, 4, 3, BLACK, false); // Black out previous cursor mark
+				drawRectangle(10, 17, 246, 16, DARK_BLUE, false); // DARK_BLUE out previous top entry
+				drawRectangle(3, 40, 4, 3, DARK_BLUE, false); // DARK_BLUE out previous cursor mark
 
 				std::u16string name = StringUtils::UTF8toUTF16(dirContents[screenOffset].name);
 
@@ -197,8 +197,8 @@ std::string browseForFile(const std::vector<std::string>& extensionList) {
 				showDirectoryContents(dirContents, screenOffset);
 			} else {
 				dmaCopyWords(0, BG_GFX_SUB+(33*256), BG_GFX_SUB+(17*256), 160*256*2); // Copy old entries up
-				drawRectangle(10, ENTRIES_PER_SCREEN*16, 246, 16, BLACK, false); // Black out previous bottom entry
-				drawRectangle(3, 168, 4, 3, BLACK, false); // Black out previous cursor mark
+				drawRectangle(10, ENTRIES_PER_SCREEN*16, 246, 16, DARK_BLUE, false); // DARK_BLUE out previous bottom entry
+				drawRectangle(3, 168, 4, 3, DARK_BLUE, false); // DARK_BLUE out previous cursor mark
 				drawRectangle(3, (fileOffset-screenOffset)*16+24, 4, 3, WHITE, false); // Draw new cursor mark
 
 				std::u16string name = StringUtils::UTF8toUTF16(dirContents[screenOffset+ENTRIES_PER_SCREEN-1].name);

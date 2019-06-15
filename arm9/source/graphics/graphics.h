@@ -9,6 +9,7 @@
 #include "uvcoordFont.h"
 
 #define BLACK 0
+#define DARK_BLUE 0x800C
 #define DARK_GRAY 0x98C6
 #define WHITE 0xFFFF
 

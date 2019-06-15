@@ -30,6 +30,7 @@ int main(int argc, char **argv) {
 	} else {
 		drawRectangle(0, 0, 256, 192, BGR15(0, 0, 255), true);
 	}
+	currentBox = save->currentBox();
 
 	drawBoxScreen();
 
@@ -52,6 +53,15 @@ int main(int argc, char **argv) {
 		} else if(hDown & KEY_RIGHT) {
 			if(arrowX < 5)	arrowX++;
 		}
+		if(hDown & KEY_L) {
+			if(currentBox > 0)	currentBox--;
+			else currentBox = save->maxBoxes()-1;
+			drawBox();
+		} else if(hDown & KEY_R) {
+			if(currentBox < save->maxBoxes()-1)	currentBox++;
+			else currentBox = 0;
+			drawBox();
+		}
 		if(hDown & KEY_A) {
 			if(heldPokemon != -1) {
 				setSpritePosition(heldPokemon, heldPokemonX, heldPokemonY);
@@ -66,12 +76,12 @@ int main(int argc, char **argv) {
 				heldPokemonX = getSpriteInfo(heldPokemon).x;
 				heldPokemonY = getSpriteInfo(heldPokemon).y;
 				setSpritePriority(heldPokemon, 1);
-				drawPokemonInfo(save->pkm(heldPokemon));
+				drawPokemonInfo(save->pkm(currentBox, heldPokemon));
 			}
 		}
 
 		if((hDown & KEY_UP || hDown & KEY_DOWN || hDown & KEY_LEFT || hDown & KEY_RIGHT) && heldPokemon == -1) {
-			drawPokemonInfo(save->pkm((arrowY*6)+arrowX));
+			drawPokemonInfo(save->pkm(currentBox, (arrowY*6)+arrowX));
 		}
 
 		if(heldPokemon != -1)	setSpritePosition(heldPokemon, (arrowX*24)+16, (arrowY*24)+32);

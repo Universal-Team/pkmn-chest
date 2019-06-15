@@ -14,11 +14,6 @@ void initGraphics(void) {
 						VRAM_B_MAIN_SPRITE,
 						VRAM_C_SUB_BG,
 						VRAM_D_SUB_SPRITE);
-	// vramSetBankE(VRAM_E_TEX_PALETTE);
-	// vramSetBankF(VRAM_F_TEX_PALETTE_SLOT4);
-	// vramSetBankG(VRAM_G_TEX_PALETTE_SLOT5); // 16Kb of palette ram, and font textures take up 8*16 bytes.
-	// vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
-	// vramSetBankI(VRAM_I_SUB_SPRITE_EXT_PALETTE);
 
 	// Init oam with 1D mapping 128 byte boundary and no external palette support
 	oamInit(&oamSub, SpriteMapping_Bmp_1D_128, false);
