@@ -41,7 +41,7 @@ void loadFont(void) {
 	loadPng("nitro:/graphics/font.png", font);
 }
 
-ImageData loadBmp(std::string path, std::vector<u16>& imageBuffer) {
+ImageData loadBmp(std::string path, std::vector<u16> &imageBuffer) {
     FILE* file = fopen(path.c_str(), "rb");
 
 	// Get width and height on image
@@ -77,7 +77,7 @@ ImageData loadBmp(std::string path, std::vector<u16>& imageBuffer) {
     return imageData;
 }
 
-ImageData loadPng(std::string path, std::vector<u16>& imageBuffer) {
+ImageData loadPng(std::string path, std::vector<u16> &imageBuffer) {
     std::vector<unsigned char> image;
 	unsigned width, height;
 	lodepng::decode(image, width, height, path);
@@ -91,7 +91,7 @@ ImageData loadPng(std::string path, std::vector<u16>& imageBuffer) {
     return imageData;
 }
 
-void drawImage(int x, int y, int w, int h, std::vector<u16> imageBuffer, bool top) {
+void drawImage(int x, int y, int w, int h, std::vector<u16> &imageBuffer, bool top) {
 	for(int i=0;i<h;i++) {
 		for(int j=0;j<w;j++) {
 			if(imageBuffer[(i*w)+j]>>15 != 0) { // Do not render transparent pixel
@@ -101,7 +101,7 @@ void drawImage(int x, int y, int w, int h, std::vector<u16> imageBuffer, bool to
 	}
 }
 
-void drawImageFromSheet(int x, int y, int w, int h, std::vector<u16> imageBuffer, int imageWidth, int xOffset, int yOffset, bool top) {
+void drawImageFromSheet(int x, int y, int w, int h, std::vector<u16> &imageBuffer, int imageWidth, int xOffset, int yOffset, bool top) {
 	for(int i=0;i<h;i++) {
 		for(int j=0;j<w;j++) {
 			(top ? BG_GFX : BG_GFX_SUB)[((y+i)*256)+j+x] = imageBuffer[((i+yOffset)*imageWidth)+j+xOffset];
@@ -109,7 +109,7 @@ void drawImageFromSheet(int x, int y, int w, int h, std::vector<u16> imageBuffer
 	}
 }
 
-void drawImageScaled(int x, int y, int w, int h, double scale, std::vector<u16> imageBuffer, bool top) {
+void drawImageScaled(int x, int y, int w, int h, double scale, std::vector<u16> &imageBuffer, bool top) {
 	scale = 1/scale;
 	for(double i=0;i<h;i+=scale) {
 		u16 ii = (u16)i;
@@ -124,7 +124,7 @@ void drawImageScaled(int x, int y, int w, int h, double scale, std::vector<u16> 
 	}
 }
 
-void drawImageTinted(int x, int y, int w, int h, u16 color, std::vector<u16> imageBuffer, bool top) {
+void drawImageTinted(int x, int y, int w, int h, u16 color, std::vector<u16> &imageBuffer, bool top) {
 	for(int i=0;i<h;i++) {
 		for(int j=0;j<w;j++) {
 			if(imageBuffer[(i*w)+j]>>15 != 0) { // Do not render transparent pixel
@@ -157,11 +157,11 @@ void fillSpriteColor(int id, u16 color) {
 	dmaFillHalfWords(color, sprites[id].gfx, sprites[id].size*2);
 }
 
-void fillSpriteImage(int id, std::vector<u16> imageBuffer) {
+void fillSpriteImage(int id, std::vector<u16> &imageBuffer) {
 	dmaCopyWords(0, imageBuffer.data(), sprites[id].gfx, sprites[id].size*2);
 }
 
-void fillSpriteFromSheet(int id, std::vector<u16> imageBuffer, int w, int h, int imageWidth, int xOffset, int yOffset) {
+void fillSpriteFromSheet(int id, std::vector<u16> &imageBuffer, int w, int h, int imageWidth, int xOffset, int yOffset) {
 	for(int i=0;i<h;i++) {
 		for(int j=0;j<w;j++) {
 			sprites[id].gfx[(i*w)+j] = imageBuffer[((i+yOffset)*imageWidth)+j+xOffset];

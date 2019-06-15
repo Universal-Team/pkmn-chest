@@ -55,7 +55,6 @@ void drawBoxScreen(void) {
 			XYCoords xy = getPokemonPosition(save->pkm(currentBox, i)->species());
 			fillSpriteFromSheet(i, spriteSheet, 32, 32, spriteSheetData.width, xy.x, xy.y);
 			fillSpriteFromSheet(i+30, spriteSheet, 32, 32, spriteSheetData.width, xy.x, xy.y);
-			updateOam();
 		}
 	}
 
@@ -80,17 +79,22 @@ void drawBox(void) {
 	printTextTinted(save->boxName(currentBox), DARK_GRAY, 60, 20, false);
 
 	for(int i=0;i<30;i++) {
+		if(save->pkm(currentBox, i)->species() == 0) {
+			setSpriteVisibility(i, false);
+			setSpriteVisibility(i+30, false);
+		} else {
+			setSpriteVisibility(i, true);
+			setSpriteVisibility(i+30, true);
+		}
+	}
+	updateOam();
+
+	for(int i=0;i<30;i++) {
 		if(save->pkm(currentBox, i)->species() != 0) {
 			XYCoords xy = getPokemonPosition(save->pkm(currentBox, i)->species());
 			fillSpriteFromSheet(i, spriteSheet, 32, 32, spriteSheetData.width, xy.x, xy.y);
 			fillSpriteFromSheet(i+30, spriteSheet, 32, 32, spriteSheetData.width, xy.x, xy.y);
-			setSpriteVisibility(i, true);
-			setSpriteVisibility(i+30, true);
-		} else {
-			setSpriteVisibility(i, false);
-			setSpriteVisibility(i+30, false);
 		}
-		updateOam();
 	}
 }
 
