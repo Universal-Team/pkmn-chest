@@ -130,9 +130,9 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 		printText(pkm->nickname(), 170, 14, true);
 
 		// Draw types
-		drawImageFromSheet(170, 33, 32, 12, types, 32, 0, (pkm->type1()*12), true);
+		drawImageFromSheet(170, 33, 32, 12, types, 32, 0, (((pkm->generation() == Generation::FOUR && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1())*12), true);
 		if(pkm->type1() != pkm->type2())
-			drawImageFromSheet(205, 33, 32, 12, types, 32, 0, (pkm->type2()*12), true);
+			drawImageFromSheet(205, 33, 32, 12, types, 32, 0, (((pkm->generation() == Generation::FOUR && pkm->type2() > 8) ? pkm->type2()-1 : pkm->type2())*12), true);
 
 		// Print Level
 		snprintf(str, sizeof(str), "Lv.%i", pkm->level());
