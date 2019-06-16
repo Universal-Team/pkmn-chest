@@ -71,7 +71,7 @@ void saveChanges(std::string savePath) {
     if (saveIsFile)
     {
         // No need to check size; if it was read successfully, that means that it has the correct size
-        std::ofstream out(savePath);
+        std::fstream out(savePath, std::fstream::in | std::fstream::out);
         out.write((char*)save->rawData(), save->getLength());
         out.close();
     }
