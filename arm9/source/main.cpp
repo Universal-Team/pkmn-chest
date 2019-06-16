@@ -37,6 +37,7 @@ int main(int argc, char **argv) {
 			continue;
 		}
 		currentBox = save->currentBox();
+		save->cryptBoxData(true);
 
 		drawBoxScreen();
 
@@ -93,8 +94,6 @@ int main(int argc, char **argv) {
 						// Save the Pokémon at the cursor's postion to a temp variable
 						std::shared_ptr<PKX> heldPkm = save->pkm(heldPokemonBox, heldPokemon);
 						std::shared_ptr<PKX> tempPkm = save->pkm(currentBox, (arrowY*6)+arrowX);
-						heldPkm->decrypt();
-						tempPkm->decrypt();
 						// Write the held Pokémon to the cursor position
 						save->pkm(heldPkm, currentBox, (arrowY*6)+arrowX, false);
 						// Write the cursor position's previous Pokémon to the held Pokémon's old spot
@@ -111,7 +110,6 @@ int main(int argc, char **argv) {
 						// If the spot is empty, write the held Pokémon there
 						// Write the held Pokémon to the cursor position
 						std::shared_ptr<PKX> heldPkm = save->pkm(heldPokemonBox, heldPokemon);
-						heldPkm->decrypt();
 
 						save->pkm(heldPkm, currentBox, (arrowY*6)+arrowX, false);
 						save->pkm(save->emptyPkm(), heldPokemonBox, heldPokemon, false);
