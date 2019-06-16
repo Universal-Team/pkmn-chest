@@ -36,9 +36,9 @@
 namespace Banks
 {
     extern std::shared_ptr<Bank> bank;
-    Result init();
-    Result swapSD(bool toSD);
-    bool loadBank(const std::string& name, std::optional<int> maxBoxes = std::nullopt);
+    int init();
+    // If maxBoxes == 0, the default will be used
+    bool loadBank(const std::string& name, int maxBoxes = 0);
     void removeBank(const std::string& name);
     void renameBank(const std::string& oldName, const std::string& newName);
     void setBankSize(const std::string& name, int size);

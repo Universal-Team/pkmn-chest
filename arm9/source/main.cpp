@@ -5,6 +5,7 @@
 #include "loader.h"
 #include "manager.h"
 #include "nitrofs.h"
+#include "common/banks.hpp"
 
 int main(int argc, char **argv) {
 	initGraphics();
@@ -22,7 +23,16 @@ int main(int argc, char **argv) {
 		while(1) swiWaitForVBlank();
 	}
 	loadFont();
+	Banks::init();
+
 	printText("Loading...", 100, 30, true);
+
+	// Make directories
+	mkdir("sd:/_nds", 0777);
+	mkdir("sd:/_nds/pkmn-chest", 0777);
+	mkdir("sd:/_nds/pkmn-chest/bank", 0777);
+	mkdir("sd:/_nds/pkmn-chest/banks", 0777);
+	mkdir("sd:/_nds/pkmn-chest/backups", 0777);
 	
 	loadGraphics();
 

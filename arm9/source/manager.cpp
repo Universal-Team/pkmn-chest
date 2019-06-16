@@ -1,4 +1,5 @@
 #include "manager.h"
+#include "common/banks.hpp"
 #include "graphics/graphics.h"
 #include "loader.h"
 
@@ -83,18 +84,20 @@ void drawBox(void) {
 	drawImage(5, 15, bankBoxData.width, bankBoxData.height, bankBox, true);
 
 	// Print box names
-	printTextTinted(save->boxName(currentBox), DARK_GRAY, 60, 20, true);
+	printTextTinted(Banks::bank->boxName(0), DARK_GRAY, 60, 20, true);
 	printTextTinted(save->boxName(currentBox), DARK_GRAY, 60, 20, false);
 
 	for(int i=0;i<30;i++) {
-		// Show/Hide Pokémon sprites for box
-		if(save->pkm(currentBox, i)->species() == 0) {
+		// Show/Hide Pokémon sprites for save box
+		if(save->pkm(currentBox, i)->species() == 0)
 			setSpriteVisibility(i, false);
-			setSpriteVisibility(i+30, false);
-		} else {
+		else
 			setSpriteVisibility(i, true);
+		// Show/Hide Pokémon sprites for bank box
+		if(Banks::bank->pkm(0, i)->species() == 0)
+			setSpriteVisibility(i+30, false);
+		else
 			setSpriteVisibility(i+30, true);
-		}
 	}
 	updateOam();
 
@@ -103,6 +106,7 @@ void drawBox(void) {
 		if(save->pkm(currentBox, i)->species() != 0) {
 			XYCoords xy = getPokemonPosition(save->pkm(currentBox, i)->species());
 			fillSpriteFromSheet(i, spriteSheet, 32, 32, spriteSheetData.width, xy.x, xy.y);
+			xy = getPokemonPosition(Banks::bank->pkm(0, i)->species());
 			fillSpriteFromSheet(i+30, spriteSheet, 32, 32, spriteSheetData.width, xy.x, xy.y);
 		}
 	}

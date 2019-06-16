@@ -27,6 +27,7 @@
 #ifndef BANK_HPP
 #define BANK_HPP
 
+#include "json.hpp"
 #include "Sav.hpp"
 
 extern "C" {
@@ -54,7 +55,7 @@ public:
 
 private:
     static constexpr int BANK_VERSION            = 2;
-    static constexpr std::string_view BANK_MAGIC = "PKSMBANK";
+    static std::string BANK_MAGIC;
     void createJSON();
     void createBank(int maxBoxes);
     void convert();

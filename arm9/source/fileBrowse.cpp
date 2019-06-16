@@ -23,6 +23,7 @@
 #include "fileBrowse.h"
 #include <algorithm>
 #include <dirent.h>
+// #include <stdio.h>
 
 #include "graphics/graphics.h"
 #include "utils.hpp"
@@ -244,5 +245,76 @@ std::string browseForFile(const std::vector<std::string>& extensionList) {
 			fileOffset = 0;
 			showDirectoryContents(dirContents, screenOffset);
 		}
+	}
+}
+
+
+int fcopy(const char *sourcePath, const char *destinationPath) {
+	DIR *isDir = opendir(sourcePath);
+	
+	if (isDir == NULL) {
+		closedir(isDir);
+
+		// Source path is a file
+		FILE* sourceFile = fopen(sourcePath, "rb");
+		off_t fsize = 0;
+		if (sourceFile) {
+			fseek(sourceFile, 0, SEEK_END);
+			fsize = ftell(sourceFile);			// Get source file's size
+			fseek(sourceFile, 0, SEEK_SET);
+		} else {
+			fclose(sourceFile);
+			return -1;
+		}
+
+	    FILE* destinationFile = fopen(destinationPath, "wb");
+		//if (destinationFile) {
+			fseek(destinationFile, 0, SEEK_SET);
+		/*} else {
+			fclose(sourceFile);
+			fclose(destinationFile);
+			return -1;
+		}*/
+
+		off_t offset = 0;
+		int numr;
+		while (1)
+		{
+			scanKeys();
+			if (keysHeld() & KEY_B) {
+				// Cancel copying
+				fclose(sourceFile);
+				fclose(destinationFile);
+				return -1;
+				break;
+			}
+			printf ("\x1b[16;0H");
+			printf ("Progress:\n");
+			printf ("%i/%i Bytes                       ", (int)offset, (int)fsize);
+
+			u32 copyBuf[0x8000];
+
+			// Copy file to destination path
+			numr = fread(copyBuf, 2, sizeof(copyBuf), sourceFile);
+			fwrite(copyBuf, 2, numr, destinationFile);
+			offset += sizeof(copyBuf);
+
+			if (offset > fsize) {
+				fclose(sourceFile);
+				fclose(destinationFile);
+
+				printf ("\x1b[17;0H");
+				printf ("%i/%i Bytes                       ", (int)fsize, (int)fsize);
+				for (int i = 0; i < 30; i++) swiWaitForVBlank();
+
+				return 1;
+				break;
+			}
+		}
+
+		return -1;
+	} else {
+		closedir(isDir);
+		return -2;
 	}
 }
