@@ -140,7 +140,8 @@ int main(int argc, char **argv) {
 			}
 
 			if((hDown & KEY_UP || hDown & KEY_DOWN || hDown & KEY_LEFT || hDown & KEY_RIGHT || hDown & KEY_L || hDown & KEY_R) && heldPokemon == -1) {
-				drawPokemonInfo(currentPokemon((arrowY*6)+arrowX));
+				if(arrowY != -1)	drawPokemonInfo(currentPokemon((arrowY*6)+arrowX));
+				else	drawPokemonInfo(save->emptyPkm());
 			}
 
 			if(hDown & KEY_START) {
