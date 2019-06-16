@@ -30,16 +30,14 @@
 #include "PK6.hpp"
 #include "PKX.hpp"
 
-class PK7 : public PKX
-{
+class PK7 : public PKX {
 protected:
     void shuffleArray(u8 sv) override;
     void crypt(void) override;
     void reorderMoves(void) override;
 
 public:
-    PK7()
-    {
+    PK7() {
         length = 232;
         data   = new u8[length];
         std::fill_n(data, length, 0);

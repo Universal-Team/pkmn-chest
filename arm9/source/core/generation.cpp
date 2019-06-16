@@ -26,15 +26,12 @@
 
 #include "generation.hpp"
 
-std::string genToString(Generation gen)
-{
+std::string genToString(Generation gen) {
     return genToCstring(gen);
 }
 
-const char* genToCstring(Generation gen)
-{
-    switch (gen)
-    {
+const char* genToCstring(Generation gen) {
+    switch (gen) {
         case Generation::LGPE:
             return "LGPE";
         case Generation::FOUR:
@@ -50,28 +47,22 @@ const char* genToCstring(Generation gen)
     }
 }
 
-bool operator<(Generation g1, Generation g2)
-{
-    switch (g1)
-    {
+bool operator<(Generation g1, Generation g2) {
+    switch (g1) {
         case Generation::FOUR:
-            if (g2 == Generation::FIVE)
-            {
+            if (g2 == Generation::FIVE) {
                 return true;
             }
         case Generation::FIVE:
-            if (g2 == Generation::SIX)
-            {
+            if (g2 == Generation::SIX) {
                 return true;
             }
         case Generation::SIX:
-            if (g2 == Generation::SEVEN)
-            {
+            if (g2 == Generation::SEVEN) {
                 return true;
             }
         case Generation::SEVEN:
-            if (g2 == Generation::LGPE)
-            {
+            if (g2 == Generation::LGPE) {
                 return true;
             }
         case Generation::LGPE:
@@ -82,14 +73,10 @@ bool operator<(Generation g1, Generation g2)
     }
 }
 
-bool operator>(Generation g1, Generation g2)
-{
-    if (g1 == g2)
-    {
+bool operator>(Generation g1, Generation g2) {
+    if (g1 == g2) {
         return false;
-    }
-    else
-    {
+    } else {
         return !(g1 < g2);
     }
 }

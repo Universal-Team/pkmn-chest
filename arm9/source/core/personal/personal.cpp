@@ -26,8 +26,7 @@
 
 #include "personal.hpp"
 
-namespace PersonalLGPE
-{
+namespace PersonalLGPE {
     u8 baseHP(u16 species) { return *(u8*)(personal_lgpe + species * 17 + 0x0); }
     u8 baseAtk(u16 species) { return *(u8*)(personal_lgpe + species * 17 + 0x1); }
     u8 baseDef(u16 species) { return *(u8*)(personal_lgpe + species * 17 + 0x2); }
@@ -44,8 +43,7 @@ namespace PersonalLGPE
     u8 formCount(u16 species) { return *(u8*)(personal_lgpe + species * 17 + 0x10); }
 }
 
-namespace PersonalSMUSUM
-{
+namespace PersonalSMUSUM {
     u8 baseHP(u16 species) { return *(u8*)(personal_smusum + species * 17 + 0x0); }
     u8 baseAtk(u16 species) { return *(u8*)(personal_smusum + species * 17 + 0x1); }
     u8 baseDef(u16 species) { return *(u8*)(personal_smusum + species * 17 + 0x2); }
@@ -62,8 +60,7 @@ namespace PersonalSMUSUM
     u8 formCount(u16 species) { return *(u8*)(personal_smusum + species * 17 + 0x10); }
 }
 
-namespace PersonalXYORAS
-{
+namespace PersonalXYORAS {
     u8 baseHP(u16 species) { return *(u8*)(personal_xyoras + species * 17 + 0x0); }
     u8 baseAtk(u16 species) { return *(u8*)(personal_xyoras + species * 17 + 0x1); }
     u8 baseDef(u16 species) { return *(u8*)(personal_xyoras + species * 17 + 0x2); }
@@ -80,8 +77,7 @@ namespace PersonalXYORAS
     u8 formCount(u16 species) { return *(u8*)(personal_xyoras + species * 17 + 0x10); }
 }
 
-namespace PersonalBWB2W2
-{
+namespace PersonalBWB2W2 {
     u8 baseHP(u16 species) { return *(u8*)(personal_bwb2w2 + species * 17 + 0x0); }
     u8 baseAtk(u16 species) { return *(u8*)(personal_bwb2w2 + species * 17 + 0x1); }
     u8 baseDef(u16 species) { return *(u8*)(personal_bwb2w2 + species * 17 + 0x2); }
@@ -98,8 +94,7 @@ namespace PersonalBWB2W2
     u8 formCount(u16 species) { return *(u8*)(personal_bwb2w2 + species * 17 + 0x10); }
 }
 
-namespace PersonalDPPtHGSS
-{
+namespace PersonalDPPtHGSS {
     u8 baseHP(u16 species) { return *(u8*)(personal_dppthgss + species * 16 + 0x0); }
     u8 baseAtk(u16 species) { return *(u8*)(personal_dppthgss + species * 16 + 0x1); }
     u8 baseDef(u16 species) { return *(u8*)(personal_dppthgss + species * 16 + 0x2); }
@@ -114,17 +109,12 @@ namespace PersonalDPPtHGSS
     u8 ability(u16 species, u8 n) { return *(u8*)(personal_dppthgss + species * 16 + 0xB + n); }
     u16 formStatIndex(u16 species) { return *(u16*)(personal_dppthgss + species * 16 + 0xD); }
     // Normalized to fit with other formCounts' return values
-    u8 formCount(u16 species)
-    {
-        if (species == 201)
-        {
+    u8 formCount(u16 species) {
+        if (species == 201) {
             return 28;
-        }
-        else
-        {
+        } else {
             u8 count = *(u8*)(personal_dppthgss + species * 16 + 0xF);
-            if (count == 0)
-            {
+            if (count == 0) {
                 return 1;
             }
             return count;

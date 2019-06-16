@@ -32,8 +32,7 @@
 #include "Sav.hpp"
 #include "personal.hpp"
 
-class Sav5 : public Sav
-{
+class Sav5 : public Sav {
 protected:
     int PCLayout, Trainer1, Trainer2, BattleSubway, PokeDexLanguageFlags;
 
@@ -82,7 +81,7 @@ public:
     std::shared_ptr<PKX> pkm(u8 box, u8 slot, bool ekx = false) const override;
 
     // NOTICE: this sets a pkx into the savefile, not a pkx
-    // that's because PKSM works with decrypted boxes and
+    // that's because pkmn-chest works with decrypted boxes and
     // crypts them back during resigning
     void pkm(std::shared_ptr<PKX> pk, u8 box, u8 slot, bool applyTrade) override;
     void pkm(std::shared_ptr<PKX> pk, u8 slot) override;
@@ -93,10 +92,6 @@ public:
     void dex(std::shared_ptr<PKX> pk) override;
     int dexSeen(void) const override;
     int dexCaught(void) const override;
-    // int emptyGiftLocation(void) const override;
-    // std::vector<MysteryGift::giftData> currentGifts(void) const override;
-    // void mysteryGift(WCX& wc, int& pos) override;
-    // std::unique_ptr<WCX> mysteryGift(int pos) const override;
     void cryptBoxData(bool crypted) override;
     void cryptMysteryGiftData(void);
     std::string boxName(u8 box) const override;

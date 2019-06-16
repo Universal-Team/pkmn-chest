@@ -29,8 +29,7 @@
 
 #include "Sav4.hpp"
 
-class SavHGSS : public Sav4
-{
+class SavHGSS : public Sav4 {
 public:
     SavHGSS(u8* dt);
     virtual ~SavHGSS(){};

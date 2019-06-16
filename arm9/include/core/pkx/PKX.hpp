@@ -32,15 +32,14 @@
 #include <stdlib.h>
 #include <string>
 
-#include "Item.hpp"
 #include "generation.hpp"
+#include "Item.hpp"
+#include <nds/ndstypes.h>
 #include "personal.hpp"
 #include "random.hpp"
-#include <nds/ndstypes.h>
 #include "utils.hpp"
 
-class PKX
-{
+class PKX {
 protected:
     u32 expTable(u8 row, u8 col) const;
     u8 blockPosition(u8 index) const;

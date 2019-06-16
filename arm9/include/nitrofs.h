@@ -42,8 +42,7 @@
 #include <stdio.h>
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
     int nitroFSInit(const char *ndsfile);
@@ -73,29 +72,25 @@ extern "C"
 #define NITROISDIR 0x80 //mask to indicate this name entry is a dir, other 7 bits = name length
 
     //Directory filename subtable entry structure
-    struct ROM_FNTDir
-    {
+    struct ROM_FNTDir {
         u32 entry_start;
         u16 entry_file_id;
         u16 parent_id;
     };
 
     //Yo, dis table is fat (describes the structures
-    struct ROM_FAT
-    {
+    struct ROM_FAT {
         u32 top;    //start of file in rom image
         u32 bottom; //end of file in rom image
     };
 
-    struct nitroFSStruct
-    {
+    struct nitroFSStruct {
         off_t pos;   //where in the file am i?
         off_t start; //where in the rom this file starts
         off_t end;   //where in the rom this file ends
     };
 
-    struct nitroDIRStruct
-    {
+    struct nitroDIRStruct {
         off_t pos;     //where in the file am i?
         off_t namepos; //ptr to next name to lookup in list
         struct ROM_FAT romfat;

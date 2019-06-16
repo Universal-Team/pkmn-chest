@@ -13,16 +13,13 @@ bool loadSave(std::string savePath) {
     std::ifstream in(savePath);
     u32 size;
     char* saveData = nullptr;
-    if (in.good())
-    {
+    if (in.good()) {
         in.seekg (0, in.end);
         size     = in.tellg();
         in.seekg (0, in.beg);
         saveData = new char[size];
         in.read(saveData, size);
-    }
-    else
-    {
+    } else {
         // Gui::error(i18n::localize("BAD_OPEN_SAVE"), in.result());
         // loadedTitle  = nullptr;
         saveFileName = "";
@@ -32,8 +29,7 @@ bool loadSave(std::string savePath) {
     in.close();
     save = Sav::getSave((u8*)saveData, size);
     delete[] saveData;
-    if (!save)
-    {
+    if (!save) {
         // Gui::warn(saveFileName, i18n::localize("SAVE_INVALID"));
         saveFileName = "";
         // loadedTitle  = nullptr;
@@ -68,8 +64,7 @@ bool loadSave(std::string savePath) {
 
 void saveChanges(std::string savePath) {
     save->resign();
-    if (saveIsFile)
-    {
+    if (saveIsFile) {
         // No need to check size; if it was read successfully, that means that it has the correct size
         std::fstream out(savePath, std::fstream::in | std::fstream::out);
         out.write((char*)save->rawData(), save->getLength());

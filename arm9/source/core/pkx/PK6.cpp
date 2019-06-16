@@ -28,34 +28,29 @@
 #include "random.hpp"
 #include "../../loader.h"
 
-void PK6::shuffleArray(u8 sv)
-{
+void PK6::shuffleArray(u8 sv) {
     static const int blockLength = 56;
     u8 index                     = sv * 4;
 
     u8 cdata[length];
     std::copy(data, data + length, cdata);
 
-    for (u8 block = 0; block < 4; block++)
-    {
+    for (u8 block = 0; block < 4; block++) {
         u8 ofs = blockPosition(index + block);
         std::copy(cdata + 8 + blockLength * ofs, cdata + 8 + blockLength * ofs + blockLength, data + 8 + blockLength * block);
     }
 }
 
-void PK6::crypt(void)
-{
+void PK6::crypt(void) {
     u32 seed = encryptionConstant();
-    for (int i = 0x08; i < 232; i += 2)
-    {
+    for (int i = 0x08; i < 232; i += 2) {
         u16 temp = *(u16*)(data + i);
         seed     = seedStep(seed);
         temp ^= (seed >> 16);
         *(u16*)(data + i) = temp;
     }
     seed = encryptionConstant();
-    for (u32 i = 232; i < length; i += 2)
-    {
+    for (u32 i = 232; i < length; i += 2) {
         u16 temp = *(u16*)(data + i);
         seed     = seedStep(seed);
         temp ^= (seed >> 16);
@@ -63,122 +58,97 @@ void PK6::crypt(void)
     }
 }
 
-PK6::PK6(u8* dt, bool ekx, bool party)
-{
+PK6::PK6(u8* dt, bool ekx, bool party) {
     length = party ? 260 : 232;
     data   = new u8[length];
     std::fill_n(data, length, 0);
 
     std::copy(dt, dt + length, data);
-    if (ekx)
-    {
+    if (ekx) {
         decrypt();
     }
 }
 
-std::shared_ptr<PKX> PK6::clone(void)
-{
+std::shared_ptr<PKX> PK6::clone(void) {
     return std::make_shared<PK6>(data, false, length == 260);
 }
 
-Generation PK6::generation(void) const
-{
+Generation PK6::generation(void) const {
     return Generation::SIX;
 }
 
-bool PK6::untraded(void) const
-{
+bool PK6::untraded(void) const {
     return data[0x78] == 0 && data[0x79] == 0 && genNumber() == 6;
 }
 
-bool PK6::untradedEvent(void) const
-{
+bool PK6::untradedEvent(void) const {
     return geoCountry(0) == 0 && geoRegion(0) == 0 && (metLocation() / 10000 == 4) && gen6();
 }
 
-u32 PK6::encryptionConstant(void) const
-{
+u32 PK6::encryptionConstant(void) const {
     return *(u32*)(data);
 }
-void PK6::encryptionConstant(u32 v)
-{
+void PK6::encryptionConstant(u32 v) {
     *(u32*)(data) = v;
 }
 
-u16 PK6::sanity(void) const
-{
+u16 PK6::sanity(void) const {
     return *(u16*)(data + 0x04);
 }
-void PK6::sanity(u16 v)
-{
+void PK6::sanity(u16 v) {
     *(u16*)(data + 0x04) = v;
 }
 
-u16 PK6::checksum(void) const
-{
+u16 PK6::checksum(void) const {
     return *(u16*)(data + 0x06);
 }
-void PK6::checksum(u16 v)
-{
+void PK6::checksum(u16 v) {
     *(u16*)(data + 0x06) = v;
 }
 
-u16 PK6::species(void) const
-{
+u16 PK6::species(void) const {
     return *(u16*)(data + 0x08);
 }
-void PK6::species(u16 v)
-{
+void PK6::species(u16 v) {
     *(u16*)(data + 0x08) = v;
 }
 
-u16 PK6::heldItem(void) const
-{
+u16 PK6::heldItem(void) const {
     return *(u16*)(data + 0x0A);
 }
-void PK6::heldItem(u16 v)
-{
+void PK6::heldItem(u16 v) {
     *(u16*)(data + 0x0A) = v;
 }
 
-u16 PK6::TID(void) const
-{
+u16 PK6::TID(void) const {
     return *(u16*)(data + 0x0C);
 }
-void PK6::TID(u16 v)
-{
+void PK6::TID(u16 v) {
     *(u16*)(data + 0x0C) = v;
 }
 
-u16 PK6::SID(void) const
-{
+u16 PK6::SID(void) const {
     return *(u16*)(data + 0x0E);
 }
-void PK6::SID(u16 v)
-{
+void PK6::SID(u16 v) {
     *(u16*)(data + 0x0E) = v;
 }
 
-u32 PK6::experience(void) const
-{
+u32 PK6::experience(void) const {
     return *(u32*)(data + 0x10);
 }
-void PK6::experience(u32 v)
-{
+void PK6::experience(u32 v) {
     *(u32*)(data + 0x10) = v;
 }
 
-u8 PK6::ability(void) const
-{
+u8 PK6::ability(void) const {
     return data[0x14];
 }
-void PK6::ability(u8 v)
-{
+void PK6::ability(u8 v) {
     data[0x14] = v;
 }
 
-void PK6::setAbility(u8 v)
-{
+void PK6::setAbility(u8 v) {
     u8 abilitynum;
 
     if (v == 0)
@@ -192,663 +162,507 @@ void PK6::setAbility(u8 v)
     data[0x14] = abilities(v);
 }
 
-u8 PK6::abilityNumber(void) const
-{
+u8 PK6::abilityNumber(void) const {
     return data[0x15];
 }
-void PK6::abilityNumber(u8 v)
-{
+void PK6::abilityNumber(u8 v) {
     data[0x15] = v;
 }
 
-u8 PK6::trainingBagHits(void) const
-{
+u8 PK6::trainingBagHits(void) const {
     return data[0x16];
 }
-void PK6::trainingBagHits(u8 v)
-{
+void PK6::trainingBagHits(u8 v) {
     data[0x16] = v;
 }
 
-u8 PK6::trainingBag(void) const
-{
+u8 PK6::trainingBag(void) const {
     return data[0x17];
 }
-void PK6::trainingBag(u8 v)
-{
+void PK6::trainingBag(u8 v) {
     data[0x17] = v;
 }
 
-u32 PK6::PID(void) const
-{
+u32 PK6::PID(void) const {
     return *(u32*)(data + 0x18);
 }
-void PK6::PID(u32 v)
-{
+void PK6::PID(u32 v) {
     *(u32*)(data + 0x18) = v;
 }
 
-u8 PK6::nature(void) const
-{
+u8 PK6::nature(void) const {
     return data[0x1C];
 }
-void PK6::nature(u8 v)
-{
+void PK6::nature(u8 v) {
     data[0x1C] = v;
 }
 
-bool PK6::fatefulEncounter(void) const
-{
+bool PK6::fatefulEncounter(void) const {
     return (data[0x1D] & 1) == 1;
 }
-void PK6::fatefulEncounter(bool v)
-{
+void PK6::fatefulEncounter(bool v) {
     data[0x1D] = (u8)((data[0x1D] & ~0x01) | (v ? 1 : 0));
 }
 
-u8 PK6::gender(void) const
-{
+u8 PK6::gender(void) const {
     return (data[0x1D] >> 1) & 0x3;
 }
-void PK6::gender(u8 v)
-{
+void PK6::gender(u8 v) {
     data[0x1D] = u8((data[0x1D] & ~0x06) | (v << 1));
 }
 
-u8 PK6::alternativeForm(void) const
-{
+u8 PK6::alternativeForm(void) const {
     return data[0x1D] >> 3;
 }
-void PK6::alternativeForm(u8 v)
-{
+void PK6::alternativeForm(u8 v) {
     data[0x1D] = u8((data[0x1D] & 0x07) | (v << 3));
 }
 
-u8 PK6::ev(u8 ev) const
-{
+u8 PK6::ev(u8 ev) const {
     return data[0x1E + ev];
 }
-void PK6::ev(u8 ev, u8 v)
-{
+void PK6::ev(u8 ev, u8 v) {
     data[0x1E + ev] = v;
 }
 
-u8 PK6::contest(u8 contest) const
-{
+u8 PK6::contest(u8 contest) const {
     return data[0x24 + contest];
 }
-void PK6::contest(u8 contest, u8 v)
-{
+void PK6::contest(u8 contest, u8 v) {
     data[0x24 + contest] = v;
 }
 
-u16 PK6::markValue(void) const
-{
+u16 PK6::markValue(void) const {
     return data[0x2A];
 }
-void PK6::markValue(u16 v)
-{
+void PK6::markValue(u16 v) {
     data[0x2A] = v;
 }
 
-u8 PK6::pkrs(void) const
-{
+u8 PK6::pkrs(void) const {
     return data[0x2B];
 }
-void PK6::pkrs(u8 v)
-{
+void PK6::pkrs(u8 v) {
     data[0x2B] = v;
 }
 
-u8 PK6::pkrsDays(void) const
-{
+u8 PK6::pkrsDays(void) const {
     return data[0x2B] & 0xF;
 };
-void PK6::pkrsDays(u8 v)
-{
+void PK6::pkrsDays(u8 v) {
     data[0x2B] = (u8)((data[0x2B] & ~0xF) | v);
 }
 
-u8 PK6::pkrsStrain(void) const
-{
+u8 PK6::pkrsStrain(void) const {
     return data[0x2B] >> 4;
 };
-void PK6::pkrsStrain(u8 v)
-{
+void PK6::pkrsStrain(u8 v) {
     data[0x2B] = (u8)((data[0x2B] & 0xF) | v << 4);
 }
 
-bool PK6::ribbon(u8 ribcat, u8 ribnum) const
-{
+bool PK6::ribbon(u8 ribcat, u8 ribnum) const {
     return (data[0x30 + ribcat] & (1 << ribnum)) == 1 << ribnum;
 }
-void PK6::ribbon(u8 ribcat, u8 ribnum, u8 v)
-{
+void PK6::ribbon(u8 ribcat, u8 ribnum, u8 v) {
     data[0x30 + ribcat] = (u8)((data[0x30 + ribcat] & ~(1 << ribnum)) | (v ? 1 << ribnum : 0));
 }
 
-u8 PK6::ribbonContestCount(void) const
-{
+u8 PK6::ribbonContestCount(void) const {
     return data[0x38];
 }
-void PK6::ribbonContestCount(u8 v)
-{
+void PK6::ribbonContestCount(u8 v) {
     data[0x38] = v;
 }
 
-u8 PK6::ribbonBattleCount(void) const
-{
+u8 PK6::ribbonBattleCount(void) const {
     return data[0x39];
 }
-void PK6::ribbonBattleCount(u8 v)
-{
+void PK6::ribbonBattleCount(u8 v) {
     data[0x39] = v;
 }
 
-std::string PK6::nickname(void) const
-{
+std::string PK6::nickname(void) const {
     return StringUtils::getString(data, 0x40, 12);
 }
-void PK6::nickname(const std::string& v)
-{
+void PK6::nickname(const std::string& v) {
     StringUtils::setString(data, v, 0x40, 12);
 }
 
-u16 PK6::move(u8 m) const
-{
+u16 PK6::move(u8 m) const {
     return *(u16*)(data + 0x5A + m * 2);
 }
-void PK6::move(u8 m, u16 v)
-{
+void PK6::move(u8 m, u16 v) {
     *(u16*)(data + 0x5A + m * 2) = v;
 }
 
-u8 PK6::PP(u8 m) const
-{
+u8 PK6::PP(u8 m) const {
     return data[0x62 + m];
 }
-void PK6::PP(u8 m, u8 v)
-{
+void PK6::PP(u8 m, u8 v) {
     data[0x62 + m] = v;
 }
 
-u8 PK6::PPUp(u8 m) const
-{
+u8 PK6::PPUp(u8 m) const {
     return data[0x66 + m];
 }
-void PK6::PPUp(u8 m, u8 v)
-{
+void PK6::PPUp(u8 m, u8 v) {
     data[0x66 + m] = v;
 }
 
-u16 PK6::relearnMove(u8 m) const
-{
+u16 PK6::relearnMove(u8 m) const {
     return *(u16*)(data + 0x6A + m * 2);
 }
-void PK6::relearnMove(u8 m, u16 v)
-{
+void PK6::relearnMove(u8 m, u16 v) {
     *(u16*)(data + 0x6A + m * 2) = v;
 }
 
-bool PK6::secretSuperTrainingUnlocked(void) const
-{
+bool PK6::secretSuperTrainingUnlocked(void) const {
     return (data[0x72] & 1) == 1;
 }
-void PK6::secretSuperTrainingUnlocked(bool v)
-{
+void PK6::secretSuperTrainingUnlocked(bool v) {
     data[0x72] = (data[0x72] & ~1) | (v ? 1 : 0);
 }
 
-bool PK6::secretSuperTrainingComplete(void) const
-{
+bool PK6::secretSuperTrainingComplete(void) const {
     return (data[0x72] & 2) == 2;
 }
-void PK6::secretSuperTrainingComplete(bool v)
-{
+void PK6::secretSuperTrainingComplete(bool v) {
     data[0x72] = (data[0x72] & ~2) | (v ? 2 : 0);
 }
 
-u8 PK6::iv(u8 stat) const
-{
+u8 PK6::iv(u8 stat) const {
     u32 buffer = *(u32*)(data + 0x74);
     return (u8)((buffer >> 5 * stat) & 0x1F);
 }
 
-void PK6::iv(u8 stat, u8 v)
-{
+void PK6::iv(u8 stat, u8 v) {
     u32 buffer = *(u32*)(data + 0x74);
     buffer &= ~(0x1F << 5 * stat);
     buffer |= v << (5 * stat);
     *(u32*)(data + 0x74) = buffer;
 }
 
-bool PK6::egg(void) const
-{
+bool PK6::egg(void) const {
     return ((*(u32*)(data + 0x74) >> 30) & 0x1) == 1;
 }
-void PK6::egg(bool v)
-{
+void PK6::egg(bool v) {
     *(u32*)(data + 0x74) = (u32)((*(u32*)(data + 0x74) & ~0x40000000) | (u32)(v ? 0x40000000 : 0));
 }
 
-bool PK6::nicknamed(void) const
-{
+bool PK6::nicknamed(void) const {
     return ((*(u32*)(data + 0x74) >> 31) & 0x1) == 1;
 }
-void PK6::nicknamed(bool v)
-{
+void PK6::nicknamed(bool v) {
     *(u32*)(data + 0x74) = (*(u32*)(data + 0x74) & 0x7FFFFFFF) | (v ? 0x80000000 : 0);
 }
 
-std::string PK6::htName(void) const
-{
+std::string PK6::htName(void) const {
     return StringUtils::getString(data, 0x78, 12);
 }
-void PK6::htName(const std::string& v)
-{
+void PK6::htName(const std::string& v) {
     StringUtils::setString(data, v, 0x78, 12);
 }
 
-u8 PK6::htGender(void) const
-{
+u8 PK6::htGender(void) const {
     return data[0x92];
 }
-void PK6::htGender(u8 v)
-{
+void PK6::htGender(u8 v) {
     data[0x92] = v;
 }
 
-u8 PK6::currentHandler(void) const
-{
+u8 PK6::currentHandler(void) const {
     return data[0x93];
 }
-void PK6::currentHandler(u8 v)
-{
+void PK6::currentHandler(u8 v) {
     data[0x93] = v;
 }
 
-u8 PK6::geoRegion(u8 region) const
-{
+u8 PK6::geoRegion(u8 region) const {
     return data[0x94 + region * 2];
 }
-void PK6::geoRegion(u8 region, u8 v)
-{
+void PK6::geoRegion(u8 region, u8 v) {
     data[0x94 + region * 2] = v;
 }
 
-u8 PK6::geoCountry(u8 country) const
-{
+u8 PK6::geoCountry(u8 country) const {
     return data[0x95 + country * 2];
 }
-void PK6::geoCountry(u8 country, u8 v)
-{
+void PK6::geoCountry(u8 country, u8 v) {
     data[0x95 + country * 2] = v;
 }
 
-u8 PK6::htFriendship(void) const
-{
+u8 PK6::htFriendship(void) const {
     return data[0xA2];
 }
-void PK6::htFriendship(u8 v)
-{
+void PK6::htFriendship(u8 v) {
     data[0xA2] = v;
 }
 
-u8 PK6::htAffection(void) const
-{
+u8 PK6::htAffection(void) const {
     return data[0xA3];
 }
-void PK6::htAffection(u8 v)
-{
+void PK6::htAffection(u8 v) {
     data[0xA3] = v;
 }
 
-u8 PK6::htIntensity(void) const
-{
+u8 PK6::htIntensity(void) const {
     return data[0xA4];
 }
-void PK6::htIntensity(u8 v)
-{
+void PK6::htIntensity(u8 v) {
     data[0xA4] = v;
 }
 
-u8 PK6::htMemory(void) const
-{
+u8 PK6::htMemory(void) const {
     return data[0xA5];
 }
-void PK6::htMemory(u8 v)
-{
+void PK6::htMemory(u8 v) {
     data[0xA5] = v;
 }
 
-u8 PK6::htFeeling(void) const
-{
+u8 PK6::htFeeling(void) const {
     return data[0xA6];
 }
-void PK6::htFeeling(u8 v)
-{
+void PK6::htFeeling(u8 v) {
     data[0xA6] = v;
 }
 
-u16 PK6::htTextVar(void) const
-{
+u16 PK6::htTextVar(void) const {
     return *(u16*)(data + 0xA8);
 }
-void PK6::htTextVar(u16 v)
-{
+void PK6::htTextVar(u16 v) {
     *(u16*)(data + 0xA8) = v;
 }
 
-u8 PK6::fullness(void) const
-{
+u8 PK6::fullness(void) const {
     return data[0xAE];
 }
-void PK6::fullness(u8 v)
-{
+void PK6::fullness(u8 v) {
     data[0xAE] = v;
 }
 
-u8 PK6::enjoyment(void) const
-{
+u8 PK6::enjoyment(void) const {
     return data[0xAF];
 }
-void PK6::enjoyment(u8 v)
-{
+void PK6::enjoyment(u8 v) {
     data[0xAF] = v;
 }
 
-std::string PK6::otName(void) const
-{
+std::string PK6::otName(void) const {
     return StringUtils::getString(data, 0xB0, 13);
 }
-void PK6::otName(const std::string& v)
-{
+void PK6::otName(const std::string& v) {
     StringUtils::setString(data, v, 0xB0, 12);
 }
 
-u8 PK6::otFriendship(void) const
-{
+u8 PK6::otFriendship(void) const {
     return data[0xCA];
 }
-void PK6::otFriendship(u8 v)
-{
+void PK6::otFriendship(u8 v) {
     data[0xCA] = v;
 }
 
-u8 PK6::otAffection(void) const
-{
+u8 PK6::otAffection(void) const {
     return data[0xCB];
 }
-void PK6::otAffection(u8 v)
-{
+void PK6::otAffection(u8 v) {
     data[0xCB] = v;
 }
 
-u8 PK6::otIntensity(void) const
-{
+u8 PK6::otIntensity(void) const {
     return data[0xCC];
 }
-void PK6::otIntensity(u8 v)
-{
+void PK6::otIntensity(u8 v) {
     data[0xCC] = v;
 }
 
-u8 PK6::otMemory(void) const
-{
+u8 PK6::otMemory(void) const {
     return data[0xCD];
 }
-void PK6::otMemory(u8 v)
-{
+void PK6::otMemory(u8 v) {
     data[0xCD] = v;
 }
 
-u16 PK6::otTextVar(void) const
-{
+u16 PK6::otTextVar(void) const {
     return *(u16*)(data + 0xCE);
 }
-void PK6::otTextVar(u16 v)
-{
+void PK6::otTextVar(u16 v) {
     *(u16*)(data + 0xCE) = v;
 }
 
-u8 PK6::otFeeling(void) const
-{
+u8 PK6::otFeeling(void) const {
     return data[0xD0];
 }
-void PK6::otFeeling(u8 v)
-{
+void PK6::otFeeling(u8 v) {
     data[0xD0] = v;
 }
 
-u8 PK6::eggYear(void) const
-{
+u8 PK6::eggYear(void) const {
     return data[0xD1];
 }
-void PK6::eggYear(u8 v)
-{
+void PK6::eggYear(u8 v) {
     data[0xD1] = v;
 }
 
-u8 PK6::eggMonth(void) const
-{
+u8 PK6::eggMonth(void) const {
     return data[0xD2];
 }
-void PK6::eggMonth(u8 v)
-{
+void PK6::eggMonth(u8 v) {
     data[0xD2] = v;
 }
 
-u8 PK6::eggDay(void) const
-{
+u8 PK6::eggDay(void) const {
     return data[0xD3];
 }
-void PK6::eggDay(u8 v)
-{
+void PK6::eggDay(u8 v) {
     data[0xD3] = v;
 }
 
-u8 PK6::metYear(void) const
-{
+u8 PK6::metYear(void) const {
     return data[0xD4];
 }
-void PK6::metYear(u8 v)
-{
+void PK6::metYear(u8 v) {
     data[0xD4] = v;
 }
 
-u8 PK6::metMonth(void) const
-{
+u8 PK6::metMonth(void) const {
     return data[0xD5];
 }
-void PK6::metMonth(u8 v)
-{
+void PK6::metMonth(u8 v) {
     data[0xD5] = v;
 }
 
-u8 PK6::metDay(void) const
-{
+u8 PK6::metDay(void) const {
     return data[0xD6];
 }
-void PK6::metDay(u8 v)
-{
+void PK6::metDay(u8 v) {
     data[0xD6] = v;
 }
 
-u16 PK6::eggLocation(void) const
-{
+u16 PK6::eggLocation(void) const {
     return *(u16*)(data + 0xD8);
 }
-void PK6::eggLocation(u16 v)
-{
+void PK6::eggLocation(u16 v) {
     *(u16*)(data + 0xD8) = v;
 }
 
-u16 PK6::metLocation(void) const
-{
+u16 PK6::metLocation(void) const {
     return *(u16*)(data + 0xDA);
 }
-void PK6::metLocation(u16 v)
-{
+void PK6::metLocation(u16 v) {
     *(u16*)(data + 0xDA) = v;
 }
 
-u8 PK6::ball(void) const
-{
+u8 PK6::ball(void) const {
     return data[0xDC];
 }
-void PK6::ball(u8 v)
-{
+void PK6::ball(u8 v) {
     data[0xDC] = v;
 }
 
-u8 PK6::metLevel(void) const
-{
+u8 PK6::metLevel(void) const {
     return data[0xDD] & ~0x80;
 }
-void PK6::metLevel(u8 v)
-{
+void PK6::metLevel(u8 v) {
     data[0xDD] = (data[0xDD] & 0x80) | v;
 }
 
-u8 PK6::otGender(void) const
-{
+u8 PK6::otGender(void) const {
     return data[0xDD] >> 7;
 }
-void PK6::otGender(u8 v)
-{
+void PK6::otGender(u8 v) {
     data[0xDD] = (data[0xDD] & ~0x80) | (v << 7);
 }
 
-u8 PK6::encounterType(void) const
-{
+u8 PK6::encounterType(void) const {
     return data[0xDE];
 }
-void PK6::encounterType(u8 v)
-{
+void PK6::encounterType(u8 v) {
     data[0xDE] = v;
 }
 
-u8 PK6::version(void) const
-{
+u8 PK6::version(void) const {
     return data[0xDF];
 }
-void PK6::version(u8 v)
-{
+void PK6::version(u8 v) {
     data[0xDF] = v;
 }
 
-u8 PK6::country(void) const
-{
+u8 PK6::country(void) const {
     return data[0xE0];
 }
-void PK6::country(u8 v)
-{
+void PK6::country(u8 v) {
     data[0xE0] = v;
 }
 
-u8 PK6::region(void) const
-{
+u8 PK6::region(void) const {
     return data[0xE1];
 }
-void PK6::region(u8 v)
-{
+void PK6::region(u8 v) {
     data[0xE1] = v;
 }
 
-u8 PK6::consoleRegion(void) const
-{
+u8 PK6::consoleRegion(void) const {
     return data[0xE2];
 }
-void PK6::consoleRegion(u8 v)
-{
+void PK6::consoleRegion(u8 v) {
     data[0xE2] = v;
 }
 
-u8 PK6::language(void) const
-{
+u8 PK6::language(void) const {
     return data[0xE3];
 }
-void PK6::language(u8 v)
-{
+void PK6::language(u8 v) {
     data[0xE3] = v;
 }
 
-u8 PK6::currentFriendship(void) const
-{
+u8 PK6::currentFriendship(void) const {
     return currentHandler() == 0 ? otFriendship() : htFriendship();
 }
-void PK6::currentFriendship(u8 v)
-{
+void PK6::currentFriendship(u8 v) {
     if (currentHandler() == 0)
         otFriendship(v);
     else
         htFriendship(v);
 }
 
-u8 PK6::oppositeFriendship(void) const
-{
+u8 PK6::oppositeFriendship(void) const {
     return currentHandler() == 1 ? otFriendship() : htFriendship();
 }
-void PK6::oppositeFriendship(u8 v)
-{
+void PK6::oppositeFriendship(u8 v) {
     if (currentHandler() == 1)
         otFriendship(v);
     else
         htFriendship(v);
 }
 
-void PK6::refreshChecksum(void)
-{
+void PK6::refreshChecksum(void) {
     u16 chk = 0;
-    for (u8 i = 8; i < 232; i += 2)
-    {
+    for (u8 i = 8; i < 232; i += 2) {
         chk += *(u16*)(data + i);
     }
     checksum(chk);
 }
 
-u8 PK6::hpType(void) const
-{
+u8 PK6::hpType(void) const {
     return 15 * ((iv(0) & 1) + 2 * (iv(1) & 1) + 4 * (iv(2) & 1) + 8 * (iv(3) & 1) + 16 * (iv(4) & 1) + 32 * (iv(5) & 1)) / 63;
 }
-void PK6::hpType(u8 v)
-{
-    static constexpr u16 hpivs[16][6] = {
-        {1, 1, 0, 0, 0, 0}, // Fighting
-        {0, 0, 0, 1, 0, 0}, // Flying
-        {1, 1, 0, 1, 0, 0}, // Poison
-        {1, 1, 1, 1, 0, 0}, // Ground
-        {1, 1, 0, 0, 1, 0}, // Rock
-        {1, 0, 0, 1, 1, 0}, // Bug
-        {1, 0, 1, 1, 1, 0}, // Ghost
-        {1, 1, 1, 1, 1, 0}, // Steel
-        {1, 0, 1, 0, 0, 1}, // Fire
-        {1, 0, 0, 1, 0, 1}, // Water
-        {1, 0, 1, 1, 0, 1}, // Grass
-        {1, 1, 1, 1, 0, 1}, // Electric
-        {1, 0, 1, 0, 1, 1}, // Psychic
-        {1, 0, 0, 1, 1, 1}, // Ice
-        {1, 0, 1, 1, 1, 1}, // Dragon
-        {1, 1, 1, 1, 1, 1}, // Dark
+void PK6::hpType(u8 v) {
+    static constexpr u16 hpivs[16][6] = { {1, 1, 0, 0, 0, 0}, // Fighting {0, 0, 0, 1, 0, 0}, // Flying {1, 1, 0, 1, 0, 0}, // Poison {1, 1, 1, 1, 0, 0}, // Ground {1, 1, 0, 0, 1, 0}, // Rock {1, 0, 0, 1, 1, 0}, // Bug {1, 0, 1, 1, 1, 0}, // Ghost {1, 1, 1, 1, 1, 0}, // Steel {1, 0, 1, 0, 0, 1}, // Fire {1, 0, 0, 1, 0, 1}, // Water {1, 0, 1, 1, 0, 1}, // Grass {1, 1, 1, 1, 0, 1}, // Electric {1, 0, 1, 0, 1, 1}, // Psychic {1, 0, 0, 1, 1, 1}, // Ice {1, 0, 1, 1, 1, 1}, // Dragon {1, 1, 1, 1, 1, 1}, // Dark
     };
 
-    for (u8 i = 0; i < 6; i++)
-    {
+    for (u8 i = 0; i < 6; i++) {
         iv(i, (iv(i) & 0x1e) + hpivs[v][i]);
     }
 }
 
-u16 PK6::TSV(void) const
-{
+u16 PK6::TSV(void) const {
     return (TID() ^ SID()) >> 4;
 }
-u16 PK6::PSV(void) const
-{
+u16 PK6::PSV(void) const {
     return ((PID() >> 16) ^ (PID() & 0xFFFF)) >> 4;
 }
 
-u8 PK6::level(void) const
-{
+u8 PK6::level(void) const {
     u8 i      = 1;
     u8 xpType = expType();
     while (experience() >= expTable(i, xpType) && ++i < 100)
@@ -856,49 +670,36 @@ u8 PK6::level(void) const
     return i;
 }
 
-void PK6::level(u8 v)
-{
+void PK6::level(u8 v) {
     experience(expTable(v - 1, expType()));
 }
 
-bool PK6::shiny(void) const
-{
+bool PK6::shiny(void) const {
     return TSV() == PSV();
 }
-void PK6::shiny(bool v)
-{
-    if (v)
-    {
-        while (!shiny())
-        {
+void PK6::shiny(bool v) {
+    if (v) {
+        while (!shiny()) {
             PID(PKX::getRandomPID(species(), gender(), version(), nature(), alternativeForm(), abilityNumber(), PID(), generation()));
         }
-    }
-    else
-    {
-        while (shiny())
-        {
+    } else {
+        while (shiny()) {
             PID(PKX::getRandomPID(species(), gender(), version(), nature(), alternativeForm(), abilityNumber(), PID(), generation()));
         }
     }
 }
 
-u16 PK6::formSpecies(void) const
-{
+u16 PK6::formSpecies(void) const {
     u16 tmpSpecies = species();
     u8 form        = alternativeForm();
     u8 formcount   = PersonalXYORAS::formCount(tmpSpecies);
 
-    if (form && form < formcount)
-    {
+    if (form && form < formcount) {
         u16 backSpecies = tmpSpecies;
         tmpSpecies      = PersonalXYORAS::formStatIndex(tmpSpecies);
-        if (!tmpSpecies)
-        {
+        if (!tmpSpecies) {
             tmpSpecies = backSpecies;
-        }
-        else if (form < formcount)
-        {
+        } else if (form < formcount) {
             tmpSpecies += form - 1;
         }
     }
@@ -906,8 +707,7 @@ u16 PK6::formSpecies(void) const
     return tmpSpecies;
 }
 
-u16 PK6::stat(const u8 stat) const
-{
+u16 PK6::stat(const u8 stat) const {
     u16 calc;
     u8 mult = 10, basestat = 0;
 
@@ -935,8 +735,7 @@ u16 PK6::stat(const u8 stat) const
     return calc * mult / 10;
 }
 
-std::shared_ptr<PKX> PK6::next(void) const
-{
+std::shared_ptr<PKX> PK6::next(void) const {
     u8 dt[232];
     std::copy(data, data + 232, dt);
 
@@ -957,14 +756,12 @@ std::shared_ptr<PKX> PK6::next(void) const
 
     pk7->markValue(markValue());
 
-    switch (abilityNumber())
-    {
+    switch (abilityNumber()) {
         case 1:
         case 2:
         case 4:
             u8 index = abilityNumber() >> 1;
-            if (abilities(index) == ability())
-            {
+            if (abilities(index) == ability()) {
                 pk7->ability(abilities(index));
             }
     }
@@ -982,8 +779,7 @@ std::shared_ptr<PKX> PK6::next(void) const
     return std::shared_ptr<PKX>(pk7);
 }
 
-std::shared_ptr<PKX> PK6::previous(void) const
-{
+std::shared_ptr<PKX> PK6::previous(void) const {
     u8 dt[232] = {0};
     PK5* pk5   = new PK5(dt);
 
@@ -997,16 +793,14 @@ std::shared_ptr<PKX> PK6::previous(void) const
     pk5->markValue(markValue());
     pk5->language(language());
 
-    for (int i = 0; i < 6; i++)
-    {
+    for (int i = 0; i < 6; i++) {
         // EV Cap
         pk5->ev(i, ev(i) > 252 ? 252 : ev(i));
         pk5->iv(i, iv(i));
         pk5->contest(i, contest(i));
     }
 
-    for (int i = 0; i < 4; i++)
-    {
+    for (int i = 0; i < 4; i++) {
         pk5->move(i, move(i));
         pk5->PPUp(i, PPUp(i));
         pk5->PP(i, PP(i));
@@ -1087,10 +881,8 @@ std::shared_ptr<PKX> PK6::previous(void) const
     if (shiny() && (val > 7) && (val < 16))
         pk5->PID(PID() ^ 0x80000000);
 
-    for (int i = 0; i < 4; i++)
-    {
-        if (pk5->move(i) > save->maxMove())
-        {
+    for (int i = 0; i < 4; i++) {
+        if (pk5->move(i) > save->maxMove()) {
             pk5->move(i, 0);
         }
     }
@@ -1099,77 +891,61 @@ std::shared_ptr<PKX> PK6::previous(void) const
     return std::shared_ptr<PKX>(pk5);
 }
 
-int PK6::partyCurrHP(void) const
-{
-    if (length == 232)
-    {
+int PK6::partyCurrHP(void) const {
+    if (length == 232) {
         return -1;
     }
     return *(u16*)(data + 0xF0);
 }
 
-void PK6::partyCurrHP(u16 v)
-{
-    if (length != 232)
-    {
+void PK6::partyCurrHP(u16 v) {
+    if (length != 232) {
         *(u16*)(data + 0xF0) = v;
     }
 }
 
-int PK6::partyStat(const u8 stat) const
-{
-    if (length == 232)
-    {
+int PK6::partyStat(const u8 stat) const {
+    if (length == 232) {
         return -1;
     }
     return *(u16*)(data + 0xF2 + stat * 2);
 }
 
-void PK6::partyStat(const u8 stat, u16 v)
-{
-    if (length != 232)
-    {
+void PK6::partyStat(const u8 stat, u16 v) {
+    if (length != 232) {
         *(u16*)(data + 0xF2 + stat * 2) = v;
     }
 }
 
-int PK6::partyLevel() const
-{
-    if (length == 232)
-    {
+int PK6::partyLevel() const {
+    if (length == 232) {
         return -1;
     }
     return *(data + 0xEC);
 }
 
-void PK6::partyLevel(u8 v)
-{
-    if (length != 232)
-    {
+void PK6::partyLevel(u8 v) {
+    if (length != 232) {
         *(data + 0xEC) = v;
     }
 }
 
-void PK6::reorderMoves(void)
-{
+void PK6::reorderMoves(void) {
     PKX::reorderMoves();
-    if (relearnMove(3) != 0 && relearnMove(2) == 0)
-    {
+    if (relearnMove(3) != 0 && relearnMove(2) == 0) {
         relearnMove(2, relearnMove(3));
         PP(2, PP(3));
         PPUp(2, PPUp(3));
         relearnMove(3, 0);
     }
-    if (relearnMove(2) != 0 && relearnMove(1) == 0)
-    {
+    if (relearnMove(2) != 0 && relearnMove(1) == 0) {
         relearnMove(1, relearnMove(2));
         PP(1, PP(2));
         PPUp(1, PPUp(2));
         relearnMove(2, 0);
         reorderMoves();
     }
-    if (relearnMove(1) != 0 && relearnMove(0) == 0)
-    {
+    if (relearnMove(1) != 0 && relearnMove(0) == 0) {
         relearnMove(0, relearnMove(1));
         PP(0, PP(1));
         PPUp(0, PPUp(1));

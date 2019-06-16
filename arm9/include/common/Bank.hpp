@@ -34,8 +34,7 @@ extern "C" {
 #include "sha256.h"
 }
 
-class Bank
-{
+class Bank {
 public:
     Bank(const std::string& name, int maxBoxes);
     ~Bank() { delete[] data; }
@@ -59,14 +58,12 @@ private:
     void createJSON();
     void createBank(int maxBoxes);
     void convert();
-    struct BankHeader
-    {
+    struct BankHeader {
         const char MAGIC[8];
         int version;
         int boxes;
     };
-    struct BankEntry
-    {
+    struct BankEntry {
         Generation gen;
         u8 data[260];
     };

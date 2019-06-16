@@ -26,32 +26,28 @@
 
 #include "Item.hpp"
 
-Item::operator Item4() const
-{
+Item::operator Item4() const {
     Item4 ret;
     ret.id(id());
     ret.count(count());
     return ret;
 }
 
-Item::operator Item5() const
-{
+Item::operator Item5() const {
     Item5 ret;
     ret.id(id());
     ret.count(count());
     return ret;
 }
 
-Item::operator Item6() const
-{
+Item::operator Item6() const {
     Item6 ret;
     ret.id(id());
     ret.count(count());
     return ret;
 }
 
-Item::operator Item7() const
-{
+Item::operator Item7() const {
     Item7 ret;
     ret.id(std::min((int)id(), 0x3FF));
     ret.count(std::min((int)count(), 0x3FF));
@@ -61,8 +57,7 @@ Item::operator Item7() const
     return ret;
 }
 
-Item::operator Item7b() const
-{
+Item::operator Item7b() const {
     Item7b ret;
     ret.id(std::min((int)id(), 0x7FFF));
     ret.count(std::min((int)count(), 0x7FFF));
@@ -71,8 +66,7 @@ Item::operator Item7b() const
     return ret;
 }
 
-Item7::operator Item7b() const
-{
+Item7::operator Item7b() const {
     Item7b ret;
     ret.id(id()); // Capped at 0x3FF, so no need to cap it at 0x7FFF
     ret.count(count());
@@ -81,8 +75,7 @@ Item7::operator Item7b() const
     return ret;
 }
 
-Item7b::operator Item7() const
-{
+Item7b::operator Item7() const {
     Item7 ret;
     ret.id(std::min((int)id(), 0x3FF));
     ret.count(std::min((int)count(), 0x3FF));

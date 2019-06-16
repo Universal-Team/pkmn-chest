@@ -156,8 +156,7 @@ static unsigned uivector_reserve(uivector* p, size_t allocsize) {
     if(data) {
       p->allocsize = newsize;
       p->data = (unsigned*)data;
-    }
-    else return 0; /*error: not enough memory*/
+    } else return 0; /*error: not enough memory*/
   }
   return 1;
 }
@@ -209,8 +208,7 @@ static unsigned ucvector_reserve(ucvector* p, size_t allocsize) {
     if(data) {
       p->allocsize = newsize;
       p->data = (unsigned char*)data;
-    }
-    else return 0; /*error: not enough memory*/
+    } else return 0; /*error: not enough memory*/
   }
   return 1;
 }
@@ -530,8 +528,7 @@ static unsigned HuffmanTree_make2DTree(HuffmanTree* tree) {
           tree->tree2d[2 * treepos + bit] = nodefilled + tree->numcodes;
           treepos = nodefilled;
         }
-      }
-      else treepos = tree->tree2d[2 * treepos + bit] - tree->numcodes;
+      } else treepos = tree->tree2d[2 * treepos + bit] - tree->numcodes;
     }
   }
 
@@ -984,8 +981,7 @@ static unsigned getTreeInflateDynamic(HuffmanTree* tree_ll, HuffmanTree* tree_d,
           /*return error code 10 or 11 depending on the situation that happened in huffmanDecodeSymbol
           (10=no endcode, 11=wrong jump outside of tree)*/
           error = (*bp) > inbitlength ? 10 : 11;
-        }
-        else error = 16; /*unexisting code, this can never happen*/
+        } else error = 16; /*unexisting code, this can never happen*/
         break;
       }
     }
@@ -1051,8 +1047,7 @@ static unsigned inflateHuffmanBlock(ucvector* out, const unsigned char* in, size
           /*return error code 10 or 11 depending on the situation that happened in huffmanDecodeSymbol
           (10=no endcode, 11=wrong jump outside of tree)*/
           error = (*bp) > inlength * 8 ? 10 : 11;
-        }
-        else error = 18; /*error: invalid distance code (30-31 are never used)*/
+        } else error = 18; /*error: invalid distance code (30-31 are never used)*/
         break;
       }
       distance = DISTANCEBASE[code_d];
@@ -1660,8 +1655,7 @@ static unsigned deflateDynamic(ucvector* out, size_t* bp, Hash* hash,
         if(rest >= 3) {
           uivector_push_back(&bitlen_lld_e, 16);
           uivector_push_back(&bitlen_lld_e, rest - 3);
-        }
-        else j -= rest;
+        } else j -= rest;
         i += j;
       } else /*too short to benefit from repeat code*/ {
         uivector_push_back(&bitlen_lld_e, bitlen_lld.data[i]);
@@ -3940,8 +3934,7 @@ static unsigned readChunk_tRNS(LodePNGColorMode* color, const unsigned char* dat
     color->key_r = 256u * data[0] + data[1];
     color->key_g = 256u * data[2] + data[3];
     color->key_b = 256u * data[4] + data[5];
-  }
-  else return 42; /*error: tRNS chunk not allowed for other color models*/
+  } else return 42; /*error: tRNS chunk not allowed for other color models*/
 
   return 0; /* OK */
 }
@@ -4532,8 +4525,7 @@ unsigned lodepng_decode(unsigned char** out, unsigned* w, unsigned* h,
     *out = (unsigned char*)lodepng_malloc(outsize);
     if(!(*out)) {
       state->error = 83; /*alloc fail*/
-    }
-    else state->error = lodepng_convert(*out, data, &state->info_raw,
+    } else state->error = lodepng_convert(*out, data, &state->info_raw,
                                         &state->info_png.color, *w, *h);
     lodepng_free(data);
   }
@@ -4681,8 +4673,7 @@ static unsigned addChunk_PLTE(ucvector* out, const LodePNGColorMode* info) {
   for(i = 0; i != info->palettesize * 4; ++i) {
     /*add all channels except alpha channel*/
     if(i % 4 != 3) ucvector_push_back(&PLTE, info->palette[i]);
-  }
-  error = addChunk(out, "PLTE", PLTE.data, PLTE.size);
+  } error = addChunk(out, "PLTE", PLTE.data, PLTE.size);
   ucvector_cleanup(&PLTE);
 
   return error;
@@ -5177,8 +5168,7 @@ static unsigned filter(unsigned char* out, const unsigned char* in, unsigned w, 
       for(x = 0; x != linebytes; ++x) out[y * (linebytes + 1) + 1 + x] = attempt[bestType][x];
     }
     for(type = 0; type != 5; ++type) lodepng_free(attempt[type]);
-  }
-  else return 88; /* unknown filter strategy */
+  } else return 88; /* unknown filter strategy */
 
   return error;
 }
@@ -5342,8 +5332,7 @@ static unsigned getPaletteTranslucency(const unsigned char* palette, size_t pale
       r = palette[4 * i + 0]; g = palette[4 * i + 1]; b = palette[4 * i + 2];
       key = 1;
       i = (size_t)(-1); /*restart from beginning, to detect earlier opaque colors with key's value*/
-    }
-    else if(palette[4 * i + 3] != 255) return 2;
+    } else if(palette[4 * i + 3] != 255) return 2;
     /*when key, no opaque RGB may have key's RGB*/
     else if(key && r == palette[i * 4 + 0] && g == palette[i * 4 + 1] && b == palette[i * 4 + 2]) return 2;
   }
@@ -5440,10 +5429,8 @@ unsigned lodepng_encode(unsigned char** out, size_t* outsize,
         state->error = 104;
         goto cleanup;
       }
-    }
-    else
+    } else {
 #endif /* LODEPNG_COMPILE_ANCILLARY_CHUNKS */
-    {
       state->error = lodepng_auto_choose_color(&info.color, image, w, h, &state->info_raw);
       if(state->error) goto cleanup;
     }
@@ -5493,8 +5480,7 @@ unsigned lodepng_encode(unsigned char** out, size_t* outsize,
     if(!state->error) preProcessScanlines(&data, &datasize, converted, w, h, &info, &state->encoder);
     lodepng_free(converted);
     if(state->error) goto cleanup;
-  }
-  else preProcessScanlines(&data, &datasize, image, w, h, &info, &state->encoder);
+  } else preProcessScanlines(&data, &datasize, image, w, h, &info, &state->encoder);
 
   /* output all PNG chunks */ {
 #ifdef LODEPNG_COMPILE_ANCILLARY_CHUNKS

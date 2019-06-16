@@ -29,8 +29,7 @@
 
 #include "Sav5.hpp"
 
-class SavB2W2 : public Sav5
-{
+class SavB2W2 : public Sav5 {
 public:
     SavB2W2(u8* dt);
     virtual ~SavB2W2();

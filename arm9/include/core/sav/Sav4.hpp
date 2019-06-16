@@ -32,8 +32,7 @@
 #include "personal.hpp"
 #include <vector>
 
-class Sav4 : public Sav
-{
+class Sav4 : public Sav {
 protected:
     int Trainer1;
     int MailItems, PouchBalls, BattleItems;
@@ -93,7 +92,7 @@ public:
     std::shared_ptr<PKX> pkm(u8 box, u8 slot, bool ekx = false) const override;
 
     // NOTICE: this sets a pkx into the savefile, not a pkx
-    // that's because PKSM works with decrypted boxes and
+    // that's because pkmn-chest works with decrypted boxes and
     // crypts them back during resigning
     void pkm(std::shared_ptr<PKX> pk, u8 box, u8 slot, bool applyTrade) override;
     void pkm(std::shared_ptr<PKX> pk, u8 slot) override;
@@ -104,10 +103,6 @@ public:
     void dex(std::shared_ptr<PKX> pk) override;
     int dexSeen(void) const override;
     int dexCaught(void) const override;
-    // int emptyGiftLocation(void) const override;
-    // std::vector<MysteryGift::giftData> currentGifts(void) const override;
-    // void mysteryGift(WCX& wc, int& pos) override;
-    // std::unique_ptr<WCX> mysteryGift(int pos) const override;
     void cryptBoxData(bool crypted) override;
     std::string boxName(u8 box) const override;
     void boxName(u8 box, const std::string& name) override;

@@ -30,39 +30,21 @@
 #include <queue>
 #include <vector>
 
-// std::string StringUtils::format(const std::string& fmt_str, ...)
-// {
-//     va_list ap;
-//     char* fp = NULL;
-//     va_start(ap, fmt_str);
-//     vasprintf(&fp, fmt_str.c_str(), ap);
-//     va_end(ap);
-//     std::unique_ptr<char, decltype(free)*> formatted(fp, free);
-//     return std::string(formatted.get());
-// }
-
-std::u16string StringUtils::UTF8toUTF16(const std::string& src)
-{
+std::u16string StringUtils::UTF8toUTF16(const std::string& src) {
     std::u16string ret;
-    for (size_t i = 0; i < src.size(); i++)
-    {
+    for (size_t i = 0; i < src.size(); i++) {
         u16 codepoint = 0xFFFD;
         int iMod      = 0;
-        if (src[i] & 0x80 && src[i] & 0x40 && src[i] & 0x20 && !(src[i] & 0x10) && i + 2 < src.size())
-        {
+        if (src[i] & 0x80 && src[i] & 0x40 && src[i] & 0x20 && !(src[i] & 0x10) && i + 2 < src.size()) {
             codepoint = src[i] & 0x0F;
             codepoint = codepoint << 6 | (src[i + 1] & 0x3F);
             codepoint = codepoint << 6 | (src[i + 2] & 0x3F);
             iMod      = 2;
-        }
-        else if (src[i] & 0x80 && src[i] & 0x40 && !(src[i] & 0x20) && i + 1 < src.size())
-        {
+        } else if (src[i] & 0x80 && src[i] & 0x40 && !(src[i] & 0x20) && i + 1 < src.size()) {
             codepoint = src[i] & 0x1F;
             codepoint = codepoint << 6 | (src[i + 1] & 0x3F);
             iMod      = 1;
-        }
-        else if (!(src[i] & 0x80))
-        {
+        } else if (!(src[i] & 0x80)) {
             codepoint = src[i];
         }
 
@@ -72,29 +54,20 @@ std::u16string StringUtils::UTF8toUTF16(const std::string& src)
     return ret;
 }
 
-static std::string utf16DataToUtf8(const char16_t* data, size_t size, char16_t delim = 0)
-{
+static std::string utf16DataToUtf8(const char16_t* data, size_t size, char16_t delim = 0) {
     std::string ret;
     char addChar[4] = {0};
-    for (size_t i = 0; i < size; i++)
-    {
-        if (data[i] == delim)
-        {
+    for (size_t i = 0; i < size; i++) {
+        if (data[i] == delim) {
             return ret;
-        }
-        else if (data[i] < 0x0080)
-        {
+        } else if (data[i] < 0x0080) {
             addChar[0] = data[i];
             addChar[1] = '\0';
-        }
-        else if (data[i] < 0x0800)
-        {
+        } else if (data[i] < 0x0800) {
             addChar[0] = 0xC0 | ((data[i] >> 6) & 0x1F);
             addChar[1] = 0x80 | (data[i] & 0x3F);
             addChar[2] = '\0';
-        }
-        else
-        {
+        } else {
             addChar[0] = 0xE0 | ((data[i] >> 12) & 0x0F);
             addChar[1] = 0x80 | ((data[i] >> 6) & 0x3F);
             addChar[2] = 0x80 | (data[i] & 0x3F);
@@ -105,82 +78,35 @@ static std::string utf16DataToUtf8(const char16_t* data, size_t size, char16_t d
     return ret;
 }
 
-std::string StringUtils::UTF16toUTF8(const std::u16string& src)
-{
+std::string StringUtils::UTF16toUTF8(const std::u16string& src) {
     return utf16DataToUtf8(src.data(), src.size());
 }
 
-std::string StringUtils::getString(const u8* data, int ofs, int len, char16_t term)
-{
+std::string StringUtils::getString(const u8* data, int ofs, int len, char16_t term) {
     return utf16DataToUtf8((char16_t*)(data + ofs), len, term);
 }
 
-void StringUtils::setString(u8* data, const std::u16string& v, int ofs, int len, char16_t terminator, char16_t padding)
-{
+void StringUtils::setString(u8* data, const std::u16string& v, int ofs, int len, char16_t terminator, char16_t padding) {
     int i = 0;
-    for (; i < std::min(len - 1, (int)v.size()); i++) // len includes terminator
-    {
+    for (; i < std::min(len - 1, (int)v.size()); i++) { // len includes terminator
         *(u16*)(data + ofs + i * 2) = v[i];
     }
     *(u16*)(data + ofs + i++ * 2) = terminator; // Set terminator
-    for (; i < len; i++)
-    {
+    for (; i < len; i++) {
         *(u16*)(data + ofs + i * 2) = padding; // Set final padding bytes
     }
 }
 
-void StringUtils::setString(u8* data, const std::string& v, int ofs, int len, char16_t terminator, char16_t padding)
-{
+void StringUtils::setString(u8* data, const std::string& v, int ofs, int len, char16_t terminator, char16_t padding) {
     setString(data, UTF8toUTF16(v), ofs, len, terminator, padding);
-    // len *= 2;
-    // u8 toinsert[len] = {0};
-    // if (v.empty()) return;
-
-    // char buf;
-    // int nicklen = v.length(), r = 0, w = 0, i = 0;
-    // while (r < nicklen || w > len)
-    // {
-    //     buf = v[r++];
-    //     if ((buf & 0x80) == 0)
-    //     {
-    //         toinsert[w] = buf & 0x7f;
-    //         i = 0;
-    //     }
-    //     else if ((buf & 0xe0) == 0xc0)
-    //     {
-    //         toinsert[w] = buf & 0x1f;
-    //         i = 1;
-    //     }
-    //     else if ((buf & 0xf0) == 0xe0)
-    //     {
-    //         toinsert[w] = buf & 0x0f;
-    //         i = 2;
-    //     }
-    //     else break;
-
-    //     for (int j = 0; j < i; j++)
-    //     {
-    //         buf = v[r++];
-    //         if (toinsert[w] > 0x04)
-    //         {
-    //             toinsert[w + 1] = (toinsert[w + 1] << 6) | (((toinsert[w] & 0xfc) >> 2) & 0x3f);
-    //             toinsert[w] &= 0x03;
-    //         }
-    //         toinsert[w] = (toinsert[w] << 6) | (buf & 0x3f);
-    //     }
-    //     w += 2;
-    // }
-    // memcpy(data + ofs, toinsert, len);
 }
 
-std::string StringUtils::getString4(const u8* data, int ofs, int len)
-{
+std::string StringUtils::getString4(const u8* data, int ofs, int len) {
     std::string output;
     len *= 2;
     u16 temp;
     u16 codepoint;
-    for (u8 i = 0; i < len; i += 2)
-    {
+    for (u8 i = 0; i < len; i += 2) {
         temp = *(u16*)(data + ofs + i);
         if (temp == 0xFFFF)
             break;
@@ -190,8 +116,7 @@ std::string StringUtils::getString4(const u8* data, int ofs, int len)
             break;
 
         // Stupid stupid stupid
-        switch (codepoint)
-        {
+        switch (codepoint) {
             case 0x246E:
                 codepoint = 0x2640;
                 break;
@@ -201,21 +126,16 @@ std::string StringUtils::getString4(const u8* data, int ofs, int len)
         }
 
         char* addChar;
-        if (codepoint < 0x0080)
-        {
+        if (codepoint < 0x0080) {
             addChar    = new char[2];
             addChar[0] = codepoint;
             addChar[1] = '\0';
-        }
-        else if (codepoint < 0x0800)
-        {
+        } else if (codepoint < 0x0800) {
             addChar    = new char[3];
             addChar[0] = 0xC0 | ((codepoint >> 6) & 0x1F);
             addChar[1] = 0x80 | (codepoint & 0x3F);
             addChar[2] = '\0';
-        }
-        else
-        {
+        } else {
             addChar    = new char[4];
             addChar[0] = 0xE0 | ((codepoint >> 12) & 0x0F);
             addChar[1] = 0x80 | ((codepoint >> 6) & 0x3F);
@@ -228,31 +148,24 @@ std::string StringUtils::getString4(const u8* data, int ofs, int len)
     return output;
 }
 
-void StringUtils::setString4(u8* data, const std::string& v, int ofs, int len)
-{
+void StringUtils::setString4(u8* data, const std::string& v, int ofs, int len) {
     u16 output[len] = {0};
     u16 outIndex = 0, charIndex = 0;
-    for (; outIndex < len && charIndex < v.length(); charIndex++, outIndex++)
-    {
-        if (v[charIndex] & 0x80)
-        {
+    for (; outIndex < len && charIndex < v.length(); charIndex++, outIndex++) {
+        if (v[charIndex] & 0x80) {
             u16 codepoint = 0;
-            if (v[charIndex] & 0x80 && v[charIndex] & 0x40 && v[charIndex] & 0x20)
-            {
+            if (v[charIndex] & 0x80 && v[charIndex] & 0x40 && v[charIndex] & 0x20) {
                 codepoint = v[charIndex] & 0x0F;
                 codepoint = codepoint << 6 | (v[charIndex + 1] & 0x3F);
                 codepoint = codepoint << 6 | (v[charIndex + 2] & 0x3F);
                 charIndex += 2;
-            }
-            else if (v[charIndex] & 0x80 && v[charIndex] & 0x40)
-            {
+            } else if (v[charIndex] & 0x80 && v[charIndex] & 0x40) {
                 codepoint = v[charIndex] & 0x1F;
                 codepoint = codepoint << 6 | (v[charIndex + 1] & 0x3F);
                 charIndex += 1;
             }
             // GAHHHHHH WHY
-            switch (codepoint)
-            {
+            switch (codepoint) {
                 case 0x2640:
                     codepoint = 0x246E; // Female
                     break;
@@ -262,9 +175,7 @@ void StringUtils::setString4(u8* data, const std::string& v, int ofs, int len)
             }
             size_t index     = std::distance(G4Chars, std::find(G4Chars, G4Chars + G4TEXT_LENGTH, codepoint));
             output[outIndex] = (index < G4TEXT_LENGTH ? G4Values[index] : 0x0000);
-        }
-        else
-        {
+        } else {
             size_t index     = std::distance(G4Chars, std::find(G4Chars, G4Chars + G4TEXT_LENGTH, v[charIndex]));
             output[outIndex] = (index < G4TEXT_LENGTH ? G4Values[index] : 0x0000);
         }
@@ -273,14 +184,11 @@ void StringUtils::setString4(u8* data, const std::string& v, int ofs, int len)
     memcpy(data + ofs, output, len * 2);
 }
 
-std::string& StringUtils::toUpper(std::string& in)
-{
+std::string& StringUtils::toUpper(std::string& in) {
     std::transform(in.begin(), in.end(), in.begin(), ::toupper);
     std::u16string otherIn = StringUtils::UTF8toUTF16(in);
-    for (size_t i = 0; i < otherIn.size(); i++)
-    {
-        switch (otherIn[i])
-        {
+    for (size_t i = 0; i < otherIn.size(); i++) {
+        switch (otherIn[i]) {
             case u'í':
                 otherIn[i] = u'Í';
                 break;
@@ -323,14 +231,11 @@ std::string& StringUtils::toUpper(std::string& in)
     return in;
 }
 
-std::string& StringUtils::toLower(std::string& in)
-{
+std::string& StringUtils::toLower(std::string& in) {
     std::transform(in.begin(), in.end(), in.begin(), ::tolower);
     std::u16string otherIn = StringUtils::UTF8toUTF16(in);
-    for (size_t i = 0; i < otherIn.size(); i++)
-    {
-        switch (otherIn[i])
-        {
+    for (size_t i = 0; i < otherIn.size(); i++) {
+        switch (otherIn[i]) {
             case u'Í':
                 otherIn[i] = u'í';
                 break;

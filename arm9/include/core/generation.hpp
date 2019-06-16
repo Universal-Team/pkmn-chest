@@ -29,8 +29,7 @@
 
 #include <string>
 
-enum class Generation
-{
+enum class Generation {
     FOUR,
     FIVE,
     SIX,

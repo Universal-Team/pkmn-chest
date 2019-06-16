@@ -29,18 +29,14 @@
 
 #include "Item.hpp"
 #include "PKX.hpp"
-// #include "WCX.hpp"
 #include "game.hpp"
 #include "generation.hpp"
-// #include "i18n.hpp"
-// #include "mysterygift.hpp"
 #include "utils.hpp"
 #include <memory>
 #include <map>
 #include <stdint.h>
 
-enum Pouch
-{
+enum Pouch {
     NormalItem,
     KeyItem,
     TM,
@@ -53,9 +49,8 @@ enum Pouch
     ZCrystals
 };
 
-class Sav
-{
-protected:
+class Sav {
+    protected:
     int Box, Party, PokeDex, WondercardData, WondercardFlags;
     int PouchHeldItem, PouchKeyItem, PouchTMHM, PouchMedicine, PouchBerry;
 
@@ -141,16 +136,12 @@ public:
     virtual void dex(std::shared_ptr<PKX> pk)                           = 0;
     virtual int dexSeen(void) const                                     = 0;
     virtual int dexCaught(void) const                                   = 0;
-    // virtual int emptyGiftLocation(void) const                           = 0;
-    // virtual std::vector<MysteryGift::giftData> currentGifts(void) const = 0;
-    // virtual std::unique_ptr<WCX> mysteryGift(int pos) const             = 0;
-    // virtual void mysteryGift(WCX& wc, int& pos)                         = 0;
     virtual void cryptBoxData(bool crypted)                             = 0;
     virtual std::string boxName(u8 box) const                           = 0;
     virtual void boxName(u8 box, const std::string& name)               = 0;
     virtual u8 partyCount(void) const                                   = 0;
     virtual void partyCount(u8 count)                                   = 0;
-    virtual void fixParty(void); // Has to be overridden by SavLGPE because it works stupidly
+    virtual void fixParty(void);
 
     virtual int maxSlot(void) const { return maxBoxes() * 30; }
     virtual int maxBoxes(void) const          = 0;

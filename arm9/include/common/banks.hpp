@@ -33,8 +33,7 @@
 #define BANK_DEFAULT_SIZE 50
 #define BANK_MAX_SIZE 500
 
-namespace Banks
-{
+namespace Banks {
     extern std::shared_ptr<Bank> bank;
     int init();
     // If maxBoxes == 0, the default will be used

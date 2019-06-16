@@ -34,8 +34,7 @@
 #include "personal_xyoras.h"
 #include <nds/ndstypes.h>
 
-namespace PersonalLGPE
-{
+namespace PersonalLGPE {
     u8 baseHP(u16 species);
     u8 baseAtk(u16 species);
     u8 baseDef(u16 species);
@@ -52,8 +51,7 @@ namespace PersonalLGPE
     u8 formCount(u16 species);
 }
 
-namespace PersonalSMUSUM
-{
+namespace PersonalSMUSUM {
     u8 baseHP(u16 species);
     u8 baseAtk(u16 species);
     u8 baseDef(u16 species);
@@ -70,8 +68,7 @@ namespace PersonalSMUSUM
     u8 formCount(u16 species);
 }
 
-namespace PersonalXYORAS
-{
+namespace PersonalXYORAS {
     u8 baseHP(u16 species);
     u8 baseAtk(u16 species);
     u8 baseDef(u16 species);
@@ -88,8 +85,7 @@ namespace PersonalXYORAS
     u8 formCount(u16 species);
 }
 
-namespace PersonalBWB2W2
-{
+namespace PersonalBWB2W2 {
     u8 baseHP(u16 species);
     u8 baseAtk(u16 species);
     u8 baseDef(u16 species);
@@ -106,8 +102,7 @@ namespace PersonalBWB2W2
     u8 formCount(u16 species);
 }
 
-namespace PersonalDPPtHGSS
-{
+namespace PersonalDPPtHGSS {
     u8 baseHP(u16 species);
     u8 baseAtk(u16 species);
     u8 baseDef(u16 species);

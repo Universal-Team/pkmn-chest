@@ -31,8 +31,7 @@
 #include "PKX.hpp"
 #include "time.h"
 
-class PK4 : public PKX
-{
+class PK4 : public PKX {
 protected:
     static constexpr u8 beasts[4]  = {251, 243, 244, 245};
 
@@ -40,8 +39,7 @@ protected:
     void crypt(void) override;
 
 public:
-    PK4()
-    {
+    PK4() {
         length = 136;
         data   = new u8[length];
         std::fill_n(data, length, 0);

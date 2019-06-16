@@ -27,8 +27,8 @@
 #ifndef ITEM_HPP
 #define ITEM_HPP
 
-#include "generation.hpp"
 #include <nds/ndstypes.h>
+#include "generation.hpp"
 
 class Item4;
 class Item5;
@@ -36,8 +36,7 @@ class Item6;
 class Item7;
 class Item7b;
 
-class Item
-{
+class Item {
 public:
     virtual Generation generation(void) const     = 0;
     virtual u16 id(void) const                    = 0;
@@ -52,20 +51,16 @@ public:
     virtual operator Item7b(void) const;
 };
 
-class Item4 : public Item
-{
+class Item4 : public Item {
 private:
-    struct
-    {
+    struct {
         u16 id;
         u16 count;
     } itemData;
 
 public:
-    Item4(u8* data = nullptr)
-    {
-        if (data)
-        {
+    Item4(u8* data = nullptr) {
+        if (data) {
             std::copy(data, data + 4, (u8*)&itemData);
         }
     }
@@ -77,20 +72,16 @@ public:
     std::pair<u8*, int> bytes(void) const override { return {(u8*)&itemData, sizeof(itemData)}; }
 };
 
-class Item5 : public Item
-{
-private:
-    struct
-    {
+class Item5 : public Item {
+    private:
+    struct {
         u16 id;
         u16 count;
     } itemData;
 
 public:
-    Item5(u8* data = nullptr)
-    {
-        if (data)
-        {
+    Item5(u8* data = nullptr) {
+        if (data) {
             std::copy(data, data + 4, (u8*)&itemData);
         }
     }
@@ -102,20 +93,16 @@ public:
     std::pair<u8*, int> bytes(void) const override { return {(u8*)&itemData, sizeof(itemData)}; }
 };
 
-class Item6 : public Item
-{
+class Item6 : public Item {
 private:
-    struct
-    {
+    struct {
         u16 id;
         u16 count;
     } itemData;
 
 public:
-    Item6(u8* data = nullptr)
-    {
-        if (data)
-        {
+    Item6(u8* data = nullptr) {
+        if (data) {
             std::copy(data, data + 4, (u8*)&itemData);
         }
     }
@@ -127,11 +114,9 @@ public:
     std::pair<u8*, int> bytes(void) const override { return {(u8*)&itemData, sizeof(itemData)}; }
 };
 
-class Item7 : public Item
-{
+class Item7 : public Item {
 private:
-    struct
-    {
+    struct {
         unsigned int id : 10;
         unsigned int count : 10;
         unsigned int freeSpace : 10;
@@ -140,10 +125,8 @@ private:
     } itemData;
 
 public:
-    Item7(u8* data = nullptr)
-    {
-        if (data)
-        {
+    Item7(u8* data = nullptr) {
+        if (data) {
             std::copy(data, data + 4, (u8*)&itemData);
         }
     }
@@ -162,11 +145,9 @@ public:
     operator Item7b(void) const override;
 };
 
-class Item7b : public Item
-{
+class Item7b : public Item {
 private:
-    struct
-    {
+    struct {
         unsigned int id : 15;
         unsigned int count : 15;
         unsigned int newFlag : 1;
@@ -174,10 +155,8 @@ private:
     } itemData;
 
 public:
-    Item7b(u8* data = nullptr)
-    {
-        if (data)
-        {
+    Item7b(u8* data = nullptr) {
+        if (data) {
             std::copy(data, data + 4, (u8*)&itemData);
         }
     }

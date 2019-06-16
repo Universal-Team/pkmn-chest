@@ -25,10 +25,10 @@
  */
 
 #include "Bank.hpp"
-#include "PK4.hpp"
-#include "../fileBrowse.h"
-#include <unistd.h>
 #include <fstream>
+#include "PK4.hpp"
+#include <unistd.h>
+#include "../fileBrowse.h"
 #include "../graphics/graphics.h"
 
 #define BANK(paths) paths.first
@@ -39,52 +39,40 @@
 std::string Bank::BANK_MAGIC = "PKSMBANK";
 
 // TODO actually do stuff with the name
-Bank::Bank(const std::string& name, int maxBoxes) : bankName(name)
-{
+Bank::Bank(const std::string& name, int maxBoxes) : bankName(name) {
     load(maxBoxes);
-    if (boxes() != maxBoxes)
-    {
+    if (boxes() != maxBoxes) {
         resize(maxBoxes);
     }
 }
 
-void Bank::load(int maxBoxes)
-{
-    if (data)
-    {
+void Bank::load(int maxBoxes) {
+    if (data) {
         delete[] data;
         data = nullptr;
     }
     needsCheck = false;
-    if (name() == "pksm_1" && access("sd:/_nds/pkmn-chest/bank/bank.bin", F_OK) == 0)
-    {
+    if (name() == "pksm_1" && access("sd:/_nds/pkmn-chest/bank/bank.bin", F_OK) == 0) {
         convert();
-    }
-    else
-    {
+    } else {
         auto paths    = this->paths();
         bool needSave = false;
         std::ifstream in(BANK(paths));
-        if (in.good())
-        {
+        if (in.good()) {
             // Gui::waitFrame(i18n::localize("BANK_LOAD"));
             BankHeader h{"BAD_MGC", 0, 0};
             in.seekg (0, in.end);
             size = in.tellg();
             in.seekg (0, in.beg);
             in.read((char*)&h, sizeof(BankHeader) - sizeof(int));
-            if (memcmp(&h, BANK_MAGIC.data(), 8))
-            {
+            if (memcmp(&h, BANK_MAGIC.data(), 8)) {
                 // Gui::warn(i18n::localize("BANK_CORRUPT"));
                 in.close();
                 createBank(maxBoxes);
                 needSave = true;
-            }
-            else
-            {
+            } else {
                 // NOTE: THIS IS THE CONVERSION SECTION. WILL NEED TO BE MODIFIED WHEN THE FORMAT IS CHANGED
-                if (h.version == 1)
-                {
+                if (h.version == 1) {
                     h.boxes  = (size - (sizeof(BankHeader) - sizeof(int))) / sizeof(BankEntry) / 30;
                     maxBoxes = h.boxes;
                     extern nlohmann::json g_banks;
@@ -93,8 +81,7 @@ void Bank::load(int maxBoxes)
                     h.version         = BANK_VERSION;
                     needSave          = true;
                 }
-                else
-                {
+                else {
                     data = new u8[size];
                     in.read((char*)&h.boxes, sizeof(int));
                 }
@@ -102,9 +89,7 @@ void Bank::load(int maxBoxes)
                 in.read((char*)data + sizeof(BankHeader), size - sizeof(BankHeader));
                 in.close();
             }
-        }
-        else
-        {
+        } else {
             // Gui::waitFrame(i18n::localize("BANK_CREATE"));
             in.close();
             createBank(maxBoxes);
@@ -112,8 +97,7 @@ void Bank::load(int maxBoxes)
         }
 
         in.open(JSON(paths));
-        if (in.good())
-        {
+        if (in.good()) {
             in.seekg (0, in.end);
             size_t jsonSize = in.tellg();
             in.seekg (0, in.beg);
@@ -122,30 +106,22 @@ void Bank::load(int maxBoxes)
             in.close();
             jsonData[jsonSize] = '\0';
             boxNames           = nlohmann::json::parse(jsonData, nullptr, false);
-            if (boxNames.is_discarded())
-            {
+            if (boxNames.is_discarded()) {
                 createJSON();
                 needSave = true;
-            }
-            else
-            {
-                for (int i = boxNames.size(); i < boxes(); i++)
-                {
+            } else {
+                for (int i = boxNames.size(); i < boxes(); i++) {
                     // boxNames[i] = i18n::localize("STORAGE") + " " + std::to_string(i + 1);
                     boxNames[i] = "STORAGE " + std::to_string(i + 1);
-                    if (!needSave)
-                    {
+                    if (!needSave) {
                         needSave = true;
                     }
                 }
             }
-        }
-        else
-        {
+        } else {
             in.close();
             boxNames = nlohmann::json::array();
-            for (int i = 0; i < boxes(); i++)
-            {
+            for (int i = 0; i < boxes(); i++) {
                 // boxNames[i] = i18n::localize("STORAGE") + " " + std::to_string(i + 1);
                 boxNames[i] = "STORAGE " + std::to_string(i + 1);
             }
@@ -153,24 +129,19 @@ void Bank::load(int maxBoxes)
             needSave = true;
         }
 
-        if (boxes() != maxBoxes)
-        {
+        if (boxes() != maxBoxes) {
             resize(maxBoxes);
         }
 
-        if (needSave)
-        {
+        if (needSave) {
             save();
-        }
-        else
-        {
+        } else {
             sha256(prevHash.data(), data, size);
         }
     }
 }
 
-bool Bank::save() const
-{
+bool Bank::save() const {
     // if (Configuration::getInstance().autoBackup())
     // {
     //     if (!backup() && !Gui::showChoiceMessage(i18n::localize("BACKUP_FAIL_SAVE_1"), i18n::localize("BACKUP_FAIL_SAVE_2")))
@@ -182,28 +153,22 @@ bool Bank::save() const
     // Gui::waitFrame(i18n::localize("BANK_SAVE"));
     // FSUSER_DeleteFile(ARCHIVE, fsMakePath(PATH_UTF16, StringUtils::UTF8toUTF16(BANK(paths)).c_str()));
     std::ofstream out(BANK(paths));
-    if (out.good())
-    {
+    if (out.good()) {
         out.write((char*)data, sizeof(BankHeader) + sizeof(BankEntry) * boxes() * 30);
         out.close();
 
         std::string jsonData = boxNames.dump(2);
         // FSUSER_DeleteFile(ARCHIVE, fsMakePath(PATH_UTF16, StringUtils::UTF8toUTF16(JSON(paths)).c_str()));
         out.open(JSON(paths));
-        if (out.good())
-        {
+        if (out.good()) {
             out.write(jsonData.data(), jsonData.size() + 1);
             sha256(prevHash.data(), data, sizeof(BankHeader) + sizeof(BankEntry) * boxes() * 30);
-        }
-        else
-        {
+        } else {
             // Gui::error(i18n::localize("BANK_NAME_ERROR"), out.result());
         }
         out.close();
         return true;
-    }
-    else
-    {
+    } else {
         // Gui::error(i18n::localize("BANK_SAVE_ERROR"), out.result());
         out.close();
         return false;
@@ -212,18 +177,15 @@ bool Bank::save() const
     needsCheck = false;
 }
 
-void Bank::resize(size_t boxes)
-{
+void Bank::resize(size_t boxes) {
     size_t newSize = sizeof(BankHeader) + sizeof(BankEntry) * boxes * 30;
     auto paths     = this->paths();
-    if (newSize != size)
-    {
+    if (newSize != size) {
         // Gui::showResizeStorage();
         u8* newData = new u8[newSize];
         std::copy(data, data + std::min(newSize, size), newData);
         delete[] data;
-        if (newSize > size)
-        {
+        if (newSize > size) {
             std::fill_n(newData + size, newSize - size, 0xFF);
         }
         data = newData;
@@ -233,8 +195,7 @@ void Bank::resize(size_t boxes)
 
         ((BankHeader*)data)->boxes = boxes;
 
-        for (size_t i = boxNames.size(); i < boxes; i++)
-        {
+        for (size_t i = boxNames.size(); i < boxes; i++) {
             // boxNames[i] = i18n::localize("STORAGE") + " " + std::to_string(i + 1);
             boxNames[i] = "STORAGE " + std::to_string(i + 1);
         }
@@ -244,12 +205,10 @@ void Bank::resize(size_t boxes)
     size = newSize;
 }
 
-std::shared_ptr<PKX> Bank::pkm(int box, int slot) const
-{
+std::shared_ptr<PKX> Bank::pkm(int box, int slot) const {
     BankEntry* bank = (BankEntry*)(data + sizeof(BankHeader));
     int index       = box * 30 + slot;
-    switch (bank[index].gen)
-    {
+    switch (bank[index].gen) {
         case Generation::FOUR:
             return std::make_shared<PK4>(bank[index].data, false, false);
         case Generation::FIVE:
@@ -266,13 +225,11 @@ std::shared_ptr<PKX> Bank::pkm(int box, int slot) const
     }
 }
 
-void Bank::pkm(std::shared_ptr<PKX> pkm, int box, int slot)
-{
+void Bank::pkm(std::shared_ptr<PKX> pkm, int box, int slot) {
     BankEntry* bank = (BankEntry*)(data + sizeof(BankHeader));
     int index       = box * 30 + slot;
     BankEntry newEntry;
-    if (pkm->species() == 0)
-    {
+    if (pkm->species() == 0) {
         std::fill_n((char*)&newEntry, sizeof(BankEntry), 0xFF);
         bank[index] = newEntry;
         needsCheck  = true;
@@ -280,52 +237,43 @@ void Bank::pkm(std::shared_ptr<PKX> pkm, int box, int slot)
     }
     newEntry.gen = pkm->generation();
     std::copy(pkm->rawData(), pkm->rawData() + pkm->getLength(), newEntry.data);
-    if (pkm->getLength() < 260)
-    {
+    if (pkm->getLength() < 260) {
         std::fill_n(newEntry.data + pkm->getLength(), 260 - pkm->getLength(), 0xFF);
     }
     bank[index] = newEntry;
     needsCheck  = true;
 }
 
-bool Bank::backup() const
-{
+bool Bank::backup() const {
     // Gui::waitFrame(i18n::localize("BANK_BACKUP"));
     auto paths = this->paths();
     // Archive::copyFile(Archive::sd(), "sd:/_nds/pkmn-chest/backups/" + bankName + ".bnk.bak", Archive::sd(), "sd:/_nds/pkmn-chest/backups/" + bankName + ".bnk.bak.old");
     // Archive::copyFile(Archive::sd(), "sd:/_nds/pkmn-chest/backups/" + bankName + ".json.bak", Archive::sd(), "sd:/_nds/pkmn-chest/backups/" + bankName + ".json.bak.old");
-    if (fcopy(BANK(paths).c_str(), ("sd:/_nds/pkmn-chest/backups/" + bankName + ".bnk.bak").c_str()))
-    {
+    if (fcopy(BANK(paths).c_str(), ("sd:/_nds/pkmn-chest/backups/" + bankName + ".bnk.bak").c_str())) {
         return false;
     }
     fcopy(JSON(paths).c_str(), ("sd:/_nds/pkmn-chest/backups/" + bankName + ".json.bak").c_str());
     return true;
 }
 
-std::string Bank::boxName(int box) const
-{
+std::string Bank::boxName(int box) const {
     return boxNames[box].get<std::string>();
 }
 
-void Bank::boxName(std::string name, int box)
-{
+void Bank::boxName(std::string name, int box) {
     boxNames[box] = name;
 }
 
-void Bank::createJSON()
-{
+void Bank::createJSON() {
     boxNames = nlohmann::json::array();
-    for (int i = 0; i < boxes(); i++)
-    {
+    for (int i = 0; i < boxes(); i++) {
         // boxNames[i] = i18n::localize("STORAGE") + " " + std::to_string(i + 1);
         boxNames[i] = "STORAGE " + std::to_string(i + 1);
     }
 }
 
-void Bank::createBank(int maxBoxes)
-{
-    if (data)
-    {
+void Bank::createBank(int maxBoxes) {
+    if (data) {
         delete[] data;
     }
     data = new u8[size = sizeof(BankHeader) + sizeof(BankEntry) * maxBoxes * 30];
@@ -335,24 +283,20 @@ void Bank::createBank(int maxBoxes)
     std::fill_n(data + sizeof(BankHeader), sizeof(BankEntry) * boxes() * 30, 0xFF);
 }
 
-bool Bank::hasChanged() const
-{
-    if (!needsCheck)
-    {
+bool Bank::hasChanged() const {
+    if (!needsCheck) {
         return false;
     }
     u8 hash[SHA256_BLOCK_SIZE];
     sha256(hash, data, sizeof(BankHeader) + sizeof(BankEntry) * boxes() * 30);
-    if (memcmp(hash, prevHash.data(), SHA256_BLOCK_SIZE))
-    {
+    if (memcmp(hash, prevHash.data(), SHA256_BLOCK_SIZE)) {
         return true;
     }
     needsCheck = false;
     return false;
 }
 
-void Bank::convert()
-{
+void Bank::convert() {
     bool deleteOld = true;
     // Gui::waitFrame(i18n::localize("BANK_CONVERT"));
     std::fstream stream("sd:/_nds/pkmn-chest/bank/bank.bin", std::fstream::in | std::fstream::out);
@@ -360,12 +304,9 @@ void Bank::convert()
     size_t oldSize = stream.tellg();
     stream.seekg (0, stream.beg);
     u8* oldData    = new u8[oldSize];
-    if (stream.good())
-    {
+    if (stream.good()) {
         stream.read((char*)oldData, oldSize);
-    }
-    else
-    {
+    } else {
         // Gui::error(i18n::localize("BANK_BAD_CONVERT"), stream.result());
         delete[] oldData;
         stream.close();
@@ -382,41 +323,30 @@ void Bank::convert()
     std::fill_n(data + sizeof(BankHeader), sizeof(BankEntry) * boxes() * 30, 0xFF);
     boxNames = nlohmann::json::array();
 
-    for (int box = 0; box < std::min((int)oldSize / (232 * 30), boxes()); box++)
-    {
-        for (int slot = 0; slot < 30; slot++)
-        {
+    for (int box = 0; box < std::min((int)oldSize / (232 * 30), boxes()); box++) {
+        for (int slot = 0; slot < 30; slot++) {
             u8* pkmData              = oldData + box * (232 * 30) + slot * 232;
             std::shared_ptr<PKX> pkm = std::make_shared<PK6>(pkmData, false);
-            if ((pkm->encryptionConstant() == 0 && pkm->species() == 0))
-            {
+            if ((pkm->encryptionConstant() == 0 && pkm->species() == 0)) {
                 this->pkm(pkm, box, slot);
                 continue;
             }
             bool badMove = false;
-            for (int i = 0; i < 4; i++)
-            {
-                if (pkm->move(i) > 621)
-                {
+            for (int i = 0; i < 4; i++) {
+                if (pkm->move(i) > 621) {
                     badMove = true;
                     break;
                 }
-                if (((PK6*)pkm.get())->relearnMove(i) > 621)
-                {
+                if (((PK6*)pkm.get())->relearnMove(i) > 621) {
                     badMove = true;
                     break;
                 }
             }
-            if (pkm->version() > 27 || pkm->species() > 721 || pkm->ability() > 191 || pkm->heldItem() > 775 || badMove)
-            {
+            if (pkm->version() > 27 || pkm->species() > 721 || pkm->ability() > 191 || pkm->heldItem() > 775 || badMove) {
                 pkm = std::make_shared<PK7>(pkmData, false);
-            }
-            else if (((PK6*)pkm.get())->encounterType() != 0)
-            {
-                if (((PK6*)pkm.get())->level() == 100) // Can be hyper trained
-                {
-                    if (!pkm->gen4() || ((PK6*)pkm.get())->encounterType() > 24) // Either isn't from Gen 4 or has invalid encounter type
-                    {
+            } else if (((PK6*)pkm.get())->encounterType() != 0) {
+                if (((PK6*)pkm.get())->level() == 100) { // Can be hyper trained
+                    if (!pkm->gen4() || ((PK6*)pkm.get())->encounterType() > 24) { // Either isn't from Gen 4 or has invalid encounter type
                         pkm = std::make_shared<PK7>(pkmData, false);
                     }
                 }
@@ -425,8 +355,7 @@ void Bank::convert()
         }
     }
 
-    for (int i = 0; i < boxes(); i++)
-    {
+    for (int i = 0; i < boxes(); i++) {
         // boxNames[i] = i18n::localize("STORAGE") + " " + std::to_string(i + 1);
         boxNames[i] = "STORAGE " + std::to_string(i + 1);
     }
@@ -437,25 +366,21 @@ void Bank::convert()
 
     delete[] oldData;
 
-    if (deleteOld)
-    {
+    if (deleteOld) {
         remove("sd:/_nds/pkmn-chest/bank/bank.bin");
     }
     save();
 }
 
-const std::string& Bank::name() const
-{
+const std::string& Bank::name() const {
     return bankName;
 }
 
-int Bank::boxes() const
-{
+int Bank::boxes() const {
     return ((BankHeader*)data)->boxes;
 }
 
-bool Bank::setName(const std::string& name)
-{
+bool Bank::setName(const std::string& name) {
     auto oldPaths       = paths();
     std::string oldName = bankName;
     bankName            = name;
@@ -480,7 +405,6 @@ bool Bank::setName(const std::string& name)
     return true;
 }
 
-std::pair<std::string, std::string> Bank::paths() const
-{
+std::pair<std::string, std::string> Bank::paths() const {
     return {"sd:/_nds/pkmn-chest/banks/" + bankName + ".bnk", "sd:/_nds/pkmn-chest/banks/" + bankName + ".json"};
 }

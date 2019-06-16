@@ -27,8 +27,7 @@
 #ifndef Game_HPP
 #define Game_HPP
 
-enum Game
-{
+enum Game {
     DP,
     Pt,
     HGSS,
