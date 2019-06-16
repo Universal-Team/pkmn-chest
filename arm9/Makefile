@@ -21,7 +21,8 @@ SOURCES		:=	source \
 				source/graphics
 INCLUDES	:=	include \
 				include/common include/common/utils \
-				include/core/ include/core/sav include/core/personal include/core/pkx
+				include/core/ include/core/sav include/core/personal include/core/pkx \
+				include/graphics
 DATA		:=
 
 #---------------------------------------------------------------------------------

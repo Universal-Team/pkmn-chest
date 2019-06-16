@@ -25,14 +25,9 @@
  */
 
 #include "Bank.hpp"
-#include "Configuration.hpp"
-// #include "FSStream.hpp"
-// #include "PB7.hpp"
 #include "PK4.hpp"
 #include "../fileBrowse.h"
 #include <unistd.h>
-// #include "archive.hpp"
-// #include "gui.hpp"
 #include <fstream>
 #include "../graphics/graphics.h"
 
