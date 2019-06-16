@@ -156,7 +156,7 @@ int main(int argc, char **argv) {
 					hDown = keysDown();
 				} while(!(hDown & KEY_A || hDown & KEY_B));
 				if(hDown & KEY_A) {
-					save->cryptBoxData(true);
+					save->cryptBoxData(false);
 					saveChanges(savePath);
 				}
 
