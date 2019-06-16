@@ -10,6 +10,8 @@ struct XYCoords {
 
 extern int bottomArrowID, topArrowID, shinyID, currentBox, bottomHeldPokemonID, topHeldPokemonID;
 
+void loadGraphics(void);
+
 void drawBoxScreen(void);
 
 void drawBox(void);

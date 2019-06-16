@@ -7,6 +7,8 @@
 
 extern std::shared_ptr<Sav> save;
 
-bool load(const std::string savePath);
+bool loadSave(std::string savePath);
+
+void saveChanges(std::string savePath);
 
 #endif

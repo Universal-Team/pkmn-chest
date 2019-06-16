@@ -13,7 +13,8 @@ XYCoords getPokemonPosition(int dexNumber) {
 	return xy;
 }
 
-void drawBoxScreen(void) {
+void loadGraphics(void) {
+	// Load images into RAM
 	bankBoxData = loadPng("nitro:/graphics/bankBox.png", bankBox);
 	spriteSheetData = loadPng("nitro:/graphics/spriteSheet.png", spriteSheet);
 	stripesData = loadPng("nitro:/graphics/stripes.png", stripes);
@@ -21,29 +22,10 @@ void drawBoxScreen(void) {
 	loadPng("nitro:/graphics/arrow.png", arrow);
 	loadPng("nitro:/graphics/shiny.png", shiny);
 
-	// Draws the BGs
-	drawRectangle(0, 0, 256, 192, DARK_BLUE, true);
-	drawRectangle(0, 0, 256, 192, DARK_BLUE, false);
-	drawImage(5, 15, bankBoxData.width, bankBoxData.height, bankBox, false);
-	drawImage(5, 15, bankBoxData.width, bankBoxData.height, bankBox, true);
-
-	// The Button.
-	drawRectangle(170, 120, 68, 30, BGR15(0x63, 0x65, 0x73), false);
-
-	// Print Pokemon info and box names
-	drawPokemonInfo(save->pkm(currentBox, 0));
-	printTextTinted(save->boxName(currentBox), DARK_GRAY, 60, 20, true);
-	printTextTinted(save->boxName(currentBox), DARK_GRAY, 60, 20, false);
-
-	// Pokémon Sprites
+	// Init Pokémon Sprites
 	for(int i=0;i<30;i++)	initSprite(SpriteSize_32x32, false);
 	for(int i=0;i<30;i++)	initSprite(SpriteSize_32x32, true);
-	bottomArrowID = initSprite(SpriteSize_16x16, false);
-	topArrowID = initSprite(SpriteSize_16x16, true);
-	bottomHeldPokemonID = initSprite(SpriteSize_32x32, false);
-	topHeldPokemonID = initSprite(SpriteSize_32x32, true);
-	shinyID = initSprite(SpriteSize_16x16, true); // 8x8 wasn't working
-
+	// Prepare their locations
 	for(int y=0;y<5;y++) {
 		for(int x=0;x<6;x++) {
 			prepareSprite((y*6)+x, 8+(x*24), 32+(y*24), 2);
@@ -51,41 +33,52 @@ void drawBoxScreen(void) {
 		}
 	}
 
-	for(int i=0;i<30;i++) {
-		if(save->pkm(currentBox, i)->species() != 0) {
-			XYCoords xy = getPokemonPosition(save->pkm(currentBox, i)->species());
-			fillSpriteFromSheet(i, spriteSheet, 32, 32, spriteSheetData.width, xy.x, xy.y);
-			fillSpriteFromSheet(i+30, spriteSheet, 32, 32, spriteSheetData.width, xy.x, xy.y);
-		}
-	}
-
 	// Prepare bottom arrow sprite
+	bottomArrowID = initSprite(SpriteSize_16x16, false);
 	fillSpriteImage(bottomArrowID, arrow);
 	prepareSprite(bottomArrowID, 24, 36, 0);
+	setSpriteVisibility(bottomArrowID, false);
 
 	// Prepare top arrow sprite
+	topArrowID = initSprite(SpriteSize_16x16, true);
 	fillSpriteImage(topArrowID, arrow);
 	prepareSprite(topArrowID, 24, 36, 0);
 	setSpriteVisibility(topArrowID, false);
 
 	// Prepare bottom sprite for moving pokemon
+	bottomHeldPokemonID = initSprite(SpriteSize_32x32, false);
 	prepareSprite(bottomHeldPokemonID, 0, 0, 1);
 	setSpriteVisibility(bottomHeldPokemonID, false);
 
 	// Prepare top sprite for moving pokemon
+	topHeldPokemonID = initSprite(SpriteSize_32x32, true);
 	prepareSprite(topHeldPokemonID, 0, 0, 1);
 	setSpriteVisibility(topHeldPokemonID, false);
 
 	// Prepare shiny sprite
+	shinyID = initSprite(SpriteSize_16x16, true); // 8x8 wasn't working
 	fillSpriteImage(shinyID, shiny);
 	prepareSprite(shinyID, 239, 52, 0);
-	setSpriteVisibility(shinyID, save->pkm(currentBox, 0)->shiny());
+	setSpriteVisibility(shinyID, false);
+}
 
-	updateOam();
+void drawBoxScreen(void) {
+	// Draws backgrounds
+	drawRectangle(0, 0, 256, 192, DARK_BLUE, true);
+	drawRectangle(0, 0, 256, 192, DARK_BLUE, false);
+
+	// Show bottom arrow
+	setSpriteVisibility(bottomArrowID, true);
+
+	// Draw the boxes and Pokémon
+	drawBox();
+
+	// Draw first Pokémon's info
+	drawPokemonInfo(save->pkm(currentBox, 0));
 }
 
 void drawBox(void) {
-	// Draws the BGs
+	// Draw box images
 	drawImage(5, 15, bankBoxData.width, bankBoxData.height, bankBox, false);
 	drawImage(5, 15, bankBoxData.width, bankBoxData.height, bankBox, true);
 
@@ -94,6 +87,7 @@ void drawBox(void) {
 	printTextTinted(save->boxName(currentBox), DARK_GRAY, 60, 20, false);
 
 	for(int i=0;i<30;i++) {
+		// Show/Hide Pokémon sprites for box
 		if(save->pkm(currentBox, i)->species() == 0) {
 			setSpriteVisibility(i, false);
 			setSpriteVisibility(i+30, false);
@@ -105,6 +99,7 @@ void drawBox(void) {
 	updateOam();
 
 	for(int i=0;i<30;i++) {
+		// Fill Pokémon Sprites
 		if(save->pkm(currentBox, i)->species() != 0) {
 			XYCoords xy = getPokemonPosition(save->pkm(currentBox, i)->species());
 			fillSpriteFromSheet(i, spriteSheet, 32, 32, spriteSheetData.width, xy.x, xy.y);

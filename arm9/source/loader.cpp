@@ -7,7 +7,7 @@ static std::string saveFileName;
 
 std::shared_ptr<Sav> save;
 
-bool load(const std::string savePath) {
+bool loadSave(std::string savePath) {
     saveIsFile   = true;
     saveFileName = savePath;
     std::ifstream in(savePath);
@@ -64,4 +64,15 @@ bool load(const std::string savePath) {
     //     }
     // }
     return true;
+}
+
+void saveChanges(std::string savePath) {
+    save->resign();
+    if (saveIsFile)
+    {
+        // No need to check size; if it was read successfully, that means that it has the correct size
+        std::ofstream out(savePath);
+        out.write((char*)save->rawData(), save->getLength());
+        out.close();
+    }
 }

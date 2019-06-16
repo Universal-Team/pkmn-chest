@@ -129,7 +129,10 @@ std::string browseForFile(const std::vector<std::string>& extensionList) {
 	getDirectoryContents(dirContents, extensionList);
 	showDirectoryContents(dirContents, screenOffset);
 
-	while(true) {
+	// Clear top screen
+	drawRectangle(0, 0, 256, 192, DARK_BLUE, true);
+
+	while(1) {
 		// Clear old cursors
 		drawRectangle(0, 17, 10, 175, DARK_BLUE, false);
 
@@ -139,9 +142,9 @@ std::string browseForFile(const std::vector<std::string>& extensionList) {
 
 		// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
 		do {
+			swiWaitForVBlank();
 			scanKeys();
 			pressed = keysDownRepeat();
-			swiWaitForVBlank();
 		} while(!pressed);
 
 		if(pressed & KEY_UP)	fileOffset -= 1;
