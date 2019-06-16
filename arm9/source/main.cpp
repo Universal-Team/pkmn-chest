@@ -46,14 +46,16 @@ int main(int argc, char **argv) {
 			for(int i=0;i<120;i++)	swiWaitForVBlank();
 			continue;
 		}
-		currentBox = save->currentBox();
+		currentSaveBox = save->currentBox();
+		currentBankBox = 0;
 		save->cryptBoxData(true);
 
 		drawBoxScreen();
 
 		int arrowX = 0, arrowY = 0, heldPokemon = -1, heldPokemonBox = -1;
+		bool heldPokemonScreen = false;
+		topScreen = false;
 		u16 hDown = 0;
-		bool topScreen = false;
 		while(1) {
 			do {
 				swiWaitForVBlank();
@@ -78,73 +80,67 @@ int main(int argc, char **argv) {
 			}
 			if(hDown & KEY_L) {
 				switchBoxLeft:
-				if(currentBox > 0)	currentBox--;
-				else currentBox = save->maxBoxes()-1;
-				drawBox();
-				if(currentBox == heldPokemonBox)
+				if(currentBox() > 0)
+					(topScreen ? currentBankBox : currentSaveBox)--;
+				else if(topScreen) currentBankBox = Banks::bank->boxes()-1;
+				else currentSaveBox = save->maxBoxes()-1;
+				drawBox(topScreen);
+				if(currentBox() == heldPokemonBox && topScreen == heldPokemonScreen)
 					setSpriteVisibility(heldPokemon, false);
 			} else if(hDown & KEY_R) {
 				switchBoxRight:
-				if(currentBox < save->maxBoxes()-1)	currentBox++;
-				else currentBox = 0;
-				drawBox();
-				if(currentBox == heldPokemonBox)
+				if((topScreen ? currentBankBox < Banks::bank->boxes()-1 : currentSaveBox < save->maxBoxes()-1))
+					(topScreen ? currentBankBox : currentSaveBox)++;
+				else (topScreen ? currentBankBox : currentSaveBox) = 0;
+				drawBox(topScreen);
+				if(currentBox() == heldPokemonBox && topScreen == heldPokemonScreen)
 					setSpriteVisibility(heldPokemon, false);
 			}
 			if(hDown & KEY_A) {
 				if(heldPokemon != -1) {
-					if(heldPokemon == (arrowY*6)+arrowX && heldPokemonBox == currentBox) {
+					if(heldPokemon == (arrowY*6)+arrowX && heldPokemonBox == currentBox()) {
 						// If in the held Pokémon's previous spot, just put it back down
 						setSpriteVisibility(heldPokemon, true);
 						setSpriteVisibility(topScreen ? topHeldPokemonID : bottomHeldPokemonID, false);
 						heldPokemon = -1;
 						heldPokemonBox = -1;
-					} else if(save->pkm(currentBox, (arrowY*6)+arrowX)->species() != 0) {
+					} else {
 						// If the new spot has a Pokémon, swap it with the held one
 						// Save the Pokémon at the cursor's postion to a temp variable
-						std::shared_ptr<PKX> heldPkm = save->pkm(heldPokemonBox, heldPokemon);
-						std::shared_ptr<PKX> tempPkm = save->pkm(currentBox, (arrowY*6)+arrowX);
+						std::shared_ptr<PKX> heldPkm = (heldPokemonScreen ? Banks::bank->pkm(heldPokemonBox, heldPokemon) : save->pkm(heldPokemonBox, heldPokemon));
+						std::shared_ptr<PKX> tempPkm;
+						if(currentPokemon((arrowY*6)+arrowX)->species() != 0)	tempPkm = currentPokemon((arrowY*6)+arrowX);
+						else	tempPkm = save->emptyPkm();
 						// Write the held Pokémon to the cursor position
-						save->pkm(heldPkm, currentBox, (arrowY*6)+arrowX, false);
+						if(topScreen)	Banks::bank->pkm(heldPkm, currentBox(), (arrowY*6)+arrowX);
+						else	save->pkm(heldPkm, currentBox(), (arrowY*6)+arrowX, false);
 						// Write the cursor position's previous Pokémon to the held Pokémon's old spot
-						save->pkm(tempPkm, heldPokemonBox, heldPokemon, false);
+						if(heldPokemonScreen)	Banks::bank->pkm(tempPkm, heldPokemonBox, heldPokemon);
+						else	save->pkm(tempPkm, heldPokemonBox, heldPokemon, false);
 
 						setSpriteVisibility(topScreen ? topHeldPokemonID : bottomHeldPokemonID, false);
 						heldPokemon = -1;
 						heldPokemonBox = -1;
 						
 						// Show the new held Pokémon and it's info
-						drawBox();
-						drawPokemonInfo(save->pkm(currentBox, (arrowY*6)+arrowX));
-					} else {
-						// If the spot is empty, write the held Pokémon there
-						// Write the held Pokémon to the cursor position
-						std::shared_ptr<PKX> heldPkm = save->pkm(heldPokemonBox, heldPokemon);
-
-						save->pkm(heldPkm, currentBox, (arrowY*6)+arrowX, false);
-						save->pkm(save->emptyPkm(), heldPokemonBox, heldPokemon, false);
-
-						setSpriteVisibility(topScreen ? topHeldPokemonID : bottomHeldPokemonID, false);
-						heldPokemon = -1;
-						heldPokemonBox = -1;
-
-						drawBox();
+						drawBox(topScreen);
+						drawPokemonInfo(currentPokemon((arrowY*6)+arrowX));
 					}
 				} else {
-					if(save->pkm(currentBox, (arrowY*6)+arrowX)->species() != 0) {
+					if(currentPokemon((arrowY*6)+arrowX)->species() != 0) {
 						// If no pokemon is currently held and there is one at the cursor, pick it up
 						heldPokemon = (arrowY*6)+arrowX;
-						heldPokemonBox = currentBox;
-						setHeldPokemon(save->pkm(currentBox, heldPokemon)->species());
+						heldPokemonBox = currentBox();
+						setHeldPokemon(currentPokemon(heldPokemon)->species());
 						setSpriteVisibility(heldPokemon, false);
 						setSpriteVisibility((topScreen ? topHeldPokemonID : bottomHeldPokemonID), true);
-						drawPokemonInfo(save->pkm(currentBox, heldPokemon));
+						drawPokemonInfo(currentPokemon(heldPokemon));
 					}
 				}
 			}
 
 			if((hDown & KEY_UP || hDown & KEY_DOWN || hDown & KEY_LEFT || hDown & KEY_RIGHT || hDown & KEY_L || hDown & KEY_R) && heldPokemon == -1) {
-				drawPokemonInfo(save->pkm(currentBox, (arrowY*6)+arrowX));
+				drawPokemonInfo(currentPokemon((arrowY*6)+arrowX));
 			}
 
 			if(hDown & KEY_START) {

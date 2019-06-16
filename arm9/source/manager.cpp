@@ -1,11 +1,22 @@
 #include "manager.h"
+#include "banks.hpp"
 #include "common/banks.hpp"
 #include "graphics/graphics.h"
 #include "loader.h"
 
 std::vector<u16> arrow, bankBox, shiny, spriteSheet, stripes, types;
 ImageData bankBoxData, spriteSheetData, stripesData, typesData;
-int bottomArrowID, topArrowID, shinyID, currentBox, bottomHeldPokemonID, topHeldPokemonID;
+int bottomArrowID, topArrowID, shinyID, currentSaveBox, currentBankBox, bottomHeldPokemonID, topHeldPokemonID;
+bool topScreen;
+
+int currentBox(void) {
+	return topScreen ? currentBankBox : currentSaveBox;
+}
+
+std::shared_ptr<PKX> currentPokemon(int slot) {
+	if(topScreen)	return Banks::bank->pkm(currentBox(), slot);
+	else	return save->pkm(currentBox(), slot);
+}
 
 XYCoords getPokemonPosition(int dexNumber) {
 	XYCoords xy;
@@ -72,42 +83,56 @@ void drawBoxScreen(void) {
 	setSpriteVisibility(bottomArrowID, true);
 
 	// Draw the boxes and Pokémon
-	drawBox();
+	drawBox(true);
+	drawBox(false);
 
 	// Draw first Pokémon's info
-	drawPokemonInfo(save->pkm(currentBox, 0));
+	drawPokemonInfo(save->pkm(currentBox(), 0));
 }
 
-void drawBox(void) {
+void drawBox(bool top) {
 	// Draw box images
-	drawImage(5, 15, bankBoxData.width, bankBoxData.height, bankBox, false);
-	drawImage(5, 15, bankBoxData.width, bankBoxData.height, bankBox, true);
+	drawImage(5, 15, bankBoxData.width, bankBoxData.height, bankBox, top);
 
-	// Print box names
-	printTextTinted(Banks::bank->boxName(0), DARK_GRAY, 60, 20, true);
-	printTextTinted(save->boxName(currentBox), DARK_GRAY, 60, 20, false);
+	if(top) {
+		// Print box names
+		printTextTinted(Banks::bank->boxName(currentBankBox), DARK_GRAY, 60, 20, true);
 
-	for(int i=0;i<30;i++) {
-		// Show/Hide Pokémon sprites for save box
-		if(save->pkm(currentBox, i)->species() == 0)
-			setSpriteVisibility(i, false);
-		else
-			setSpriteVisibility(i, true);
-		// Show/Hide Pokémon sprites for bank box
-		if(Banks::bank->pkm(0, i)->species() == 0)
-			setSpriteVisibility(i+30, false);
-		else
-			setSpriteVisibility(i+30, true);
-	}
-	updateOam();
+		for(int i=0;i<30;i++) {
+			// Show/Hide Pokémon sprites for bank box
+			if(Banks::bank->pkm(currentBankBox, i)->species() == 0)
+				setSpriteVisibility(i+30, false);
+			else
+				setSpriteVisibility(i+30, true);
+		}
+		updateOam();
 
-	for(int i=0;i<30;i++) {
-		// Fill Pokémon Sprites
-		if(save->pkm(currentBox, i)->species() != 0) {
-			XYCoords xy = getPokemonPosition(save->pkm(currentBox, i)->species());
-			fillSpriteFromSheet(i, spriteSheet, 32, 32, spriteSheetData.width, xy.x, xy.y);
-			xy = getPokemonPosition(Banks::bank->pkm(0, i)->species());
-			fillSpriteFromSheet(i+30, spriteSheet, 32, 32, spriteSheetData.width, xy.x, xy.y);
+		for(int i=0;i<30;i++) {
+			// Fill Pokémon Sprites
+			if(Banks::bank->pkm(currentBankBox, i)->species() != 0) {
+				XYCoords xy = getPokemonPosition(Banks::bank->pkm(0, i)->species());
+				fillSpriteFromSheet(i+30, spriteSheet, 32, 32, spriteSheetData.width, xy.x, xy.y);
+			}
+		}
+	} else {
+		// Print box names
+		printTextTinted(save->boxName(currentSaveBox), DARK_GRAY, 60, 20, false);
+
+		for(int i=0;i<30;i++) {
+			// Show/Hide Pokémon sprites for save box
+			if(save->pkm(currentSaveBox, i)->species() == 0)
+				setSpriteVisibility(i, false);
+			else
+				setSpriteVisibility(i, true);
+		}
+		updateOam();
+
+		for(int i=0;i<30;i++) {
+			// Fill Pokémon Sprites
+			if(save->pkm(currentSaveBox, i)->species() != 0) {
+				XYCoords xy = getPokemonPosition(save->pkm(currentSaveBox, i)->species());
+				fillSpriteFromSheet(i, spriteSheet, 32, 32, spriteSheetData.width, xy.x, xy.y);
+			}
 		}
 	}
 }
