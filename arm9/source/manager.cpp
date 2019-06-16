@@ -110,7 +110,7 @@ void drawBox(bool top) {
 		for(int i=0;i<30;i++) {
 			// Fill Pokémon Sprites
 			if(Banks::bank->pkm(currentBankBox, i)->species() != 0) {
-				XYCoords xy = getPokemonPosition(Banks::bank->pkm(0, i)->species());
+				XYCoords xy = getPokemonPosition(Banks::bank->pkm(currentBankBox, i)->species());
 				fillSpriteFromSheet(i+30, spriteSheet, 32, 32, spriteSheetData.width, xy.x, xy.y);
 			}
 		}

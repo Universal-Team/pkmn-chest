@@ -131,17 +131,13 @@ int main(int argc, char **argv) {
 						// If no pokemon is currently held and there is one at the cursor, pick it up
 						heldPokemon = (arrowY*6)+arrowX;
 						heldPokemonBox = currentBox();
+						heldPokemonScreen = topScreen;
 						setHeldPokemon(currentPokemon(heldPokemon)->species());
-						setSpriteVisibility(heldPokemon, false);
-						setSpriteVisibility((topScreen ? topHeldPokemonID : bottomHeldPokemonID), true);
+						setSpriteVisibility(heldPokemonScreen ? heldPokemon+30 : heldPokemon, false);
+						setSpriteVisibility(topScreen ? topHeldPokemonID : bottomHeldPokemonID, true);
 						drawPokemonInfo(currentPokemon(heldPokemon));
 					}
 				}
-			}
-
-			if((hDown & KEY_UP || hDown & KEY_DOWN || hDown & KEY_LEFT || hDown & KEY_RIGHT || hDown & KEY_L || hDown & KEY_R) && heldPokemon == -1) {
-				if(arrowY != -1)	drawPokemonInfo(currentPokemon((arrowY*6)+arrowX));
-				else	drawPokemonInfo(save->emptyPkm());
 			}
 
 			if(hDown & KEY_START) {
@@ -163,8 +159,12 @@ int main(int argc, char **argv) {
 					hDown = keysDown();
 				} while(!(hDown & KEY_A || hDown & KEY_B));
 				if(hDown & KEY_A) {
+					// Save changes to save file
 					save->cryptBoxData(false);
 					saveChanges(savePath);
+
+					// Save changes to bank
+					Banks::bank->save();
 				}
 
 				break;
@@ -189,6 +189,11 @@ int main(int argc, char **argv) {
 					setSpriteVisibility(topHeldPokemonID, false);
 				}
 
+			}
+
+			if((hDown & KEY_UP || hDown & KEY_DOWN || hDown & KEY_LEFT || hDown & KEY_RIGHT || hDown & KEY_L || hDown & KEY_R) && heldPokemon == -1) {
+				if(arrowY != -1)	drawPokemonInfo(currentPokemon((arrowY*6)+arrowX));
+				else	drawPokemonInfo(save->emptyPkm());
 			}
 
 			if(arrowY == -1) {
