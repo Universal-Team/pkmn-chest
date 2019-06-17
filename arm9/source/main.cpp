@@ -122,11 +122,16 @@ int main(int argc, char **argv) {
 						else	tempPkm = save->emptyPkm();
 						// Write the held Pokémon to the cursor position
 						if(topScreen)	Banks::bank->pkm(heldPkm, currentBox(), (arrowY*6)+arrowX);
-						else	save->pkm(heldPkm, currentBox(), (arrowY*6)+arrowX, false);
+						else {
+							save->pkm(heldPkm, currentBox(), (arrowY*6)+arrowX, false);
+							save->dex(heldPkm);
+						}
 						// Write the cursor position's previous Pokémon to the held Pokémon's old spot
 						if(heldPokemonScreen)	Banks::bank->pkm(tempPkm, heldPokemonBox, heldPokemon);
-						else	save->pkm(tempPkm, heldPokemonBox, heldPokemon, false);
-
+						else {
+							save->pkm(tempPkm, heldPokemonBox, heldPokemon, false);
+							save->dex(heldPkm);
+						}
 						setSpriteVisibility(topScreen ? topHeldPokemonID : bottomHeldPokemonID, false);
 						heldPokemon = -1;
 						heldPokemonBox = -1;
