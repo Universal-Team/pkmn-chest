@@ -1,6 +1,8 @@
 #ifndef MANAGER_H
 #define MANAGER_H
 
+#include "graphics/graphics.h"
+#include <nds.h>
 #include "sav/Sav.hpp"
 
 struct XYCoords {
@@ -8,6 +10,8 @@ struct XYCoords {
 	int y;
 };
 
+extern std::vector<u16> arrow, bankBox, keyboard, shiny, spriteSheet, stripes, types;
+extern ImageData bankBoxData, keyboardData, spriteSheetData, stripesData, typesData;
 extern int bottomArrowID, topArrowID, shinyID, currentSaveBox, currentBankBox, bottomHeldPokemonID, topHeldPokemonID;
 extern bool topScreen;
 

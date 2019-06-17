@@ -3,6 +3,7 @@
 #include "common/banks.hpp"
 #include "fileBrowse.h"
 #include "graphics/graphics.h"
+#include "keyboard.h"
 #include "loader.h"
 #include "manager.h"
 #include "flashcard.h"
@@ -156,6 +157,13 @@ int main(int argc, char **argv) {
 						drawPokemonInfo(currentPokemon(heldPokemon));
 					}
 				}
+			}
+
+			if(hDown & KEY_SELECT) {
+				std::string newName = Input::getString();
+				if(topScreen)	Banks::bank->boxName(newName, currentBankBox);
+				else	save->boxName(currentSaveBox, newName);
+				drawBox(topScreen);
 			}
 
 			if(hDown & KEY_START) {

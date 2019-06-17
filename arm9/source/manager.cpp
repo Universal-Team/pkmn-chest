@@ -5,8 +5,8 @@
 #include "loader.h"
 #include "utils.hpp"
 
-std::vector<u16> arrow, bankBox, shiny, spriteSheet, stripes, types;
-ImageData bankBoxData, spriteSheetData, stripesData, typesData;
+std::vector<u16> arrow, bankBox, keyboard, shiny, spriteSheet, stripes, types;
+ImageData bankBoxData, keyboardData, spriteSheetData, stripesData, typesData;
 int bottomArrowID, topArrowID, shinyID, currentSaveBox, currentBankBox, bottomHeldPokemonID, topHeldPokemonID;
 bool topScreen;
 
@@ -29,6 +29,7 @@ XYCoords getPokemonPosition(int dexNumber) {
 void loadGraphics(void) {
 	// Load images into RAM
 	bankBoxData = loadPng("nitro:/graphics/bankBox.png", bankBox);
+	keyboardData = loadPng("nitro:/graphics/keyboard.png", keyboard);
 	spriteSheetData = loadPng("nitro:/graphics/spriteSheet.png", spriteSheet);
 	stripesData = loadPng("nitro:/graphics/stripes.png", stripes);
 	typesData = loadPng("nitro:/graphics/types.png", types);
