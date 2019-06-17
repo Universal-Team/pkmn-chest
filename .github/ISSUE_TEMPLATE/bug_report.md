@@ -1,7 +1,7 @@
 ---
 name: Bug report
 about: Report a bug to help improve Pokémon Chest
-title: ''
+title: "[Bug Report] "
 labels: bug
 assignees: ''
 

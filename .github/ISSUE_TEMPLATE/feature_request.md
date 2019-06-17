@@ -1,7 +1,7 @@
 ---
 name: Feature request
 about: Suggest an idea for Pokémon Chest
-title: ''
+title: "[Feature Request]"
 labels: enhancement
 assignees: ''
 
