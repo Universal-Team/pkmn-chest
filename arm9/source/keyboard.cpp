@@ -26,7 +26,9 @@ Key modifierKeys[] = {
 	{"rsft", 228, 54},	// Right Shift
 };
 
-std::string Input::getString() {
+std::string Input::getLine() { return Input::getLine(-1); }
+
+std::string Input::getLine(uint maxLength) {
 	// Hide bottom sprites below the keyboard
 	for(int i=12;i<30;i++) {
 		setSpriteVisibility(i, false);
@@ -59,27 +61,28 @@ std::string Input::getString() {
 		}
 		keyDownDelay = 10;
 
-		// 
 		if(hDown & KEY_TOUCH) {
 			touchRead(&touch);
-			// Check if a regular key was pressed
-			for(uint i=0;i<(sizeof(keys)/sizeof(keys[0]));i++) {
-				if((touch.px > keys[i].x-2 && touch.px < keys[i].x+18) && (touch.py > keys[i].y+(192-keyboardData.height)-2 && touch.py < keys[i].y+18+(192-keyboardData.height))) {
-					drawRectangle(keys[i].x, keys[i].y+(192-keyboardData.height), 16, 16, 0x8006, false);
-					char c = keys[i].character[0];
-					string += (shift || caps ? toupper(c) : c);
+			if(string.length() < maxLength) {
+				// Check if a regular key was pressed
+				for(uint i=0;i<(sizeof(keys)/sizeof(keys[0]));i++) {
+					if((touch.px > keys[i].x-2 && touch.px < keys[i].x+18) && (touch.py > keys[i].y+(192-keyboardData.height)-2 && touch.py < keys[i].y+18+(192-keyboardData.height))) {
+						drawRectangle(keys[i].x, keys[i].y+(192-keyboardData.height), 16, 16, 0x8006, false);
+						char c = keys[i].character[0];
+						string += (shift || caps ? toupper(c) : c);
+						shift = false;
+						printText(string, 0, 192-keyboardData.height-16, false);
+						break;
+					}
+				}
+				// Check if space was pressed
+				Key key = {" ", 68, 72};
+				if((touch.px > key.x-2 && touch.px < key.x+100) && (touch.py > key.y+(192-keyboardData.height)-2 && touch.py < key.y+18+(192-keyboardData.height))) {
+					drawRectangle(key.x, key.y+(192-keyboardData.height), 98, 16, 0x8006, false);
+					string += key.character;
 					shift = false;
 					printText(string, 0, 192-keyboardData.height-16, false);
-					break;
 				}
-			}
-			// Check if space was pressed
-			Key key = {" ", 68, 72};
-			if((touch.px > key.x-2 && touch.px < key.x+100) && (touch.py > key.y+(192-keyboardData.height)-2 && touch.py < key.y+18+(192-keyboardData.height))) {
-				drawRectangle(key.x, key.y+(192-keyboardData.height), 98, 16, 0x8006, false);
-				string += key.character;
-				shift = false;
-				printText(string, 0, 192-keyboardData.height-16, false);
 			}
 			// Check if a modifier key was pressed
 			for(uint i=0;i<(sizeof(modifierKeys)/sizeof(modifierKeys[0]));i++) {

@@ -4,7 +4,8 @@
 #include <string>
 
 namespace Input {
-	std::string getString();
+	std::string getLine();
+	std::string getLine(uint maxLength);
 }
 
 

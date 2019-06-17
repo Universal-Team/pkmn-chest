@@ -160,7 +160,7 @@ int main(int argc, char **argv) {
 			}
 
 			if(hDown & KEY_SELECT) {
-				std::string newName = Input::getString();
+				std::string newName = Input::getLine(topScreen ? 16 : 8);
 				if(topScreen)	Banks::bank->boxName(newName, currentBankBox);
 				else	save->boxName(currentSaveBox, newName);
 				drawBox(topScreen);
