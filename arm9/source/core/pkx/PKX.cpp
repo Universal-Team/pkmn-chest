@@ -188,20 +188,20 @@ u32 PKX::seedStep(u32 seed) {
 }
 
 void PKX::reorderMoves(void) {
-    if (move(3) != 0 && move(2) == 0) {
+    if(move(3) != 0 && move(2) == 0) {
         move(2, move(3));
         PP(2, PP(3));
         PPUp(2, PPUp(3));
         move(3, 0);
     }
-    if (move(2) != 0 && move(1) == 0) {
+    if(move(2) != 0 && move(1) == 0) {
         move(1, move(2));
         PP(1, PP(2));
         PPUp(1, PPUp(2));
         move(2, 0);
         reorderMoves();
     }
-    if (move(1) != 0 && move(0) == 0) {
+    if(move(1) != 0 && move(0) == 0) {
         move(0, move(1));
         PP(0, PP(1));
         PPUp(0, PPUp(1));
@@ -244,15 +244,15 @@ bool PKX::gen3(void) const {
 }
 
 int PKX::genNumber(void) const {
-    if (gen7()) {
+    if(gen7()) {
         return 7;
-    } else if (gen6()) {
+    } else if(gen6()) {
         return 6;
-    } else if (gen5()) {
+    } else if(gen5()) {
         return 5;
-    } else if (gen4()) {
+    } else if(gen4()) {
         return 4;
-    } else if (gen3()) {
+    } else if(gen3()) {
         return 3;
     } else {
         return -1;
@@ -262,12 +262,12 @@ int PKX::genNumber(void) const {
 void PKX::fixMoves(void) {
     reorderMoves();
 
-    if (move(0) == 0) {
+    if(move(0) == 0) {
         move(0, 1);
     }
 
-    for (int i = 0; i < 4; i++) {
-        if (move(i) == 0) {
+    for(int i = 0; i < 4; i++) {
+        if(move(i) == 0) {
             PP(i, 0);
             PPUp(i, 0);
         } else {
@@ -277,32 +277,32 @@ void PKX::fixMoves(void) {
 }
 
 u8 PKX::genFromBytes(u8* data, size_t length, bool ekx) {
-    if (length == 136) {
-        if (*(u16*)(data + 4) == 0 && (*(u16*)(data + 0x80) >= 0x3333 || data[0x5F] >= 0x10) && *(u16*)(data + 0x46) == 0) {
+    if(length == 136) {
+        if(*(u16*)(data + 4) == 0 && (*(u16*)(data + 0x80) >= 0x3333 || data[0x5F] >= 0x10) && *(u16*)(data + 0x46) == 0) {
             return 5;
         }
         return 4;
-    } else if (length == 232) {
+    } else if(length == 232) {
         PK6 test(data, ekx);
-        if (test.species() > 721 || test.version() > 27 || test.move(0) > 621 || test.move(1) > 621 || test.move(2) > 621 || test.move(3) > 621 ||
+        if(test.species() > 721 || test.version() > 27 || test.move(0) > 621 || test.move(1) > 621 || test.move(2) > 621 || test.move(3) > 621 ||
             test.relearnMove(0) > 621 || test.relearnMove(1) > 621 || test.relearnMove(2) > 621 || test.relearnMove(3) > 621 ||
             test.ability() > 191 || test.heldItem() > 775) { // Invalid values for gen 6
             return 7;
         }
 
         int et = test.encounterType();
-        if (et != 0) {
-            if (test.level() < 100) {
+        if(et != 0) {
+            if(test.level() < 100) {
                 return 6;
             }
 
-            switch (test.version()) {
+            switch(test.version()) {
                 case 7:
                 case 8:
                 case 10:
                 case 11:
                 case 12:
-                    if (et > 24) {
+                    if(et > 24) {
                         return 7;
                     }
                     break;
@@ -316,7 +316,7 @@ u8 PKX::genFromBytes(u8* data, size_t length, bool ekx) {
 }
 
 static inline u8 genderFromRatio(u32 pid, u8 gt) {
-    switch (gt) {
+    switch(gt) {
         case 0xFF:
             return 2;
         case 0xFE:
@@ -334,12 +334,12 @@ static inline u8 getUnownForm(u32 pid) {
 }
 
 u32 PKX::getRandomPID(u16 species, u8 gender, u8 originGame, u8 nature, u8 form, u8 abilityNum, u32 oldPid, Generation gen) {
-    if (originGame >= 24) { // Origin game over gen 5
+    if(originGame >= 24) { // Origin game over gen 5
         return randomNumbers();
     }
 
     u8 (*genderTypeFinder)(u16 species);
-    switch (gen) {
+    switch(gen) {
         case Generation::FOUR:
             genderTypeFinder = PersonalDPPtHGSS::gender;
             break;
@@ -357,36 +357,36 @@ u32 PKX::getRandomPID(u16 species, u8 gender, u8 originGame, u8 nature, u8 form,
 
     u8 genderType = genderTypeFinder(species);
     bool g3unown  = originGame <= 5 && species == 201;
-    while (true) {
+    while(true) {
         u32 possiblePID = randomNumbers();
-        if (originGame <= 15 && possiblePID % 25 != nature) {
+        if(originGame <= 15 && possiblePID % 25 != nature) {
             continue;
         }
 
-        if (g3unown) {
-            if (getUnownForm(possiblePID) != form) {
+        if(g3unown) {
+            if(getUnownForm(possiblePID) != form) {
                 continue;
             }
-        } else if (abilityNum != 4) {
-            if (abilityNum == 1 && (possiblePID & (1 << (gen == Generation::FIVE ? 16 : 0)))) {
+        } else if(abilityNum != 4) {
+            if(abilityNum == 1 && (possiblePID & (1 << (gen == Generation::FIVE ? 16 : 0)))) {
                 continue;
-            } else if (abilityNum == 2 && !(possiblePID & (1 << (gen == Generation::FIVE ? 16 : 0)))) {
+            } else if(abilityNum == 2 && !(possiblePID & (1 << (gen == Generation::FIVE ? 16 : 0)))) {
                 continue;
             }
         }
 
-        if (genderType == 255 || genderType == 254 || genderType == 0 || gender == 2) {
+        if(genderType == 255 || genderType == 254 || genderType == 0 || gender == 2) {
             return possiblePID;
         }
 
-        if (gender == genderFromRatio(possiblePID, genderType)) {
+        if(gender == genderFromRatio(possiblePID, genderType)) {
             return possiblePID;
         }
     }
 }
 
 u32 PKX::versionTID() const {
-    switch (version()) {
+    switch(version()) {
         default:
             return TID();
         case 30: // SM
@@ -400,7 +400,7 @@ u32 PKX::versionTID() const {
 }
 
 u32 PKX::versionSID() const {
-    switch (version()) {
+    switch(version()) {
         default:
             return SID();
         case 30: // SM
@@ -414,7 +414,7 @@ u32 PKX::versionSID() const {
 }
 
 u32 PKX::formatTID() const {
-    switch (generation()) {
+    switch(generation()) {
         default:
             return TID();
         case Generation::SEVEN:
@@ -423,7 +423,7 @@ u32 PKX::formatTID() const {
     }
 }
 u32 PKX::formatSID() const {
-    switch (generation()) {
+    switch(generation()) {
         default:
             return SID();
         case Generation::SEVEN:
@@ -433,7 +433,7 @@ u32 PKX::formatSID() const {
 }
 
 std::shared_ptr<PKX> PKX::getPKM(Generation gen, u8* data, bool ekx, bool party) {
-    switch (gen) {
+    switch(gen) {
         case Generation::FOUR:
             return std::make_shared<PK4>(data, ekx, party);
         case Generation::FIVE:

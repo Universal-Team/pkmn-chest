@@ -243,7 +243,7 @@ static void ucvector_init_buffer(ucvector* p, unsigned char* buffer, size_t size
 }
 #endif /*LODEPNG_COMPILE_ZLIB*/
 
-#if (defined(LODEPNG_COMPILE_PNG) && defined(LODEPNG_COMPILE_ANCILLARY_CHUNKS)) || defined(LODEPNG_COMPILE_ENCODER)
+#if(defined(LODEPNG_COMPILE_PNG) && defined(LODEPNG_COMPILE_ANCILLARY_CHUNKS)) || defined(LODEPNG_COMPILE_ENCODER)
 /*returns 1 if success, 0 if failure ==> nothing done*/
 static unsigned ucvector_push_back(ucvector* p, unsigned char c) {
   if(!ucvector_resize(p, p->size + 1)) return 0;
@@ -339,13 +339,13 @@ static unsigned lodepng_buffer_file(unsigned char* out, size_t size, const char*
   readsize = fread(out, 1, size, file);
   fclose(file);
 
-  if (readsize != size) return 78;
+  if(readsize != size) return 78;
   return 0;
 }
 
 unsigned lodepng_load_file(unsigned char** out, size_t* outsize, const char* filename) {
   long size = lodepng_filesize(filename);
-  if (size < 0) return 78;
+  if(size < 0) return 78;
   *outsize = (size_t)size;
 
   *out = (unsigned char*)lodepng_malloc((size_t)size);
@@ -1063,7 +1063,7 @@ static unsigned inflateHuffmanBlock(ucvector* out, const unsigned char* in, size
       backward = start - distance;
 
       if(!ucvector_resize(out, (*pos) + length)) ERROR_BREAK(83 /*alloc fail*/);
-      if (distance < length) {
+      if(distance < length) {
         for(forward = 0; forward < length; ++forward) {
           out->data[(*pos)++] = out->data[backward++];
         }
@@ -1188,7 +1188,7 @@ static size_t searchCodeIndex(const unsigned* array, size_t array_size, size_t v
 
   while(left <= right) {
     size_t mid = (left + right) >> 1;
-    if (array[mid] >= value) right = mid - 1;
+    if(array[mid] >= value) right = mid - 1;
     else left = mid + 1;
   }
   if(left >= array_size || array[left] > value) left--;
@@ -3145,7 +3145,7 @@ unsigned lodepng_convert(unsigned char* out, const unsigned char* in,
       /*if the input was also palette with same bitdepth, then the color types are also
       equal, so copy literally. This to preserve the exact indices that were in the PNG
       even in case there are duplicate colors in the palette.*/
-      if (mode_in->colortype == LCT_PALETTE && mode_in->bitdepth == mode_out->bitdepth) {
+      if(mode_in->colortype == LCT_PALETTE && mode_in->bitdepth == mode_out->bitdepth) {
         size_t numbytes = lodepng_get_raw_size(w, h, mode_in);
         for(i = 0; i != numbytes; ++i) out[i] = in[i];
         return 0;
@@ -3174,7 +3174,7 @@ unsigned lodepng_convert(unsigned char* out, const unsigned char* in,
     for(i = 0; i != numpixels; ++i) {
       getPixelColorRGBA8(&r, &g, &b, &a, in, i, mode_in);
       error = rgba8ToPixel(out, i, mode_out, &tree, r, g, b, a);
-      if (error) break;
+      if(error) break;
     }
   }
 
@@ -3831,7 +3831,7 @@ static void removePaddingBits(unsigned char* out, const unsigned char* in,
   in and out are allowed to be the same buffer, in may also be higher but still overlapping; in must
   have >= ilinebits*h bits, out must have >= olinebits*h bits, olinebits must be <= ilinebits
   also used to move bits after earlier such operations happened, e.g. in a sequence of reduced images from Adam7
-  only useful if (ilinebits - olinebits) is a value in the range 1..7
+  only useful if(ilinebits - olinebits) is a value in the range 1..7
   */
   unsigned y;
   size_t diff = ilinebits - olinebits;
@@ -4262,7 +4262,7 @@ unsigned lodepng_inspect_chunk(LodePNGState* state, size_t pos,
   unsigned unhandled = 0;
   unsigned error = 0;
 
-  if (pos + 4 > insize) return 30;
+  if(pos + 4 > insize) return 30;
   chunkLength = lodepng_chunk_length(chunk);
   if(chunkLength > 2147483647) return 63;
   data = lodepng_chunk_data_const(chunk);

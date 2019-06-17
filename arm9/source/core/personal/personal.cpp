@@ -110,11 +110,11 @@ namespace PersonalDPPtHGSS {
     u16 formStatIndex(u16 species) { return *(u16*)(personal_dppthgss + species * 16 + 0xD); }
     // Normalized to fit with other formCounts' return values
     u8 formCount(u16 species) {
-        if (species == 201) {
+        if(species == 201) {
             return 28;
         } else {
             u8 count = *(u8*)(personal_dppthgss + species * 16 + 0xF);
-            if (count == 0) {
+            if(count == 0) {
                 return 1;
             }
             return count;

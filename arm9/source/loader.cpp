@@ -13,10 +13,10 @@ bool loadSave(std::string savePath) {
     std::ifstream in(savePath);
     u32 size;
     char* saveData = nullptr;
-    if (in.good()) {
-        in.seekg (0, in.end);
+    if(in.good()) {
+        in.seekg(0, in.end);
         size     = in.tellg();
-        in.seekg (0, in.beg);
+        in.seekg(0, in.beg);
         saveData = new char[size];
         in.read(saveData, size);
     } else {
@@ -29,27 +29,27 @@ bool loadSave(std::string savePath) {
     in.close();
     save = Sav::getSave((u8*)saveData, size);
     delete[] saveData;
-    if (!save) {
+    if(!save) {
         // Gui::warn(saveFileName, i18n::localize("SAVE_INVALID"));
         saveFileName = "";
         // loadedTitle  = nullptr;
         return false;
     }
-    // if (Configuration::getInstance().autoBackup())
+    // if(Configuration::getInstance().autoBackup())
     // {
     //     std::string id;
-    //     if (title)
+    //     if(title)
     //     {
     //         backupSave(title->checkpointPrefix());
     //     }
     //     else
     //     {
     //         bool done = false;
-    //         for (auto i = sdSaves.begin(); !done && i != sdSaves.end(); i++)
+    //         for(auto i = sdSaves.begin(); !done && i != sdSaves.end(); i++)
     //         {
-    //             for (auto j = i->second.begin(); j != i->second.end(); j++)
+    //             for(auto j = i->second.begin(); j != i->second.end(); j++)
     //             {
-    //                 if (*j == savePath)
+    //                 if(*j == savePath)
     //                 {
     //                     backupSave(i->first);
     //                     done = true;
@@ -64,7 +64,7 @@ bool loadSave(std::string savePath) {
 
 void saveChanges(std::string savePath) {
     save->resign();
-    if (saveIsFile) {
+    if(saveIsFile) {
         // No need to check size; if it was read successfully, that means that it has the correct size
         std::fstream out(savePath, std::fstream::in | std::fstream::out);
         out.write((char*)save->rawData(), save->getLength());

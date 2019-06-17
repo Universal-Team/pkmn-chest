@@ -37,7 +37,7 @@ void PK7::shuffleArray(u8 sv) {
     u8 cdata[length];
     std::copy(data, data + length, cdata);
 
-    for (u8 block = 0; block < 4; block++) {
+    for(u8 block = 0; block < 4; block++) {
         u8 ofs = blockPosition(index + block);
         std::copy(cdata + 8 + blockLength * ofs, cdata + 8 + blockLength * ofs + blockLength, data + 8 + blockLength * block);
     }
@@ -45,14 +45,14 @@ void PK7::shuffleArray(u8 sv) {
 
 void PK7::crypt(void) {
     u32 seed = encryptionConstant();
-    for (int i = 0x08; i < 232; i += 2) {
+    for(int i = 0x08; i < 232; i += 2) {
         u16 temp = *(u16*)(data + i);
         seed     = seedStep(seed);
         temp ^= (seed >> 16);
         *(u16*)(data + i) = temp;
     }
     seed = encryptionConstant();
-    for (u32 i = 232; i < length; i += 2) {
+    for(u32 i = 232; i < length; i += 2) {
         u16 temp = *(u16*)(data + i);
         seed     = seedStep(seed);
         temp ^= (seed >> 16);
@@ -66,7 +66,7 @@ PK7::PK7(u8* dt, bool ekx, bool party) {
     std::fill_n(data, length, 0);
 
     std::copy(dt, dt + length, data);
-    if (ekx) {
+    if(ekx) {
         decrypt();
     }
 }
@@ -145,9 +145,9 @@ void PK7::ability(u8 v) {
 void PK7::setAbility(u8 v) {
     u8 abilitynum;
 
-    if (v == 0)
+    if(v == 0)
         abilitynum = 1;
-    else if (v == 1)
+    else if(v == 1)
         abilitynum = 2;
     else
         abilitynum = 4;
@@ -578,7 +578,7 @@ u8 PK7::currentFriendship(void) const {
     return currentHandler() == 0 ? otFriendship() : htFriendship();
 }
 void PK7::currentFriendship(u8 v) {
-    if (currentHandler() == 0)
+    if(currentHandler() == 0)
         otFriendship(v);
     else
         htFriendship(v);
@@ -588,7 +588,7 @@ u8 PK7::oppositeFriendship(void) const {
     return currentHandler() == 1 ? otFriendship() : htFriendship();
 }
 void PK7::oppositeFriendship(u8 v) {
-    if (currentHandler() == 1)
+    if(currentHandler() == 1)
         otFriendship(v);
     else
         htFriendship(v);
@@ -596,7 +596,7 @@ void PK7::oppositeFriendship(u8 v) {
 
 void PK7::refreshChecksum(void) {
     u16 chk = 0;
-    for (u8 i = 8; i < 232; i += 2) {
+    for(u8 i = 8; i < 232; i += 2) {
         chk += *(u16*)(data + i);
     }
     checksum(chk);
@@ -609,7 +609,7 @@ void PK7::hpType(u8 v) {
     static constexpr u16 hpivs[16][6] = { {1, 1, 0, 0, 0, 0}, // Fighting {0, 0, 0, 1, 0, 0}, // Flying {1, 1, 0, 1, 0, 0}, // Poison {1, 1, 1, 1, 0, 0}, // Ground {1, 1, 0, 0, 1, 0}, // Rock {1, 0, 0, 1, 1, 0}, // Bug {1, 0, 1, 1, 1, 0}, // Ghost {1, 1, 1, 1, 1, 0}, // Steel {1, 0, 1, 0, 0, 1}, // Fire {1, 0, 0, 1, 0, 1}, // Water {1, 0, 1, 1, 0, 1}, // Grass {1, 1, 1, 1, 0, 1}, // Electric {1, 0, 1, 0, 1, 1}, // Psychic {1, 0, 0, 1, 1, 1}, // Ice {1, 0, 1, 1, 1, 1}, // Dragon {1, 1, 1, 1, 1, 1}, // Dark
     };
 
-    for (u8 i = 0; i < 6; i++) {
+    for(u8 i = 0; i < 6; i++) {
         iv((iv(i) & 0x1E) + hpivs[v][i], i);
         iv(i, (iv(i) & 0x1E) + hpivs[v][i]);
     }
@@ -625,7 +625,7 @@ u16 PK7::PSV(void) const {
 u8 PK7::level(void) const {
     u8 i      = 1;
     u8 xpType = expType();
-    while (experience() >= expTable(i, xpType) && ++i < 100)
+    while(experience() >= expTable(i, xpType) && ++i < 100)
         ;
     return i;
 }
@@ -638,12 +638,12 @@ bool PK7::shiny(void) const {
     return TSV() == PSV();
 }
 void PK7::shiny(bool v) {
-    if (v) {
-        while (!shiny()) {
+    if(v) {
+        while(!shiny()) {
             PID(PKX::getRandomPID(species(), gender(), version(), nature(), alternativeForm(), abilityNumber(), PID(), generation()));
         }
     } else {
-        while (shiny()) {
+        while(shiny()) {
             PID(PKX::getRandomPID(species(), gender(), version(), nature(), alternativeForm(), abilityNumber(), PID(), generation()));
         }
     }
@@ -654,12 +654,12 @@ u16 PK7::formSpecies(void) const {
     u8 form        = alternativeForm();
     u8 formcount   = PersonalSMUSUM::formCount(tmpSpecies);
 
-    if (form && form < formcount) {
+    if(form && form < formcount) {
         u16 backSpecies = tmpSpecies;
         tmpSpecies      = PersonalSMUSUM::formStatIndex(tmpSpecies);
-        if (!tmpSpecies) {
+        if(!tmpSpecies) {
             tmpSpecies = backSpecies;
-        } else if (form < formcount) {
+        } else if(form < formcount) {
             tmpSpecies += form - 1;
         }
     }
@@ -671,26 +671,26 @@ u16 PK7::stat(const u8 stat) const {
     u16 calc;
     u8 mult = 10, basestat = 0;
 
-    if (stat == 0)
+    if(stat == 0)
         basestat = baseHP();
-    else if (stat == 1)
+    else if(stat == 1)
         basestat = baseAtk();
-    else if (stat == 2)
+    else if(stat == 2)
         basestat = baseDef();
-    else if (stat == 3)
+    else if(stat == 3)
         basestat = baseSpe();
-    else if (stat == 4)
+    else if(stat == 4)
         basestat = baseSpa();
-    else if (stat == 5)
+    else if(stat == 5)
         basestat = baseSpd();
 
-    if (stat == 0)
+    if(stat == 0)
         calc = 10 + ((2 * basestat) + ((((data[0xDE] >> hyperTrainLookup[stat]) & 1) == 1) ? 31 : iv(stat)) + ev(stat) / 4 + 100) * level() / 100;
     else
         calc = 5 + (2 * basestat + ((((data[0xDE] >> hyperTrainLookup[stat]) & 1) == 1) ? 31 : iv(stat)) + ev(stat) / 4) * level() / 100;
-    if (nature() / 5 + 1 == stat)
+    if(nature() / 5 + 1 == stat)
         mult++;
-    if (nature() % 5 + 1 == stat)
+    if(nature() % 5 + 1 == stat)
         mult--;
     return calc * mult / 10;
 }
@@ -706,12 +706,12 @@ std::shared_ptr<PKX> PK7::previous(void) const {
 
     pk6->markValue(markValue());
 
-    switch (abilityNumber()) {
+    switch(abilityNumber()) {
         case 1:
         case 2:
         case 4:
             u8 index = abilityNumber() >> 1;
-            if (abilities(index) == ability()) {
+            if(abilities(index) == ability()) {
                 pk6->ability(pk6->abilities(index));
             }
     }
@@ -723,11 +723,11 @@ std::shared_ptr<PKX> PK7::previous(void) const {
     pk6->geoCountry(0, save->country());
     pk6->geoRegion(0, save->subRegion());
 
-    for (int i = 0; i < 4; i++) {
-        if (pk6->move(i) > save->maxMove()) {
+    for(int i = 0; i < 4; i++) {
+        if(pk6->move(i) > save->maxMove()) {
             pk6->move(i, 0);
         }
-        if (pk6->relearnMove(i) > save->maxMove()) {
+        if(pk6->relearnMove(i) > save->maxMove()) {
             pk6->relearnMove(i, 0);
         }
     }
@@ -738,60 +738,60 @@ std::shared_ptr<PKX> PK7::previous(void) const {
 }
 
 int PK7::partyCurrHP(void) const {
-    if (length == 232) {
+    if(length == 232) {
         return -1;
     }
     return *(u16*)(data + 0xF0);
 }
 
 void PK7::partyCurrHP(u16 v) {
-    if (length != 232) {
+    if(length != 232) {
         *(u16*)(data + 0xF0) = v;
     }
 }
 
 int PK7::partyStat(const u8 stat) const {
-    if (length == 232) {
+    if(length == 232) {
         return -1;
     }
     return *(u16*)(data + 0xF2 + stat * 2);
 }
 
 void PK7::partyStat(const u8 stat, u16 v) {
-    if (length != 232) {
+    if(length != 232) {
         *(u16*)(data + 0xF2 + stat * 2) = v;
     }
 }
 
 int PK7::partyLevel() const {
-    if (length == 232) {
+    if(length == 232) {
         return -1;
     }
     return *(data + 0xEC);
 }
 
 void PK7::partyLevel(u8 v) {
-    if (length != 232) {
+    if(length != 232) {
         *(data + 0xEC) = v;
     }
 }
 
 void PK7::reorderMoves(void) {
     PKX::reorderMoves();
-    if (relearnMove(3) != 0 && relearnMove(2) == 0) {
+    if(relearnMove(3) != 0 && relearnMove(2) == 0) {
         relearnMove(2, relearnMove(3));
         PP(2, PP(3));
         PPUp(2, PPUp(3));
         relearnMove(3, 0);
     }
-    if (relearnMove(2) != 0 && relearnMove(1) == 0) {
+    if(relearnMove(2) != 0 && relearnMove(1) == 0) {
         relearnMove(1, relearnMove(2));
         PP(1, PP(2));
         PPUp(1, PPUp(2));
         relearnMove(2, 0);
         reorderMoves();
     }
-    if (relearnMove(1) != 0 && relearnMove(0) == 0) {
+    if(relearnMove(1) != 0 && relearnMove(0) == 0) {
         relearnMove(0, relearnMove(1));
         PP(0, PP(1));
         PPUp(0, PPUp(1));

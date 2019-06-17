@@ -35,7 +35,7 @@
 //     u8 cdata[length];
 //     std::copy(data, data + length, cdata);
 
-//     for (u8 block = 0; block < 4; block++)
+//     for(u8 block = 0; block < 4; block++)
 //     {
 //         u8 ofs = blockPosition(index + block);
 //         std::copy(cdata + 8 + blockLength * ofs, cdata + 8 + blockLength * ofs + blockLength, data + 8 + blockLength * block);
@@ -45,7 +45,7 @@
 // void PB7::crypt(void)
 // {
 //     u32 seed = encryptionConstant();
-//     for (int i = 0x08; i < 232; i += 2)
+//     for(int i = 0x08; i < 232; i += 2)
 //     {
 //         u16 temp = *(u16*)(data + i);
 //         seed     = seedStep(seed);
@@ -53,7 +53,7 @@
 //         *(u16*)(data + i) = temp;
 //     }
 //     seed = encryptionConstant();
-//     for (u32 i = 232; i < length; i += 2)
+//     for(u32 i = 232; i < length; i += 2)
 //     {
 //         u16 temp = *(u16*)(data + i);
 //         seed     = seedStep(seed);
@@ -69,7 +69,7 @@
 //     std::fill_n(data, length, 0);
 
 //     std::copy(dt, dt + length, data);
-//     if (ekx)
+//     if(ekx)
 //     {
 //         decrypt();
 //     }
@@ -170,9 +170,9 @@
 // {
 //     u8 abilitynum;
 
-//     if (v == 0)
+//     if(v == 0)
 //         abilitynum = 1;
-//     else if (v == 1)
+//     else if(v == 1)
 //         abilitynum = 2;
 //     else
 //         abilitynum = 4;
@@ -723,7 +723,7 @@
 // }
 // void PB7::currentFriendship(u8 v)
 // {
-//     if (currentHandler() == 0)
+//     if(currentHandler() == 0)
 //         otFriendship(v);
 //     else
 //         htFriendship(v);
@@ -735,7 +735,7 @@
 // }
 // void PB7::oppositeFriendship(u8 v)
 // {
-//     if (currentHandler() == 1)
+//     if(currentHandler() == 1)
 //         otFriendship(v);
 //     else
 //         htFriendship(v);
@@ -744,7 +744,7 @@
 // void PB7::refreshChecksum(void)
 // {
 //     u16 chk = 0;
-//     for (u8 i = 8; i < 232; i += 2)
+//     for(u8 i = 8; i < 232; i += 2)
 //     {
 //         chk += *(u16*)(data + i);
 //     }
@@ -776,7 +776,7 @@
 //         {1, 1, 1, 1, 1, 1}, // Dark
 //     };
 
-//     for (u8 i = 0; i < 6; i++)
+//     for(u8 i = 0; i < 6; i++)
 //     {
 //         iv(i, (iv(i) & 0x1E) + hpivs[v][i]);
 //     }
@@ -795,7 +795,7 @@
 // {
 //     u8 i      = 1;
 //     u8 xpType = expType();
-//     while (experience() >= expTable(i, xpType) && ++i < 100)
+//     while(experience() >= expTable(i, xpType) && ++i < 100)
 //         ;
 //     return i;
 // }
@@ -811,16 +811,16 @@
 // }
 // void PB7::shiny(bool v)
 // {
-//     if (v)
+//     if(v)
 //     {
-//         while (!shiny())
+//         while(!shiny())
 //         {
 //             PID(PKX::getRandomPID(species(), gender(), version(), nature(), alternativeForm(), abilityNumber(), PID(), generation()));
 //         }
 //     }
 //     else
 //     {
-//         while (shiny())
+//         while(shiny())
 //         {
 //             PID(PKX::getRandomPID(species(), gender(), version(), nature(), alternativeForm(), abilityNumber(), PID(), generation()));
 //         }
@@ -833,15 +833,15 @@
 //     u8 form        = alternativeForm();
 //     u8 formcount   = PersonalLGPE::formCount(tmpSpecies);
 
-//     if (form && form < formcount)
+//     if(form && form < formcount)
 //     {
 //         u16 backSpecies = tmpSpecies;
 //         tmpSpecies      = PersonalLGPE::formStatIndex(tmpSpecies);
-//         if (!tmpSpecies)
+//         if(!tmpSpecies)
 //         {
 //             tmpSpecies = backSpecies;
 //         }
-//         else if (form < formcount)
+//         else if(form < formcount)
 //         {
 //             tmpSpecies += form - 1;
 //         }
@@ -855,33 +855,33 @@
 //     u16 calc;
 //     u8 mult = 10, basestat = 0;
 
-//     if (stat == 0)
+//     if(stat == 0)
 //         basestat = baseHP();
-//     else if (stat == 1)
+//     else if(stat == 1)
 //         basestat = baseAtk();
-//     else if (stat == 2)
+//     else if(stat == 2)
 //         basestat = baseDef();
-//     else if (stat == 3)
+//     else if(stat == 3)
 //         basestat = baseSpe();
-//     else if (stat == 4)
+//     else if(stat == 4)
 //         basestat = baseSpa();
-//     else if (stat == 5)
+//     else if(stat == 5)
 //         basestat = baseSpd();
 
-//     if (stat == 0)
+//     if(stat == 0)
 //         calc = 10 + ((2 * basestat) + ((((data[0xDE] >> hyperTrainLookup[stat]) & 1) == 1) ? 31 : iv(stat)) + ev(stat) / 4 + 100) * level() / 100;
 //     else
 //         calc = 5 + (2 * basestat + ((((data[0xDE] >> hyperTrainLookup[stat]) & 1) == 1) ? 31 : iv(stat)) + ev(stat) / 4) * level() / 100;
-//     if (nature() / 5 + 1 == stat)
+//     if(nature() / 5 + 1 == stat)
 //         mult++;
-//     if (nature() % 5 + 1 == stat)
+//     if(nature() % 5 + 1 == stat)
 //         mult--;
 //     return calc * mult / 10 + awakened(stat);
 // }
 
 // int PB7::partyCurrHP(void) const
 // {
-//     if (length == 232)
+//     if(length == 232)
 //     {
 //         return -1;
 //     }
@@ -890,7 +890,7 @@
 
 // void PB7::partyCurrHP(u16 v)
 // {
-//     if (length != 232)
+//     if(length != 232)
 //     {
 //         *(u16*)(data + 0xF0) = v;
 //     }
@@ -898,7 +898,7 @@
 
 // int PB7::partyStat(const u8 stat) const
 // {
-//     if (length == 232)
+//     if(length == 232)
 //     {
 //         return -1;
 //     }
@@ -907,7 +907,7 @@
 
 // void PB7::partyStat(const u8 stat, u16 v)
 // {
-//     if (length != 232)
+//     if(length != 232)
 //     {
 //         *(u16*)(data + 0xF2 + stat * 2) = v;
 //     }
@@ -915,7 +915,7 @@
 
 // int PB7::partyLevel() const
 // {
-//     if (length == 232)
+//     if(length == 232)
 //     {
 //         return -1;
 //     }
@@ -924,7 +924,7 @@
 
 // void PB7::partyLevel(u8 v)
 // {
-//     if (length != 232)
+//     if(length != 232)
 //     {
 //         *(data + 0xEC) = v;
 //     }
@@ -946,7 +946,7 @@
 //     int mult  = ((currentFriendship() / 255.0f / 10.0f) + 1.0f) * 100.0f;
 //     int awake = awakened(0);
 
-//     for (int i = 1; i < 6; i++)
+//     for(int i = 1; i < 6; i++)
 //     {
 //         base += stat(i) * mult / 100;
 //         awake += awakened(i);
@@ -981,14 +981,14 @@
 
 // void PB7::reorderMoves(void)
 // {
-//     if (relearnMove(3) != 0 && relearnMove(2) == 0)
+//     if(relearnMove(3) != 0 && relearnMove(2) == 0)
 //     {
 //         relearnMove(2, relearnMove(3));
 //         PP(2, PP(3));
 //         PPUp(2, PPUp(3));
 //         relearnMove(3, 0);
 //     }
-//     if (relearnMove(2) != 0 && relearnMove(1) == 0)
+//     if(relearnMove(2) != 0 && relearnMove(1) == 0)
 //     {
 //         relearnMove(1, relearnMove(2));
 //         PP(1, PP(2));
@@ -996,7 +996,7 @@
 //         relearnMove(2, 0);
 //         reorderMoves();
 //     }
-//     if (relearnMove(1) != 0 && relearnMove(0) == 0)
+//     if(relearnMove(1) != 0 && relearnMove(0) == 0)
 //     {
 //         relearnMove(0, relearnMove(1));
 //         PP(0, PP(1));

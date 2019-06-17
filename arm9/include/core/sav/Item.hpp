@@ -60,7 +60,7 @@ private:
 
 public:
     Item4(u8* data = nullptr) {
-        if (data) {
+        if(data) {
             std::copy(data, data + 4, (u8*)&itemData);
         }
     }
@@ -81,7 +81,7 @@ class Item5 : public Item {
 
 public:
     Item5(u8* data = nullptr) {
-        if (data) {
+        if(data) {
             std::copy(data, data + 4, (u8*)&itemData);
         }
     }
@@ -102,7 +102,7 @@ private:
 
 public:
     Item6(u8* data = nullptr) {
-        if (data) {
+        if(data) {
             std::copy(data, data + 4, (u8*)&itemData);
         }
     }
@@ -126,7 +126,7 @@ private:
 
 public:
     Item7(u8* data = nullptr) {
-        if (data) {
+        if(data) {
             std::copy(data, data + 4, (u8*)&itemData);
         }
     }
@@ -156,7 +156,7 @@ private:
 
 public:
     Item7b(u8* data = nullptr) {
-        if (data) {
+        if(data) {
             std::copy(data, data + 4, (u8*)&itemData);
         }
     }

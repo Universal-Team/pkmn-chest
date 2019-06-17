@@ -214,14 +214,14 @@ unsigned int getTopFontSpriteIndex(const u16 letter) {
 	long int right = FONT_NUM_IMAGES;
 	long int mid = 0;
 
-	while (left <= right) {
+	while(left <= right) {
 		mid = left + ((right - left) / 2);
-		if (fontUtf16LookupTable[mid] == letter) {
+		if(fontUtf16LookupTable[mid] == letter) {
 			spriteIndex = mid;
 			break;
 		}
 
-		if (fontUtf16LookupTable[mid] < letter) {
+		if(fontUtf16LookupTable[mid] < letter) {
 			left = mid + 1;
 		} else {
 			right = mid - 1;
@@ -255,7 +255,7 @@ void printTextTinted(std::u16string text, u16 color, int xPos, int yPos, bool to
 int getTextWidth(std::u16string text) {
 	int textWidth = 0;
 
-	for (uint c = 0; c < text.length(); c++) {
+	for(uint c = 0; c < text.length(); c++) {
 		unsigned int charIndex = getTopFontSpriteIndex(text[c]);
 		textWidth += fontTexcoords[2+(4*charIndex)];
 	}

@@ -106,7 +106,7 @@ void Sav5::BP(u32 v) {
 u8 Sav5::badges(void) const {
     u8& badgeBits = data[Trainer2 + 0x4];
     u8 ret        = 0;
-    for (size_t i = 0; i < sizeof(badgeBits) * 8; i++) {
+    for(size_t i = 0; i < sizeof(badgeBits) * 8; i++) {
         ret += badgeBits & BIT(i) ? 1 : 0;
     }
     return ret;
@@ -158,8 +158,8 @@ void Sav5::pkm(std::shared_ptr<PKX> pk, u8 slot) {
     std::copy(pk->rawData(), pk->rawData() + pk->getLength(), buf);
     std::unique_ptr<PK5> pk5 = std::make_unique<PK5>(buf, false, true);
 
-    if (pk->getLength() != 220) {
-        for (int i = 0; i < 6; i++) {
+    if(pk->getLength() != 220) {
+        for(int i = 0; i < 6; i++) {
             pk5->partyStat(i, pk5->stat(i));
         }
         pk5->partyLevel(pk5->level());
@@ -179,7 +179,7 @@ std::shared_ptr<PKX> Sav5::pkm(u8 box, u8 slot, bool ekx) const {
 
 void Sav5::pkm(std::shared_ptr<PKX> pk, u8 box, u8 slot, bool applyTrade) {
     transfer(pk);
-    if (applyTrade) {
+    if(applyTrade) {
         trade(pk);
     }
 
@@ -187,7 +187,7 @@ void Sav5::pkm(std::shared_ptr<PKX> pk, u8 box, u8 slot, bool applyTrade) {
 }
 
 void Sav5::trade(std::shared_ptr<PKX> pk) {
-    if (pk->egg() && (otName() != pk->otName() || TID() != pk->TID() || SID() != pk->SID() || gender() != pk->otGender())) {
+    if(pk->egg() && (otName() != pk->otName() || TID() != pk->TID() || SID() != pk->SID() || gender() != pk->otGender())) {
         // pk->metDay(Configuration::getInstance().day());
         // pk->metMonth(Configuration::getInstance().month());
         // pk->metYear(Configuration::getInstance().year() - 2000);
@@ -196,10 +196,10 @@ void Sav5::trade(std::shared_ptr<PKX> pk) {
 }
 
 void Sav5::cryptBoxData(bool crypted) {
-    for (u8 box = 0; box < boxes; box++) {
-        for (u8 slot = 0; slot < 30; slot++) {
+    for(u8 box = 0; box < boxes; box++) {
+        for(u8 slot = 0; slot < 30; slot++) {
             std::shared_ptr<PKX> pk5 = pkm(box, slot, crypted);
-            if (!crypted) {
+            if(!crypted) {
                 pk5->encrypt();
             }
             pkm(pk5, box, slot, false);
@@ -208,11 +208,11 @@ void Sav5::cryptBoxData(bool crypted) {
 }
 
 int Sav5::dexFormIndex(int species, int formct) const {
-    if (formct < 1 || species < 0)
+    if(formct < 1 || species < 0)
         return -1; // invalid
 
-    if (game == Game::B2W2) {
-        switch (species) {
+    if(game == Game::B2W2) {
+        switch(species) {
             case 646:
                 return 72; // 3 Kyurem
             case 647:
@@ -226,7 +226,7 @@ int Sav5::dexFormIndex(int species, int formct) const {
         }
     }
 
-    switch (species) {
+    switch(species) {
         case 201:
             return 0; // 28 Unown
         case 386:
@@ -265,9 +265,9 @@ int Sav5::dexFormIndex(int species, int formct) const {
 }
 
 void Sav5::dex(std::shared_ptr<PKX> pk) {
-    if (pk->species() == 0)
+    if(pk->species() == 0)
         return;
-    if (pk->species() > 649)
+    if(pk->species() > 649)
         return;
 
     const int brSize = 0x54;
@@ -290,15 +290,15 @@ void Sav5::dex(std::shared_ptr<PKX> pk) {
     displayed |= (data[ofs + brSize * 6] & (u8)(1 << (bit & 7))) != 0;
     displayed |= (data[ofs + brSize * 7] & (u8)(1 << (bit & 7))) != 0;
     displayed |= (data[ofs + brSize * 8] & (u8)(1 << (bit & 7))) != 0;
-    if (!displayed) // offset is already biased by brSize, reuse shiftoff but for the display flags.
+    if(!displayed) // offset is already biased by brSize, reuse shiftoff but for the display flags.
         data[ofs + brSize * (shift + 4)] |= (u8)(1 << (bit & 7));
 
     // Set the Language
-    if (bit < 493) { // shifted by 1, Gen5 species do not have international language bits
+    if(bit < 493) { // shifted by 1, Gen5 species do not have international language bits
         int lang = pk->language() - 1;
-        if (lang > 5)
+        if(lang > 5)
             lang--; // 0-6 language vals
-        if (lang < 0)
+        if(lang < 0)
             lang = 1;
         data[PokeDexLanguageFlags + ((bit * 7 + lang) >> 3)] |= (u8)(1 << ((bit * 7 + lang) & 7));
     }
@@ -306,7 +306,7 @@ void Sav5::dex(std::shared_ptr<PKX> pk) {
     // Formes
     int fc = PersonalBWB2W2::formCount(pk->species());
     int f  = dexFormIndex(pk->species(), fc);
-    if (f < 0)
+    if(f < 0)
         return;
 
     int formLen = game == Game::BW ? 0x9 : 0xB;
@@ -317,11 +317,11 @@ void Sav5::dex(std::shared_ptr<PKX> pk) {
     data[formDex + formLen * shiny + (bit >> 3)] |= (u8)(1 << (bit & 7));
 
     // Set displayed Flag if necessary, check all flags
-    for (int i = 0; i < fc; i++) {
+    for(int i = 0; i < fc; i++) {
         bit = f + i;
-        if ((data[formDex + formLen * 2 + (bit >> 3)] & (u8)(1 << (bit & 7))) != 0) // Nonshiny
+        if((data[formDex + formLen * 2 + (bit >> 3)] & (u8)(1 << (bit & 7))) != 0) // Nonshiny
             return;                                                                 // already set
-        if ((data[formDex + formLen * 3 + (bit >> 3)] & (u8)(1 << (bit & 7))) != 0) // Shiny
+        if((data[formDex + formLen * 3 + (bit >> 3)] & (u8)(1 << (bit & 7))) != 0) // Shiny
             return;                                                                 // already set
     }
     bit = f + pk->alternativeForm();
@@ -331,9 +331,9 @@ void Sav5::dex(std::shared_ptr<PKX> pk) {
 int Sav5::dexSeen(void) const {
     static constexpr int brSize = 0x54;
     int ret                     = 0;
-    for (int i = 0; i < maxSpecies(); i++) {
-        for (int j = 1; j <= 4; j++) { // All seen flags: gender & shinies
-            if (data[PokeDex + 0x4 + (brSize * j) + i / 8] & BIT(i % 8)) {
+    for(int i = 0; i < maxSpecies(); i++) {
+        for(int j = 1; j <= 4; j++) { // All seen flags: gender & shinies
+            if(data[PokeDex + 0x4 + (brSize * j) + i / 8] & BIT(i % 8)) {
                 ret++;
                 break;
             }
@@ -344,8 +344,8 @@ int Sav5::dexSeen(void) const {
 
 int Sav5::dexCaught(void) const {
     int ret = 0;
-    for (int i = 0; i < maxSpecies(); i++) {
-        if (data[PokeDex + 0x8 + i / 8] & BIT(i % 8)) {
+    for(int i = 0; i < maxSpecies(); i++) {
+        if(data[PokeDex + 0x8 + i / 8] & BIT(i % 8)) {
             ret++;
         }
     }
@@ -375,7 +375,7 @@ std::shared_ptr<PKX> Sav5::emptyPkm() const {
 void Sav5::item(Item& item, Pouch pouch, u16 slot) {
     Item5 inject = (Item5)item;
     auto write   = inject.bytes();
-    switch (pouch) {
+    switch(pouch) {
         case NormalItem:
             std::copy(write.first, write.first + write.second, data + PouchHeldItem + slot * 4);
             break;
@@ -397,7 +397,7 @@ void Sav5::item(Item& item, Pouch pouch, u16 slot) {
 }
 
 std::unique_ptr<Item> Sav5::item(Pouch pouch, u16 slot) const {
-    switch (pouch) {
+    switch(pouch) {
         case NormalItem:
             return std::make_unique<Item5>(data + PouchHeldItem + slot * 4);
         case KeyItem:
@@ -418,7 +418,7 @@ std::vector<std::pair<Pouch, int>> Sav5::pouches() const {
 }
 
 std::string Sav5::pouchName(Pouch pouch) const {
-    switch (pouch) {
+    switch(pouch) {
         case NormalItem:
             // return i18n::localize("ITEMS");
         case KeyItem:

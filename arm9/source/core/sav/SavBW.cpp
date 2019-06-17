@@ -82,7 +82,7 @@ void SavBW::resign(void) {
     u8* tmp             = new u8[*std::max_element(lengths, lengths + blockCount)];
     u16 cs;
 
-    for (u8 i = 0; i < blockCount; i++) {
+    for(u8 i = 0; i < blockCount; i++) {
         std::copy(data + blockOfs[i], data + blockOfs[i] + lengths[i], tmp);
         cs                           = ccitt16(tmp, lengths[i]);
         *(u16*)(data + chkMirror[i]) = cs;

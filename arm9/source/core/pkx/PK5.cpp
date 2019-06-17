@@ -35,7 +35,7 @@ void PK5::shuffleArray(u8 sv) {
     u8 cdata[length];
     std::copy(data, data + length, cdata);
 
-    for (u8 block = 0; block < 4; block++) {
+    for(u8 block = 0; block < 4; block++) {
         u8 ofs = blockPosition(index + block);
         std::copy(cdata + 8 + blockLength * ofs, cdata + 8 + blockLength * ofs + blockLength, data + 8 + blockLength * block);
     }
@@ -44,14 +44,14 @@ void PK5::shuffleArray(u8 sv) {
 void PK5::crypt(void) {
     u32 seed = checksum();
 
-    for (int i = 0x08; i < 136; i += 2) {
+    for(int i = 0x08; i < 136; i += 2) {
         seed = seedStep(seed);
         data[i] ^= (seed >> 16);
         data[i + 1] ^= (seed >> 24);
     }
 
     seed = PID();
-    for (u32 i = 136; i < length; i += 2) {
+    for(u32 i = 136; i < length; i += 2) {
         seed = seedStep(seed);
         data[i] ^= (seed >> 16);
         data[i + 1] ^= (seed >> 24);
@@ -64,7 +64,7 @@ PK5::PK5(u8* dt, bool ekx, bool party) {
     std::fill_n(data, length, 0);
 
     std::copy(dt, dt + length, data);
-    if (ekx)
+    if(ekx)
         decrypt();
 }
 
@@ -101,14 +101,14 @@ u8 PK5::abilityNumber(void) const {
     return hiddenAbility() ? 4 : 1 << ((PID() >> 16) & 1);
 }
 void PK5::abilityNumber(u8 v) {
-    if (shiny()) {
+    if(shiny()) {
         do {
             PID(PKX::getRandomPID(species(), gender(), version(), nature(), alternativeForm(), v, PID(), generation()));
-        } while (!shiny());
+        } while(!shiny());
     } else {
         do {
             PID(PKX::getRandomPID(species(), gender(), version(), nature(), alternativeForm(), v, PID(), generation()));
-        } while (shiny());
+        } while(shiny());
     }
 }
 
@@ -185,9 +185,9 @@ void PK5::ability(u8 v) {
 void PK5::setAbility(u8 v) {
     u8 abilitynum;
 
-    if (v == 0)
+    if(v == 0)
         abilitynum = 1;
-    else if (v == 1)
+    else if(v == 1)
         abilitynum = 2;
     else
         abilitynum = 4;
@@ -293,14 +293,14 @@ u8 PK5::gender(void) const {
 }
 void PK5::gender(u8 g) {
     data[0x40] = u8((data[0x40] & ~0x06) | (g << 1));
-    if (shiny()) {
+    if(shiny()) {
         do {
             PID(PKX::getRandomPID(species(), g, version(), nature(), alternativeForm(), abilityNumber(), PID(), generation()));
-        } while (!shiny());
+        } while(!shiny());
     } else {
         do {
             PID(PKX::getRandomPID(species(), g, version(), nature(), alternativeForm(), abilityNumber(), PID(), generation()));
-        } while (shiny());
+        } while(shiny());
     }
 }
 
@@ -460,7 +460,7 @@ void PK5::encounterType(u8 v) {
 
 void PK5::refreshChecksum(void) {
     u16 chk = 0;
-    for (u8 i = 8; i < 136; i += 2) {
+    for(u8 i = 8; i < 136; i += 2) {
         chk += *(u16*)(data + i);
     }
     checksum(chk);
@@ -473,7 +473,7 @@ void PK5::hpType(u8 v) {
     static constexpr u16 hpivs[16][6] = { {1, 1, 0, 0, 0, 0}, // Fighting {0, 0, 0, 1, 0, 0}, // Flying {1, 1, 0, 1, 0, 0}, // Poison {1, 1, 1, 1, 0, 0}, // Ground {1, 1, 0, 0, 1, 0}, // Rock {1, 0, 0, 1, 1, 0}, // Bug {1, 0, 1, 1, 1, 0}, // Ghost {1, 1, 1, 1, 1, 0}, // Steel {1, 0, 1, 0, 0, 1}, // Fire {1, 0, 0, 1, 0, 1}, // Water {1, 0, 1, 1, 0, 1}, // Grass {1, 1, 1, 1, 0, 1}, // Electric {1, 0, 1, 0, 1, 1}, // Psychic {1, 0, 0, 1, 1, 1}, // Ice {1, 0, 1, 1, 1, 1}, // Dragon {1, 1, 1, 1, 1, 1}, // Dark
     };
 
-    for (u8 i = 0; i < 6; i++) {
+    for(u8 i = 0; i < 6; i++) {
         iv(i, (iv(i) & 0x1E) + hpivs[v][i]);
     }
 }
@@ -488,7 +488,7 @@ u16 PK5::PSV(void) const {
 u8 PK5::level(void) const {
     u8 i      = 1;
     u8 xpType = expType();
-    while (experience() >= expTable(i, xpType) && ++i < 100)
+    while(experience() >= expTable(i, xpType) && ++i < 100)
         ;
     return i;
 }
@@ -501,12 +501,12 @@ bool PK5::shiny(void) const {
     return TSV() == PSV();
 }
 void PK5::shiny(bool v) {
-    if (v) {
-        while (!shiny()) {
+    if(v) {
+        while(!shiny()) {
             PID(PKX::getRandomPID(species(), gender(), version(), nature(), alternativeForm(), abilityNumber(), PID(), generation()));
         }
     } else {
-        while (shiny()) {
+        while(shiny()) {
             PID(PKX::getRandomPID(species(), gender(), version(), nature(), alternativeForm(), abilityNumber(), PID(), generation()));
         }
     }
@@ -517,12 +517,12 @@ u16 PK5::formSpecies(void) const {
     u8 form        = alternativeForm();
     u8 formcount   = PersonalBWB2W2::formCount(tmpSpecies);
 
-    if (form && form < formcount) {
+    if(form && form < formcount) {
         u16 backSpecies = tmpSpecies;
         tmpSpecies      = PersonalBWB2W2::formStatIndex(tmpSpecies);
-        if (!tmpSpecies) {
+        if(!tmpSpecies) {
             tmpSpecies = backSpecies;
-        } else if (form < formcount) {
+        } else if(form < formcount) {
             tmpSpecies += form - 1;
         }
     }
@@ -534,69 +534,69 @@ u16 PK5::stat(const u8 stat) const {
     u16 calc;
     u8 mult = 10, basestat = 0;
 
-    if (stat == 0)
+    if(stat == 0)
         basestat = baseHP();
-    else if (stat == 1)
+    else if(stat == 1)
         basestat = baseAtk();
-    else if (stat == 2)
+    else if(stat == 2)
         basestat = baseDef();
-    else if (stat == 3)
+    else if(stat == 3)
         basestat = baseSpe();
-    else if (stat == 4)
+    else if(stat == 4)
         basestat = baseSpa();
-    else if (stat == 5)
+    else if(stat == 5)
         basestat = baseSpd();
 
-    if (stat == 0)
+    if(stat == 0)
         calc = 10 + (2 * basestat + iv(stat) + ev(stat) / 4 + 100) * level() / 100;
     else
         calc = 5 + (2 * basestat + iv(stat) + ev(stat) / 4) * level() / 100;
-    if (nature() / 5 + 1 == stat)
+    if(nature() / 5 + 1 == stat)
         mult++;
-    if (nature() % 5 + 1 == stat)
+    if(nature() % 5 + 1 == stat)
         mult--;
     return calc * mult / 10;
 }
 
 static void fixString(std::u16string& fixString) {
-    for (size_t i = 0; i < fixString.size(); i++) {
-        if (fixString[i] == u'\u2467') {
+    for(size_t i = 0; i < fixString.size(); i++) {
+        if(fixString[i] == u'\u2467') {
             fixString[i] = u'\u00d7';
-        } else if (fixString[i] == u'\u2468') {
+        } else if(fixString[i] == u'\u2468') {
             fixString[i] = u'\u00f7';
-        } else if (fixString[i] == u'\u246c') {
+        } else if(fixString[i] == u'\u246c') {
             fixString[i] = u'\u2026';
-        } else if (fixString[i] == u'\u246d') {
+        } else if(fixString[i] == u'\u246d') {
             fixString[i] = u'\uE08E';
-        } else if (fixString[i] == u'\u246e') {
+        } else if(fixString[i] == u'\u246e') {
             fixString[i] = u'\uE08F';
-        } else if (fixString[i] == u'\u246f') {
+        } else if(fixString[i] == u'\u246f') {
             fixString[i] = u'\uE090';
-        } else if (fixString[i] == u'\u2470') {
+        } else if(fixString[i] == u'\u2470') {
             fixString[i] = u'\uE091';
-        } else if (fixString[i] == u'\u2471') {
+        } else if(fixString[i] == u'\u2471') {
             fixString[i] = u'\uE092';
-        } else if (fixString[i] == u'\u2472') {
+        } else if(fixString[i] == u'\u2472') {
             fixString[i] = u'\uE093';
-        } else if (fixString[i] == u'\u2473') {
+        } else if(fixString[i] == u'\u2473') {
             fixString[i] = u'\uE094';
-        } else if (fixString[i] == u'\u2474') {
+        } else if(fixString[i] == u'\u2474') {
             fixString[i] = u'\uE095';
-        } else if (fixString[i] == u'\u2475') {
+        } else if(fixString[i] == u'\u2475') {
             fixString[i] = u'\uE096';
-        } else if (fixString[i] == u'\u2476') {
+        } else if(fixString[i] == u'\u2476') {
             fixString[i] = u'\uE097';
-        } else if (fixString[i] == u'\u2477') {
+        } else if(fixString[i] == u'\u2477') {
             fixString[i] = u'\uE098';
-        } else if (fixString[i] == u'\u2478') {
+        } else if(fixString[i] == u'\u2478') {
             fixString[i] = u'\uE099';
-        } else if (fixString[i] == u'\u2479') {
+        } else if(fixString[i] == u'\u2479') {
             fixString[i] = u'\uE09A';
-        } else if (fixString[i] == u'\u247a') {
+        } else if(fixString[i] == u'\u247a') {
             fixString[i] = u'\uE09B';
-        } else if (fixString[i] == u'\u247b') {
+        } else if(fixString[i] == u'\u247b') {
             fixString[i] = u'\uE09C';
-        } else if (fixString[i] == u'\u247d') {
+        } else if(fixString[i] == u'\u247d') {
             fixString[i] = u'\uE09D';
         }
     }
@@ -616,13 +616,13 @@ std::shared_ptr<PKX> PK5::next(void) const {
 
     u8 pkmAbilities[3] = {abilities(0), abilities(1), abilities(2)};
     u8 abilVal         = std::distance(pkmAbilities, std::find(pkmAbilities, pkmAbilities + 3, ability()));
-    if (abilVal <= 3 && pkmAbilities[abilVal] == pkmAbilities[2] && hiddenAbility()) {
+    if(abilVal <= 3 && pkmAbilities[abilVal] == pkmAbilities[2] && hiddenAbility()) {
         abilVal = 2; // HA shared by normal ability
     }
-    if (abilVal <= 3) {
+    if(abilVal <= 3) {
         pk6->abilityNumber(1 << abilVal);
     } else { // Shouldn't happen
-        if (hiddenAbility()) {
+        if(hiddenAbility()) {
             pk6->abilityNumber(4);
         } else {
             pk6->abilityNumber(gen5() ? ((PID() >> 16) & 1) : 1 << (PID() & 1));
@@ -632,14 +632,14 @@ std::shared_ptr<PKX> PK5::next(void) const {
     pk6->markValue(markValue());
     pk6->language(language());
 
-    for (int i = 0; i < 6; i++) {
+    for(int i = 0; i < 6; i++) {
         // EV Cap
         pk6->ev(i, ev(i) > 252 ? 252 : ev(i));
         pk6->iv(i, iv(i));
         pk6->contest(i, contest(i));
     }
 
-    for (int i = 0; i < 4; i++) {
+    for(int i = 0; i < 4; i++) {
         pk6->move(i, move(i));
         pk6->PPUp(i, PPUp(i));
         pk6->PP(i, PP(i));
@@ -654,7 +654,7 @@ std::shared_ptr<PKX> PK5::next(void) const {
     pk6->nature(nature());
 
     // pk6->nickname(i18n::species(pk6->language(), pk6->species()));
-    if (nicknamed())
+    if(nicknamed())
         pk6->nickname(nickname());
 
     pk6->version(version());
@@ -683,31 +683,31 @@ std::shared_ptr<PKX> PK5::next(void) const {
     u8 contestRibbon = 0;
     u8 battleRibbon  = 0;
 
-    for (int i = 0; i < 8; i++) { // Sinnoh 3, Hoenn 1
-        if (((data[0x60] >> i) & 1) == 1)
+    for(int i = 0; i < 8; i++) { // Sinnoh 3, Hoenn 1
+        if(((data[0x60] >> i) & 1) == 1)
             contestRibbon++;
-        if (((data[0x61] >> i) & 1) == 1)
+        if(((data[0x61] >> i) & 1) == 1)
             contestRibbon++;
-        if (((data[0x3C] >> i) & 1) == 1)
+        if(((data[0x3C] >> i) & 1) == 1)
             contestRibbon++;
-        if (((data[0x3D] >> i) & 1) == 1)
+        if(((data[0x3D] >> i) & 1) == 1)
             contestRibbon++;
     }
-    for (int i = 0; i < 4; i++) { // Sinnoh 4, Hoenn 2
-        if (((data[0x62] >> i) & 1) == 1)
+    for(int i = 0; i < 4; i++) { // Sinnoh 4, Hoenn 2
+        if(((data[0x62] >> i) & 1) == 1)
             contestRibbon++;
-        if (((data[0x3E] >> i) & 1) == 1)
+        if(((data[0x3E] >> i) & 1) == 1)
             contestRibbon++;
     }
 
     // Winning Ribbon
-    if (((data[0x3E] & 0x20) >> 5) == 1)
+    if(((data[0x3E] & 0x20) >> 5) == 1)
         battleRibbon++;
     // Victory Ribbon
-    if (((data[0x3E] & 0x40) >> 6) == 1)
+    if(((data[0x3E] & 0x40) >> 6) == 1)
         battleRibbon++;
-    for (int i = 1; i < 7; i++) // Sinnoh Battle Ribbons
-        if (((data[0x24] >> i) & 1) == 1)
+    for(int i = 1; i < 7; i++) // Sinnoh Battle Ribbons
+        if(((data[0x24] >> i) & 1) == 1)
             battleRibbon++;
 
     pk6->ribbonContestCount(contestRibbon);
@@ -767,7 +767,7 @@ std::shared_ptr<PKX> PK5::next(void) const {
 
     u32 shiny = 0;
     shiny     = (PID() >> 16) ^ (PID() & 0xFFFF) ^ TID() ^ SID();
-    if (shiny >= 8 && shiny < 16) // Illegal shiny transfer
+    if(shiny >= 8 && shiny < 16) // Illegal shiny transfer
         pk6->PID(pk6->PID() ^ 0x80000000);
 
     pk6->fixMoves();
@@ -794,7 +794,7 @@ std::shared_ptr<PKX> PK5::previous(void) const {
     std::shared_ptr<PKX> pk4 = std::make_shared<PK4>(dt);
 
     // Force normal Arceus form
-    if (pk4->species() == 493) {
+    if(pk4->species() == 493) {
         pk4->alternativeForm(0);
     }
 
@@ -804,8 +804,8 @@ std::shared_ptr<PKX> PK5::previous(void) const {
     pk4->otFriendship(70);
     pk4->ball(ball());
     // met location ???
-    for (int i = 0; i < 4; i++) {
-        if (pk4->move(i) > save->maxMove()) {
+    for(int i = 0; i < 4; i++) {
+        if(pk4->move(i) > save->maxMove()) {
             pk4->move(i, 0);
         }
     }
@@ -816,40 +816,40 @@ std::shared_ptr<PKX> PK5::previous(void) const {
 }
 
 int PK5::partyCurrHP(void) const {
-    if (length == 136) {
+    if(length == 136) {
         return -1;
     }
     return *(u16*)(data + 0x8E);
 }
 
 void PK5::partyCurrHP(u16 v) {
-    if (length != 136) {
+    if(length != 136) {
         *(u16*)(data + 0x8E) = v;
     }
 }
 
 int PK5::partyStat(const u8 stat) const {
-    if (length == 136) {
+    if(length == 136) {
         return -1;
     }
     return *(u16*)(data + 0x90 + stat * 2);
 }
 
 void PK5::partyStat(const u8 stat, u16 v) {
-    if (length != 136) {
+    if(length != 136) {
         *(u16*)(data + 0x90 + stat * 2) = v;
     }
 }
 
 int PK5::partyLevel() const {
-    if (length == 136) {
+    if(length == 136) {
         return -1;
     }
     return *(data + 0x8C);
 }
 
 void PK5::partyLevel(u8 v) {
-    if (length != 136) {
+    if(length != 136) {
         *(data + 0x8C) = v;
     }
 }

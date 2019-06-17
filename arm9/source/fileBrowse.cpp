@@ -252,13 +252,13 @@ std::string browseForFile(const std::vector<std::string>& extensionList) {
 int fcopy(const char *sourcePath, const char *destinationPath) {
 	DIR *isDir = opendir(sourcePath);
 	
-	if (isDir == NULL) {
+	if(isDir == NULL) {
 		closedir(isDir);
 
 		// Source path is a file
 		FILE* sourceFile = fopen(sourcePath, "rb");
 		off_t fsize = 0;
-		if (sourceFile) {
+		if(sourceFile) {
 			fseek(sourceFile, 0, SEEK_END);
 			fsize = ftell(sourceFile);			// Get source file's size
 			fseek(sourceFile, 0, SEEK_SET);
@@ -268,7 +268,7 @@ int fcopy(const char *sourcePath, const char *destinationPath) {
 		}
 
 	    FILE* destinationFile = fopen(destinationPath, "wb");
-		//if (destinationFile) {
+		//if(destinationFile) {
 			fseek(destinationFile, 0, SEEK_SET);
 		/*} else {
 			fclose(sourceFile);
@@ -278,10 +278,10 @@ int fcopy(const char *sourcePath, const char *destinationPath) {
 
 		off_t offset = 0;
 		int numr;
-		while (1)
+		while(1)
 		{
 			scanKeys();
-			if (keysHeld() & KEY_B) {
+			if(keysHeld() & KEY_B) {
 				// Cancel copying
 				fclose(sourceFile);
 				fclose(destinationFile);
@@ -299,13 +299,13 @@ int fcopy(const char *sourcePath, const char *destinationPath) {
 			fwrite(copyBuf, 2, numr, destinationFile);
 			offset += sizeof(copyBuf);
 
-			if (offset > fsize) {
+			if(offset > fsize) {
 				fclose(sourceFile);
 				fclose(destinationFile);
 
 				printf ("\x1b[17;0H");
 				printf ("%i/%i Bytes                       ", (int)fsize, (int)fsize);
-				for (int i = 0; i < 30; i++) swiWaitForVBlank();
+				for(int i = 0; i < 30; i++) swiWaitForVBlank();
 
 				return 1;
 				break;
