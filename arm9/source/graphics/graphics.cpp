@@ -2,6 +2,7 @@
 #include "lodepng.h"
 
 std::vector<Sprite> sprites;
+std::vector<u16> font;
 
 void initGraphics(void) {
     // Initialize video mode
@@ -9,22 +10,17 @@ void initGraphics(void) {
 	videoSetModeSub(MODE_5_2D | DISPLAY_BG3_ACTIVE);
 
 	// initialize all the VRAM banks
-	vramSetBankA(VRAM_A_MAIN_BG);
-	vramSetBankB(VRAM_B_MAIN_SPRITE);
-	vramSetBankC(VRAM_C_SUB_BG);
-	vramSetBankD(VRAM_D_SUB_SPRITE);
-	vramSetBankE(VRAM_E_TEX_PALETTE);
-	vramSetBankF(VRAM_F_TEX_PALETTE_SLOT4);
-	vramSetBankG(VRAM_G_TEX_PALETTE_SLOT5); // 16Kb of palette ram, and font textures take up 8*16 bytes.
-	vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
-	vramSetBankI(VRAM_I_SUB_SPRITE_EXT_PALETTE);
+	vramSetPrimaryBanks(VRAM_A_MAIN_BG,
+						VRAM_B_MAIN_SPRITE,
+						VRAM_C_SUB_BG,
+						VRAM_D_SUB_SPRITE);
 
 	// Init oam with 1D mapping 128 byte boundary and no external palette support
 	oamInit(&oamSub, SpriteMapping_Bmp_1D_128, false);
 	oamInit(&oamMain, SpriteMapping_Bmp_1D_128, false);
 
 	// Init for background
-	REG_BG3CNT = BG_MAP_BASE(1) | BG_BMP16_256x256 | BG_PRIORITY(3);
+	REG_BG3CNT = BG_MAP_BASE(0) | BG_BMP16_256x256 | BG_PRIORITY(3);
 	REG_BG3X = 0;
 	REG_BG3Y = 0;
 	REG_BG3PA = 1<<8;
@@ -32,7 +28,7 @@ void initGraphics(void) {
 	REG_BG3PC = 0;
 	REG_BG3PD = 1<<8;
 
-	REG_BG3CNT_SUB = BG_MAP_BASE(1) | BG_BMP16_256x256 | BG_PRIORITY(3);
+	REG_BG3CNT_SUB = BG_MAP_BASE(0) | BG_BMP16_256x256 | BG_PRIORITY(3);
 	REG_BG3X_SUB = 0;
 	REG_BG3Y_SUB = 0;
 	REG_BG3PA_SUB = 1<<8;
@@ -41,7 +37,11 @@ void initGraphics(void) {
 	REG_BG3PD_SUB = 1<<8;
 }
 
-ImageData loadBmp(std::string path, std::vector<u16>& imageBuffer) {
+void loadFont(void) {
+	loadPng("nitro:/graphics/font.png", font);
+}
+
+ImageData loadBmp(std::string path, std::vector<u16> &imageBuffer) {
     FILE* file = fopen(path.c_str(), "rb");
 
 	// Get width and height on image
@@ -65,7 +65,11 @@ ImageData loadBmp(std::string path, std::vector<u16>& imageBuffer) {
 			u16* src = bmpImageBuffer+y*imageData.width;
 			for(uint x=0;x<imageData.width;x++) {
 				u16 val = *(src++);
-				imageBuffer.push_back(((val>>10)&31) | (val&(31)<<5) | (val&(31))<<10 | BIT(15));
+				if(val == 0xfc1f) { // If a pixel is magenta (#ff00ff)
+					imageBuffer.push_back(0<<15); // Save it as a transparent pixel
+				} else {
+					imageBuffer.push_back(((val>>10)&31) | (val&(31)<<5) | (val&(31))<<10 | BIT(15));
+				}
 			}
 		}
 	}
@@ -73,7 +77,7 @@ ImageData loadBmp(std::string path, std::vector<u16>& imageBuffer) {
     return imageData;
 }
 
-ImageData loadPng(std::string path, std::vector<u16>& imageBuffer) {
+ImageData loadPng(std::string path, std::vector<u16> &imageBuffer) {
     std::vector<unsigned char> image;
 	unsigned width, height;
 	lodepng::decode(image, width, height, path);
@@ -87,36 +91,44 @@ ImageData loadPng(std::string path, std::vector<u16>& imageBuffer) {
     return imageData;
 }
 
-void drawImage(int x, int y, int w, int h, std::vector<u16> imageBuffer, bool top) {
+void drawImage(int x, int y, int w, int h, std::vector<u16> &imageBuffer, bool top) {
 	for(int i=0;i<h;i++) {
 		for(int j=0;j<w;j++) {
-			if(imageBuffer[(i*w)+j] != 0xfc1f && imageBuffer[(i*w)+j]>>15 != 0) {
-				(top ? BG_GFX : BG_GFX_SUB)[(y+i+32)*256+j+x] = imageBuffer[(i*w)+j];
+			if(imageBuffer[(i*w)+j]>>15 != 0) { // Do not render transparent pixel
+				(top ? BG_GFX : BG_GFX_SUB)[(y+i)*256+j+x] = imageBuffer[(i*w)+j];
 			}
 		}
 	}
 }
 
-void drawImageScaled(int x, int y, int w, int h, double scale, std::vector<u16> imageBuffer, bool top) {
+void drawImageFromSheet(int x, int y, int w, int h, std::vector<u16> &imageBuffer, int imageWidth, int xOffset, int yOffset, bool top) {
+	for(int i=0;i<h;i++) {
+		for(int j=0;j<w;j++) {
+			(top ? BG_GFX : BG_GFX_SUB)[((y+i)*256)+j+x] = imageBuffer[((i+yOffset)*imageWidth)+j+xOffset];
+		}
+	}
+}
+
+void drawImageScaled(int x, int y, int w, int h, double scale, std::vector<u16> &imageBuffer, bool top) {
 	scale = 1/scale;
 	for(double i=0;i<h;i+=scale) {
 		u16 ii = (u16)i;
 		u16 is=(u16)(i/scale);
 		for(double j=0;j<w;j+=scale) {
 			u16 jj=(u16)j;
-			if(imageBuffer[(ii*w)+jj] != 0xfc1f && imageBuffer[(ii*w)+jj]>>15 != 0) {
+			if(imageBuffer[(ii*w)+jj]>>15 != 0) { // Do not render transparent pixel
 				u16 js=(u16)(j/scale);
-				(top ? BG_GFX : BG_GFX_SUB)[(y+is+32)*256+js+x] = imageBuffer[(ii*w)+jj];	
+				(top ? BG_GFX : BG_GFX_SUB)[(y+is)*256+js+x] = imageBuffer[(ii*w)+jj];
 			}
 		}
 	}
 }
 
-void drawImageTinted(int x, int y, int w, int h, u16 color, std::vector<u16> imageBuffer, bool top) {
+void drawImageTinted(int x, int y, int w, int h, u16 color, std::vector<u16> &imageBuffer, bool top) {
 	for(int i=0;i<h;i++) {
 		for(int j=0;j<w;j++) {
-			if(imageBuffer[(i*w)+j] != 0xfc1f && imageBuffer[(i*w)+j]>>15 != 0) {
-				(top ? BG_GFX : BG_GFX_SUB)[(y+i+32)*256+j+x] = imageBuffer[(i*w)+j] & color;	
+			if(imageBuffer[(i*w)+j]>>15 != 0) { // Do not render transparent pixel
+				(top ? BG_GFX : BG_GFX_SUB)[(y+i)*256+j+x] = imageBuffer[(i*w)+j] & color;
 			}
 		}
 	}
@@ -125,7 +137,7 @@ void drawImageTinted(int x, int y, int w, int h, u16 color, std::vector<u16> ima
 void drawRectangle(int x, int y, int w, int h, int color, bool top) {
 	h+=y;
     for(;y<h;y++) {
-        dmaFillHalfWords(((color>>10)&0x1f) | ((color)&(0x1f<<5)) | (color&0x1f)<<10 | BIT(15), (top ? BG_GFX : BG_GFX_SUB)+((y+32)*256+x), w*2);
+        dmaFillHalfWords(((color>>10)&0x1f) | ((color)&(0x1f<<5)) | (color&0x1f)<<10 | BIT(15), (top ? BG_GFX : BG_GFX_SUB)+((y)*256+x), w*2);
 	}
 }
 
@@ -134,10 +146,10 @@ int initSprite(SpriteSize spriteSize, bool top) {
 	sprites.push_back(sprite);
 
 	int id = sprites.size()-1;
-   
+
 	// Allocate memory for graphics
 	sprites[id].gfx = oamAllocateGfx((top ? &oamMain : &oamSub), sprites[id].size, sprites[id].format);
-	
+
 	return id;
 }
 
@@ -145,11 +157,11 @@ void fillSpriteColor(int id, u16 color) {
 	dmaFillHalfWords(color, sprites[id].gfx, sprites[id].size*2);
 }
 
-void fillSpriteImage(int id, std::vector<u16> imageBuffer) {
+void fillSpriteImage(int id, std::vector<u16> &imageBuffer) {
 	dmaCopyWords(0, imageBuffer.data(), sprites[id].gfx, sprites[id].size*2);
 }
 
-void fillSpriteFromSheet(int id, std::vector<u16> imageBuffer, int w, int h, int imageWidth, int xOffset, int yOffset) {
+void fillSpriteFromSheet(int id, std::vector<u16> &imageBuffer, int w, int h, int imageWidth, int xOffset, int yOffset) {
 	for(int i=0;i<h;i++) {
 		for(int j=0;j<w;j++) {
 			sprites[id].gfx[(i*w)+j] = imageBuffer[((i+yOffset)*imageWidth)+j+xOffset];
@@ -159,9 +171,9 @@ void fillSpriteFromSheet(int id, std::vector<u16> imageBuffer, int w, int h, int
 
 void prepareSprite(int id, int x, int y, int priority) {
 	oamSet(
-	(sprites[id].top ? &oamMain : &oamSub),	// Main/Sub display 
+	(sprites[id].top ? &oamMain : &oamSub),	// Main/Sub display
 	id,	// Oam entry to set
-	x, y,	// Position 
+	x, y,	// Position
 	priority, // Priority
 	sprites[id].paletteAlpha, // Alpha for bmp sprite
 	sprites[id].size,
@@ -192,3 +204,65 @@ void setSpritePriority(int id, int priority) { oamSetPriority((sprites[id].top ?
 void setSpriteVisibility(int id, int show) { oamSetHidden((sprites[id].top ? &oamMain : &oamSub), id, !show); }
 Sprite getSpriteInfo(int id) { return sprites[id]; }
 uint getSpriteAmount(void) { return sprites.size(); }
+
+/**
+ * Get the index in the UV coordinate array where the letter appears
+ */
+unsigned int getTopFontSpriteIndex(const u16 letter) {
+	unsigned int spriteIndex = 0;
+	long int left = 0;
+	long int right = FONT_NUM_IMAGES;
+	long int mid = 0;
+
+	while(left <= right) {
+		mid = left + ((right - left) / 2);
+		if(fontUtf16LookupTable[mid] == letter) {
+			spriteIndex = mid;
+			break;
+		}
+
+		if(fontUtf16LookupTable[mid] < letter) {
+			left = mid + 1;
+		} else {
+			right = mid - 1;
+		}
+	}
+	return spriteIndex;
+}
+void printText(std::string text, int xPos, int yPos, bool top) { printTextTinted(StringUtils::UTF8toUTF16(text), WHITE, xPos, yPos, top); }
+void printText(std::u16string text, int xPos, int yPos, bool top) { printTextTinted(text, WHITE, xPos, yPos, top); }
+void printTextCentered(std::string text, int yPos, int xOffset, bool top) { printTextTinted(StringUtils::UTF8toUTF16(text), WHITE, ((256-getTextWidth(StringUtils::UTF8toUTF16(text)))/2)+xOffset, yPos, top); }
+void printTextCentered(std::u16string text, int yPos, int xOffset, bool top) { printTextTinted(text, WHITE, ((256-getTextWidth(text))/2)+xOffset, yPos, top); }
+void printTextCenteredTinted(std::string text, u16 color, int xOffset, int yPos, bool top) { printTextTinted(StringUtils::UTF8toUTF16(text), color, ((256-getTextWidth(StringUtils::UTF8toUTF16(text)))/2)+xOffset, yPos, top); }
+void printTextCenteredTinted(std::u16string text, u16 color, int xOffset, int yPos, bool top) { printTextTinted(text, color, ((256-getTextWidth(text))/2)+xOffset, yPos, top); }
+void printTextTinted(std::string text, u16 color, int xPos, int yPos, bool top) { printTextTinted(StringUtils::UTF8toUTF16(text), color, xPos, yPos, top); }
+
+void printTextTinted(std::u16string text, u16 color, int xPos, int yPos, bool top) {
+	int x = 0;
+
+	for(uint c = 0; c < text.length(); c++) {
+		unsigned int charIndex = getTopFontSpriteIndex(text[c]);
+
+		for(int y = 0; y < 16; y++) {
+			int currentCharIndex = ((512*(fontTexcoords[1+(4*charIndex)]+y))+fontTexcoords[0+(4*charIndex)]);
+
+			for(u16 i = 0; i < fontTexcoords[2 + (4 * charIndex)]; i++) {
+				if(font[currentCharIndex+i]>>15 != 0) { // Do not render transparent pixel
+					(top ? BG_GFX : BG_GFX_SUB)[(y+yPos)*256+(i+x+xPos)] = font[currentCharIndex+i] & color;
+				}
+			}
+		}
+		x += fontTexcoords[2 + (4 * charIndex)];
+	}
+}
+
+int getTextWidth(std::u16string text) {
+	int textWidth = 0;
+
+	for(uint c = 0; c < text.length(); c++) {
+		unsigned int charIndex = getTopFontSpriteIndex(text[c]);
+		textWidth += fontTexcoords[2+(4*charIndex)];
+	}
+
+	return textWidth;
+}

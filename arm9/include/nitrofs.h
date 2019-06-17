@@ -1,5 +1,5 @@
 /*
-	nitrofs.h - eris's wai ossum nitro filesystem device driver header  
+	nitrofs.h - eris's wai ossum nitro filesystem device driver header
 		Based on information found at http://frangoassado.org/ds/rom_spec.txt and from the #dsdev ppls
 		Kallisti (K) 2008-01-26 All rights reversed.
 
@@ -17,19 +17,19 @@
 
 	2008-05-30  v0.5.Turbo - major speed improvement
 		* This version uses a single filehandle to access the .nds file when not in GBA mode
-		  improving the speed it takes to open a .nds file by around 106ms. This is great for 
+		  improving the speed it takes to open a .nds file by around 106ms. This is great for
 		  situations requiring reading alot of seperate small files. However it does take a little
-		  bit longer when reading from multiple files simultainously 
+		  bit longer when reading from multiple files simultainously
 		  (around 122ms over 10,327 0x100 byte reads between 2 files).
-	2008-06-09  
-		* Fixed bug with SEEK_END where it wouldnt utilize the submitted position.. 
+	2008-06-09
+		* Fixed bug with SEEK_END where it wouldnt utilize the submitted position..
 		  (now can fseek(f,-128,SEEK_END) to read from end of file :D)
 
 	2008-06-18 v0.6.Turbo - . and .. :D
 		* Today i have added full "." and ".." support.
-		  dirnext() will return . and .. first, and all relevent operations will 
-		  support . and .. in pathnames. 
-    
+		  dirnext() will return . and .. first, and all relevent operations will
+		  support . and .. in pathnames.
+
     2018-09-05 v0.9 - modernize devoptab (by RonnChyran)
         * Updated for libsysbase change in devkitARM r46 and above.
 */
@@ -42,8 +42,7 @@
 #include <stdio.h>
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
     int nitroFSInit(const char *ndsfile);
@@ -73,29 +72,25 @@ extern "C"
 #define NITROISDIR 0x80 //mask to indicate this name entry is a dir, other 7 bits = name length
 
     //Directory filename subtable entry structure
-    struct ROM_FNTDir
-    {
+    struct ROM_FNTDir {
         u32 entry_start;
         u16 entry_file_id;
         u16 parent_id;
     };
 
     //Yo, dis table is fat (describes the structures
-    struct ROM_FAT
-    {
+    struct ROM_FAT {
         u32 top;    //start of file in rom image
         u32 bottom; //end of file in rom image
     };
 
-    struct nitroFSStruct
-    {
+    struct nitroFSStruct {
         off_t pos;   //where in the file am i?
         off_t start; //where in the rom this file starts
         off_t end;   //where in the rom this file ends
     };
 
-    struct nitroDIRStruct
-    {
+    struct nitroDIRStruct {
         off_t pos;     //where in the file am i?
         off_t namepos; //ptr to next name to lookup in list
         struct ROM_FAT romfat;

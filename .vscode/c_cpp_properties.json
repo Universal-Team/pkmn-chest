@@ -1,6 +1,5 @@
 {
-    "configurations": [
-        {
+    "configurations": [ {
             "name": "Mac",
             "includePath": [
                 "${workspaceFolder}/**",

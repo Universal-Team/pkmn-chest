@@ -156,8 +156,7 @@ static unsigned uivector_reserve(uivector* p, size_t allocsize) {
     if(data) {
       p->allocsize = newsize;
       p->data = (unsigned*)data;
-    }
-    else return 0; /*error: not enough memory*/
+    } else return 0; /*error: not enough memory*/
   }
   return 1;
 }
@@ -209,8 +208,7 @@ static unsigned ucvector_reserve(ucvector* p, size_t allocsize) {
     if(data) {
       p->allocsize = newsize;
       p->data = (unsigned char*)data;
-    }
-    else return 0; /*error: not enough memory*/
+    } else return 0; /*error: not enough memory*/
   }
   return 1;
 }
@@ -245,7 +243,7 @@ static void ucvector_init_buffer(ucvector* p, unsigned char* buffer, size_t size
 }
 #endif /*LODEPNG_COMPILE_ZLIB*/
 
-#if (defined(LODEPNG_COMPILE_PNG) && defined(LODEPNG_COMPILE_ANCILLARY_CHUNKS)) || defined(LODEPNG_COMPILE_ENCODER)
+#if(defined(LODEPNG_COMPILE_PNG) && defined(LODEPNG_COMPILE_ANCILLARY_CHUNKS)) || defined(LODEPNG_COMPILE_ENCODER)
 /*returns 1 if success, 0 if failure ==> nothing done*/
 static unsigned ucvector_push_back(ucvector* p, unsigned char c) {
   if(!ucvector_resize(p, p->size + 1)) return 0;
@@ -341,13 +339,13 @@ static unsigned lodepng_buffer_file(unsigned char* out, size_t size, const char*
   readsize = fread(out, 1, size, file);
   fclose(file);
 
-  if (readsize != size) return 78;
+  if(readsize != size) return 78;
   return 0;
 }
 
 unsigned lodepng_load_file(unsigned char** out, size_t* outsize, const char* filename) {
   long size = lodepng_filesize(filename);
-  if (size < 0) return 78;
+  if(size < 0) return 78;
   *outsize = (size_t)size;
 
   *out = (unsigned char*)lodepng_malloc((size_t)size);
@@ -530,8 +528,7 @@ static unsigned HuffmanTree_make2DTree(HuffmanTree* tree) {
           tree->tree2d[2 * treepos + bit] = nodefilled + tree->numcodes;
           treepos = nodefilled;
         }
-      }
-      else treepos = tree->tree2d[2 * treepos + bit] - tree->numcodes;
+      } else treepos = tree->tree2d[2 * treepos + bit] - tree->numcodes;
     }
   }
 
@@ -984,8 +981,7 @@ static unsigned getTreeInflateDynamic(HuffmanTree* tree_ll, HuffmanTree* tree_d,
           /*return error code 10 or 11 depending on the situation that happened in huffmanDecodeSymbol
           (10=no endcode, 11=wrong jump outside of tree)*/
           error = (*bp) > inbitlength ? 10 : 11;
-        }
-        else error = 16; /*unexisting code, this can never happen*/
+        } else error = 16; /*unexisting code, this can never happen*/
         break;
       }
     }
@@ -1051,8 +1047,7 @@ static unsigned inflateHuffmanBlock(ucvector* out, const unsigned char* in, size
           /*return error code 10 or 11 depending on the situation that happened in huffmanDecodeSymbol
           (10=no endcode, 11=wrong jump outside of tree)*/
           error = (*bp) > inlength * 8 ? 10 : 11;
-        }
-        else error = 18; /*error: invalid distance code (30-31 are never used)*/
+        } else error = 18; /*error: invalid distance code (30-31 are never used)*/
         break;
       }
       distance = DISTANCEBASE[code_d];
@@ -1068,7 +1063,7 @@ static unsigned inflateHuffmanBlock(ucvector* out, const unsigned char* in, size
       backward = start - distance;
 
       if(!ucvector_resize(out, (*pos) + length)) ERROR_BREAK(83 /*alloc fail*/);
-      if (distance < length) {
+      if(distance < length) {
         for(forward = 0; forward < length; ++forward) {
           out->data[(*pos)++] = out->data[backward++];
         }
@@ -1193,7 +1188,7 @@ static size_t searchCodeIndex(const unsigned* array, size_t array_size, size_t v
 
   while(left <= right) {
     size_t mid = (left + right) >> 1;
-    if (array[mid] >= value) right = mid - 1;
+    if(array[mid] >= value) right = mid - 1;
     else left = mid + 1;
   }
   if(left >= array_size || array[left] > value) left--;
@@ -1660,8 +1655,7 @@ static unsigned deflateDynamic(ucvector* out, size_t* bp, Hash* hash,
         if(rest >= 3) {
           uivector_push_back(&bitlen_lld_e, 16);
           uivector_push_back(&bitlen_lld_e, rest - 3);
-        }
-        else j -= rest;
+        } else j -= rest;
         i += j;
       } else /*too short to benefit from repeat code*/ {
         uivector_push_back(&bitlen_lld_e, bitlen_lld.data[i]);
@@ -3151,7 +3145,7 @@ unsigned lodepng_convert(unsigned char* out, const unsigned char* in,
       /*if the input was also palette with same bitdepth, then the color types are also
       equal, so copy literally. This to preserve the exact indices that were in the PNG
       even in case there are duplicate colors in the palette.*/
-      if (mode_in->colortype == LCT_PALETTE && mode_in->bitdepth == mode_out->bitdepth) {
+      if(mode_in->colortype == LCT_PALETTE && mode_in->bitdepth == mode_out->bitdepth) {
         size_t numbytes = lodepng_get_raw_size(w, h, mode_in);
         for(i = 0; i != numbytes; ++i) out[i] = in[i];
         return 0;
@@ -3180,7 +3174,7 @@ unsigned lodepng_convert(unsigned char* out, const unsigned char* in,
     for(i = 0; i != numpixels; ++i) {
       getPixelColorRGBA8(&r, &g, &b, &a, in, i, mode_in);
       error = rgba8ToPixel(out, i, mode_out, &tree, r, g, b, a);
-      if (error) break;
+      if(error) break;
     }
   }
 
@@ -3837,7 +3831,7 @@ static void removePaddingBits(unsigned char* out, const unsigned char* in,
   in and out are allowed to be the same buffer, in may also be higher but still overlapping; in must
   have >= ilinebits*h bits, out must have >= olinebits*h bits, olinebits must be <= ilinebits
   also used to move bits after earlier such operations happened, e.g. in a sequence of reduced images from Adam7
-  only useful if (ilinebits - olinebits) is a value in the range 1..7
+  only useful if(ilinebits - olinebits) is a value in the range 1..7
   */
   unsigned y;
   size_t diff = ilinebits - olinebits;
@@ -3940,8 +3934,7 @@ static unsigned readChunk_tRNS(LodePNGColorMode* color, const unsigned char* dat
     color->key_r = 256u * data[0] + data[1];
     color->key_g = 256u * data[2] + data[3];
     color->key_b = 256u * data[4] + data[5];
-  }
-  else return 42; /*error: tRNS chunk not allowed for other color models*/
+  } else return 42; /*error: tRNS chunk not allowed for other color models*/
 
   return 0; /* OK */
 }
@@ -4269,7 +4262,7 @@ unsigned lodepng_inspect_chunk(LodePNGState* state, size_t pos,
   unsigned unhandled = 0;
   unsigned error = 0;
 
-  if (pos + 4 > insize) return 30;
+  if(pos + 4 > insize) return 30;
   chunkLength = lodepng_chunk_length(chunk);
   if(chunkLength > 2147483647) return 63;
   data = lodepng_chunk_data_const(chunk);
@@ -4532,8 +4525,7 @@ unsigned lodepng_decode(unsigned char** out, unsigned* w, unsigned* h,
     *out = (unsigned char*)lodepng_malloc(outsize);
     if(!(*out)) {
       state->error = 83; /*alloc fail*/
-    }
-    else state->error = lodepng_convert(*out, data, &state->info_raw,
+    } else state->error = lodepng_convert(*out, data, &state->info_raw,
                                         &state->info_png.color, *w, *h);
     lodepng_free(data);
   }
@@ -4681,8 +4673,7 @@ static unsigned addChunk_PLTE(ucvector* out, const LodePNGColorMode* info) {
   for(i = 0; i != info->palettesize * 4; ++i) {
     /*add all channels except alpha channel*/
     if(i % 4 != 3) ucvector_push_back(&PLTE, info->palette[i]);
-  }
-  error = addChunk(out, "PLTE", PLTE.data, PLTE.size);
+  } error = addChunk(out, "PLTE", PLTE.data, PLTE.size);
   ucvector_cleanup(&PLTE);
 
   return error;
@@ -5177,8 +5168,7 @@ static unsigned filter(unsigned char* out, const unsigned char* in, unsigned w, 
       for(x = 0; x != linebytes; ++x) out[y * (linebytes + 1) + 1 + x] = attempt[bestType][x];
     }
     for(type = 0; type != 5; ++type) lodepng_free(attempt[type]);
-  }
-  else return 88; /* unknown filter strategy */
+  } else return 88; /* unknown filter strategy */
 
   return error;
 }
@@ -5342,8 +5332,7 @@ static unsigned getPaletteTranslucency(const unsigned char* palette, size_t pale
       r = palette[4 * i + 0]; g = palette[4 * i + 1]; b = palette[4 * i + 2];
       key = 1;
       i = (size_t)(-1); /*restart from beginning, to detect earlier opaque colors with key's value*/
-    }
-    else if(palette[4 * i + 3] != 255) return 2;
+    } else if(palette[4 * i + 3] != 255) return 2;
     /*when key, no opaque RGB may have key's RGB*/
     else if(key && r == palette[i * 4 + 0] && g == palette[i * 4 + 1] && b == palette[i * 4 + 2]) return 2;
   }
@@ -5440,10 +5429,8 @@ unsigned lodepng_encode(unsigned char** out, size_t* outsize,
         state->error = 104;
         goto cleanup;
       }
-    }
-    else
+    } else {
 #endif /* LODEPNG_COMPILE_ANCILLARY_CHUNKS */
-    {
       state->error = lodepng_auto_choose_color(&info.color, image, w, h, &state->info_raw);
       if(state->error) goto cleanup;
     }
@@ -5493,8 +5480,7 @@ unsigned lodepng_encode(unsigned char** out, size_t* outsize,
     if(!state->error) preProcessScanlines(&data, &datasize, converted, w, h, &info, &state->encoder);
     lodepng_free(converted);
     if(state->error) goto cleanup;
-  }
-  else preProcessScanlines(&data, &datasize, image, w, h, &info, &state->encoder);
+  } else preProcessScanlines(&data, &datasize, image, w, h, &info, &state->encoder);
 
   /* output all PNG chunks */ {
 #ifdef LODEPNG_COMPILE_ANCILLARY_CHUNKS

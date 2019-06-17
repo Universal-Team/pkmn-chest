@@ -26,11 +26,18 @@
 #include <vector>
 
 /*
- * *Currently broken as there is no console text*
- * Browse for a file with console displayed text
+ * Browse for a file
  * const std::vector<std::string>& extensionList is the extensions to show
  * Returns the selected file
  */
 std::string browseForFile(const std::vector<std::string>& extensionList);
+
+/*
+ * Copies a file to another location
+ * const char *sourcePath is the path to the source file
+ * const char *destinationPath is the path to copy to
+ * returns 1 if successful, -2 if a directory was given, or -1 for an error while copying
+ */
+int fcopy(const char *sourcePath, const char *destinationPath);
 
 #endif //FILE_BROWSE_H

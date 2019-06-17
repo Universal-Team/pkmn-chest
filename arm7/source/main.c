@@ -59,7 +59,7 @@ int main(void) {
 	setPowerButtonCB(powerButtonCB);
 
 	// Keep the ARM7 mostly idle
-	while (!exitflag) {
+	while(!exitflag) {
 		if( 0 == (REG_KEYINPUT & (KEY_SELECT | KEY_START | KEY_L | KEY_R))) {
 			exitflag = true;
 		}
