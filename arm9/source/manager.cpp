@@ -96,7 +96,7 @@ void drawBox(bool top) {
 
 	if(top) {
 		// Print box names
-		printTextTinted(Banks::bank->boxName(currentBankBox), DARK_GRAY, 60, 20, true);
+		printTextCenteredTinted(Banks::bank->boxName(currentBankBox), DARK_GRAY, -44, 20, true);
 
 		for(int i=0;i<30;i++) {
 			// Show/Hide Pokémon sprites for bank box
@@ -116,7 +116,7 @@ void drawBox(bool top) {
 		}
 	} else {
 		// Print box names
-		printTextTinted(save->boxName(currentSaveBox), DARK_GRAY, 60, 20, false);
+		printTextCenteredTinted(save->boxName(currentSaveBox), DARK_GRAY, -44, 20, false);
 
 		for(int i=0;i<30;i++) {
 			// Show/Hide Pokémon sprites for save box

@@ -1,31 +1,23 @@
 #include <fat.h>
 
+#include "common/banks.hpp"
 #include "fileBrowse.h"
 #include "graphics/graphics.h"
 #include "loader.h"
 #include "manager.h"
 #include "nitrofs.h"
-#include "common/banks.hpp"
 
 int main(int argc, char **argv) {
 	initGraphics();
 	keysSetRepeat(25,5);
 
+	// Init filesystem
 	if(!fatInitDefault()) {
-		// Draws the bottom screen red if fatInitDefault() fails
-		drawRectangle(0, 0, 256, 192, BGR15(0, 0, 0xff), false);
+		// Prints error if fatInitDefault() fails
+		consoleDemoInit();
+		printf("fatInitDefault() failed...");
 		while(1) swiWaitForVBlank();
 	}
-
-	if(!nitroFSInit(argv[0])) {
-		// Draws the bottom screen blue if nitroFSInit() fails
-		drawRectangle(0, 0, 256, 192, BGR15(0xff, 0, 0), false);
-		while(1) swiWaitForVBlank();
-	}
-	loadFont();
-	Banks::init();
-
-	printText("Loading...", 100, 30, true);
 
 	// Make directories
 	mkdir("sd:/_nds", 0777);
@@ -33,6 +25,23 @@ int main(int argc, char **argv) {
 	mkdir("sd:/_nds/pkmn-chest/bank", 0777);
 	mkdir("sd:/_nds/pkmn-chest/banks", 0777);
 	mkdir("sd:/_nds/pkmn-chest/backups", 0777);
+
+	// Try to init NitroFS from argv provided to the game when it was launched
+	if(!nitroFSInit(argv[0])) {
+		// If that fails, try to init NitroFS on 'pkmn-chest.nds'
+		if(!nitroFSInit("pkmn-chest.nds")) {
+			// Prints error if nitroFSInit() fails
+			consoleDemoInit();
+			printf("nitroFSInit() failed...");
+			while(1) swiWaitForVBlank();
+		}
+	}
+	loadFont();
+	Banks::init();
+
+	drawRectangle(0, 0, 256, 192, DARK_BLUE, true);
+	drawRectangle(0, 0, 256, 192, DARK_BLUE, false);
+	printTextCentered("Loading...", 32, 0, false);
 	
 	loadGraphics();
 

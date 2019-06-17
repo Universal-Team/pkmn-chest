@@ -215,6 +215,43 @@ void printText(std::string text, int xPos, int yPos, bool top);
 void printText(std::u16string text, int x, int y, bool top);
 
 /**
+ * Prints text centered on a screen
+ * std::u16string test is the text that will be printed
+ * int xOffset is the X offset from the center to center on
+ * int yPos is the Y position to print at
+ * bool top is whether to draw on the top or bottom screen
+ */
+void printTextCentered(std::string text, int xOffset, int yPos, bool top);
+
+/**
+ * Prints text centered on a screen
+ * std::u16string test is the text that will be printed
+ * int xOffset is the X offset from the center to center on
+ * int yPos is the Y position to print at
+ * bool top is whether to draw on the top or bottom screen
+ */
+void printTextCentered(std::u16string text, int xOffset, int yPos, bool top);
+
+/**
+ * Prints colored text centered on a screen
+ * u16 color is the color to tint the text
+ * std::string test is the text that will be printed
+ * int xOffset is the X offset from the center to center on
+ * int yPos is the Y position to print at
+ * bool top is whether to draw on the top or bottom screen
+ */
+void printTextCenteredTinted(std::string text, u16 color, int xOffset, int yPos, bool top);
+/**
+ * Prints colored text centered on a screen
+ * u16 color is the color to tint the text
+ * std::string test is the text that will be printed
+ * int xOffset is the X offset from the center to center on
+ * int y is the Y position to print at
+ * bool top is whether to draw on the top or bottom screen
+ */
+void printTextCenteredTinted(std::u16string text, u16 color, int xOffset, int yPos, bool top);
+
+/**
  * Prints colored text to the a screen
  * u16 color is the color to tint the text
  * std::string test is the text that will be printed
