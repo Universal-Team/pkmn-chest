@@ -131,13 +131,17 @@ int main(int argc, char **argv) {
 							save->pkm(tempPkm, heldPokemonBox, heldPokemon, false);
 							save->dex(heldPkm);
 						}
+						// Hide the moving Pokémon
 						setSpriteVisibility(topScreen ? topHeldPokemonID : bottomHeldPokemonID, false);
+						
+						// Update the box(es) for the moved Pokémon
+						drawBox(topScreen);
+						if(heldPokemonScreen != topScreen)	drawBox(heldPokemonScreen);
+						drawPokemonInfo(currentPokemon((arrowY*6)+arrowX));
+
+						// Not holding a Pokémon anymore
 						heldPokemon = -1;
 						heldPokemonBox = -1;
-						
-						// Show the new held Pokémon and it's info
-						drawBox(topScreen);
-						drawPokemonInfo(currentPokemon((arrowY*6)+arrowX));
 					}
 				} else {
 					if(currentPokemon((arrowY*6)+arrowX)->species() != 0) {
