@@ -3,24 +3,38 @@
 #include <sys/stat.h>
 #include <stdio.h>
 
+static bool sdAccessed = false;
+static bool sdRead = false;
+
+static bool flashcardAccessed = false;
+static bool flashcardRead = false;
+
 bool sdFound(void) {
-	if (access("sd:/", F_OK) == 0) {
-		return true;
-	} else {
-		return false;
+	if (!sdAccessed) {
+		if (access("sd:/", F_OK) == 0) {
+			sdRead = true;
+		} else {
+			sdRead = false;
+		}
+		sdAccessed = true;
 	}
+	return sdRead;
 }
 
 bool flashcardFound(void) {
-	if (access("fat:/", F_OK) == 0) {
-		return true;
-	} else {
-		return false;
+	if (!flashcardAccessed) {
+		if (access("fat:/", F_OK) == 0) {
+			flashcardRead = true;
+		} else {
+			flashcardRead = false;
+		}
+		flashcardAccessed = true;
 	}
+	return flashcardRead;
 }
 
 bool bothSDandFlashcard(void) {
-	if ((access("sd:/", F_OK) == 0) && (access("fat:/", F_OK) == 0)) {
+	if (sdFound() && flashcardFound()) {
 		return true;
 	} else {
 		return false;

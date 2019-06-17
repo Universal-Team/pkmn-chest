@@ -5,6 +5,7 @@
 #include "graphics/graphics.h"
 #include "loader.h"
 #include "manager.h"
+#include "flashcard.h"
 #include "nitrofs.h"
 
 int main(int argc, char **argv) {
@@ -20,10 +21,10 @@ int main(int argc, char **argv) {
 	}
 
 	// Make directories
-	mkdir("/_nds", 0777);
-	mkdir("/_nds/pkmn-chest", 0777);
-	mkdir("/_nds/pkmn-chest/banks", 0777);
-	mkdir("/_nds/pkmn-chest/backups", 0777);
+	mkdir(sdFound() ? "sd:/_nds" : "fat:/_nds", 0777);
+	mkdir(sdFound() ? "sd:/_nds/pkmn-chest" : "fat:/_nds/pkmn-chest", 0777);
+	mkdir(sdFound() ? "sd:/_nds/pkmn-chest/banks" : "fat:/_nds/pkmn-chest/banks", 0777);
+	mkdir(sdFound() ? "sd:/_nds/pkmn-chest/backups" : "fat:/_nds/pkmn-chest/backups", 0777);
 
 	// Try to init NitroFS from argv provided to the game when it was launched
 	if(!nitroFSInit(argv[0])) {

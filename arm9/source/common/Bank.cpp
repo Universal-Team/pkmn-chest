@@ -52,7 +52,8 @@ void Bank::load(int maxBoxes) {
         data = nullptr;
     }
     needsCheck = false;
-    if(name() == "pkmn-chest_1" && access("/_nds/pkmn-chest/bank/bank.bin", F_OK) == 0) {
+	const char *bankBinPath = (sdFound() ? "sd:/_nds/pkmn-chest/bank/bank.bin" : "fat:/_nds/pkmn-chest/bank/bank.bin");
+    if(name() == "pkmn-chest_1" && access(bankBinPath, F_OK) == 0) {
         convert();
     } else {
         auto paths    = this->paths();
@@ -249,10 +250,11 @@ bool Bank::backup() const {
     auto paths = this->paths();
     // Archive::copyFile(Archive::sd(), "/_nds/pkmn-chest/backups/" + bankName + ".bnk.bak", Archive::sd(), "/_nds/pkmn-chest/backups/" + bankName + ".bnk.bak.old");
     // Archive::copyFile(Archive::sd(), "/_nds/pkmn-chest/backups/" + bankName + ".json.bak", Archive::sd(), "/_nds/pkmn-chest/backups/" + bankName + ".json.bak.old");
-    if(fcopy(BANK(paths).c_str(), ("/_nds/pkmn-chest/backups/" + bankName + ".bnk.bak").c_str())) {
+	const char *backupsPath = (sdFound() ? "sd:/_nds/pkmn-chest/backups/" : "fat:/_nds/pkmn-chest/backups/");
+    if(fcopy(BANK(paths).c_str(), (backupsPath + bankName + ".bnk.bak").c_str())) {
         return false;
     }
-    fcopy(JSON(paths).c_str(), ("/_nds/pkmn-chest/backups/" + bankName + ".json.bak").c_str());
+    fcopy(JSON(paths).c_str(), (backupsPath + bankName + ".json.bak").c_str());
     return true;
 }
 
@@ -299,7 +301,9 @@ bool Bank::hasChanged() const {
 void Bank::convert() {
     bool deleteOld = true;
     // Gui::waitFrame(i18n::localize("BANK_CONVERT"));
-    std::fstream stream("/_nds/pkmn-chest/bank/bank.bin", std::fstream::in | std::fstream::out);
+	const char *bankBinPath = (sdFound() ? "sd:/_nds/pkmn-chest/bank/bank.bin" : "fat:/_nds/pkmn-chest/bank/bank.bin");
+	const char *bankBinBackupPath = (sdFound() ? "sd:/_nds/pkmn-chest/backups/bank.bin" : "fat:/_nds/pkmn-chest/backups/bank.bin");
+    std::fstream stream(bankBinPath, std::fstream::in | std::fstream::out);
     stream.seekg(0, stream.end);
     size_t oldSize = stream.tellg();
     stream.seekg(0, stream.beg);
@@ -360,14 +364,14 @@ void Bank::convert() {
         boxNames[i] = "Chest " + std::to_string(i + 1);
     }
 
-    stream.open("/_nds/pkmn-chest/backups/bank.bin");
+    stream.open(bankBinBackupPath);
     stream.write((char*)oldData, oldSize);
     stream.close();
 
     delete[] oldData;
 
     if(deleteOld) {
-        remove("/_nds/pkmn-chest/bank/bank.bin");
+        remove(bankBinPath);
     }
     save();
 }
@@ -406,5 +410,6 @@ bool Bank::setName(const std::string& name) {
 }
 
 std::pair<std::string, std::string> Bank::paths() const {
-    return {"/_nds/pkmn-chest/banks/" + bankName + ".bnk", "/_nds/pkmn-chest/banks/" + bankName + ".json"};
+	const char *banksPath = (sdFound() ? "sd:/_nds/pkmn-chest/banks/" : "fat:/_nds/pkmn-chest/banks/");
+    return {banksPath + bankName + ".bnk", banksPath + bankName + ".json"};
 }

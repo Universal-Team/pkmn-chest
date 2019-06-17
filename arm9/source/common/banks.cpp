@@ -28,15 +28,18 @@
 #include <fstream>
 #include "json.hpp"
 #include "../graphics/graphics.h"
+#include "flashcard.h"
 
 std::shared_ptr<Bank> Banks::bank = nullptr;
 
 nlohmann::json g_banks;
 
 static bool saveJson() {
+	const char *jsonPath = (sdFound() ? "sd:/_nds/pkmn-chest/banks.json" : "fat:/_nds/pkmn-chest/banks.json");
+
     std::string jsonData = g_banks.dump(2);
-    remove("/_nds/pkmn-chest/banks.json");
-    std::ofstream out("/_nds/pkmn-chest/banks.json");
+    remove(jsonPath);
+    std::ofstream out(jsonPath);
     if(out.good()) {
         if(out.write(jsonData.data(), jsonData.size() + 1)) {
             out.close();
@@ -58,7 +61,7 @@ static bool createJson() {
 }
 
 static bool read() {
-    std::string path = "/_nds/pkmn-chest/banks.json";
+    std::string path = (sdFound() ? "sd:/_nds/pkmn-chest/banks.json" : "fat:/_nds/pkmn-chest/banks.json");
     std::ifstream in(path);
     if(in.good()) {
         in.seekg(0, in.end);
@@ -118,8 +121,13 @@ void Banks::removeBank(const std::string& name) {
             }
             loadBank(i.key(), i.value());
         }
-        remove(("/_nds/pkmn-chest/banks/" + name + ".bnk").c_str());
-        remove(("/_nds/pkmn-chest/banks/" + name + ".json").c_str());
+		if (sdFound()) {
+			remove(("sd:/_nds/pkmn-chest/banks/" + name + ".bnk").c_str());
+			remove(("sd:/_nds/pkmn-chest/banks/" + name + ".json").c_str());
+		} else {
+			remove(("fat:/_nds/pkmn-chest/banks/" + name + ".bnk").c_str());
+			remove(("fat:/_nds/pkmn-chest/banks/" + name + ".json").c_str());
+		}
         for(auto i = g_banks.begin(); i != g_banks.end(); i++) {
             if(i.key() == name) {
                 g_banks.erase(i);
@@ -145,9 +153,14 @@ void Banks::renameBank(const std::string& oldName, const std::string& newName) {
                 return;
             }
         } else {
-            rename(("/_nds/pkmn-chest/banks/" + oldName + ".bnk").c_str(), ("/_nds/pkmn-chest/banks/" + newName + ".bnk").c_str());
-            rename(("/_nds/pkmn-chest/banks/" + oldName + ".json").c_str(), ("/_nds/pkmn-chest/banks/" + newName + ".json").c_str());
-        }
+			if (sdFound()) {
+				rename(("sd:/_nds/pkmn-chest/banks/" + oldName + ".bnk").c_str(), ("sd:/_nds/pkmn-chest/banks/" + newName + ".bnk").c_str());
+				rename(("sd:/_nds/pkmn-chest/banks/" + oldName + ".json").c_str(), ("sd:/_nds/pkmn-chest/banks/" + newName + ".json").c_str());
+			} else {
+				rename(("fat:/_nds/pkmn-chest/banks/" + oldName + ".bnk").c_str(), ("fat:/_nds/pkmn-chest/banks/" + newName + ".bnk").c_str());
+				rename(("fat:/_nds/pkmn-chest/banks/" + oldName + ".json").c_str(), ("fat:/_nds/pkmn-chest/banks/" + newName + ".json").c_str());
+			}
+       }
         g_banks[newName] = g_banks[oldName];
         g_banks.erase(oldName);
         saveJson();
