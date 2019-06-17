@@ -126,11 +126,12 @@ void showDirectoryContents(const std::vector<DirEntry>& dirContents, int startRo
 
 bool showDriveSelectOnBoot = true;
 
+int driveSelect_cursorPosition = 0;
+
 void driveSelect(void) {
 	if (!bothSDandFlashcard()) return;
 
 	int pressed = 0;
-	int cursorPosition = 0;
 
 	// Clear top screen
 	drawRectangle(0, 0, 256, 192, DARK_BLUE, true);
@@ -153,7 +154,7 @@ void driveSelect(void) {
 		drawRectangle(0, 17, 10, 175, DARK_BLUE, false);
 
 		// Show cursor
-		drawRectangle(3, cursorPosition*16+24, 4, 3, WHITE, false);
+		drawRectangle(3, driveSelect_cursorPosition*16+24, 4, 3, WHITE, false);
 
 		// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
 		do {
@@ -162,14 +163,14 @@ void driveSelect(void) {
 			pressed = keysDownRepeat();
 		} while(!pressed);
 
-		if(pressed & KEY_UP)	cursorPosition -= 1;
-		else if(pressed & KEY_DOWN)	cursorPosition += 1;
+		if(pressed & KEY_UP)	driveSelect_cursorPosition-= 1;
+		else if(pressed & KEY_DOWN)	driveSelect_cursorPosition += 1;
 
-		if (cursorPosition < 0) cursorPosition = 1;
-		if (cursorPosition > 1) cursorPosition = 0;
+		if (driveSelect_cursorPosition < 0) driveSelect_cursorPosition = 1;
+		if (driveSelect_cursorPosition > 1) driveSelect_cursorPosition = 0;
 
 		if(pressed & KEY_A) {
-			if (cursorPosition == 1) {
+			if (driveSelect_cursorPosition == 1) {
 				chdir("sd:/");
 			} else {
 				chdir("fat:/");
