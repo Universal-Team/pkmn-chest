@@ -133,6 +133,9 @@ std::string browseForFile(const std::vector<std::string>& extensionList) {
 	// Clear top screen
 	drawRectangle(0, 0, 256, 192, DARK_BLUE, true);
 
+	// Print version number
+	printText("v0.1", 256-getTextWidth(StringUtils::UTF8toUTF16("v0.1")), 176, true);
+
 	while(1) {
 		// Clear old cursors
 		drawRectangle(0, 17, 10, 175, DARK_BLUE, false);

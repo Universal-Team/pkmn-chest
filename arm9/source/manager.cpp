@@ -3,6 +3,7 @@
 #include "common/banks.hpp"
 #include "graphics/graphics.h"
 #include "loader.h"
+#include "utils.hpp"
 
 std::vector<u16> arrow, bankBox, shiny, spriteSheet, stripes, types;
 ImageData bankBoxData, spriteSheetData, stripesData, typesData;
@@ -81,6 +82,9 @@ void drawBoxScreen(void) {
 
 	// Show bottom arrow
 	setSpriteVisibility(bottomArrowID, true);
+
+	// Move the arrow back to 24, 36
+	setSpritePosition(bottomArrowID, 24, 36);
 
 	// Draw the boxes and Pokémon
 	drawBox(true);
