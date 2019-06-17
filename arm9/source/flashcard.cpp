@@ -1,7 +1,7 @@
-#include <nds.h>
 #include <fat.h>
-#include <sys/stat.h>
+#include <nds.h>
 #include <stdio.h>
+#include <sys/stat.h>
 
 static bool sdAccessed = false;
 static bool sdRead = false;
