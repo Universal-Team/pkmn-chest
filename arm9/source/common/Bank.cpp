@@ -52,7 +52,7 @@ void Bank::load(int maxBoxes) {
         data = nullptr;
     }
     needsCheck = false;
-    if(name() == "pksm_1" && access("/_nds/pkmn-chest/bank/bank.bin", F_OK) == 0) {
+    if(name() == "pkmn-chest_1" && access("/_nds/pkmn-chest/bank/bank.bin", F_OK) == 0) {
         convert();
     } else {
         auto paths    = this->paths();
@@ -319,7 +319,7 @@ void Bank::convert() {
     ((BankHeader*)data)->version = BANK_VERSION;
     ((BankHeader*)data)->boxes   = oldSize / 232 / 30;
     extern nlohmann::json g_banks;
-    g_banks["pksm_1"] = ((BankHeader*)data)->boxes;
+    g_banks["pkmn-chest_1"] = ((BankHeader*)data)->boxes;
     std::fill_n(data + sizeof(BankHeader), sizeof(BankEntry) * boxes() * 30, 0xFF);
     boxNames = nlohmann::json::array();
 

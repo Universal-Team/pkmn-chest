@@ -53,7 +53,7 @@ static bool saveJson() {
 
 static bool createJson() {
     g_banks           = nlohmann::json::object();
-    g_banks["pksm_1"] = BANK_DEFAULT_SIZE;
+    g_banks["pkmn-chest_1"] = BANK_DEFAULT_SIZE;
     return saveJson();
 }
 
@@ -83,7 +83,7 @@ int Banks::init() {
     if(g_banks.is_discarded())
         return -2;
 
-    auto i = g_banks.find("pksm_1");
+    auto i = g_banks.find("pkmn-chest");
     if(i == g_banks.end()) {
         i = g_banks.begin();
     }

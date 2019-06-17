@@ -182,6 +182,9 @@ int main(int argc, char **argv) {
 
 					// Save changes to bank
 					Banks::bank->save();
+				} else {
+					// Reload the bank
+					Banks::bank->load(Banks::bank->boxes());
 				}
 
 				break;
