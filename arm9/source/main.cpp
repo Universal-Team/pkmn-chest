@@ -20,11 +20,10 @@ int main(int argc, char **argv) {
 	}
 
 	// Make directories
-	mkdir("sd:/_nds", 0777);
-	mkdir("sd:/_nds/pkmn-chest", 0777);
-	mkdir("sd:/_nds/pkmn-chest/bank", 0777);
-	mkdir("sd:/_nds/pkmn-chest/banks", 0777);
-	mkdir("sd:/_nds/pkmn-chest/backups", 0777);
+	mkdir("/_nds", 0777);
+	mkdir("/_nds/pkmn-chest", 0777);
+	mkdir("/_nds/pkmn-chest/banks", 0777);
+	mkdir("/_nds/pkmn-chest/backups", 0777);
 
 	// Try to init NitroFS from argv provided to the game when it was launched
 	if(!nitroFSInit(argv[0])) {
