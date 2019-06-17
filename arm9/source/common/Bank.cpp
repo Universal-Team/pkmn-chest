@@ -30,6 +30,7 @@
 #include <unistd.h>
 #include "../fileBrowse.h"
 #include "../graphics/graphics.h"
+#include "flashcard.h"
 
 #define BANK(paths) paths.first
 #define JSON(paths) paths.second
