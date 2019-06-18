@@ -63,7 +63,7 @@ steps:
 - task: GitHubRelease@0
   displayName: "Release to Universal-Team/extras"
   inputs:
-    gitHubConnection: Universal-Team
+    gitHubConnection: TWLBot
     repositoryName: Universal-Team/extras
     action: create
     target: $(EXTRAS_COMMIT)
