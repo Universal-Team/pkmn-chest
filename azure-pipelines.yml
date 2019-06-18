@@ -17,7 +17,7 @@ steps:
 - script: |
      curl -L https://github.com/devkitPro/pacman/releases/download/devkitpro-pacman-1.0.1/devkitpro-pacman.deb -o pacman.deb
      sudo apt update
-     sudo apt install p7zip-full haveged
+     sudo apt install p7zip-full haveged qrencode
      sudo dpkg -i pacman.deb
      sudo dkp-pacman -Sy
      sudo dkp-pacman -S nds-dev --noconfirm
@@ -50,9 +50,24 @@ steps:
     cd extras/builds/
     cp ../../pkmn-chest.nds pkmn-chest.nds
     cp ../../pkmn-chest.cia pkmn-chest.cia
+    qrencode -o pkmn-chest.png https://raw.githubusercontent.com/Universal-Team/extras/v$CURRENT_DATE/pkmn-chest.cia
     git stage .
     git commit -m "pkmn-chest | $(COMMIT_TAG)"
     git push origin master
     git tag v$CURRENT_DATE
     echo '##vso[task.setvariable variable=TWLBOT_COMMIT]'$(git log -1 --format="%H")
   displayName: "Commit to Universal-Team/extras"
+
+- script: |
+    curl -o send.sh https://raw.githubusercontent.com/DS-Homebrew/discord-webhooks/master/send-azure.sh
+    chmod +x send.sh
+    export IMAGE=https://raw.githubusercontent.com/Universal-Team/extras/v$CURRENT_DATE/pkmn-chest.png
+    ./send.sh success $WEBHOOK_URL
+  condition: succeeded()
+  displayName: "Send success webhook"
+- script: |
+    curl -o send.sh https://raw.githubusercontent.com/DS-Homebrew/discord-webhooks/master/send-azure.sh
+    chmod +x send.sh
+    ./send.sh failure $WEBHOOK_URL
+  condition: failed()
+  displayName: "Send failure webhook"
