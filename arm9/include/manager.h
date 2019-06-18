@@ -39,9 +39,7 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm);
 // Fills the held Pokémon sprite
 void setHeldPokemon(int dexNum);
 
-/*
- * Main Pokémon box mangaement loop
- */
-void manageBoxes();
+// Main Pokémon box mangaement loop
+void manageBoxes(void);
 
 #endif

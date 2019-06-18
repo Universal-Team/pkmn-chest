@@ -1,6 +1,7 @@
 #include "manager.h"
 #include "banks.hpp"
 #include "common/banks.hpp"
+#include "graphics/colors.h"
 #include "graphics/graphics.h"
 #include "keyboard.h"
 #include "loader.h"
@@ -9,8 +10,8 @@
 bool topScreen;
 int bottomArrowID, topArrowID, shinyID, currentSaveBox, currentBankBox, bottomHeldPokemonID, topHeldPokemonID;
 std::string savePath;
-std::vector<u16> arrow, bankBox, keyboard, shiny, spriteSheet, stripes, types;
-ImageData bankBoxData, keyboardData, spriteSheetData, stripesData, typesData;
+std::vector<u16> arrow, bankBox, keyboard, menuButton, shiny, spriteSheet, stripes, types;
+ImageData bankBoxData, keyboardData, menuButtonData, spriteSheetData, stripesData, typesData;
 
 int currentBox(void) {
 	return topScreen ? currentBankBox : currentSaveBox;
@@ -32,6 +33,7 @@ void loadGraphics(void) {
 	// Load images into RAM
 	bankBoxData = loadPng("nitro:/graphics/bankBox.png", bankBox);
 	keyboardData = loadPng("nitro:/graphics/keyboard.png", keyboard);
+	menuButtonData = loadPng("nitro:/graphics/menuButton.png", menuButton);
 	spriteSheetData = loadPng("nitro:/graphics/spriteSheet.png", spriteSheet);
 	stripesData = loadPng("nitro:/graphics/stripes.png", stripes);
 	typesData = loadPng("nitro:/graphics/types.png", types);
@@ -187,7 +189,166 @@ void setHeldPokemon(int dexNum) {
 	}
 }
 
-void manageBoxes() {
+void savePrompt(void) {
+	// Draw background
+	drawRectangle(0, 0, 256, 30, WHITE, false);
+	drawRectangle(0, 30, 256, 147, DARK_GRAY, false);
+	drawRectangle(0, 177, 256, 15, BLACK, false);
+
+	printTextTinted("Would you like to save changes", DARK_GRAY, 5, 0, false);
+	printTextTinted("to the chest?", DARK_GRAY, 5, 16, false);
+	drawRectangle(200, 32, 56, 16, BLACK, false);
+	printText("Yes", 205, 32, false);
+	drawRectangle(200, 49, 56, 16, BLACK, false);
+	printText("No", 205, 49, false);
+	bool menuSelection = 0, colorSelection = 0, savingSave = 0;
+	int hDown;
+	touchPosition touch;
+	while(1) {
+		do {
+			swiWaitForVBlank();
+			scanKeys();
+			hDown = keysDown();
+		} while(!hDown);
+
+		if(hDown & KEY_A) {
+			saveYes:
+			drawRectangle(0, 0, 256, 30, WHITE, false);
+			printTextTinted("Saving...", DARK_GRAY, 5, 0, false);
+			if(!savingSave) {
+				if(!menuSelection)	Banks::bank->save();
+				drawRectangle(0, 0, 256, 30, WHITE, false);
+				printTextTinted("Would you like to save changes", DARK_GRAY, 5, 0, false);
+				printTextTinted("to the save?", DARK_GRAY, 5, 16, false);
+				savingSave = 1;
+			} else {
+				if(!menuSelection) {
+					// Re-encrypt the box data
+					save->cryptBoxData(false);
+					// Save changes to save file
+					saveChanges(savePath);
+				}
+				break;
+			}
+		} else if(hDown & KEY_B) {
+			saveNo:
+			if(!savingSave) {
+				drawRectangle(0, 0, 256, 30, WHITE, false);
+				printTextTinted("Would you like to save changes", DARK_GRAY, 5, 0, false);
+				printTextTinted("to the save?", DARK_GRAY, 5, 16, false);
+				savingSave = 1;
+			} else {
+				break;
+			}
+		} else if(hDown & KEY_UP) {
+			if(menuSelection)	menuSelection = 0;
+			colorSelection = 1;
+		} else if(hDown & KEY_DOWN) {
+			if(!menuSelection)	menuSelection = 1;
+			colorSelection = 1;
+		} else if(hDown & KEY_TOUCH) {
+			touchRead(&touch);
+			if(touch.px >= 200 && touch.py >= 32 && touch.py <= 48) {
+				goto saveYes;
+			} else if(touch.px >= 200 && touch.py >= 49 && touch.py <= 65) {
+				goto saveNo;
+			}
+		}
+		if(colorSelection) {
+			drawRectangle(200, 32, 56, 16, !menuSelection ? TEAL & LIGHT_GRAY : BLACK, false);
+			printText("Yes", 205, 32, false);
+			drawRectangle(200, 49, 56, 16, menuSelection ? TEAL & LIGHT_GRAY : BLACK, false);
+			printText("No", 205, 49, false);
+		}
+	}
+	// Draw X menu background
+	drawRectangle(0, 0, 256, 15, BLACK, false);
+	drawRectangle(0, 15, 256, 162, DARK_GRAY, false);
+	drawRectangle(0, 177, 256, 15, BLACK, false);
+}
+
+void drawXMenuButtons(int menuSelection) {
+	drawImageTinted(3, 24, menuButtonData.width, menuButtonData.height, menuSelection == 0 ? TEAL_RGB : LIGHT_GRAY, menuButton, false);
+	drawImageTinted(131, 24, menuButtonData.width, menuButtonData.height, menuSelection == 1 ? TEAL_RGB : LIGHT_GRAY, menuButton, false);
+	drawImageTinted(3, 72, menuButtonData.width, menuButtonData.height, menuSelection == 2 ? TEAL_RGB : LIGHT_GRAY, menuButton, false);
+	printText("Options", 50, 40, false);
+	printText("Save", 178, 40, false);
+	printText("Exit", 50, 88, false);
+}
+
+bool xMenu(void) {
+	// Hide all sprites
+	for(uint i=0;i<getSpriteAmount();i++) {
+		setSpriteVisibility(i, false);
+	}
+	updateOam();
+	
+	// Draw background
+	drawRectangle(0, 0, 256, 15, BLACK, false);
+	drawRectangle(0, 15, 256, 162, DARK_GRAY, false);
+	drawRectangle(0, 177, 256, 15, BLACK, false);
+
+	drawXMenuButtons(-1);
+
+	int hDown, menuSelection = -1, selectedOption = -1;
+	touchPosition touch;
+	while(1) {
+		do {
+			swiWaitForVBlank();
+			scanKeys();
+			hDown = keysDown();
+		} while(!hDown);
+		if(menuSelection == -1 && (hDown & KEY_UP || hDown & KEY_DOWN || hDown & KEY_LEFT || hDown & KEY_RIGHT)) {
+			menuSelection = 0;
+		} else if(hDown & KEY_UP) {
+			if(menuSelection > 1)	menuSelection -= 2;
+		} else if(hDown & KEY_DOWN) {
+			if(menuSelection < 1)	menuSelection += 2;
+		} else if(hDown & KEY_LEFT) {
+			if(menuSelection % 2)	menuSelection--;
+		} else if(hDown & KEY_RIGHT) {
+			if(!(menuSelection % 2))	menuSelection++;
+		} else if(hDown & KEY_TOUCH) {
+			touchRead(&touch);
+			XYCoords menuButtons[] = {{3, 24}, {131, 24}, {3, 72}};
+			for(uint i=0; i<(sizeof(menuButtons)/sizeof(menuButtons[0]));i++) {
+				if(touch.px >= menuButtons[i].x && touch.px <= menuButtons[i].x+menuButtonData.width && touch.py >= menuButtons[i].y && touch.py <= menuButtons[i].y+menuButtonData.height) {
+					selectedOption = i;
+				}
+			}
+			menuSelection = -1;
+		} else if(hDown & KEY_A) {
+			selectedOption = menuSelection;
+		} else if(hDown & KEY_B) {
+			drawBoxScreen();
+			break;
+		}
+
+		if(selectedOption != -1) {
+			// Flash selected option
+			drawXMenuButtons(selectedOption);
+			for(int i=0;i<6;i++)	swiWaitForVBlank();
+			drawXMenuButtons(-1);
+			for(int i=0;i<6;i++)	swiWaitForVBlank();
+			drawXMenuButtons(selectedOption);
+			for(int i=0;i<6;i++)	swiWaitForVBlank();
+
+			if(selectedOption == 0) {
+			} else if(selectedOption == 1) {
+				savePrompt();
+			} else if(selectedOption == 2) {
+				savePrompt();
+				return 0;
+			}
+			selectedOption = -1;
+		}
+
+		drawXMenuButtons(menuSelection);
+	}
+	return 1;
+}
+
+void manageBoxes(void) {
 	int arrowX = 0, arrowY = 0, heldPokemon = -1, heldPokemonBox = -1;
 	bool heldPokemonScreen = false;
 	topScreen = false;
@@ -294,39 +455,8 @@ void manageBoxes() {
 			}
 		}
 
-		if(hDown & KEY_START) {
-			// Hide all sprites
-			for(uint i=0;i<getSpriteAmount();i++) {
-				setSpriteVisibility(i, false);
-			}
-			updateOam();
-
-			// Draw message box asking whether to save
-			drawRectangle(20, 20, 216, 152, 0x8006, true);
-			printText("Do you want to save changes?", 25, 25, true);
-			printText("A: Yes   B: No", 25, 57, true);
-			
-			// Scan for A/B to decide whether to save
-			do {
-				swiWaitForVBlank();
-				scanKeys();
-				hDown = keysDown();
-			} while(!(hDown & KEY_A || hDown & KEY_B));
-			if(hDown & KEY_A) {
-				// Save changes to save file
-				// Re-encrypt the box data
-				save->cryptBoxData(false);
-				saveChanges(savePath);
-
-				// Save changes to bank
-				Banks::bank->save();
-			} else {
-				// Reload the bank
-				Banks::bank->load(Banks::bank->boxes());
-			}
-			
-			// Break from this function's loop
-			break;
+		if(hDown & KEY_X) {
+			if(!xMenu())	break;
 		}
 
 		if(arrowY == -2) {

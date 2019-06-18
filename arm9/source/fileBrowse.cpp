@@ -23,11 +23,11 @@
 #include "fileBrowse.h"
 #include <algorithm>
 #include <dirent.h>
-// #include <stdio.h>
 
+#include "flashcard.h"
+#include "graphics/colors.h"
 #include "graphics/graphics.h"
 #include "utils.hpp"
-#include "flashcard.h"
 
 #define ENTRIES_PER_SCREEN 11
 #define ENTRY_PAGE_LENGTH 10

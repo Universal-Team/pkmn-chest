@@ -1,6 +1,8 @@
 #include "graphics.h"
 #include "lodepng.h"
 
+#define WHITE 0xFFFF
+
 std::vector<Sprite> sprites;
 std::vector<u16> font;
 

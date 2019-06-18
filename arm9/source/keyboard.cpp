@@ -1,4 +1,5 @@
 #include "keyboard.h"
+#include "graphics/colors.h"
 #include "graphics/graphics.h"
 #include "manager.h"
 #include <string>

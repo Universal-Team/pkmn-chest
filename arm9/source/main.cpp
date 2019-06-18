@@ -3,6 +3,7 @@
 #include "common/banks.hpp"
 #include "fileBrowse.h"
 #include "flashcard.h"
+#include "graphics/colors.h"
 #include "graphics/graphics.h"
 #include "loader.h"
 #include "manager.h"
