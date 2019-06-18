@@ -82,8 +82,8 @@ void loadGraphics(void) {
 
 void drawBoxScreen(void) {
 	// Draws backgrounds
-	drawRectangle(0, 0, 256, 192, DARK_BLUE, true);
-	drawRectangle(0, 0, 256, 192, DARK_BLUE, false);
+	drawRectangle(0, 0, 256, 192, DARK_GRAY, true);
+	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
 
 	// Show bottom arrow
 	setSpriteVisibility(bottomArrowID, true);
@@ -148,7 +148,7 @@ void drawBox(bool top) {
 
 void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 	// Clear previous draw
-	drawRectangle(170, 0, 86, 192, DARK_BLUE, true);
+	drawRectangle(170, 0, 86, 192, DARK_GRAY, true);
 
 	// Draw dashed lines
 	drawImage(170, 30, stripesData.width, stripesData.height, stripes, true);
@@ -280,10 +280,11 @@ void drawXMenuButtons(int menuSelection) {
 }
 
 bool xMenu(void) {
-	// Hide all sprites
-	for(uint i=0;i<getSpriteAmount();i++) {
+	// Hide bottom sprites
+	for(uint i=0;i<30;i++) {
 		setSpriteVisibility(i, false);
 	}
+	setSpriteVisibility(bottomArrowID, false);
 	updateOam();
 	
 	// Draw background
@@ -322,8 +323,10 @@ bool xMenu(void) {
 			menuSelection = -1;
 		} else if(hDown & KEY_A) {
 			selectedOption = menuSelection;
-		} else if(hDown & KEY_B) {
-			drawBoxScreen();
+		} else if(hDown & KEY_B || hDown & KEY_X) {
+			if(!topScreen)	setSpriteVisibility(bottomArrowID, true);
+			drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+			drawBox(false);
 			break;
 		}
 
@@ -458,7 +461,7 @@ void manageBoxes(void) {
 			}
 		}
 
-		if(hDown & KEY_X) {
+		if(hDown & KEY_X && heldPokemon == -1) {
 			if(!xMenu())	break;
 		}
 

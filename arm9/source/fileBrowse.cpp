@@ -98,13 +98,13 @@ void getDirectoryContents(std::vector<DirEntry>& dirContents) {
 void showDirectoryContents(const std::vector<DirEntry>& dirContents, int startRow) {
 	getcwd(path, PATH_MAX);
 
-	// Clear screen
-	drawRectangle(0, 0, 256, 192, DARK_BLUE, false);
+	// Draw background
+	drawRectangle(0, 0, 256, 15, BLACK, false);
+	drawRectangle(0, 16, 256, 1, WHITE, false);
+	drawRectangle(0, 17, 256, 175, DARK_GRAY, false);
+	
 	// Print path
 	printText(path, 0, 0, false);
-
-	// Move to 2nd row and print line of dashes
-	drawRectangle(0, 16, 256, 1, WHITE, false);
 
 	// Print directory listing
 	for(int i=0;i < ((int)dirContents.size() - startRow) && i < ENTRIES_PER_SCREEN; i++) {
@@ -134,13 +134,13 @@ void driveSelect(void) {
 	int pressed = 0;
 
 	// Clear top screen
-	drawRectangle(0, 0, 256, 192, DARK_BLUE, true);
+	drawRectangle(0, 0, 256, 192, DARK_GRAY, true);
 
 	// Print version number
 	printText(verNumber, 256-getTextWidth(StringUtils::UTF8toUTF16(verNumber)), 176, true);
 
 	// Clear bottom screen
-	drawRectangle(0, 0, 256, 192, DARK_BLUE, false);
+	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
 
 	// Move to 2nd row and print line of dashes
 	drawRectangle(0, 16, 256, 1, WHITE, false);
@@ -151,7 +151,7 @@ void driveSelect(void) {
 
 	while(1) {
 		// Clear old cursors
-		drawRectangle(0, 17, 10, 175, DARK_BLUE, false);
+		drawRectangle(0, 17, 10, 175, DARK_GRAY, false);
 
 		// Show cursor
 		drawRectangle(3, driveSelect_cursorPosition*16+24, 4, 3, WHITE, false);
@@ -196,14 +196,14 @@ std::string browseForFile(const std::vector<std::string>& extensionList) {
 	showDirectoryContents(dirContents, screenOffset);
 
 	// Clear top screen
-	drawRectangle(0, 0, 256, 192, DARK_BLUE, true);
+	drawRectangle(0, 0, 256, 192, DARK_GRAY, true);
 
 	// Print version number
 	printText(verNumber, 256-getTextWidth(StringUtils::UTF8toUTF16(verNumber)), 176, true);
 
 	while(1) {
 		// Clear old cursors
-		drawRectangle(0, 17, 10, 175, DARK_BLUE, false);
+		drawRectangle(0, 17, 10, 175, DARK_GRAY, false);
 
 		// Show cursor
 		drawRectangle(3, (fileOffset-screenOffset)*16+24, 4, 3, WHITE, false);
@@ -246,8 +246,8 @@ std::string browseForFile(const std::vector<std::string>& extensionList) {
 				for(int i=ENTRIES_PER_SCREEN-1;i>0;i--) {
 					dmaCopyWords(0, BG_GFX_SUB+(((i*16)+1)*256), BG_GFX_SUB+((((i+1)*16)+1)*256), 16*256*2);
 				}
-				drawRectangle(10, 17, 246, 16, DARK_BLUE, false); // DARK_BLUE out previous top entry
-				drawRectangle(3, 40, 4, 3, DARK_BLUE, false); // DARK_BLUE out previous cursor mark
+				drawRectangle(10, 17, 246, 16, DARK_GRAY, false); // DARK_GRAY out previous top entry
+				drawRectangle(3, 40, 4, 3, DARK_GRAY, false); // DARK_GRAY out previous cursor mark
 
 				std::u16string name = StringUtils::UTF8toUTF16(dirContents[screenOffset].name);
 
@@ -269,8 +269,8 @@ std::string browseForFile(const std::vector<std::string>& extensionList) {
 				showDirectoryContents(dirContents, screenOffset);
 			} else {
 				dmaCopyWords(0, BG_GFX_SUB+(33*256), BG_GFX_SUB+(17*256), 160*256*2); // Copy old entries up
-				drawRectangle(10, ENTRIES_PER_SCREEN*16, 246, 16, DARK_BLUE, false); // DARK_BLUE out previous bottom entry
-				drawRectangle(3, 168, 4, 3, DARK_BLUE, false); // DARK_BLUE out previous cursor mark
+				drawRectangle(10, ENTRIES_PER_SCREEN*16, 246, 16, DARK_GRAY, false); // DARK_GRAY out previous bottom entry
+				drawRectangle(3, 168, 4, 3, DARK_GRAY, false); // DARK_GRAY out previous cursor mark
 				drawRectangle(3, (fileOffset-screenOffset)*16+24, 4, 3, WHITE, false); // Draw new cursor mark
 
 				std::u16string name = StringUtils::UTF8toUTF16(dirContents[screenOffset+ENTRIES_PER_SCREEN-1].name);
@@ -307,7 +307,7 @@ std::string browseForFile(const std::vector<std::string>& extensionList) {
 
 		if(pressed & KEY_B) {
 			// Go up a directory
-			if ((strcmp (path, "sd:/") == 0) || (strcmp (path, "fat:/") == 0)) {
+			if((strcmp (path, "sd:/") == 0) || (strcmp (path, "fat:/") == 0)) {
 				driveSelect();
 			} else {
 				chdir("..");

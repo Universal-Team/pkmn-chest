@@ -16,7 +16,7 @@ Key keys[] = {
 	{"1", 0, 0}, {"2", 20, 0}, {"3", 40, 0}, {"4", 60, 0}, {"5", 80, 0}, {"6", 100, 0}, {"7", 120, 0}, {"8", 140, 0}, {"9", 160, 0}, {"0", 180, 0}, {"-", 200, 0}, {"=", 220, 0},
 	{"q", 10, 18}, {"w", 30, 18}, {"e", 50, 18}, {"r", 70, 18}, {"t", 90, 18}, {"y", 110, 18}, {"u", 130, 18}, {"i", 150, 18}, {"o", 170, 18}, {"p", 190, 18}, {"[", 210, 18}, {"]", 230, 18},
 	{"a", 20, 36}, {"s", 40, 36}, {"d", 60, 36}, {"f", 80, 36}, {"g", 100, 36}, {"h", 120, 36}, {"j", 140, 36}, {"k", 160, 36}, {"l", 180, 36}, {";", 200, 36}, {"'", 220, 36},
-	{"z", 28, 54}, {"x", 48, 54}, {"c", 68, 54}, {"v", 88, 54}, {"b", 108, 54}, {"n", 128, 54}, {"m", 148, 54}, {",", 168, 54}, {".", 188, 54}, {"/", 208, 54},
+	{"z", 30, 54}, {"x", 50, 54}, {"c", 70, 54}, {"v", 90, 54}, {"b", 110, 54}, {"n", 130, 54}, {"m", 150, 54}, {",", 170, 54}, {".", 190, 54}, {"/", 210, 54},
 
 };
 Key modifierKeys[] = {
@@ -24,19 +24,19 @@ Key modifierKeys[] = {
 	{"caps", 0, 36},	// Caps Lock
 	{"entr", 240, 36},	// Enter
 	{"lsft", 0, 54},	// Left Shift
-	{"rsft", 228, 54},	// Right Shift
+	{"rsft", 230, 54},	// Right Shift
 };
 
 std::string Input::getLine() { return Input::getLine(-1); }
 
 std::string Input::getLine(uint maxLength) {
-	// Hide bottom sprites below the keyboard
+	// Hide sprites below the keyboard
 	for(int i=12;i<30;i++) {
 		setSpriteVisibility(i, false);
 	}
 	updateOam();
 
-	drawRectangle(0, 192-keyboardData.height-16, 256, keyboardData.height+16, DARK_BLUE, false);
+	drawRectangle(0, 192-keyboardData.height-16, 256, keyboardData.height+16, DARKER_GRAY, false);
 	drawImage(0, 192-keyboardData.height, keyboardData.width, keyboardData.height, keyboard, false);
 	int hDown;
 	touchPosition touch;
@@ -53,12 +53,12 @@ std::string Input::getLine(uint maxLength) {
 			} else if(keyDownDelay == 0) {
 				keyDownDelay--;
 				drawImage(0, 192-keyboardData.height, keyboardData.width, keyboardData.height, keyboard, false);
-				if(caps) drawRectangle(modifierKeys[1].x, modifierKeys[1].y+(192-keyboardData.height), 16, 16, 0x8260, false);
+				if(caps) drawRectangle(modifierKeys[1].x, modifierKeys[1].y+(192-keyboardData.height), 16, 16, GRAY, false);
 			}
 		} while(!hDown);
 		if(keyDownDelay > 0) {
 			drawImage(0, 192-keyboardData.height, keyboardData.width, keyboardData.height, keyboard, false);
-			if(caps) drawRectangle(modifierKeys[1].x, modifierKeys[1].y+(192-keyboardData.height), 16, 16, 0x8006, false);
+			if(caps) drawRectangle(modifierKeys[1].x, modifierKeys[1].y+(192-keyboardData.height), 16, 16, GRAY, false);
 		}
 		keyDownDelay = 10;
 
@@ -68,7 +68,7 @@ std::string Input::getLine(uint maxLength) {
 				// Check if a regular key was pressed
 				for(uint i=0;i<(sizeof(keys)/sizeof(keys[0]));i++) {
 					if((touch.px > keys[i].x-2 && touch.px < keys[i].x+18) && (touch.py > keys[i].y+(192-keyboardData.height)-2 && touch.py < keys[i].y+18+(192-keyboardData.height))) {
-						drawRectangle(keys[i].x, keys[i].y+(192-keyboardData.height), 16, 16, 0x8006, false);
+						drawRectangle(keys[i].x, keys[i].y+(192-keyboardData.height), 16, 16, DARK_GRAY, false);
 						char c = keys[i].character[0];
 						string += (shift || caps ? toupper(c) : c);
 						shift = false;
@@ -77,9 +77,9 @@ std::string Input::getLine(uint maxLength) {
 					}
 				}
 				// Check if space was pressed
-				Key key = {" ", 68, 72};
+				Key key = {" ", 70, 72};
 				if((touch.px > key.x-2 && touch.px < key.x+100) && (touch.py > key.y+(192-keyboardData.height)-2 && touch.py < key.y+18+(192-keyboardData.height))) {
-					drawRectangle(key.x, key.y+(192-keyboardData.height), 98, 16, 0x8006, false);
+					drawRectangle(key.x, key.y+(192-keyboardData.height), 96, 16, DARK_GRAY, false);
 					string += key.character;
 					shift = false;
 					printText(string, 0, 192-keyboardData.height-16, false);
@@ -88,20 +88,20 @@ std::string Input::getLine(uint maxLength) {
 			// Check if a modifier key was pressed
 			for(uint i=0;i<(sizeof(modifierKeys)/sizeof(modifierKeys[0]));i++) {
 				if((touch.px > modifierKeys[i].x-2 && touch.px < modifierKeys[i].x+18) && (touch.py > modifierKeys[i].y+(192-keyboardData.height)-2 && touch.py < modifierKeys[i].y+18+(192-keyboardData.height))) {
-					drawRectangle(modifierKeys[i].x, modifierKeys[i].y+(192-keyboardData.height), 16, 16, 0x8006, false);
 					if(modifierKeys[i].character == "bksp") {
+						drawRectangle(modifierKeys[i].x, modifierKeys[i].y+(192-keyboardData.height), 16, 16, DARK_GRAY, false);
 						string = string.substr(0, string.length()-1);
-						drawRectangle(0, 192-keyboardData.height-16, 256, 16, DARK_BLUE, false);
+						drawRectangle(0, 192-keyboardData.height-16, 256, 16, DARKER_GRAY, false);
 						printText(string, 0, 192-keyboardData.height-16, false);
 					} else if(modifierKeys[i].character == "caps") {
 						caps = !caps;
-						if(caps) drawRectangle(modifierKeys[i].x, modifierKeys[i].y+(192-keyboardData.height), 16, 16, 0x8006, false);
+						if(caps) drawRectangle(modifierKeys[i].x, modifierKeys[i].y+(192-keyboardData.height), 16, 16, GRAY, false);
 					} else if(modifierKeys[i].character == "entr") {
 						enter = true;
 					} else if(modifierKeys[i].character == "lsft") {
 						shift = !shift;
 						if(shift) {
-							drawRectangle(modifierKeys[i].x, modifierKeys[i].y+(192-keyboardData.height), 24, 16, 0x8260, false);
+							drawRectangle(modifierKeys[i].x, modifierKeys[i].y+(192-keyboardData.height), 26, 16, GRAY, false);
 							keyDownDelay = -1;
 						} else {
 							keyDownDelay = 0;
@@ -109,7 +109,7 @@ std::string Input::getLine(uint maxLength) {
 					} else if(modifierKeys[i].character == "rsft") {
 						shift = !shift;
 						if(shift) {
-							drawRectangle(modifierKeys[i].x, modifierKeys[i].y+(192-keyboardData.height), 24, 16, 0x8260, false);
+							drawRectangle(modifierKeys[i].x, modifierKeys[i].y+(192-keyboardData.height), 26, 16, GRAY, false);
 							keyDownDelay = -1;
 						} else {
 							keyDownDelay = 0;
@@ -121,7 +121,7 @@ std::string Input::getLine(uint maxLength) {
 		}
 
 		if(hDown & KEY_START || enter) {
-			drawRectangle(0, 192-keyboardData.height-16, 256, keyboardData.height+16, DARK_BLUE, false);
+			drawRectangle(0, 192-keyboardData.height-16, 256, keyboardData.height+16, DARK_GRAY, false);
 			drawBox(false);
 			break;
 		}

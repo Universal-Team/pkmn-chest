@@ -40,8 +40,8 @@ int main(int argc, char **argv) {
 	loadFont();
 	Banks::init();
 
-	drawRectangle(0, 0, 256, 192, DARK_BLUE, true);
-	drawRectangle(0, 0, 256, 192, DARK_BLUE, false);
+	drawRectangle(0, 0, 256, 192, DARK_GRAY, true);
+	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
 	printTextCentered("Loading...", 32, 0, false);
 	
 	loadGraphics();
