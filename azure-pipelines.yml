@@ -35,6 +35,8 @@ steps:
      chmod +x make_cia
      make
      ./make_cia --srl="pkmn-chest.nds"
+     cp pkmn-chest.nds $(Build.ArtifactStagingDirectory)
+     cp pkmn-chest.cia $(Build.ArtifactStagingDirectory)
      export COMMIT_TAG="$(git log --format=%h -1)"
      export COMMIT_MESSAGE="$(git log --pretty=format:"%an - %s" -1)"
      # pkmn-chest.nds and pkmn-chest.cia should be generated if the build is successful
@@ -55,8 +57,24 @@ steps:
     git commit -m "pkmn-chest | $(COMMIT_TAG)"
     git push origin master
     git tag v$CURRENT_DATE
-    echo '##vso[task.setvariable variable=TWLBOT_COMMIT]'$(git log -1 --format="%H")
+    echo '##vso[task.setvariable variable=EXTRAS_COMMIT]'$(git log -1 --format="%H")
   displayName: "Commit to Universal-Team/extras"
+
+- task: GitHubRelease@0
+  displayName: "Release to Universal-Team/extras"
+  inputs:
+    gitHubConnection: Universal-Team
+    repositoryName: Universal-Team/extras
+    action: create
+    target: $(EXTRAS_COMMIT)
+    tagSource: 'manual'
+    tag: v$(CURRENT_DATE)
+    title: pkmn-chest | $(COMMIT_TAG)
+    releaseNotesSource: input
+    releaseNotes: $(COMMIT_MESSAGE)
+    assets: '$(Build.ArtifactStagingDirectory)/**/*'
+    isPreRelease: true
+    addChangeLog: false
 
 - script: |
     curl -o send.sh https://raw.githubusercontent.com/DS-Homebrew/discord-webhooks/master/send-azure.sh
