@@ -118,8 +118,13 @@ std::string Input::getLine(uint maxLength) {
 					break;
 				}
 			}
+		} else if(hDown & KEY_B) {
+			drawRectangle(modifierKeys[0].x, modifierKeys[0].y+(192-keyboardData.height), 16, 16, DARK_GRAY, false);
+			string = string.substr(0, string.length()-1);
+			drawRectangle(0, 192-keyboardData.height-16, 256, 16, DARKER_GRAY, false);
+			printText(string, 0, 192-keyboardData.height-16, false);
 		}
-
+		
 		if(hDown & KEY_START || enter) {
 			drawRectangle(0, 192-keyboardData.height-16, 256, keyboardData.height+16, DARK_GRAY, false);
 			drawBox(false);

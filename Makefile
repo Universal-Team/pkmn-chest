@@ -13,7 +13,7 @@ export TOPDIR	:=	$(CURDIR)
 NITRO_FILES	:= nitrofiles
 
 # These set the information text in the nds file
-GAME_TITLE     := pkmn-chest
+GAME_TITLE     := Pokemon Chest
 GAME_SUBTITLE1 := Universal-Team
 
 include $(DEVKITARM)/ds_rules

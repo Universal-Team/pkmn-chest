@@ -193,7 +193,7 @@ void setHeldPokemon(int dexNum) {
 void savePrompt(void) {
 	// Draw background
 	drawRectangle(0, 0, 256, 32, WHITE, false);
-	drawRectangle(0, 30, 256, 144, DARK_GRAY, false);
+	drawRectangle(0, 32, 256, 144, DARK_GRAY, false);
 	drawRectangle(0, 176, 256, 16, BLACK, false);
 
 	printTextTinted("Would you like to save changes", DARK_GRAY, 5, 0, false);
@@ -214,11 +214,11 @@ void savePrompt(void) {
 
 		if(hDown & KEY_A) {
 			saveYes:
-			drawRectangle(0, 0, 256, 30, WHITE, false);
+			drawRectangle(0, 0, 256, 32, WHITE, false);
 			printTextTinted("Saving...", DARK_GRAY, 5, 0, false);
 			if(!savingSave) {
 				if(!menuSelection)	Banks::bank->save();
-				drawRectangle(0, 0, 256, 30, WHITE, false);
+				drawRectangle(0, 0, 256, 32, WHITE, false);
 				printTextTinted("Would you like to save changes", DARK_GRAY, 5, 0, false);
 				if(savePath == cardSave)
 					printTextTinted("to the gamecard?", DARK_GRAY, 5, 16, false);
@@ -248,7 +248,7 @@ void savePrompt(void) {
 		} else if(hDown & KEY_B) {
 			saveNo:
 			if(!savingSave) {
-				drawRectangle(0, 0, 256, 30, WHITE, false);
+				drawRectangle(0, 0, 256, 32, WHITE, false);
 				printTextTinted("Would you like to save changes", DARK_GRAY, 5, 0, false);
 				if(savePath == cardSave)
 					printTextTinted("to the gamecard?", DARK_GRAY, 5, 16, false);
@@ -359,6 +359,11 @@ bool xMenu(void) {
 				savePrompt();
 			} else if(selectedOption == 2) {
 				savePrompt();
+				// Hide remaining sprites
+				for(uint i=30;i<getSpriteAmount();i++) {
+					setSpriteVisibility(i, false);
+				}
+				updateOam();
 				return 0;
 			}
 			selectedOption = -1;
@@ -418,15 +423,17 @@ void manageBoxes(void) {
 			if(arrowY == -1) {
 				// If the arrow is on the box title, rename it
 				std::string newName = Input::getLine(topScreen ? 16 : 8);
-				if(topScreen)	Banks::bank->boxName(newName, currentBankBox);
-				else	save->boxName(currentSaveBox, newName);
+				if(newName != "") {
+					if(topScreen)	Banks::bank->boxName(newName, currentBankBox);
+					else	save->boxName(currentSaveBox, newName);
+				}
 				drawBox(topScreen);
 			} else {
 				// Otherwise move Pokémon
 				if(heldPokemon != -1) {
 					if(heldPokemon == (arrowY*6)+arrowX && heldPokemonBox == currentBox()) {
 						// If in the held Pokémon's previous spot, just put it back down
-						setSpriteVisibility(heldPokemon, true);
+						setSpriteVisibility((heldPokemonScreen ? heldPokemon+30 : heldPokemon), true);
 						setSpriteVisibility(topScreen ? topHeldPokemonID : bottomHeldPokemonID, false);
 						heldPokemon = -1;
 						heldPokemonBox = -1;
