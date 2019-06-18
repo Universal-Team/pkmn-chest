@@ -18,11 +18,13 @@ BUILD		:=	build
 SOURCES		:=	source \
 				source/common source/common/utils \
 				source/core/ source/core/sav source/core/personal source/core/pkx \
-				source/graphics
+				source/graphics \
+				source/saves
 INCLUDES	:=	include \
 				include/common include/common/utils \
 				include/core/ include/core/sav include/core/personal include/core/pkx \
-				include/graphics
+				include/graphics \
+				source/saves
 DATA		:=
 
 #---------------------------------------------------------------------------------

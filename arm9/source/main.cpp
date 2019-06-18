@@ -12,6 +12,7 @@
 int main(int argc, char **argv) {
 	initGraphics();
 	keysSetRepeat(25,5);
+	sysSetCardOwner(BUS_OWNER_ARM9);
 
 	// Init filesystem
 	if(!fatInitDefault()) {

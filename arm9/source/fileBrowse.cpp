@@ -27,6 +27,7 @@
 #include "flashcard.h"
 #include "graphics/colors.h"
 #include "graphics/graphics.h"
+#include "saves/cardSaves.h"
 #include "utils.hpp"
 
 #define ENTRIES_PER_SCREEN 11
@@ -126,11 +127,9 @@ void showDirectoryContents(const std::vector<DirEntry>& dirContents, int startRo
 
 bool showDriveSelectOnBoot = true;
 
-int driveSelect_cursorPosition = 0;
+uint driveSelect_cursorPosition = 0;
 
-void driveSelect(void) {
-	if (!bothSDandFlashcard()) return;
-
+std::string driveSelect(void) {
 	int pressed = 0;
 
 	// Clear top screen
@@ -139,16 +138,38 @@ void driveSelect(void) {
 	// Print version number
 	printText(verNumber, 256-getTextWidth(StringUtils::UTF8toUTF16(verNumber)), 176, true);
 
-	// Clear bottom screen
-	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
-
-	// Move to 2nd row and print line of dashes
+	// Draw background
+	drawRectangle(0, 0, 256, 15, BLACK, false);
 	drawRectangle(0, 16, 256, 1, WHITE, false);
+	drawRectangle(0, 17, 256, 175, DARK_GRAY, false);
 
-	// Show drive letters
-	printText("fat:", 10, 16, false);
-	printText("sd:", 10, 32, false);
+	updateCardInfo();
 
+	std::vector<std::string> drives;
+	char slot1Text[28];
+	int slot1TextY = 0;
+
+	// TODO: Implement favorite saves and add them to this
+	if(flashcardFound())	drives.push_back("fat:");
+	if(sdFound())	drives.push_back("sd:");
+	drives.push_back("card:");
+	
+	// Show drives
+	for(uint i=0;i<drives.size();i++) {
+		if(drives[i] != "card:")	printText(drives[i], 10, ((i+1)*16), false);
+		else {
+			slot1TextY = ((i+1)*16);
+			if(REG_SCFG_MC == 0x11) {
+				printText("Slot-1: No card inserted", 10, slot1TextY, false);
+			} else {
+				snprintf(slot1Text, sizeof(slot1Text), "Slot-1: %s [%s]", gamename, gameid);
+				printText(slot1Text, 10, slot1TextY, false);
+			}
+		}
+	}
+
+	int cardWait = 30;
+	bool noCardMessageSet = 0;
 	while(1) {
 		// Clear old cursors
 		drawRectangle(0, 17, 10, 175, DARK_GRAY, false);
@@ -161,30 +182,55 @@ void driveSelect(void) {
 			swiWaitForVBlank();
 			scanKeys();
 			pressed = keysDownRepeat();
+
+			if(REG_SCFG_MC == 0x11) {
+				disableSlot1();
+				cardWait = 30;
+				if(!noCardMessageSet) {
+					drawRectangle(10, slot1TextY, 200, 16, DARK_GRAY, false);
+					printText("Slot-1: No card inserted", slot1TextY, slot1TextY, false);
+					noCardMessageSet = 1;
+				}
+			}
+			if(cardWait > 0) {
+				cardWait--;
+			} else if(cardWait == 0) {
+				cardWait--;
+				enableSlot1();
+				if(updateCardInfo()) {
+					snprintf(slot1Text, sizeof(slot1Text), "Slot-1: %s [%s]", gamename, gameid);
+					drawRectangle(10, slot1TextY, 200, 16, DARK_GRAY, false);
+					printText(slot1Text, 10, slot1TextY, false);
+					noCardMessageSet = 0;
+				}
+			}
 		} while(!pressed);
 
-		if(pressed & KEY_UP)	driveSelect_cursorPosition-= 1;
-		else if(pressed & KEY_DOWN)	driveSelect_cursorPosition += 1;
+		if(pressed & KEY_UP)	driveSelect_cursorPosition--;
+		else if(pressed & KEY_DOWN)	driveSelect_cursorPosition++;
 
-		if (driveSelect_cursorPosition < 0) driveSelect_cursorPosition = 1;
-		if (driveSelect_cursorPosition > 1) driveSelect_cursorPosition = 0;
+		if(driveSelect_cursorPosition < 0) driveSelect_cursorPosition = drives.size()-1;
+		if(driveSelect_cursorPosition > drives.size()-1) driveSelect_cursorPosition = 0;
 
 		if(pressed & KEY_A) {
-			if (driveSelect_cursorPosition == 1) {
-				chdir("sd:/");
-			} else {
+			if(drives[driveSelect_cursorPosition] == "fat:") {
 				chdir("fat:/");
+			} else if(drives[driveSelect_cursorPosition] == "sd:") {
+				chdir("sd:/");
+			} else if(drives[driveSelect_cursorPosition] == "card:") {
+				dumpSave();
+				return "sd:/_nds/pkmn-chest/backups/card.sav";
 			}
-			break;
+			return "";
 		}
 	}
 }
 
 std::string browseForFile(const std::vector<std::string>& extensionList) {
-	if (showDriveSelectOnBoot) {
-		driveSelect();
+	{
+		std::string drive = driveSelect();
+		if(drive != "")	return drive;
 	}
-	showDriveSelectOnBoot = false;
 
 	int pressed = 0;
 	int screenOffset = 0;
@@ -308,7 +354,8 @@ std::string browseForFile(const std::vector<std::string>& extensionList) {
 		if(pressed & KEY_B) {
 			// Go up a directory
 			if((strcmp (path, "sd:/") == 0) || (strcmp (path, "fat:/") == 0)) {
-				driveSelect();
+				std::string drive = driveSelect();
+				if(drive != "")	return drive;
 			} else {
 				chdir("..");
 			}
@@ -340,30 +387,12 @@ int fcopy(const char *sourcePath, const char *destinationPath) {
 		}
 
 	    FILE* destinationFile = fopen(destinationPath, "wb");
-		//if(destinationFile) {
 			fseek(destinationFile, 0, SEEK_SET);
-		/*} else {
-			fclose(sourceFile);
-			fclose(destinationFile);
-			return -1;
-		}*/
 
 		off_t offset = 0;
 		int numr;
 		while(1)
 		{
-			scanKeys();
-			if(keysHeld() & KEY_B) {
-				// Cancel copying
-				fclose(sourceFile);
-				fclose(destinationFile);
-				return -1;
-				break;
-			}
-			printf ("\x1b[16;0H");
-			printf ("Progress:\n");
-			printf ("%i/%i Bytes                       ", (int)offset, (int)fsize);
-
 			u32 copyBuf[0x8000];
 
 			// Copy file to destination path
@@ -375,8 +404,6 @@ int fcopy(const char *sourcePath, const char *destinationPath) {
 				fclose(sourceFile);
 				fclose(destinationFile);
 
-				printf ("\x1b[17;0H");
-				printf ("%i/%i Bytes                       ", (int)fsize, (int)fsize);
 				for(int i = 0; i < 30; i++) swiWaitForVBlank();
 
 				return 1;

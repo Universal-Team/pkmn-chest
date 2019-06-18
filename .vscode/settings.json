@@ -80,6 +80,7 @@
         "thread": "cpp",
         "typeindex": "cpp",
         "variant": "cpp",
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+        "*.inc": "cpp"
     }
 }
