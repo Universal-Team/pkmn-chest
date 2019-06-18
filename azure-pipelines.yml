@@ -46,13 +46,13 @@ steps:
     echo '##vso[task.setvariable variable=COMMIT_MESSAGE]'$(git log --pretty=format:"%an - %s" -1)
     git config --global user.email "flamekat54@aol.com"
     git config --global user.name "TWLBot"
-    git clone https://$GITHUB_TOKEN@github.com/TWLBot/overflow-builds.git
-    cd overflow-builds/
-    cp ../pkmn-chest.nds pkmn-chest.nds
-    cp ../pkmn-chest.cia pkmn-chest.cia
+    git clone https://$GITHUB_TOKEN@github.com/Universal-Team/extras.git
+    cd extras/builds/
+    cp ../../pkmn-chest.nds pkmn-chest.nds
+    cp ../../pkmn-chest.cia pkmn-chest.cia
     git stage .
     git commit -m "pkmn-chest | $(COMMIT_TAG)"
     git push origin master
     git tag v$CURRENT_DATE
     echo '##vso[task.setvariable variable=TWLBOT_COMMIT]'$(git log -1 --format="%H")
-  displayName: "Commit to TWLBot/overflow-builds"
+  displayName: "Commit to Universal-Team/extras"
