@@ -1,5 +1,6 @@
 #include <fstream>
 #include "saves/cardSaves.h"
+#include "graphics/colors.h"
 #include "graphics/graphics.h"
 
 auxspi_extra card_type = AUXSPI_FLASH_CARD;
@@ -29,7 +30,7 @@ bool updateCardInfo(sNDSHeader* nds, char* gameid, char* gamename, auxspi_extra*
 }
 
 void dumpSave(void) {
-	std::ofstream output("sd:/_nds/pkmn-chest/backups/card.sav", std::ofstream::binary);
+	std::ofstream output(cardSave, std::ofstream::binary);
 	if(output.is_open()) {
 		unsigned char* buffer;
 		if(card_type == AUXSPI_INFRARED) {
@@ -56,13 +57,9 @@ void dumpSave(void) {
 	output.close();
 }
 
-void restoreSave(auxspi_extra card_type, char gameid[]) {
-	// sprintf(txt, "Press A to load %s.sav.\n", gameid);
-	// WriteMessage(txt, true);
-	// WriteMessage("Press X to manually select the file to load (use this also if garbage text is displayed)\n");
-	// NameUpdate(gameid, false);
+bool restoreSave(void) {
 	bool auxspi = card_type == AUXSPI_INFRARED;
-	std::ifstream input("/_nds/pkmn-chest/backups/card.sav", std::ifstream::binary);
+	std::ifstream input(cardSave, std::ifstream::binary);
 	if(input.is_open()) {
 		unsigned char* buffer;
 		int size;
@@ -83,7 +80,7 @@ void restoreSave(auxspi_extra card_type, char gameid[]) {
 				shift = 8; // 256 bytes
 				break;
 			default:
-				return;
+				return false;
 			}
 			LEN = 1 << shift;
 			num_blocks = 1 << (size - shift);
@@ -95,36 +92,24 @@ void restoreSave(auxspi_extra card_type, char gameid[]) {
 		length = input.tellg();
 		input.seekg(0, input.beg);
 		if(length != (auxspi ? (int)(LEN*num_blocks) : size)) {
-			// WriteMessage("The size of the loaded file doesn't match the size of the save for the cartridge!\n", true);
-			// WriteMessage("Press A to continue\n");
-			// wait();
+			drawRectangle(20, 20, 216, 152, 0xCC00, true);
+			printTextCentered("Warning: The size of the save", 0, 24, true);
+			printTextCentered("doesn't match the size of the", 0, 40, true);
+			printTextCentered("current gamecard! Write stopped.", 0, 56, true);
+			for(int i=0;i<120;i++)	swiWaitForVBlank();
 			input.close();
-			return;
+			return false;
 		}
 		if(type == 3) {
-			// WriteMessage("The savefile in the cartridge has to be cleared, press A to continue, B to cancel\n", true);
-			// if(wait(true) == KEY_B) {
-				// input.close();
-				// return;
-			// }
-			// WriteMessage("Deleting the previous savefile\n", true);
 			if(auxspi)
 				auxspi_erase(card_type);
 			else
 				cardEepromChipErase();
-			// WriteMessage("Savefile deleted\n");
 		}
-		// WriteMessage("Savefile loaded, press A to write it in the cartridge, B to cancel\n", true);
-		// if(wait(true) == KEY_B) {
-		// 	input.close();
-		// 	return;
-		// }
 		if(auxspi){
 			buffer = new unsigned char[LEN];
-			int step = num_blocks / 32;
 			for(unsigned int i = 0; i < num_blocks; i++) {
-				if(i % step == 0)
-					printText("#", (i/step)*16, 32, false);
+				drawRectangle((((double)i/num_blocks)*246)+5, 33, 1, 16, LIGHT_GRAY, false);
 
 				input.read((char*)buffer, LEN);
 				auxspi_write_data(i << shift, buffer, LEN, type, card_type);
@@ -134,18 +119,14 @@ void restoreSave(auxspi_extra card_type, char gameid[]) {
 			int written = 0;
 			buffer = new unsigned char[blocks];
 			for(unsigned int i = 0; i < 32; i++) {
-				printText("#", (i)*16, 32, false);
+				drawRectangle(((i/32)*246)+5, 33, 8, 16, LIGHT_GRAY, false);
 				input.read((char*)buffer, blocks);
 				cardWriteEeprom(written, buffer, blocks, type);
 				written += blocks;
 			}
 		}
 		delete[] buffer;
-		// WriteMessage("Savefile successfully written!\n");
-	} else {
-		// WriteMessage("Savefile not found!\n");
 	}
 	input.close();
-	// WriteMessage("Press A to continue\n");
-	// wait();
+	return true;
 }

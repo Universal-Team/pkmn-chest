@@ -188,7 +188,7 @@ std::string driveSelect(void) {
 				cardWait = 30;
 				if(!noCardMessageSet) {
 					drawRectangle(10, slot1TextY, 200, 16, DARK_GRAY, false);
-					printText("Slot-1: No card inserted", slot1TextY, slot1TextY, false);
+					printText("Slot-1: No card inserted", 10, slot1TextY, false);
 					noCardMessageSet = 1;
 				}
 			}
@@ -219,7 +219,7 @@ std::string driveSelect(void) {
 				chdir("sd:/");
 			} else if(drives[driveSelect_cursorPosition] == "card:") {
 				dumpSave();
-				return "sd:/_nds/pkmn-chest/backups/card.sav";
+				return cardSave;
 			}
 			return "";
 		}

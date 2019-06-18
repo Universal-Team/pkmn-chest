@@ -233,8 +233,8 @@ unsigned int getTopFontSpriteIndex(const u16 letter) {
 }
 void printText(std::string text, int xPos, int yPos, bool top) { printTextTinted(StringUtils::UTF8toUTF16(text), WHITE, xPos, yPos, top); }
 void printText(std::u16string text, int xPos, int yPos, bool top) { printTextTinted(text, WHITE, xPos, yPos, top); }
-void printTextCentered(std::string text, int yPos, int xOffset, bool top) { printTextTinted(StringUtils::UTF8toUTF16(text), WHITE, ((256-getTextWidth(StringUtils::UTF8toUTF16(text)))/2)+xOffset, yPos, top); }
-void printTextCentered(std::u16string text, int yPos, int xOffset, bool top) { printTextTinted(text, WHITE, ((256-getTextWidth(text))/2)+xOffset, yPos, top); }
+void printTextCentered(std::string text, int xOffset, int yPos, bool top) { printTextTinted(StringUtils::UTF8toUTF16(text), WHITE, ((256-getTextWidth(StringUtils::UTF8toUTF16(text)))/2)+xOffset, yPos, top); }
+void printTextCentered(std::u16string text, int xOffset, int yPos, bool top) { printTextTinted(text, WHITE, ((256-getTextWidth(text))/2)+xOffset, yPos, top); }
 void printTextCenteredTinted(std::string text, u16 color, int xOffset, int yPos, bool top) { printTextTinted(StringUtils::UTF8toUTF16(text), color, ((256-getTextWidth(StringUtils::UTF8toUTF16(text)))/2)+xOffset, yPos, top); }
 void printTextCenteredTinted(std::u16string text, u16 color, int xOffset, int yPos, bool top) { printTextTinted(text, color, ((256-getTextWidth(text))/2)+xOffset, yPos, top); }
 void printTextTinted(std::string text, u16 color, int xPos, int yPos, bool top) { printTextTinted(StringUtils::UTF8toUTF16(text), color, xPos, yPos, top); }

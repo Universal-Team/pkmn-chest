@@ -5,6 +5,7 @@
 #include "graphics/graphics.h"
 #include "keyboard.h"
 #include "loader.h"
+#include "saves/cardSaves.h"
 #include "utils.hpp"
 
 bool topScreen;
@@ -219,7 +220,10 @@ void savePrompt(void) {
 				if(!menuSelection)	Banks::bank->save();
 				drawRectangle(0, 0, 256, 30, WHITE, false);
 				printTextTinted("Would you like to save changes", DARK_GRAY, 5, 0, false);
-				printTextTinted("to the save?", DARK_GRAY, 5, 16, false);
+				if(savePath == cardSave)
+					printTextTinted("to the gamecard?", DARK_GRAY, 5, 16, false);
+				else
+					printTextTinted("to the save?", DARK_GRAY, 5, 16, false);
 				savingSave = 1;
 			} else {
 				if(!menuSelection) {
@@ -230,6 +234,14 @@ void savePrompt(void) {
 					// Reload save
 					loadSave(savePath);
 					save->cryptBoxData(true);
+					if(savePath == cardSave) {
+						drawRectangle(0, 32, 256, 48, DARK_GRAY, false);
+						updateCardInfo();
+						if(!restoreSave()) {
+							drawRectangle(0, 0, 256, 192, DARK_GRAY, true);
+							drawBox(true);
+						}
+					}
 				}
 				break;
 			}
@@ -238,7 +250,10 @@ void savePrompt(void) {
 			if(!savingSave) {
 				drawRectangle(0, 0, 256, 30, WHITE, false);
 				printTextTinted("Would you like to save changes", DARK_GRAY, 5, 0, false);
-				printTextTinted("to the save?", DARK_GRAY, 5, 16, false);
+				if(savePath == cardSave)
+					printTextTinted("to the gamecard?", DARK_GRAY, 5, 16, false);
+				else
+					printTextTinted("to the save?", DARK_GRAY, 5, 16, false);
 				savingSave = 1;
 			} else {
 				break;

@@ -51,7 +51,7 @@ steps:
     cd extras/builds/
     cp ../../pkmn-chest.nds pkmn-chest.nds
     cp ../../pkmn-chest.cia pkmn-chest.cia
-    git stage *
+    git stage .
     git commit -m "pkmn-chest | $(COMMIT_TAG)"
     git push origin master
     git tag v$CURRENT_DATE

@@ -43,7 +43,7 @@ int main(int argc, char **argv) {
 
 	drawRectangle(0, 0, 256, 192, DARK_GRAY, true);
 	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
-	printTextCentered("Loading...", 32, 0, false);
+	printTextCentered("Loading...", 0, 32, false);
 	
 	loadGraphics();
 
@@ -52,7 +52,7 @@ int main(int argc, char **argv) {
 	while(1) {
 		if(!loadSave(savePath = browseForFile(extensionList))) {
 			drawRectangle(20, 20, 216, 152, 0xCC00, true);
-			printText("Invalid save file", 25, 25, true);
+			printTextCentered("Invalid save file", 0, 24, true);
 			for(int i=0;i<120;i++)	swiWaitForVBlank();
 			continue;
 		}
