@@ -36,8 +36,8 @@ checkarm9:
 #---------------------------------------------------------------------------------
 $(TARGET).nds	: $(NITRO_FILES) arm7/$(TARGET).elf arm9/$(TARGET).elf
 	ndstool	-c $(TARGET).nds -7 arm7/$(TARGET).elf -9 arm9/$(TARGET).elf \
-	-b1 icon.bmp "$(GAME_TITLE);$(GAME_SUBTITLE1)" \
-	$(_ADDFILES)
+	-b1 icon.bmp "$(GAME_TITLE);$(GAME_SUBTITLE1)" $(_ADDFILES) \
+	-g PKCA 01 "PKMNCHEST" -z 80040000 -u 00030004 -a 00000138
 
 #---------------------------------------------------------------------------------
 arm7/$(TARGET).elf:

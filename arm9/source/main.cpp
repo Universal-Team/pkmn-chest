@@ -32,10 +32,16 @@ int main(int argc, char **argv) {
 	if(!nitroFSInit(argv[0])) {
 		// If that fails, try to init NitroFS on 'pkmn-chest.nds'
 		if(!nitroFSInit("pkmn-chest.nds")) {
-			// Prints error if nitroFSInit() fails
-			consoleDemoInit();
-			printf("nitroFSInit() failed...");
-			while(1) swiWaitForVBlank();
+			if(!nitroFSInit("/_nds/pkmn-chest/pkmn-chest.nds")) {
+				// Prints error if nitroFSInit() fails
+				consoleDemoInit();
+				printf("nitroFSInit() failed...\n\n");
+				printf("If you're using a cia install,\n");
+				printf("you'll need:\n\n");
+				printf("sdmc:/_nds/pkmn-chest/\n");
+				printf("                  pkmn-chest.nds");
+				while(1) swiWaitForVBlank();
+			}
 		}
 	}
 	loadFont();

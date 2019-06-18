@@ -34,9 +34,8 @@ steps:
      export DEVKITARM="/opt/devkitpro/devkitARM"
      chmod +x make_cia
      make
-     ./make_cia --srl="pkmn-chest.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
-     make
-     mkdir export COMMIT_TAG="$(git log --format=%h -1)"
+     ./make_cia --srl="pkmn-chest.nds"
+     export COMMIT_TAG="$(git log --format=%h -1)"
      export COMMIT_MESSAGE="$(git log --pretty=format:"%an - %s" -1)"
      # pkmn-chest.nds and pkmn-chest.cia should be generated if the build is successful
      ls
