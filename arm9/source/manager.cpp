@@ -191,16 +191,16 @@ void setHeldPokemon(int dexNum) {
 
 void savePrompt(void) {
 	// Draw background
-	drawRectangle(0, 0, 256, 30, WHITE, false);
-	drawRectangle(0, 30, 256, 147, DARK_GRAY, false);
-	drawRectangle(0, 177, 256, 15, BLACK, false);
+	drawRectangle(0, 0, 256, 32, WHITE, false);
+	drawRectangle(0, 30, 256, 144, DARK_GRAY, false);
+	drawRectangle(0, 176, 256, 16, BLACK, false);
 
 	printTextTinted("Would you like to save changes", DARK_GRAY, 5, 0, false);
 	printTextTinted("to the chest?", DARK_GRAY, 5, 16, false);
-	drawRectangle(200, 32, 56, 16, BLACK, false);
+	drawRectangle(200, 33, 56, 16, BLACK, false);
 	printText("Yes", 205, 32, false);
-	drawRectangle(200, 49, 56, 16, BLACK, false);
-	printText("No", 205, 49, false);
+	drawRectangle(200, 50, 56, 16, BLACK, false);
+	printText("No", 205, 50, false);
 	bool menuSelection = 0, colorSelection = 0, savingSave = 0;
 	int hDown;
 	touchPosition touch;
@@ -227,6 +227,9 @@ void savePrompt(void) {
 					save->cryptBoxData(false);
 					// Save changes to save file
 					saveChanges(savePath);
+					// Reload save
+					loadSave(savePath);
+					save->cryptBoxData(true);
 				}
 				break;
 			}
@@ -255,16 +258,16 @@ void savePrompt(void) {
 			}
 		}
 		if(colorSelection) {
-			drawRectangle(200, 32, 56, 16, !menuSelection ? TEAL & LIGHT_GRAY : BLACK, false);
-			printText("Yes", 205, 32, false);
-			drawRectangle(200, 49, 56, 16, menuSelection ? TEAL & LIGHT_GRAY : BLACK, false);
-			printText("No", 205, 49, false);
+			drawRectangle(200, 33, 56, 16, !menuSelection ? TEAL & LIGHT_GRAY : BLACK, false);
+			printText("Yes", 205, 33, false);
+			drawRectangle(200, 50, 56, 16, menuSelection ? TEAL & LIGHT_GRAY : BLACK, false);
+			printText("No", 205, 50, false);
 		}
 	}
 	// Draw X menu background
-	drawRectangle(0, 0, 256, 15, BLACK, false);
-	drawRectangle(0, 15, 256, 162, DARK_GRAY, false);
-	drawRectangle(0, 177, 256, 15, BLACK, false);
+	drawRectangle(0, 0, 256, 16, BLACK, false);
+	drawRectangle(0, 16, 256, 160, DARK_GRAY, false);
+	drawRectangle(0, 176, 256, 16, BLACK, false);
 }
 
 void drawXMenuButtons(int menuSelection) {
@@ -284,9 +287,9 @@ bool xMenu(void) {
 	updateOam();
 	
 	// Draw background
-	drawRectangle(0, 0, 256, 15, BLACK, false);
-	drawRectangle(0, 15, 256, 162, DARK_GRAY, false);
-	drawRectangle(0, 177, 256, 15, BLACK, false);
+	drawRectangle(0, 0, 256, 16, BLACK, false);
+	drawRectangle(0, 16, 256, 160, DARK_GRAY, false);
+	drawRectangle(0, 176, 256, 16, BLACK, false);
 
 	drawXMenuButtons(-1);
 
