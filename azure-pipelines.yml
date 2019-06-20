@@ -38,7 +38,9 @@ steps:
     # If setting up normally, just do `brew install qrencode`
     # I wanted to save time on the builds by skipping brew, though
     mkdir -p /usr/local/Cellar/qrencode/4.0.2/lib/
-    mv ../../../tools-osx/libqrencode.4.dylib /usr/local/Cellar/qrencode/4.0.2/lib/libqrencode.4.dylib
+    mv ../../../tools-osx/libqrencode.4.dylib /usr/local/Cellar/qrencode/4.0.2/lib/
+    mkdir -p /usr/local/Cellar/libpng/1.6.37/lib/
+    mv ../../../tools-osx/libpng16.16.dylib /usr/local/Cellar/libpng/1.6.37/lib/
     ../../../tools-osx/qrencode -o pkmn-chest.png https://raw.githubusercontent.com/Universal-Team/extras/v$CURRENT_DATE/builds/pkmn-chest/pkmn-chest.cia
     git stage .
     git commit -m "pkmn-chest | $(COMMIT_TAG)"
