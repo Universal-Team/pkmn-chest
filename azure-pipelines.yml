@@ -28,13 +28,11 @@ steps:
     tools-osx/make_cia --srl="pkmn-chest.nds"
     cp pkmn-chest.nds $(Build.ArtifactStagingDirectory)
     cp pkmn-chest.cia $(Build.ArtifactStagingDirectory)
-    export COMMIT_TAG="$(git log --format=%h -1)"
-    export COMMIT_MESSAGE="$(git log --pretty=format:"%an - %s" -1)"
+    echo '##vso[task.setvariable variable=COMMIT_TAG]'$(git log --format=%h -1)
+    echo '##vso[task.setvariable variable=COMMIT_MESSAGE]'$(git log --pretty=format:"%an - %s" -1)
   displayName: 'Build Pokémon Chest'
 
 - script: |    
-    echo '##vso[task.setvariable variable=COMMIT_TAG]'$(git log --format=%h -1)
-    echo '##vso[task.setvariable variable=COMMIT_MESSAGE]'$(git log --pretty=format:"%an - %s" -1)
     git config --global user.email "flamekat54@aol.com"
     git config --global user.name "TWLBot"
     git clone --depth 1 https://$GITHUB_TOKEN@github.com/Universal-Team/extras.git
@@ -42,7 +40,7 @@ steps:
     cd extras/builds/pkmn-chest
     cp ../../../pkmn-chest.nds pkmn-chest.nds
     cp ../../../pkmn-chest.cia pkmn-chest.cia
-    tools/qrencode -o pkmn-chest.png https://raw.githubusercontent.com/Universal-Team/extras/v$CURRENT_DATE/builds/pkmn-chest/pkmn-chest.cia
+    tools-osx/qrencode -o pkmn-chest.png https://raw.githubusercontent.com/Universal-Team/extras/v$CURRENT_DATE/builds/pkmn-chest/pkmn-chest.cia
     git stage .
     git commit -m "pkmn-chest | $(COMMIT_TAG)"
     git push origin master
