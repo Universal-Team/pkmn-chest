@@ -15,9 +15,6 @@ variables:
 
 steps:
 - script: |
-    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-    brew install p7zip
-    brew install qrencode
     curl -L https://github.com/devkitPro/pacman/releases/download/devkitpro-pacman-1.0.1/devkitpro-pacman-installer.pkg -o devkitpro-pacman-installer.pkg
     sudo installer -pkg devkitpro-pacman-installer.pkg -target /
     sudo dkp-pacman -Sy
@@ -28,7 +25,7 @@ steps:
     export DEVKITPRO="/opt/devkitpro"
     export DEVKITARM="/opt/devkitpro/devkitARM"
     make
-    ./make_cia --srl="pkmn-chest.nds"
+    tools-osx/make_cia --srl="pkmn-chest.nds"
     cp pkmn-chest.nds $(Build.ArtifactStagingDirectory)
     cp pkmn-chest.cia $(Build.ArtifactStagingDirectory)
     export COMMIT_TAG="$(git log --format=%h -1)"
@@ -45,7 +42,7 @@ steps:
     cd extras/builds/pkmn-chest
     cp ../../../pkmn-chest.nds pkmn-chest.nds
     cp ../../../pkmn-chest.cia pkmn-chest.cia
-    qrencode -o pkmn-chest.png https://raw.githubusercontent.com/Universal-Team/extras/v$CURRENT_DATE/pkmn-chest.cia
+    tools/qrencode -o pkmn-chest.png https://raw.githubusercontent.com/Universal-Team/extras/v$CURRENT_DATE/pkmn-chest.cia
     git stage .
     git commit -m "pkmn-chest | $(COMMIT_TAG)"
     git push origin master
