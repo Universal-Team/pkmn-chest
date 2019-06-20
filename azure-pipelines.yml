@@ -76,14 +76,14 @@ steps:
     addChangeLog: false
 
 - script: |
-    curl -o send.sh https://raw.githubusercontent.com/DS-Homebrew/discord-webhooks/master/send-azure.sh
+    curl -o send.sh https://github.com/Universal-Team/discord-webhooks/raw/master/send-azure.sh
     chmod +x send.sh
-    export IMAGE=https://raw.githubusercontent.com/Universal-Team/extras/v$CURRENT_DATE/pkmn-chest.png
+    export IMAGE=https://raw.githubusercontent.com/Universal-Team/extras/v$CURRENT_DATE/builds/pkmn-chest/pkmn-chest.png
     ./send.sh success $WEBHOOK_URL
   condition: succeeded()
   displayName: "Send success webhook"
 - script: |
-    curl -o send.sh https://raw.githubusercontent.com/DS-Homebrew/discord-webhooks/master/send-azure.sh
+    curl -o send.sh https://github.com/Universal-Team/discord-webhooks/raw/master/send-azure.sh
     chmod +x send.sh
     ./send.sh failure $WEBHOOK_URL
   condition: failed()
