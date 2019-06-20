@@ -40,7 +40,7 @@ steps:
     cd extras/builds/pkmn-chest
     cp ../../../pkmn-chest.nds pkmn-chest.nds
     cp ../../../pkmn-chest.cia pkmn-chest.cia
-    tools-osx/qrencode -o pkmn-chest.png https://raw.githubusercontent.com/Universal-Team/extras/v$CURRENT_DATE/builds/pkmn-chest/pkmn-chest.cia
+    ../../../tools-osx/qrencode -o pkmn-chest.png https://raw.githubusercontent.com/Universal-Team/extras/v$CURRENT_DATE/builds/pkmn-chest/pkmn-chest.cia
     git stage .
     git commit -m "pkmn-chest | $(COMMIT_TAG)"
     git push origin master
