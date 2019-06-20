@@ -33,9 +33,8 @@ steps:
 - script: |
     export DEVKITPRO="/opt/devkitpro"
     export DEVKITARM="/opt/devkitpro/devkitARM"
-    chmod +x make_cia
     make
-    #  ./make_cia --srl="pkmn-chest.nds"
+    ./make_cia --srl="pkmn-chest.nds"
     cp pkmn-chest.nds $(Build.ArtifactStagingDirectory)
     cp pkmn-chest.cia $(Build.ArtifactStagingDirectory)
     export COMMIT_TAG="$(git log --format=%h -1)"
@@ -51,7 +50,7 @@ steps:
 
     cd extras/builds/pkmn-chest
     cp ../../../pkmn-chest.nds pkmn-chest.nds
-    # cp ../../../pkmn-chest.cia pkmn-chest.cia
+    cp ../../../pkmn-chest.cia pkmn-chest.cia
     qrencode -o pkmn-chest.png https://raw.githubusercontent.com/Universal-Team/extras/v$CURRENT_DATE/pkmn-chest.cia
     git stage .
     git commit -m "pkmn-chest | $(COMMIT_TAG)"
