@@ -203,16 +203,16 @@ void savePrompt(void) {
 	drawRectangle(200, 50, 56, 16, BLACK, false);
 	printText("No", 205, 50, false);
 	bool menuSelection = 0, colorSelection = 0, savingSave = 0;
-	int hDown;
+	int pressed;
 	touchPosition touch;
 	while(1) {
 		do {
 			swiWaitForVBlank();
 			scanKeys();
-			hDown = keysDown();
-		} while(!hDown);
+			pressed = keysDown();
+		} while(!pressed);
 
-		if(hDown & KEY_A) {
+		if(pressed & KEY_A) {
 			saveYes:
 			drawRectangle(0, 0, 256, 32, WHITE, false);
 			printTextTinted("Saving...", DARK_GRAY, 5, 0, false);
@@ -245,7 +245,7 @@ void savePrompt(void) {
 				}
 				break;
 			}
-		} else if(hDown & KEY_B) {
+		} else if(pressed & KEY_B) {
 			saveNo:
 			if(!savingSave) {
 				drawRectangle(0, 0, 256, 32, WHITE, false);
@@ -258,13 +258,13 @@ void savePrompt(void) {
 			} else {
 				break;
 			}
-		} else if(hDown & KEY_UP) {
+		} else if(pressed & KEY_UP) {
 			if(menuSelection)	menuSelection = 0;
 			colorSelection = 1;
-		} else if(hDown & KEY_DOWN) {
+		} else if(pressed & KEY_DOWN) {
 			if(!menuSelection)	menuSelection = 1;
 			colorSelection = 1;
-		} else if(hDown & KEY_TOUCH) {
+		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
 			if(touch.px >= 200 && touch.py >= 32 && touch.py <= 48) {
 				goto saveYes;
@@ -309,25 +309,25 @@ bool xMenu(void) {
 
 	drawXMenuButtons(-1);
 
-	int hDown, menuSelection = -1, selectedOption = -1;
+	int pressed, menuSelection = -1, selectedOption = -1;
 	touchPosition touch;
 	while(1) {
 		do {
 			swiWaitForVBlank();
 			scanKeys();
-			hDown = keysDown();
-		} while(!hDown);
-		if(menuSelection == -1 && (hDown & KEY_UP || hDown & KEY_DOWN || hDown & KEY_LEFT || hDown & KEY_RIGHT)) {
+			pressed = keysDown();
+		} while(!pressed);
+		if(menuSelection == -1 && (pressed & KEY_UP || pressed & KEY_DOWN || pressed & KEY_LEFT || pressed & KEY_RIGHT)) {
 			menuSelection = 0;
-		} else if(hDown & KEY_UP) {
+		} else if(pressed & KEY_UP) {
 			if(menuSelection > 1)	menuSelection -= 2;
-		} else if(hDown & KEY_DOWN) {
+		} else if(pressed & KEY_DOWN) {
 			if(menuSelection < 1)	menuSelection += 2;
-		} else if(hDown & KEY_LEFT) {
+		} else if(pressed & KEY_LEFT) {
 			if(menuSelection % 2)	menuSelection--;
-		} else if(hDown & KEY_RIGHT) {
+		} else if(pressed & KEY_RIGHT) {
 			if(!(menuSelection % 2))	menuSelection++;
-		} else if(hDown & KEY_TOUCH) {
+		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
 			XYCoords menuButtons[] = {{3, 24}, {131, 24}, {3, 72}};
 			for(uint i=0; i<(sizeof(menuButtons)/sizeof(menuButtons[0]));i++) {
@@ -336,9 +336,9 @@ bool xMenu(void) {
 				}
 			}
 			menuSelection = -1;
-		} else if(hDown & KEY_A) {
+		} else if(pressed & KEY_A) {
 			selectedOption = menuSelection;
-		} else if(hDown & KEY_B || hDown & KEY_X) {
+		} else if(pressed & KEY_B || pressed & KEY_X) {
 			if(!topScreen)	setSpriteVisibility(bottomArrowID, true);
 			drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
 			drawBox(false);
@@ -378,30 +378,31 @@ void manageBoxes(void) {
 	int arrowX = 0, arrowY = 0, heldPokemon = -1, heldPokemonBox = -1;
 	bool heldPokemonScreen = false;
 	topScreen = false;
-	u16 hDown = 0;
+	u16 pressed = 0, held = 0;
 	while(1) {
 		do {
 			swiWaitForVBlank();
 			scanKeys();
-			hDown = keysDownRepeat();
-		} while(!hDown);
+			pressed = keysDown();
+			held = keysDownRepeat();
+		} while(!held);
 
-		if(hDown & KEY_UP) {
+		if(held & KEY_UP) {
 			if(arrowY > (topScreen ? -1 : -2))	arrowY--;
-		} else if(hDown & KEY_DOWN) {
+		} else if(held & KEY_DOWN) {
 			if(arrowY < (topScreen ? 5 : 4))	arrowY++;
 		}
-		if(hDown & KEY_LEFT && arrowY != -1) {
+		if(held & KEY_LEFT && arrowY != -1) {
 			if(arrowX > 0)	arrowX--;
-		} else if(hDown & KEY_RIGHT && arrowY != -1) {
+		} else if(held & KEY_RIGHT && arrowY != -1) {
 			if(arrowX < 5)	arrowX++;
 		}
-		if(hDown & KEY_LEFT && arrowY == -1) {
+		if(held & KEY_LEFT && arrowY == -1) {
 			goto switchBoxLeft;
-		} else if(hDown & KEY_RIGHT && arrowY == -1) {
+		} else if(held & KEY_RIGHT && arrowY == -1) {
 			goto switchBoxRight;
 		}
-		if(hDown & KEY_L) {
+		if(held & KEY_L) {
 			switchBoxLeft:
 			if(currentBox() > 0)
 				(topScreen ? currentBankBox : currentSaveBox)--;
@@ -410,7 +411,7 @@ void manageBoxes(void) {
 			drawBox(topScreen);
 			if(currentBox() == heldPokemonBox && topScreen == heldPokemonScreen)
 				setSpriteVisibility(heldPokemon, false);
-		} else if(hDown & KEY_R) {
+		} else if(held & KEY_R) {
 			switchBoxRight:
 			if((topScreen ? currentBankBox < Banks::bank->boxes()-1 : currentSaveBox < save->maxBoxes()-1))
 				(topScreen ? currentBankBox : currentSaveBox)++;
@@ -419,7 +420,7 @@ void manageBoxes(void) {
 			if(currentBox() == heldPokemonBox && topScreen == heldPokemonScreen)
 				setSpriteVisibility(heldPokemon, false);
 		}
-		if(hDown & KEY_A) {
+		if(pressed & KEY_A) {
 			if(arrowY == -1) {
 				// If the arrow is on the box title, rename it
 				std::string newName = Input::getLine(topScreen ? 16 : 8);
@@ -483,7 +484,7 @@ void manageBoxes(void) {
 			}
 		}
 
-		if(hDown & KEY_X && heldPokemon == -1) {
+		if(pressed & KEY_X && heldPokemon == -1) {
 			if(!xMenu())	break;
 		}
 
@@ -510,7 +511,7 @@ void manageBoxes(void) {
 
 		}
 
-		if((hDown & KEY_UP || hDown & KEY_DOWN || hDown & KEY_LEFT || hDown & KEY_RIGHT || hDown & KEY_L || hDown & KEY_R) && heldPokemon == -1) {
+		if((held & KEY_UP || held & KEY_DOWN || held & KEY_LEFT || held & KEY_RIGHT || held & KEY_L || held & KEY_R) && heldPokemon == -1) {
 			// If the cursor is moved and we're not holding a Pokémon, draw the new one
 			if(arrowY != -1)	drawPokemonInfo(currentPokemon((arrowY*6)+arrowX));
 			else	drawPokemonInfo(save->emptyPkm());

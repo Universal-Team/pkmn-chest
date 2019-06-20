@@ -38,7 +38,7 @@ std::string Input::getLine(uint maxLength) {
 
 	drawRectangle(0, 192-keyboardData.height-16, 256, keyboardData.height+16, DARKER_GRAY, false);
 	drawImage(0, 192-keyboardData.height, keyboardData.width, keyboardData.height, keyboard, false);
-	int hDown;
+	int held;
 	touchPosition touch;
 	std::string string;
 	int keyDownDelay = 10;
@@ -47,7 +47,7 @@ std::string Input::getLine(uint maxLength) {
 		do {
 			swiWaitForVBlank();
 			scanKeys();
-			hDown = keysDownRepeat();
+			held = keysDownRepeat();
 			if(keyDownDelay > 0) {
 				keyDownDelay--;
 			} else if(keyDownDelay == 0) {
@@ -55,14 +55,14 @@ std::string Input::getLine(uint maxLength) {
 				drawImage(0, 192-keyboardData.height, keyboardData.width, keyboardData.height, keyboard, false);
 				if(caps) drawRectangle(modifierKeys[1].x, modifierKeys[1].y+(192-keyboardData.height), 16, 16, GRAY, false);
 			}
-		} while(!hDown);
+		} while(!held);
 		if(keyDownDelay > 0) {
 			drawImage(0, 192-keyboardData.height, keyboardData.width, keyboardData.height, keyboard, false);
 			if(caps) drawRectangle(modifierKeys[1].x, modifierKeys[1].y+(192-keyboardData.height), 16, 16, GRAY, false);
 		}
 		keyDownDelay = 10;
 
-		if(hDown & KEY_TOUCH) {
+		if(held & KEY_TOUCH) {
 			touchRead(&touch);
 			if(string.length() < maxLength) {
 				// Check if a regular key was pressed
@@ -118,14 +118,14 @@ std::string Input::getLine(uint maxLength) {
 					break;
 				}
 			}
-		} else if(hDown & KEY_B) {
+		} else if(held & KEY_B) {
 			drawRectangle(modifierKeys[0].x, modifierKeys[0].y+(192-keyboardData.height), 16, 16, DARK_GRAY, false);
 			string = string.substr(0, string.length()-1);
 			drawRectangle(0, 192-keyboardData.height-16, 256, 16, DARKER_GRAY, false);
 			printText(string, 0, 192-keyboardData.height-16, false);
 		}
 		
-		if(hDown & KEY_START || enter) {
+		if(held & KEY_START || enter) {
 			drawRectangle(0, 192-keyboardData.height-16, 256, keyboardData.height+16, DARK_GRAY, false);
 			drawBox(false);
 			break;
