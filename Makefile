@@ -18,30 +18,22 @@ GAME_SUBTITLE1 := Universal-Team
 
 include $(DEVKITARM)/ds_rules
 
-.PHONY: checkarm7 checkarm9 clean
+.PHONY: checkarm9 clean
 
 #---------------------------------------------------------------------------------
 # main targets
 #---------------------------------------------------------------------------------
-all: checkarm7 checkarm9 $(TARGET).nds
-
-#---------------------------------------------------------------------------------
-checkarm7:
-	$(MAKE) -C arm7
+all: checkarm9 $(TARGET).nds
 
 #---------------------------------------------------------------------------------
 checkarm9:
 	$(MAKE) -C arm9
 
 #---------------------------------------------------------------------------------
-$(TARGET).nds	: $(NITRO_FILES) arm7/$(TARGET).elf arm9/$(TARGET).elf
-	ndstool	-c $(TARGET).nds -7 arm7/$(TARGET).elf -9 arm9/$(TARGET).elf \
+$(TARGET).nds	: $(NITRO_FILES) arm9/$(TARGET).elf
+	ndstool	-c $(TARGET).nds -9 arm9/$(TARGET).elf \
 	-b1 icon.bmp "$(GAME_TITLE);$(GAME_SUBTITLE1)" $(_ADDFILES) \
 	-g PKCA 01 "PKMNCHEST" -z 80040000 -u 00030004 -a 00000138
-
-#---------------------------------------------------------------------------------
-arm7/$(TARGET).elf:
-	$(MAKE) -C arm7
 
 #---------------------------------------------------------------------------------
 arm9/$(TARGET).elf:
@@ -50,5 +42,4 @@ arm9/$(TARGET).elf:
 #---------------------------------------------------------------------------------
 clean:
 	$(MAKE) -C arm9 clean
-	$(MAKE) -C arm7 clean
-	rm -f $(TARGET).nds $(TARGET).arm7 $(TARGET).arm9
+	rm -f $(TARGET).nds $(TARGET).arm9
