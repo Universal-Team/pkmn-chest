@@ -33,7 +33,7 @@ XYCoords getPokemonPosition(int dexNumber) {
 void loadGraphics(void) {
 	// Load images into RAM
 	bankBoxData = loadPng("nitro:/graphics/bankBox.png", bankBox);
-	keyboardData = loadPng("nitro:/graphics/keyboard.png", keyboard);
+	keyboardData = loadPng("nitro:/graphics/keyboardKana.png", keyboard);
 	menuButtonData = loadPng("nitro:/graphics/menuButton.png", menuButton);
 	spriteSheetData = loadPng("nitro:/graphics/spriteSheet.png", spriteSheet);
 	stripesData = loadPng("nitro:/graphics/stripes.png", stripes);
