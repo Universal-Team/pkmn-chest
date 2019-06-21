@@ -189,10 +189,10 @@ std::string Input::getLine(uint maxLength) {
 	touchPosition touch;
 	while(1) {
 		do {
+			swiWaitForVBlank();
 			scanKeys();
 			held = keysDownRepeat();
 			pressed = keysDown();
-			swiWaitForVBlank();
 			if(cursorBlink == 30) {
 				drawRectangle(0, 192-keyboardData.height-16, 256, 16, DARKER_GRAY, false);
 				printText(string+"_", 0, 192-keyboardData.height-16, false);
