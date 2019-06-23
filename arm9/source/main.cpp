@@ -14,6 +14,9 @@ int main(int argc, char **argv) {
 	keysSetRepeat(25,5);
 	sysSetCardOwner(BUS_OWNER_ARM9);
 
+	drawRectangle(0, 0, 256, 192, DARK_GRAY, true);
+	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+
 	// Init filesystem
 	if(!fatInitDefault()) {
 		// Prints error if fatInitDefault() fails
@@ -45,12 +48,9 @@ int main(int argc, char **argv) {
 		}
 	}
 	loadFont();
-	Banks::init();
-
-	drawRectangle(0, 0, 256, 192, DARK_GRAY, true);
-	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
 	printTextCentered("Loading...", 0, 32, false);
-	
+
+	Banks::init();
 	loadGraphics();
 
 	std::vector<std::string> extensionList;

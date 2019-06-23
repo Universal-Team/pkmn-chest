@@ -128,7 +128,7 @@ void showDirectoryContents(const std::vector<DirEntry>& dirContents, int startRo
 	}
 }
 
-#define verNumber "v0.1"
+#define verNumber "v0.2"
 
 bool showTopMenuOnExit = true, noCardMessageSet = false;
 int tmCurPos = 0, tmScreenOffset = 0, tmSlot1Offset = 0;
@@ -233,7 +233,7 @@ std::string topMenuSelect(void) {
 	drawRectangle(0, 0, 256, 192, DARK_GRAY, true);
 
 	// Print version number
-	printText(verNumber, 256-getTextWidth(StringUtils::UTF8toUTF16(verNumber)), 176, true);
+	printText(verNumber, 256-getTextWidth(verNumber), 176, true);
 
 	updateCardInfo();
 
@@ -408,7 +408,7 @@ std::string browseForFile(const std::vector<std::string>& extensionList) {
 	drawRectangle(0, 0, 256, 192, DARK_GRAY, true);
 
 	// Print version number
-	printText(verNumber, 256-getTextWidth(StringUtils::UTF8toUTF16(verNumber)), 176, true);
+	printText(verNumber, 256-getTextWidth(verNumber), 176, true);
 
 	while(1) {
 		// Clear old cursors

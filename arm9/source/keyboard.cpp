@@ -249,8 +249,6 @@ std::string Input::getLine(uint maxLength) {
 			if(!shift)	printText(string, 0, 192-keyboardData.height-16, false);
 		}
 		if(held & KEY_START || enter) {
-			drawRectangle(0, 192-keyboardData.height-16, 256, keyboardData.height+16, DARK_GRAY, false);
-			drawBox(false);
 			break;
 		} else if (pressed & KEY_SELECT || changeLayout) {
 			changeLayout = 0;

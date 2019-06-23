@@ -280,6 +280,7 @@ void printTextTinted(std::u16string text, u16 color, int xPos, int yPos, bool to
 	}
 }
 
+int getTextWidth(std::string text) { return getTextWidth(StringUtils::UTF8toUTF16(text)); }
 int getTextWidth(std::u16string text) {
 	int textWidth = 0;
 

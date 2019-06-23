@@ -3,6 +3,6 @@
 
 #include <sav/Sav.hpp>
 
-void showPokemonSummary(std::shared_ptr<PKX> pkm);
+std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm);
 
 #endif

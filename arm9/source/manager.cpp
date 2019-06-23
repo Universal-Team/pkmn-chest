@@ -431,7 +431,9 @@ void manageBoxes(void) {
 					if(topScreen)	Banks::bank->boxName(newName, currentBankBox);
 					else	save->boxName(currentSaveBox, newName);
 				}
-				drawBox(topScreen);
+				drawRectangle(0, 192-keyboardData.height-16, 256, keyboardData.height+16, DARK_GRAY, false);
+				drawBox(false);
+				if(topScreen)	drawBox(topScreen);
 			} else {
 				// Otherwise move Pokémon
 				if(heldPokemon != -1) {
@@ -487,8 +489,19 @@ void manageBoxes(void) {
 			}
 		}
 
-		if(pressed & KEY_Y) {
-			showPokemonSummary(currentPokemon((arrowY*6)+arrowX));
+		if(pressed & KEY_Y && heldPokemon == -1) {
+			if(topScreen)
+				Banks::bank->pkm(showPokemonSummary(currentPokemon((arrowY*6)+arrowX)), currentBankBox, (arrowY*6)+arrowX);
+			else
+				save->pkm(showPokemonSummary(currentPokemon((arrowY*6)+arrowX)), currentSaveBox, (arrowY*6)+arrowX, false);
+			drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+			drawBox(false);
+			if(topScreen)	drawBox(topScreen);
+			drawPokemonInfo(currentPokemon((arrowY*6)+arrowX));
+			setSpriteVisibility(topArrowID, topScreen);
+			setSpriteVisibility(bottomArrowID, !topScreen);
+			setSpritePosition(bottomArrowID, arrowX, arrowY);
+			updateOam();
 		}
 
 		if(pressed & KEY_X && heldPokemon == -1) {
