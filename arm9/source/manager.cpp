@@ -6,13 +6,14 @@
 #include "keyboard.h"
 #include "loader.h"
 #include "saves/cardSaves.h"
+#include "summary.h"
 #include "utils.hpp"
 
 bool topScreen;
 int bottomArrowID, topArrowID, shinyID, currentSaveBox, currentBankBox, bottomHeldPokemonID, topHeldPokemonID;
 std::string savePath;
-std::vector<u16> arrow, bankBox, keyboard, menuButton, shiny, spriteSheet, stripes, types;
-ImageData bankBoxData, keyboardData, menuButtonData, spriteSheetData, stripesData, typesData;
+std::vector<u16> arrow, ballSheet, bankBox, keyboard, menuButton, shiny, pokemonSheet, stripes, types;
+ImageData ballSheetData, bankBoxData, keyboardData, menuButtonData, pokemonSheetData, stripesData, typesData;
 
 int currentBox(void) {
 	return topScreen ? currentBankBox : currentSaveBox;
@@ -24,6 +25,7 @@ std::shared_ptr<PKX> currentPokemon(int slot) {
 }
 
 XYCoords getPokemonPosition(int dexNumber) {
+	if(dexNumber > 649)	return {0, 0};
 	XYCoords xy;
 	xy.y = (dexNumber/16)*32;
 	xy.x = (dexNumber-((dexNumber/16)*16))*32;
@@ -32,10 +34,11 @@ XYCoords getPokemonPosition(int dexNumber) {
 
 void loadGraphics(void) {
 	// Load images into RAM
+	ballSheetData = loadPng("nitro:/graphics/ballSheet.png", ballSheet);
 	bankBoxData = loadPng("nitro:/graphics/bankBox.png", bankBox);
 	keyboardData = loadPng("nitro:/graphics/keyboardKana.png", keyboard);
 	menuButtonData = loadPng("nitro:/graphics/menuButton.png", menuButton);
-	spriteSheetData = loadPng("nitro:/graphics/spriteSheet.png", spriteSheet);
+	pokemonSheetData = loadPng("nitro:/graphics/pokemonSheet.png", pokemonSheet);
 	stripesData = loadPng("nitro:/graphics/stripes.png", stripes);
 	typesData = loadPng("nitro:/graphics/types.png", types);
 	loadPng("nitro:/graphics/arrow.png", arrow);
@@ -121,7 +124,7 @@ void drawBox(bool top) {
 			// Fill Pokémon Sprites
 			if(Banks::bank->pkm(currentBankBox, i)->species() != 0) {
 				XYCoords xy = getPokemonPosition(Banks::bank->pkm(currentBankBox, i)->species());
-				fillSpriteFromSheet(i+30, spriteSheet, 32, 32, spriteSheetData.width, xy.x, xy.y);
+				fillSpriteFromSheet(i+30, pokemonSheet, 32, 32, pokemonSheetData.width, xy.x, xy.y);
 			}
 		}
 	} else {
@@ -141,7 +144,7 @@ void drawBox(bool top) {
 			// Fill Pokémon Sprites
 			if(save->pkm(currentSaveBox, i)->species() != 0) {
 				XYCoords xy = getPokemonPosition(save->pkm(currentSaveBox, i)->species());
-				fillSpriteFromSheet(i, spriteSheet, 32, 32, spriteSheetData.width, xy.x, xy.y);
+				fillSpriteFromSheet(i, pokemonSheet, 32, 32, pokemonSheetData.width, xy.x, xy.y);
 			}
 		}
 	}
@@ -162,7 +165,7 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 
 		// Print Pokédex number
 		char str[9];
-		snprintf(str, sizeof(str), "No.%.3i", pkm->species());
+		snprintf(str, sizeof(str), "#%.3i", pkm->species());
 		printTextTinted(str, 0xCE73, 170, 2, true);
 
 		// Print nickname
@@ -185,8 +188,8 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 void setHeldPokemon(int dexNum) {
 	if(dexNum != 0) {
 		XYCoords xy = getPokemonPosition(dexNum);
-		fillSpriteFromSheet(bottomHeldPokemonID, spriteSheet, 32, 32, spriteSheetData.width, xy.x, xy.y);
-		fillSpriteFromSheet(topHeldPokemonID, spriteSheet, 32, 32, spriteSheetData.width, xy.x, xy.y);
+		fillSpriteFromSheet(bottomHeldPokemonID, pokemonSheet, 32, 32, pokemonSheetData.width, xy.x, xy.y);
+		fillSpriteFromSheet(topHeldPokemonID, pokemonSheet, 32, 32, pokemonSheetData.width, xy.x, xy.y);
 	}
 }
 
@@ -482,6 +485,10 @@ void manageBoxes(void) {
 					}
 				}
 			}
+		}
+
+		if(pressed & KEY_Y) {
+			showPokemonSummary(currentPokemon((arrowY*6)+arrowX));
 		}
 
 		if(pressed & KEY_X && heldPokemon == -1) {

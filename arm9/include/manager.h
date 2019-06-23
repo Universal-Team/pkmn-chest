@@ -12,8 +12,8 @@ struct XYCoords {
 
 extern int bottomArrowID, topArrowID, shinyID, currentSaveBox, currentBankBox, bottomHeldPokemonID, topHeldPokemonID;
 extern std::string savePath;
-extern std::vector<u16> arrow, bankBox, keyboard, shiny, spriteSheet, stripes, types;
-extern ImageData bankBoxData, keyboardData, spriteSheetData, stripesData, typesData;
+extern std::vector<u16> arrow, ballSheet, bankBox, keyboard, menuButton, shiny, pokemonSheet, stripes, types;
+extern ImageData ballSheetData, bankBoxData, keyboardData, menuButtonData, pokemonSheetData, stripesData, typesData;
 
 // Returns the current box for the cursor's current screen
 int currentBox(void);
@@ -23,6 +23,13 @@ int currentBox(void);
  * on the cursor's current screen
  */
 std::shared_ptr<PKX> currentPokemon(int slot);
+
+/*
+ * Gets the position of a Pokémon in the spritesheet
+ * int dexNumber is the National dex number of the Pokémon
+ * Returns an XYCoords of the spritesheet position
+ */
+XYCoords getPokemonPosition(int dexNumber);
 
 // Loads the images into RAM and creates the sprites
 void loadGraphics(void);

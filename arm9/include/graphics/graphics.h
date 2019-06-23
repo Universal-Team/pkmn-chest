@@ -75,6 +75,21 @@ void drawImage(int x, int y, int w, int h, std::vector<u16> &imageBuffer, bool t
 void drawImageFromSheet(int x, int y, int w, int h, std::vector<u16> &imageBuffer, int imageWidth, int xOffset, int yOffset, bool top);
 
 /*
+ * Draws a scaled image to the screen from a portion of a vector of raw pixel data
+ * int x is the X position
+ * int y is the Y position
+ * int w is the Width
+ * int h is the Height
+ * double scale is the Scale to draw the image at
+ * std::vector<u16> &imageBuffer is the raw pixel data
+ * int imageWidth is the width of the spritesheet
+ * int xOffset is the X position in the sheet to start at
+ * int yOffset is the Y position in the sheet to start at
+ * bool top is whether to draw on the top or bottom screen
+ */
+void drawImageFromSheetScaled(int x, int y, int w, int h, double scale, std::vector<u16> &imageBuffer, int imageWidth, int xOffset, int yOffset, bool top);
+
+/*
  * Draws a scaled image to the screen from a vector of raw pixel data
  * int x is the X position
  * int y is the Y position
@@ -97,6 +112,17 @@ void drawImageScaled(int x, int y, int w, int h, double scale, std::vector<u16> 
  * bool top is whether to draw on the top or bottom screen
  */
 void drawImageTinted(int x, int y, int w, int h, u16 color, std::vector<u16> &imageBuffer, bool top);
+
+/*
+ * Draws a rectangle outline of a given size at a given position
+ * int x is the X position
+ * int y is the Y position
+ * int w is the Width
+ * int h is the Height
+ * int color is the color in RGB15
+ * bool top is whether to draw on the top or bottom screen
+ */
+void drawOutline(int x, int y, int w, int h, int color, bool top);
 
 /*
  * Draws a rectangle of a given size at a given position

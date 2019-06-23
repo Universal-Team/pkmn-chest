@@ -7,7 +7,7 @@ std::vector<Sprite> sprites;
 std::vector<u16> font;
 
 void initGraphics(void) {
-    // Initialize video mode
+	// Initialize video mode
 	videoSetMode(MODE_5_2D | DISPLAY_BG3_ACTIVE);
 	videoSetModeSub(MODE_5_2D | DISPLAY_BG3_ACTIVE);
 
@@ -44,7 +44,7 @@ void loadFont(void) {
 }
 
 ImageData loadBmp(std::string path, std::vector<u16> &imageBuffer) {
-    FILE* file = fopen(path.c_str(), "rb");
+	FILE* file = fopen(path.c_str(), "rb");
 
 	// Get width and height on image
 	ImageData imageData;
@@ -76,21 +76,21 @@ ImageData loadBmp(std::string path, std::vector<u16> &imageBuffer) {
 		}
 	}
 	fclose(file);
-    return imageData;
+	return imageData;
 }
 
 ImageData loadPng(std::string path, std::vector<u16> &imageBuffer) {
-    std::vector<unsigned char> image;
+	std::vector<unsigned char> image;
 	unsigned width, height;
 	lodepng::decode(image, width, height, path);
 	for(unsigned i=0;i<image.size()/4;i++) {
   		imageBuffer.push_back(ARGB16(image[(i*4)+3], image[i*4]>>3, image[(i*4)+1]>>3, image[(i*4)+2]>>3));
 	}
 
-    ImageData imageData;
-    imageData.width = width;
-    imageData.height = height;
-    return imageData;
+	ImageData imageData;
+	imageData.width = width;
+	imageData.height = height;
+	return imageData;
 }
 
 void drawImage(int x, int y, int w, int h, std::vector<u16> &imageBuffer, bool top) {
@@ -106,9 +106,21 @@ void drawImage(int x, int y, int w, int h, std::vector<u16> &imageBuffer, bool t
 void drawImageFromSheet(int x, int y, int w, int h, std::vector<u16> &imageBuffer, int imageWidth, int xOffset, int yOffset, bool top) {
 	for(int i=0;i<h;i++) {
 		for(int j=0;j<w;j++) {
-			(top ? BG_GFX : BG_GFX_SUB)[((y+i)*256)+j+x] = imageBuffer[((i+yOffset)*imageWidth)+j+xOffset];
+			if(imageBuffer[((i+yOffset)*imageWidth)+j+xOffset]>>15 != 0) { // Do not render transparent pixel
+				(top ? BG_GFX : BG_GFX_SUB)[((y+i)*256)+j+x] = imageBuffer[((i+yOffset)*imageWidth)+j+xOffset];
+			}
 		}
 	}
+}
+
+void drawImageFromSheetScaled(int x, int y, int w, int h, double scale, std::vector<u16> &imageBuffer, int imageWidth, int xOffset, int yOffset, bool top) {
+	std::vector<u16> buffer;
+	for(int i=0;i<h;i++) {
+		for(int j=0;j<w;j++) {
+			buffer.push_back(imageBuffer[((i+yOffset)*imageWidth)+j+xOffset]);
+		}
+	}
+	drawImageScaled(x, y, w, h, scale, buffer, top);
 }
 
 void drawImageScaled(int x, int y, int w, int h, double scale, std::vector<u16> &imageBuffer, bool top) {
@@ -136,10 +148,20 @@ void drawImageTinted(int x, int y, int w, int h, u16 color, std::vector<u16> &im
 	}
 }
 
+void drawOutline(int x, int y, int w, int h, int color, bool top) {
+	h+=y;
+	if(y>=0 && y<192)	dmaFillHalfWords(((color>>10)&0x1f) | ((color)&(0x1f<<5)) | (color&0x1f)<<10 | BIT(15), (top ? BG_GFX : BG_GFX_SUB)+((y*256)+(x < 0 ? 0 : x)), (x+w > 256 ? w+(256-x-w) : w*2));
+	for(y++;y<(h-1);y++) {
+		if(y>=0 && y<192 && x>0)	(top ? BG_GFX : BG_GFX_SUB)[(y)*256+x] = ((color>>10)&0x1f) | ((color)&(0x1f<<5)) | (color&0x1f)<<10 | BIT(15);
+		if(y>=0 && y<192 && x+w<256)	(top ? BG_GFX : BG_GFX_SUB)[(y)*256+x+w-1] = ((color>>10)&0x1f) | ((color)&(0x1f<<5)) | (color&0x1f)<<10 | BIT(15);
+	}
+	if(y>=0 && y<192)	dmaFillHalfWords(((color>>10)&0x1f) | ((color)&(0x1f<<5)) | (color&0x1f)<<10 | BIT(15), (top ? BG_GFX : BG_GFX_SUB)+((y*256)+(x < 0 ? 0 : x)), (x+w > 256 ? w+(256-x-w) : w*2));
+}
+
 void drawRectangle(int x, int y, int w, int h, int color, bool top) {
 	h+=y;
-    for(;y<h;y++) {
-        dmaFillHalfWords(((color>>10)&0x1f) | ((color)&(0x1f<<5)) | (color&0x1f)<<10 | BIT(15), (top ? BG_GFX : BG_GFX_SUB)+((y)*256+x), w*2);
+	for(;y<h;y++) {
+		dmaFillHalfWords(((color>>10)&0x1f) | ((color)&(0x1f<<5)) | (color&0x1f)<<10 | BIT(15), (top ? BG_GFX : BG_GFX_SUB)+((y)*256+x), w*2);
 	}
 }
 

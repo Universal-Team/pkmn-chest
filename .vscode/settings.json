@@ -81,6 +81,7 @@
         "typeindex": "cpp",
         "variant": "cpp",
         "filesystem": "cpp",
-        "*.inc": "cpp"
+        "*.inc": "cpp",
+        "*.tcc": "cpp"
     }
 }
