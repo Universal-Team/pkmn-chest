@@ -52,7 +52,7 @@ void drawPokemonStats(std::shared_ptr<PKX> pkm) {
 	printText(dexNo, 64, 8, false);
 	printText(pkm->nickname(), 64, 24, false);
 	printTextTinted(pkm->otName(), (pkm->otGender() ? 0x801F : 0xFC00), 64, 56, false);
-	snprintf(tid, sizeof(tid), "%li", pkm->formatTID());
+	snprintf(tid, sizeof(tid), "%.5li", pkm->formatTID());
 	printText(tid, 64, 72, false);
 	snprintf(expPts, sizeof(expPts), "%li", pkm->experience());
 	printText(expPts, 64, 88, false);
@@ -90,23 +90,24 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 			if(selection < 5)	selection++;
 		} else if(pressed & KEY_A) {
 			switch(selection) {
-				case 0:
-					// Add getInt();
+				case 0: {
+					int num = Input::getInt(649);
+					if(num != -1)	pkm->species(num);
 					break;
-				case 1: {
+				} case 1: {
 					std::string name = Input::getLine(10);
 					if(name != "")	pkm->nickname(name);
-					drawPokemonStats(pkm);
 					break;
 				} case 2: {
 					std::string name = Input::getLine(7);
 					if(name != "")	pkm->otName(name);
-					drawPokemonStats(pkm);
 					break;
 				} case 3:
-					// Add getInt();
+					int num = Input::getInt(65535);
+					if(num != -1)	pkm->TID(num);
 					break;
 			}
+			drawPokemonStats(pkm);
 		} else if(pressed & KEY_B) {
 			return pkm;
 		}

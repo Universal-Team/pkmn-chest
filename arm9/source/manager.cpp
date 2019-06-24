@@ -12,8 +12,8 @@
 bool topScreen;
 int bottomArrowID, topArrowID, shinyID, currentSaveBox, currentBankBox, bottomHeldPokemonID, topHeldPokemonID;
 std::string savePath;
-std::vector<u16> arrow, ballSheet, bankBox, keyboard, menuButton, shiny, pokemonSheet, stripes, types;
-ImageData ballSheetData, bankBoxData, keyboardData, menuButtonData, pokemonSheetData, stripesData, typesData;
+std::vector<u16> arrow, ballSheet, bankBox, menuButton, shiny, pokemonSheet, stripes, types;
+ImageData ballSheetData, bankBoxData, menuButtonData, pokemonSheetData, stripesData, typesData;
 
 int currentBox(void) {
 	return topScreen ? currentBankBox : currentSaveBox;
@@ -36,7 +36,6 @@ void loadGraphics(void) {
 	// Load images into RAM
 	ballSheetData = loadPng("nitro:/graphics/ballSheet.png", ballSheet);
 	bankBoxData = loadPng("nitro:/graphics/bankBox.png", bankBox);
-	keyboardData = loadPng("nitro:/graphics/keyboardKana.png", keyboard);
 	menuButtonData = loadPng("nitro:/graphics/menuButton.png", menuButton);
 	pokemonSheetData = loadPng("nitro:/graphics/pokemonSheet.png", pokemonSheet);
 	stripesData = loadPng("nitro:/graphics/stripes.png", stripes);
@@ -426,12 +425,17 @@ void manageBoxes(void) {
 		if(pressed & KEY_A) {
 			if(arrowY == -1) {
 				// If the arrow is on the box title, rename it
+				// Hide bottom screen sprites
+				for(int i=0;i<30;i++) {
+					setSpriteVisibility(i, false);
+				}
+				updateOam();
 				std::string newName = Input::getLine(topScreen ? 16 : 8);
 				if(newName != "") {
 					if(topScreen)	Banks::bank->boxName(newName, currentBankBox);
 					else	save->boxName(currentSaveBox, newName);
 				}
-				drawRectangle(0, 192-keyboardData.height-16, 256, keyboardData.height+16, DARK_GRAY, false);
+				drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
 				drawBox(false);
 				if(topScreen)	drawBox(topScreen);
 			} else {

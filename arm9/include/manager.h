@@ -12,8 +12,8 @@ struct XYCoords {
 
 extern int bottomArrowID, topArrowID, shinyID, currentSaveBox, currentBankBox, bottomHeldPokemonID, topHeldPokemonID;
 extern std::string savePath;
-extern std::vector<u16> arrow, ballSheet, bankBox, keyboard, menuButton, shiny, pokemonSheet, stripes, types;
-extern ImageData ballSheetData, bankBoxData, keyboardData, menuButtonData, pokemonSheetData, stripesData, typesData;
+extern std::vector<u16> arrow, ballSheet, bankBox, menuButton, shiny, pokemonSheet, stripes, types;
+extern ImageData ballSheetData, bankBoxData, menuButtonData, pokemonSheetData, stripesData, typesData;
 
 // Returns the current box for the cursor's current screen
 int currentBox(void);

@@ -6,6 +6,8 @@
 namespace Input {
 	std::string getLine();
 	std::string getLine(uint maxLength);
+	int getInt();
+	int getInt(uint max);
 }
 
 #endif
