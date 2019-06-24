@@ -8,6 +8,8 @@ namespace Input {
 	std::string getLine(uint maxLength);
 	int getInt();
 	int getInt(uint max);
+	bool getBool();
+	bool getBool(std::string option1, std::string option2);
 }
 
 #endif

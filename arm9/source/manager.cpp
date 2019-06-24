@@ -13,7 +13,7 @@ bool topScreen;
 int bottomArrowID, topArrowID, shinyID, currentSaveBox, currentBankBox, bottomHeldPokemonID, topHeldPokemonID;
 std::string savePath;
 std::vector<u16> arrow, ballSheet, bankBox, menuButton, shiny, pokemonSheet, stripes, types;
-ImageData ballSheetData, bankBoxData, menuButtonData, pokemonSheetData, stripesData, typesData;
+ImageData ballSheetData, bankBoxData, menuButtonData, pokemonSheetData, shinyData, stripesData, typesData;
 
 int currentBox(void) {
 	return topScreen ? currentBankBox : currentSaveBox;
@@ -38,10 +38,10 @@ void loadGraphics(void) {
 	bankBoxData = loadPng("nitro:/graphics/bankBox.png", bankBox);
 	menuButtonData = loadPng("nitro:/graphics/menuButton.png", menuButton);
 	pokemonSheetData = loadPng("nitro:/graphics/pokemonSheet.png", pokemonSheet);
+	shinyData = loadPng("nitro:/graphics/shiny.png", shiny);
 	stripesData = loadPng("nitro:/graphics/stripes.png", stripes);
 	typesData = loadPng("nitro:/graphics/types.png", types);
 	loadPng("nitro:/graphics/arrow.png", arrow);
-	loadPng("nitro:/graphics/shiny.png", shiny);
 
 	// Init Pokémon Sprites
 	for(int i=0;i<30;i++)	initSprite(SpriteSize_32x32, false);
@@ -168,7 +168,7 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 		printTextTinted(str, 0xCE73, 170, 2, true);
 
 		// Print nickname
-		printText(pkm->nickname(), 170, 14, true);
+		printTextTinted(pkm->nickname(), (pkm->gender() ? (pkm->gender() == 1 ? 0x801F : WHITE) : 0xFC00), 170, 14, true);
 
 		// Draw types
 		drawImageFromSheet(170, 33, 32, 12, types, 32, 0, (((pkm->generation() == Generation::FOUR && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1())*12), true);
@@ -493,14 +493,19 @@ void manageBoxes(void) {
 			}
 		}
 
-		if(pressed & KEY_Y && heldPokemon == -1) {
+		if(pressed & KEY_Y && heldPokemon == -1 && currentPokemon((arrowY*6)+arrowX)->species() != 0) {
+			// Show Pokemon summary & save edits
 			if(topScreen)
 				Banks::bank->pkm(showPokemonSummary(currentPokemon((arrowY*6)+arrowX)), currentBankBox, (arrowY*6)+arrowX);
 			else
 				save->pkm(showPokemonSummary(currentPokemon((arrowY*6)+arrowX)), currentSaveBox, (arrowY*6)+arrowX, false);
+
+			// Redraw box screen
 			drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
 			drawBox(false);
 			if(topScreen)	drawBox(topScreen);
+
+			// Reset sprite visibility
 			drawPokemonInfo(currentPokemon((arrowY*6)+arrowX));
 			setSpriteVisibility(topArrowID, topScreen);
 			setSpriteVisibility(bottomArrowID, !topScreen);

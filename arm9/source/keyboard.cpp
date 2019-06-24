@@ -429,3 +429,40 @@ int Input::getInt(uint max) {
 	if(i > max)	return max;
 	return i;
 }
+
+bool Input::getBool() { return getBool("true", "false"); }
+bool Input::getBool(std::string optionTrue, std::string optionFalse) {
+	// Draw rectangles
+	drawRectangle(38, 66, 180, 60, DARKER_GRAY, false);
+	drawRectangle(48, 76, 70, 40, LIGHT_GRAY, false);
+	drawRectangle(138, 76, 70, 40, LIGHT_GRAY, false);
+
+	// Print text
+	printTextCenteredTinted(optionFalse, DARK_GRAY, -45, 88, false);
+	printTextCenteredTinted(optionTrue, DARK_GRAY, 45, 88, false);
+
+	int pressed;
+	touchPosition touch;
+	while(1) {
+		do {
+			swiWaitForVBlank();
+			scanKeys();
+			pressed = keysDown();
+		} while(!pressed);
+
+		if(pressed & KEY_TOUCH) {
+			touchRead(&touch);
+			if(touch.py > 76 && touch.py < 116) {
+				if(touch.px > 48 && touch.px < 118) {
+					return false;
+				} else if(touch.px > 138 && touch.px < 208) {
+					return true;
+				}
+			}
+		} else if(pressed & KEY_A) {
+			return true;
+		} else if(pressed & KEY_B) {
+			return false;
+		}
+	}
+}
