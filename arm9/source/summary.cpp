@@ -3,15 +3,25 @@
 #include "keyboard.h"
 #include "manager.h"
 
-char dexNo[6];
-char ball[6];
-char level[6];
-char nature[6];
-char shinyText[6];
-char pkrs[6];
-char tid[6];
-char sid[6];
-char frnd[6];
+struct Button {
+	int x;
+	int y;
+	char text[11];
+};
+
+Button buttons[] {
+	{64, 4},
+	{64, 20},
+	{64, 36},
+	{64, 52},
+	{64, 68},
+	{64, 84},
+	{64, 100},
+	{64, 124},
+	{96, 140},
+	{96, 156},
+	{96, 172},
+};
 
 XYCoords getPokeballPosition(u8 ball) {
 	if(ball > 25)	return {0, 0};
@@ -46,39 +56,36 @@ void drawPokemonStats(std::shared_ptr<PKX> pkm) {
 	if(pkm->shiny())	drawImage(150, 32, shinyData.width, shinyData.height, shiny, false);
 
 	// Print Pokémon and trainer info labels
-	printText("Dex #", 20, 4, false);
-	printText("Name", 20, 20, false);
-	printText("Ball", 20, 36, false);
-	printText("Level", 20, 52, false);
-	printText("Nature", 20, 68, false);
-	printText("Shiny", 20, 84, false);
-	printText("Pkrs", 20, 100, false);
-	printText("Orig. Trainer", 20, 124, false);
-	printText("Trainer ID", 20, 140, false);
-	printText("Secret ID", 20, 156, false);
-	printText("Friendship", 20, 172, false);
+	printText("Dex #", 20, buttons[0].y, false);
+	printText("Name", 20, buttons[1].y, false);
+	printText("Ball", 20, buttons[2].y, false);
+	printText("Level", 20, buttons[3].y, false);
+	printText("Nature", 20, buttons[4].y, false);
+	printText("Shiny", 20, buttons[5].y, false);
+	printText("Pkrs", 20, buttons[6].y, false);
+	printText("Orig. Trainer", 20, buttons[7].y, false);
+	printText("Trainer ID", 20, buttons[8].y, false);
+	printText("Secret ID", 20, buttons[9].y, false);
+	printText("Friendship", 20, buttons[10].y, false);
 
 	// Print Pokémon and trainer info
-	snprintf(dexNo, sizeof(dexNo), "%.3i", pkm->species());
-	printText(dexNo, 64, 4, false);
-	printText(pkm->nickname(), 64, 20, false);
-	snprintf(ball, sizeof(ball), "%i", pkm->ball());
-	printText(ball, 64, 36, false);
-	snprintf(level, sizeof(level), "%i", pkm->level());
-	printText(level, 64, 52, false);
-	snprintf(nature, sizeof(nature), "%i", pkm->nature());
-	printText(nature, 64, 68, false);
-	snprintf(shinyText, sizeof(shinyText), "%s", pkm->shiny() ? "Yes" : "No");
-	printText(shinyText, 64, 84, false);
-	snprintf(pkrs, sizeof(pkrs), "%s", pkm->pkrsDays() ? "Yes" : "No");
-	printText(pkrs, 64, 100, false);
-	printTextTinted(pkm->otName(), (pkm->otGender() ? 0x801F : 0xFC00), 96, 124, false);
-	snprintf(tid, sizeof(tid), "%.5i", pkm->TID());
-	printText(tid, 96, 140, false);
-	snprintf(sid, sizeof(sid), "%.5i", pkm->SID());
-	printText(sid, 96, 156, false);
-	snprintf(frnd, sizeof(frnd), "%i", pkm->otFriendship());
-	printText(frnd, 96, 172, false);
+	snprintf(buttons[0].text,  sizeof(buttons[0].text), "%.3i", pkm->species());
+	snprintf(buttons[1].text,  sizeof(buttons[1].text), "%s", pkm->nickname().c_str());
+	snprintf(buttons[2].text,  sizeof(buttons[2].text), "%i", pkm->ball());
+	snprintf(buttons[3].text,  sizeof(buttons[3].text), "%i", pkm->level());
+	snprintf(buttons[4].text,  sizeof(buttons[4].text), "%i", pkm->nature());
+	snprintf(buttons[5].text,  sizeof(buttons[5].text), "%s", pkm->shiny() ? "Yes" : "No");
+	snprintf(buttons[6].text,  sizeof(buttons[6].text), "%s", pkm->pkrsDays() ? "Yes" : "No");
+	snprintf(buttons[7].text,  sizeof(buttons[7].text), "%s", pkm->otName().c_str());
+	snprintf(buttons[8].text,  sizeof(buttons[8].text), "%.5i", pkm->TID());
+	snprintf(buttons[9].text,  sizeof(buttons[9].text), "%.5i", pkm->SID());
+	snprintf(buttons[10].text, sizeof(buttons[10].text),"%i", pkm->otFriendship());
+	for(uint i=0;i<(sizeof(buttons)/sizeof(buttons[0]));i++) {
+		if(i!=7)	// OT Name is colored
+			printText(buttons[i].text, buttons[i].x, buttons[i].y, false);
+		else
+			printTextTinted(buttons[i].text, (pkm->otGender() ? 0x801F : 0xFC00), buttons[i].x, buttons[i].y, false);
+	}
 }
 
 std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
@@ -88,10 +95,12 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 	// Move arrow to first option
 	setSpriteVisibility(topArrowID, false);
 	setSpriteVisibility(bottomArrowID, true);
-	setSpritePosition(bottomArrowID, 64+getTextWidth(dexNo), -2);
+	setSpritePosition(bottomArrowID, buttons[0].x+getTextWidth(buttons[0].text), buttons[0].y-6);
 	updateOam();
 
+	bool optionSelected = false;
 	int held, pressed, selection = 0;
+	touchPosition touch;
 	while(1) {
 		do {
 			swiWaitForVBlank();
@@ -105,6 +114,22 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 		} else if(held & KEY_DOWN) {
 			if(selection < 10)	selection++;
 		} else if(pressed & KEY_A) {
+			optionSelected = true;
+		} else if(pressed & KEY_B) {
+			return pkm;
+		} else if(pressed & KEY_TOUCH) {
+			touchRead(&touch);
+			for(uint i=0;i<(sizeof(buttons)/sizeof(buttons[0]));i++) {
+				if(touch.px >= buttons[i].x && touch.px <= buttons[i].x+getTextWidth(buttons[i].text) && touch.py >= buttons[i].y && touch.py <= buttons[i].y+16) {
+					selection = i;
+					optionSelected = true;
+					break;
+				}
+			}
+		}
+
+		if(optionSelected) {
+			optionSelected = false;
 			setSpriteVisibility(bottomArrowID, false);
 			switch(selection) {
 				case 0: {
@@ -155,45 +180,9 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 			}
 			setSpriteVisibility(bottomArrowID, true);
 			drawPokemonStats(pkm);
-		} else if(pressed & KEY_B) {
-			return pkm;
 		}
 
-		switch(selection) {
-			case 0:
-				setSpritePosition(bottomArrowID, 64+getTextWidth(dexNo), -2);
-				break;
-			case 1:
-				setSpritePosition(bottomArrowID, 64+getTextWidth(pkm->nickname()), 14);
-				break;
-			case 2:
-				setSpritePosition(bottomArrowID, 64+getTextWidth(ball), 30);
-				break;
-			case 3:
-				setSpritePosition(bottomArrowID, 64+getTextWidth(level), 46);
-				break;
-			case 4:
-				setSpritePosition(bottomArrowID, 64+getTextWidth(nature), 62);
-				break;
-			case 5:
-				setSpritePosition(bottomArrowID, 64+getTextWidth(shinyText), 78);
-				break;
-			case 6:
-				setSpritePosition(bottomArrowID, 64+getTextWidth(pkrs), 94);
-				break;
-			case 7:
-				setSpritePosition(bottomArrowID, 96+getTextWidth(pkm->otName()), 118);
-				break;
-			case 8:
-				setSpritePosition(bottomArrowID, 96+getTextWidth(tid), 136);
-				break;
-			case 9:
-				setSpritePosition(bottomArrowID, 96+getTextWidth(sid), 150);
-				break;
-			case 10:
-				setSpritePosition(bottomArrowID, 96+getTextWidth(frnd), 166);
-				break;
-		}
+		setSpritePosition(bottomArrowID, buttons[selection].x+getTextWidth(buttons[selection].text), buttons[selection].y-6);
 		updateOam();
 	}
 }
