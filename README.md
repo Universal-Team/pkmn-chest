@@ -8,11 +8,14 @@
 A Pokémon Bank for 4<sup>th</sup> and 5<sup>th</sup> generation Pokémon games for the Nintendo DS(i).
 
 ## Compiling
-
 Compiling this app requires [devkitPRO](https://devkitpro.org)'s devkitARM and libnds.
 These can be installed by getting [devkitPro pacman](https://devkitpro.org/wiki/devkitPro_pacman), then running:
 `sudo dkp-pacman -S default-arm7 devkitARM devkitarm-rules libnds libfat-nds`<br/>
 <sup>(command may be slightly different depending on your OS)</sup>
+
+## Contact
+The best way to talk to us is to join [our Discord](https://discord.gg/KDJCfGF).
+If you want to report a bug you can do so [here](https://github.com/Universal-Team/pkmn-chest/issues/new/choose).
 
 ## Credits
 ### Main Developers
