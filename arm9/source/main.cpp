@@ -1,6 +1,7 @@
 #include <fat.h>
 
 #include "common/banks.hpp"
+#include "config.h"
 #include "fileBrowse.h"
 #include "flashcard.h"
 #include "graphics/colors.h"
@@ -51,6 +52,7 @@ int main(int argc, char **argv) {
 	printTextCentered("Loading...", 0, 32, false);
 
 	Banks::init();
+	Config::loadConfig();
 	loadGraphics();
 
 	std::vector<std::string> extensionList;
