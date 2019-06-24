@@ -84,9 +84,9 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 			held = keysDownRepeat();
 		} while(!held);
 
-		if(pressed & KEY_UP) {
+		if(held & KEY_UP) {
 			if(selection > 0)	selection--;
-		} else if(pressed & KEY_DOWN) {
+		} else if(held & KEY_DOWN) {
 			if(selection < 5)	selection++;
 		} else if(pressed & KEY_A) {
 			switch(selection) {
