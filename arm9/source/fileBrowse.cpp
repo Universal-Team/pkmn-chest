@@ -46,6 +46,8 @@ struct DirEntry {
 };
 
 bool nameEndsWith(const std::string& name, const std::vector<std::string> extensionList) {
+	if(name.substr(0, 2) == "._") return false;
+
 	if(name.size() == 0) return false;
 
 	if(extensionList.size() == 0) return true;
@@ -390,25 +392,13 @@ std::string topMenuSelect(void) {
 	}
 }
 
-std::string browseForFile(const std::vector<std::string>& extensionList) {
-	if(showTopMenuOnExit) {
-		showTopMenuOnExit = 0;
-		std::string str = topMenuSelect();
-		if(str != "")	return str;
-	}
-
+std::string browseForFile(const std::vector<std::string>& extensionList, bool directoryNavigation) {
 	int pressed = 0, held = 0, screenOffset = 0, fileOffset = 0;
 	bool drawFullScreen = false;
 	std::vector<DirEntry> dirContents;
 
 	getDirectoryContents(dirContents, extensionList);
 	showDirectoryContents(dirContents, screenOffset);
-
-	// Clear top screen
-	drawRectangle(0, 0, 256, 192, DARK_GRAY, true);
-
-	// Print version number
-	printText(verNumber, 256-getTextWidth(verNumber), 176, true);
 
 	while(1) {
 		// Clear old cursors
@@ -446,18 +436,18 @@ std::string browseForFile(const std::vector<std::string>& extensionList) {
 			drawFullScreen = true;
 		} else if(pressed & KEY_A) {
 			DirEntry* entry = &dirContents.at(fileOffset);
-			if(entry->isDirectory) {
+			if(entry->isDirectory && directoryNavigation) {
 				// Enter selected directory
 				chdir(entry->name.c_str());
 				getDirectoryContents(dirContents, extensionList);
 				screenOffset = 0;
 				fileOffset = 0;
 				showDirectoryContents(dirContents, screenOffset);
-			} else {
+			} else if(!entry->isDirectory) {
 				// Return the chosen file
 				return entry->name;
 			}
-		} else if(pressed & KEY_B) {
+		} else if(pressed & KEY_B && directoryNavigation) {
 			// Go up a directory
 			if((strcmp (path, "sd:/") == 0) || (strcmp (path, "fat:/") == 0)) {
 				std::string str = topMenuSelect();
@@ -469,7 +459,9 @@ std::string browseForFile(const std::vector<std::string>& extensionList) {
 			screenOffset = 0;
 			fileOffset = 0;
 			showDirectoryContents(dirContents, screenOffset);
-		} else if(pressed & KEY_Y && !dirContents[fileOffset].isDirectory) {
+		} else if(pressed & KEY_B && !directoryNavigation) {
+			return "";
+		} else if(pressed & KEY_Y && !dirContents[fileOffset].isDirectory && directoryNavigation) {
 			if(loadSave(dirContents[fileOffset].name)) {
 				char path[PATH_MAX];
 				getcwd(path, PATH_MAX);
@@ -531,6 +523,29 @@ std::string browseForFile(const std::vector<std::string>& extensionList) {
 		}
 		drawFullScreen = false;
 	}
+}
+
+std::string browseForSave(void) {
+	if(showTopMenuOnExit) {
+		showTopMenuOnExit = 0;
+		std::string str = topMenuSelect();
+		if(str != "")	return str;
+	}
+
+	// Clear top screen
+	drawRectangle(0, 0, 256, 192, DARK_GRAY, true);
+
+	// Print version number
+	printText(verNumber, 256-getTextWidth(verNumber), 176, true);
+
+	std::vector<std::string> extensionList;
+	extensionList.push_back("sav");
+	char sav[6];
+	for(int i=1;i<10;i++) {
+		snprintf(sav, sizeof(sav), "sav%i", i);
+		extensionList.push_back(sav);
+	}
+	return browseForFile(extensionList, true);
 }
 
 

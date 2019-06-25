@@ -25,10 +25,11 @@
  */
 
 #include "banks.hpp"
+#include "config.h"
+#include "flashcard.h"
 #include <fstream>
 #include "json.hpp"
 #include "../graphics/graphics.h"
-#include "flashcard.h"
 
 std::shared_ptr<Bank> Banks::bank = nullptr;
 
@@ -37,90 +38,90 @@ nlohmann::json g_banks;
 static bool saveJson() {
 	const char *jsonPath = (sdFound() ? "sd:/_nds/pkmn-chest/banks.json" : "fat:/_nds/pkmn-chest/banks.json");
 
-    std::string jsonData = g_banks.dump(2);
-    remove(jsonPath);
-    std::ofstream out(jsonPath);
-    if(out.good()) {
-        if(out.write(jsonData.data(), jsonData.size() + 1)) {
-            out.close();
-            return 1;
-        } else {
-            out.close();
-            return 0;
-        }
-    } else {
-        out.close();
-        return 0;
-    }
+	std::string jsonData = g_banks.dump(2);
+	remove(jsonPath);
+	std::ofstream out(jsonPath);
+	if(out.good()) {
+		if(out.write(jsonData.data(), jsonData.size() + 1)) {
+			out.close();
+			return 1;
+		} else {
+			out.close();
+			return 0;
+		}
+	} else {
+		out.close();
+		return 0;
+	}
 }
 
 static bool createJson() {
-    g_banks           = nlohmann::json::object();
-    g_banks["pkmn-chest_1"] = BANK_DEFAULT_SIZE;
-    return saveJson();
+	g_banks		   = nlohmann::json::object();
+	g_banks["pkmn-chest_1"] = BANK_DEFAULT_SIZE;
+	return saveJson();
 }
 
 static bool read() {
-    std::string path = (sdFound() ? "sd:/_nds/pkmn-chest/banks.json" : "fat:/_nds/pkmn-chest/banks.json");
-    std::ifstream in(path);
-    if(in.good()) {
-        in.seekg(0, in.end);
-        size_t size = in.tellg();
-        in.seekg(0, in.beg);
-        char data[size + 1];
-        in.read(data, size);
-        data[size] = '\0';
-        in.close();
-        g_banks = nlohmann::json::parse(data, nullptr, false);
-        return 1;
-    } else {
-        in.close();
-        return createJson();
-    }
+	std::string path = (sdFound() ? "sd:/_nds/pkmn-chest/banks.json" : "fat:/_nds/pkmn-chest/banks.json");
+	std::ifstream in(path);
+	if(in.good()) {
+		in.seekg(0, in.end);
+		size_t size = in.tellg();
+		in.seekg(0, in.beg);
+		char data[size + 1];
+		in.read(data, size);
+		data[size] = '\0';
+		in.close();
+		g_banks = nlohmann::json::parse(data, nullptr, false);
+		return 1;
+	} else {
+		in.close();
+		return createJson();
+	}
 }
 
 int Banks::init() {
-    if(!read())
-        return -1;
+	if(!read())
+		return -1;
 
-    if(g_banks.is_discarded())
-        return -2;
+	if(g_banks.is_discarded())
+		return -2;
 
-    auto i = g_banks.find("pkmn-chest");
-    if(i == g_banks.end()) {
-        i = g_banks.begin();
-    }
+	auto i = g_banks.find(Config::chestFile);
+	if(i == g_banks.end()) {
+		i = g_banks.begin();
+	}
 
-    return loadBank(i.key(), i.value());
+	return loadBank(i.key(), i.value());
 }
 
 bool Banks::loadBank(const std::string& name, int maxBoxes) {
-    if(!bank || bank->name() != name) {
-        auto found = g_banks.find(name);
-        if(found == g_banks.end()) {
-            g_banks[name] = (maxBoxes == 0 ? BANK_DEFAULT_SIZE : maxBoxes);
-            saveJson();
-            found = g_banks.find(name);
-        }
-        bank = std::make_shared<Bank>(found.key(), found.value().get<int>());
-        return true;
-    }
-    return false;
+	if(!bank || bank->name() != name) {
+		auto found = g_banks.find(name);
+		if(found == g_banks.end()) {
+			g_banks[name] = (maxBoxes == 0 ? BANK_DEFAULT_SIZE : maxBoxes);
+			saveJson();
+			found = g_banks.find(name);
+		}
+		bank = std::make_shared<Bank>(found.key(), found.value().get<int>());
+		return true;
+	}
+	return false;
 }
 
 void Banks::removeBank(const std::string& name) {
-    if(g_banks.size() == 1) {
-        return;
-    }
-    if(g_banks.contains(name)) {
-        if(bank && bank->name() == name) {
-            bank   = nullptr;
-            auto i = g_banks.begin();
-            if(i.key() == name) {
-                i++;
-            }
-            loadBank(i.key(), i.value());
-        }
+	if(g_banks.size() == 1) {
+		return;
+	}
+	if(g_banks.contains(name)) {
+		if(bank && bank->name() == name) {
+			bank   = nullptr;
+			auto i = g_banks.begin();
+			if(i.key() == name) {
+				i++;
+			}
+			loadBank(i.key(), i.value());
+		}
 		if (sdFound()) {
 			remove(("sd:/_nds/pkmn-chest/banks/" + name + ".bnk").c_str());
 			remove(("sd:/_nds/pkmn-chest/banks/" + name + ".json").c_str());
@@ -128,31 +129,31 @@ void Banks::removeBank(const std::string& name) {
 			remove(("fat:/_nds/pkmn-chest/banks/" + name + ".bnk").c_str());
 			remove(("fat:/_nds/pkmn-chest/banks/" + name + ".json").c_str());
 		}
-        for(auto i = g_banks.begin(); i != g_banks.end(); i++) {
-            if(i.key() == name) {
-                g_banks.erase(i);
-                saveJson();
-                break;
-            }
-        }
-    }
+		for(auto i = g_banks.begin(); i != g_banks.end(); i++) {
+			if(i.key() == name) {
+				g_banks.erase(i);
+				saveJson();
+				break;
+			}
+		}
+	}
 }
 
 std::vector<std::pair<std::string, int>> Banks::bankNames() {
-    std::vector<std::pair<std::string, int>> ret(g_banks.size());
-    for(auto i = g_banks.begin(); i != g_banks.end(); i++) {
-        ret[std::distance(g_banks.begin(), i)] = {i.key(), i.value().get<int>()};
-    }
-    return ret;
+	std::vector<std::pair<std::string, int>> ret(g_banks.size());
+	for(auto i = g_banks.begin(); i != g_banks.end(); i++) {
+		ret[std::distance(g_banks.begin(), i)] = {i.key(), i.value().get<int>()};
+	}
+	return ret;
 }
 
 void Banks::renameBank(const std::string& oldName, const std::string& newName) {
-    if(oldName != newName && g_banks.contains(oldName)) {
-        if(bank->name() == oldName) {
-            if(!bank->setName(newName)) {
-                return;
-            }
-        } else {
+	if(oldName != newName && g_banks.contains(oldName)) {
+		if(bank->name() == oldName) {
+			if(!bank->setName(newName)) {
+				return;
+			}
+		} else {
 			if (sdFound()) {
 				rename(("sd:/_nds/pkmn-chest/banks/" + oldName + ".bnk").c_str(), ("sd:/_nds/pkmn-chest/banks/" + newName + ".bnk").c_str());
 				rename(("sd:/_nds/pkmn-chest/banks/" + oldName + ".json").c_str(), ("sd:/_nds/pkmn-chest/banks/" + newName + ".json").c_str());
@@ -160,39 +161,19 @@ void Banks::renameBank(const std::string& oldName, const std::string& newName) {
 				rename(("fat:/_nds/pkmn-chest/banks/" + oldName + ".bnk").c_str(), ("fat:/_nds/pkmn-chest/banks/" + newName + ".bnk").c_str());
 				rename(("fat:/_nds/pkmn-chest/banks/" + oldName + ".json").c_str(), ("fat:/_nds/pkmn-chest/banks/" + newName + ".json").c_str());
 			}
-       }
-        g_banks[newName] = g_banks[oldName];
-        g_banks.erase(oldName);
-        saveJson();
-    }
+		}
+		g_banks[newName] = g_banks[oldName];
+		g_banks.erase(oldName);
+		saveJson();
+	}
 }
 
 void Banks::setBankSize(const std::string& name, int size) {
-    if(g_banks.count(name)) {
-        g_banks[name] = size;
-        if(bank && bank->name() == name && size != bank->boxes()) {
-            bank->resize(size);
-        }
-        saveJson();
-    }
+	if(g_banks.count(name)) {
+		g_banks[name] = size;
+		if(bank && bank->name() == name && size != bank->boxes()) {
+			bank->resize(size);
+		}
+		saveJson();
+	}
 }
-
-// bool Banks::swapSD(bool toSD)
-// {
-//     bool res = 0;
-//     if(toSD)
-//     {
-//         if(R_FAILED(res = Archive::moveDir(Archive::data(), "/banks", Archive::sd(), "/_nds/pkmn-chest/banks")))
-//             return res;
-//         if(R_FAILED(res = Archive::moveFile(Archive::data(), "/banks.json", Archive::sd(), "/_nds/pkmn-chest/banks.json")))
-//             return res;
-//     }
-//     else
-//     {
-//         if(R_FAILED(res = Archive::moveDir(Archive::sd(), "/_nds/pkmn-chest/banks", Archive::data(), "/banks")))
-//             return res;
-//         if(R_FAILED(res = Archive::moveFile(Archive::sd(), "/_nds/pkmn-chest/banks.json", Archive::data(), "/banks.json")))
-//             return res;
-//     }
-//     return res;
-// }

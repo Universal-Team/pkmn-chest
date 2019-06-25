@@ -28,9 +28,17 @@
 /*
  * Browse for a file
  * const std::vector<std::string>& extensionList is the extensions to show
+ * bool directoryNavigation is whether to allow changing folders
  * Returns the selected file
  */
-std::string browseForFile(const std::vector<std::string>& extensionList);
+std::string browseForFile(const std::vector<std::string>& extensionList, bool directoryNavigation);
+
+/*
+ * Browse for a save file
+ * Returns the selected file
+ */
+std::string browseForSave(void);
+
 
 /*
  * Copies a file to another location

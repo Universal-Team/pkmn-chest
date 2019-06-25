@@ -51,14 +51,12 @@ int main(int argc, char **argv) {
 	loadFont();
 	printTextCentered("Loading...", 0, 32, false);
 
-	Banks::init();
 	Config::loadConfig();
+	Banks::init();
 	loadGraphics();
 
-	std::vector<std::string> extensionList;
-	extensionList.push_back(".sav");
 	while(1) {
-		if(!loadSave(savePath = browseForFile(extensionList))) {
+		if(!loadSave(savePath = browseForSave())) {
 			drawRectangle(20, 20, 216, 152, 0xCC00, true);
 			printTextCentered("Invalid save file", 0, 24, true);
 			for(int i=0;i<120;i++)	swiWaitForVBlank();

@@ -1,6 +1,8 @@
 #include "manager.h"
 #include "banks.hpp"
 #include "common/banks.hpp"
+#include "config.h"
+#include "configMenu.h"
 #include "graphics/colors.h"
 #include "graphics/graphics.h"
 #include "keyboard.h"
@@ -357,6 +359,13 @@ bool xMenu(void) {
 			for(int i=0;i<6;i++)	swiWaitForVBlank();
 
 			if(selectedOption == 0) {
+				configMenu();
+
+				// Redraw menu
+				drawRectangle(0, 0, 256, 16, BLACK, false);
+				drawRectangle(0, 16, 256, 160, DARK_GRAY, false);
+				drawRectangle(0, 176, 256, 16, BLACK, false);
+				drawXMenuButtons(1);
 			} else if(selectedOption == 1) {
 				savePrompt();
 			} else if(selectedOption == 2) {
