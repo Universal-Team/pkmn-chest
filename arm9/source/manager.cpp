@@ -206,93 +206,37 @@ void setHeldPokemon(int dexNum) {
 
 void savePrompt(void) {
 	// Draw background
-	drawRectangle(0, 0, 256, 32, WHITE, false);
+	drawRectangle(0, 0, 256, 32, LIGHT_GRAY, false);
 	drawRectangle(0, 32, 256, 144, DARK_GRAY, false);
 	drawRectangle(0, 176, 256, 16, BLACK, false);
 
 	printTextTinted("Would you like to save changes", DARK_GRAY, 5, 0, false);
 	printTextTinted("to the chest?", DARK_GRAY, 5, 16, false);
-	drawRectangle(200, 33, 56, 16, BLACK, false);
-	printText("Yes", 205, 32, false);
-	drawRectangle(200, 50, 56, 16, BLACK, false);
-	printText("No", 205, 50, false);
-	bool menuSelection = 0, colorSelection = 0, savingSave = 0;
-	int pressed;
-	touchPosition touch;
-	while(1) {
-		do {
-			swiWaitForVBlank();
-			scanKeys();
-			pressed = keysDown();
-		} while(!pressed);
+	if(Input::getBool("Save", "Discard"))	Banks::bank->save();
 
-		if(pressed & KEY_A) {
-			saveYes:
-			drawRectangle(0, 0, 256, 32, WHITE, false);
-			printTextTinted("Saving...", DARK_GRAY, 5, 0, false);
-			if(!savingSave) {
-				if(!menuSelection)	Banks::bank->save();
-				drawRectangle(0, 0, 256, 32, WHITE, false);
-				printTextTinted("Would you like to save changes", DARK_GRAY, 5, 0, false);
-				if(savePath == cardSave)
-					printTextTinted("to the gamecard?", DARK_GRAY, 5, 16, false);
-				else
-					printTextTinted("to the save?", DARK_GRAY, 5, 16, false);
-				savingSave = 1;
-			} else {
-				if(!menuSelection) {
-					// Re-encrypt the box data
-					save->cryptBoxData(false);
-					// Save changes to save file
-					saveChanges(savePath);
-					// Reload save
-					loadSave(savePath);
-					save->cryptBoxData(true);
-					if(savePath == cardSave) {
-						drawRectangle(0, 32, 256, 48, DARK_GRAY, false);
-						updateCardInfo();
-						if(!restoreSave()) {
-							drawRectangle(0, 0, 256, 192, DARK_GRAY, true);
-							drawBox(true);
-						}
-					}
-				}
-				break;
+	drawRectangle(0, 0, 256, 32, LIGHT_GRAY, false);
+	printTextTinted("Would you like to save changes", DARK_GRAY, 5, 0, false);
+	if(savePath == cardSave)	printTextTinted("to the gamecard?", DARK_GRAY, 5, 16, false);
+	else	printTextTinted("to the save?", DARK_GRAY, 5, 16, false);
+
+	if(Input::getBool("Save", "Discard")) {
+		// Re-encrypt the box data
+		save->cryptBoxData(false);
+		// Save changes to save file
+		saveChanges(savePath);
+		// Reload save
+		loadSave(savePath);
+		save->cryptBoxData(true);
+		if(savePath == cardSave) {
+			drawRectangle(0, 32, 256, 48, DARK_GRAY, false);
+			updateCardInfo();
+			if(!restoreSave()) {
+				drawRectangle(0, 0, 256, 192, DARK_GRAY, true);
+				drawBox(true);
 			}
-		} else if(pressed & KEY_B) {
-			saveNo:
-			if(!savingSave) {
-				drawRectangle(0, 0, 256, 32, WHITE, false);
-				printTextTinted("Would you like to save changes", DARK_GRAY, 5, 0, false);
-				if(savePath == cardSave)
-					printTextTinted("to the gamecard?", DARK_GRAY, 5, 16, false);
-				else
-					printTextTinted("to the save?", DARK_GRAY, 5, 16, false);
-				savingSave = 1;
-			} else {
-				break;
-			}
-		} else if(pressed & KEY_UP) {
-			if(menuSelection)	menuSelection = 0;
-			colorSelection = 1;
-		} else if(pressed & KEY_DOWN) {
-			if(!menuSelection)	menuSelection = 1;
-			colorSelection = 1;
-		} else if(pressed & KEY_TOUCH) {
-			touchRead(&touch);
-			if(touch.px >= 200 && touch.py >= 32 && touch.py <= 48) {
-				goto saveYes;
-			} else if(touch.px >= 200 && touch.py >= 49 && touch.py <= 65) {
-				goto saveNo;
-			}
-		}
-		if(colorSelection) {
-			drawRectangle(200, 33, 56, 16, !menuSelection ? TEAL & LIGHT_GRAY : BLACK, false);
-			printText("Yes", 205, 33, false);
-			drawRectangle(200, 50, 56, 16, menuSelection ? TEAL & LIGHT_GRAY : BLACK, false);
-			printText("No", 205, 50, false);
 		}
 	}
+
 	// Draw X menu background
 	drawRectangle(0, 0, 256, 16, BLACK, false);
 	drawRectangle(0, 16, 256, 160, DARK_GRAY, false);

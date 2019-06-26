@@ -24,11 +24,11 @@
 #include <algorithm>
 #include <dirent.h>
 #include <fat.h>
-#include <fstream>
-
 #include "flashcard.h"
+#include <fstream>
 #include "graphics/colors.h"
 #include "graphics/graphics.h"
+#include "keyboard.h"
 #include "loader.h"
 #include "saves/cardSaves.h"
 #include "utils.hpp"
@@ -300,19 +300,21 @@ std::string topMenuSelect(void) {
 			}
 			return "";
 		} else if(pressed & KEY_X) {
-			if(topMenuContents[tmCurPos] != "fat:" && topMenuContents[tmCurPos] != "sd:" && topMenuContents[tmCurPos] != "card:") {
-				std::ofstream out(sdFound() ? "sd:/_nds/pkmn-chest/favorites.lst" : "fat:/_nds/pkmn-chest/favorites.lst");
+			if((topMenuContents[tmCurPos] != "fat:") && (topMenuContents[tmCurPos] != "sd:") && (topMenuContents[tmCurPos] != "card:")) {
+				if(Input::getBool("Remove", "Cancel")) {
+					std::ofstream out(sdFound() ? "sd:/_nds/pkmn-chest/favorites.lst" : "fat:/_nds/pkmn-chest/favorites.lst");
 
-				std::string line;
-				for(int i=0;i<(int)topMenuContents.size();i++) {
-					if(i != tmCurPos && topMenuContents[i] != "fat:" && topMenuContents[i] != "sd:" && topMenuContents[i] != "card:") {
-						out << topMenuContents[i] << std::endl;
+					std::string line;
+					for(int i=0;i<(int)topMenuContents.size();i++) {
+						if(i != tmCurPos && topMenuContents[i] != "fat:" && topMenuContents[i] != "sd:" && topMenuContents[i] != "card:") {
+							out << topMenuContents[i] << std::endl;
+						}
 					}
+
+					out.close();
+
+					topMenuContents.erase(topMenuContents.begin()+tmCurPos);
 				}
-
-				out.close();
-
-				topMenuContents.erase(topMenuContents.begin()+tmCurPos);
 				showTopMenu(topMenuContents);
 				drawFullScreen = true; // Stay at the bottom of the list
 			}
