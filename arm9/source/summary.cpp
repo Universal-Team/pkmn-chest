@@ -1,5 +1,6 @@
 #include "summary.h"
 #include "graphics/colors.h"
+#include "loader.h"
 #include "keyboard.h"
 #include "manager.h"
 
@@ -237,7 +238,7 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 						if(pkm->gender() != 2)	pkm->gender(Input::getBool("Female", "Male"));
 						break;
 					} case 2: {
-						int num = Input::getInt(25);
+						int num = Input::getInt(save->generation() == Generation::FIVE ? 25 : 24);
 						if(num > 0)	pkm->ball(num);
 						break;
 					} case 3: {
