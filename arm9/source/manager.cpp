@@ -14,15 +14,28 @@
 
 bool topScreen;
 int bottomArrowID, topArrowID, shinyID, currentSaveBox, currentBankBox, bottomHeldPokemonID, topHeldPokemonID;
+int arrowMode = 0;
 std::string savePath;
-std::vector<u16> arrow, ballSheet, bankBox, menuButton, shiny, pokemonSheet, stripes, types;
+std::vector<u16> arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, menuButton, shiny, pokemonSheet, stripes, types;
 ImageData ballSheetData, bankBoxData, menuButtonData, pokemonSheetData, shinyData, stripesData, typesData;
 
-struct button {
+struct Button {
 	int x;
 	int y;
 	std::string text;
-} xMenuButtons[] = {
+};
+
+std::vector<Button> aMenuButtons = {
+	{170, 32, "Edit"},
+	{170, 57, "Move"},
+	{170, 82, "Back"},
+};
+std::vector<Button> aMenuTopBarButtons = {
+	{170, 32, "Rename"},
+	{170, 57, "Swap"},
+	{170, 82, "Back"},
+};
+Button xMenuButtons[] = {
 	{3, 24, "Party"}, {131, 24, "Options"},
 	{3, 72, "Save"}, {131, 72, "Exit"},
 };
@@ -53,7 +66,9 @@ void loadGraphics(void) {
 	shinyData = loadPng("nitro:/graphics/shiny.png", shiny);
 	stripesData = loadPng("nitro:/graphics/stripes.png", stripes);
 	typesData = loadPng("nitro:/graphics/types.png", types);
-	loadPng("nitro:/graphics/arrow.png", arrow);
+	loadPng("nitro:/graphics/arrowBlue.png", arrowBlue);
+	loadPng("nitro:/graphics/arrowRed.png", arrowRed);
+	loadPng("nitro:/graphics/arrowYellow.png", arrowYellow);
 
 	// Init Pokémon Sprites
 	for(int i=0;i<30;i++)	initSprite(SpriteSize_32x32, false);
@@ -68,13 +83,13 @@ void loadGraphics(void) {
 
 	// Prepare bottom arrow sprite
 	bottomArrowID = initSprite(SpriteSize_16x16, false);
-	fillSpriteImage(bottomArrowID, arrow);
+	fillSpriteImage(bottomArrowID, arrowRed);
 	prepareSprite(bottomArrowID, 24, 36, 0);
 	setSpriteVisibility(bottomArrowID, false);
 
 	// Prepare top arrow sprite
 	topArrowID = initSprite(SpriteSize_16x16, true);
-	fillSpriteImage(topArrowID, arrow);
+	fillSpriteImage(topArrowID, arrowRed);
 	prepareSprite(topArrowID, 24, 36, 0);
 	setSpriteVisibility(topArrowID, false);
 
@@ -204,6 +219,110 @@ void setHeldPokemon(int dexNum) {
 	}
 }
 
+void drawAMenuButtons(std::vector<Button>& buttons) {
+	for(uint i=0;i<buttons.size();i++) {
+		drawRectangle(buttons[i].x, buttons[i].y, 64, 24, DARKER_GRAY, false);
+		printText(buttons[i].text, buttons[i].x+4, buttons[i].y+4, false);
+	}
+}
+
+bool aMenu(int pkmPos, std::vector<Button>& buttons) {
+	setSpritePosition(bottomArrowID, buttons[0].x+getTextWidth(buttons[0].text)+4, buttons[0].y);
+	setSpriteVisibility(topArrowID, false);
+	setSpriteVisibility(bottomArrowID, true);
+	updateOam();
+
+	drawAMenuButtons(buttons);
+
+	bool optionSelected = false;
+	int pressed, menuSelection = 0;
+	touchPosition touch;
+	while(1) {
+		do {
+			swiWaitForVBlank();
+			scanKeys();
+			pressed = keysDown();
+		} while(!pressed);
+		
+		if(pressed & KEY_UP) {
+			if(menuSelection > 0)	menuSelection--;
+		} else if(pressed & KEY_DOWN) {
+			if(menuSelection < 2)	menuSelection++;
+		} else if(pressed & KEY_TOUCH) {
+			touchRead(&touch);
+
+			for(uint i=0; i<buttons.size();i++) {
+				if(touch.px >= buttons[i].x && touch.px <= buttons[i].x+64 && touch.py >= buttons[i].y && touch.py <= buttons[i].y+25) {
+					menuSelection = i;
+					optionSelected = true;
+				}
+			}
+		} else if(pressed & KEY_A) {
+			optionSelected = true;
+		} else if(pressed & KEY_B) {
+			goto back;
+		}
+
+		if(optionSelected && pkmPos != -1) { // A Pokémon
+			optionSelected = false;
+			if(menuSelection == 0) { // Edit
+				showPokemonSummary(currentPokemon(pkmPos));
+				
+				// Redraw screen
+				drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+				drawBox(false);
+				drawAMenuButtons(buttons);
+			} else if(menuSelection == 1) { // Move
+				if(topScreen) {
+					setSpriteVisibility(bottomArrowID, false);
+					setSpriteVisibility(topArrowID, true);
+				}
+				updateOam();
+				drawRectangle(170, 0, 86, 192, DARK_GRAY, false);
+				return true;
+			} else if(menuSelection == 2) { // Back
+				back:
+				if(topScreen) {
+					setSpriteVisibility(bottomArrowID, false);
+					setSpriteVisibility(topArrowID, true);
+				}
+				updateOam();
+				drawRectangle(170, 0, 86, 192, DARK_GRAY, false);
+				break;
+			}
+		} else if(optionSelected) { // Top bar
+			optionSelected = false;
+			if(menuSelection == 0) { // Rename
+				// If the arrow is on the box title, rename it
+				// Hide bottom screen sprites
+				for(int i=0;i<30;i++) {
+					setSpriteVisibility(i, false);
+				}
+				updateOam();
+				std::string newName = Input::getLine(topScreen ? 16 : 8);
+				if(newName != "") {
+					if(topScreen)	Banks::bank->boxName(newName, currentBankBox);
+					else	save->boxName(currentSaveBox, newName);
+				}
+
+				// Redraw screen
+				drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+				drawBox(false);
+				if(topScreen)	drawBox(topScreen);
+				drawAMenuButtons(buttons);
+			} else if(menuSelection == 1) { // Swap
+				
+			} else if(menuSelection == 2) { // Back
+				goto back;
+			}
+		}
+
+		setSpritePosition(bottomArrowID, buttons[menuSelection].x+getTextWidth(buttons[menuSelection].text)+4, buttons[menuSelection].y);
+		updateOam();
+	}
+	return false;
+}
+
 void savePrompt(void) {
 	// Draw background
 	drawRectangle(0, 0, 256, 32, LIGHT_GRAY, false);
@@ -257,6 +376,9 @@ bool xMenu(void) {
 	}
 	setSpriteVisibility(bottomArrowID, false);
 	updateOam();
+
+	// Make bottom arrow red
+	fillSpriteImage(bottomArrowID, arrowRed);
 	
 	// Draw background
 	drawRectangle(0, 0, 256, 16, BLACK, false);
@@ -294,6 +416,8 @@ bool xMenu(void) {
 		} else if(pressed & KEY_A) {
 			selectedOption = menuSelection;
 		} else if(pressed & KEY_B || pressed & KEY_X) {
+			// Reset arrow color
+			fillSpriteImage(bottomArrowID, arrowMode ? arrowBlue : arrowRed);
 			if(!topScreen)	setSpriteVisibility(bottomArrowID, true);
 			drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
 			drawBox(false);
@@ -384,20 +508,8 @@ void manageBoxes(void) {
 		}
 		if(pressed & KEY_A) {
 			if(arrowY == -1) {
-				// If the arrow is on the box title, rename it
-				// Hide bottom screen sprites
-				for(int i=0;i<30;i++) {
-					setSpriteVisibility(i, false);
-				}
-				updateOam();
-				std::string newName = Input::getLine(topScreen ? 16 : 8);
-				if(newName != "") {
-					if(topScreen)	Banks::bank->boxName(newName, currentBankBox);
-					else	save->boxName(currentSaveBox, newName);
-				}
-				drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
-				drawBox(false);
-				if(topScreen)	drawBox(topScreen);
+				if(arrowMode == 0 && heldPokemon == -1)
+					aMenu(-1, aMenuTopBarButtons);
 			} else {
 				// Otherwise move Pokémon
 				if(heldPokemon != -1) {
@@ -438,39 +550,17 @@ void manageBoxes(void) {
 						heldPokemon = -1;
 						heldPokemonBox = -1;
 					}
-				} else {
-					if(currentPokemon((arrowY*6)+arrowX)->species() != 0) {
-						// If no pokemon is currently held and there is one at the cursor, pick it up
-						heldPokemon = (arrowY*6)+arrowX;
-						heldPokemonBox = currentBox();
-						heldPokemonScreen = topScreen;
-						setHeldPokemon(currentPokemon(heldPokemon)->species());
-						setSpriteVisibility(heldPokemonScreen ? heldPokemon+30 : heldPokemon, false);
-						setSpriteVisibility(topScreen ? topHeldPokemonID : bottomHeldPokemonID, true);
-						drawPokemonInfo(currentPokemon(heldPokemon));
-					}
+				} else if(currentPokemon((arrowY*6)+arrowX)->species() != 0 && (arrowMode != 0 || aMenu((arrowY*6)+arrowX, aMenuButtons))) {
+					// If no pokemon is currently held and there is one at the cursor, pick it up
+					heldPokemon = (arrowY*6)+arrowX;
+					heldPokemonBox = currentBox();
+					heldPokemonScreen = topScreen;
+					setHeldPokemon(currentPokemon(heldPokemon)->species());
+					setSpriteVisibility(heldPokemonScreen ? heldPokemon+30 : heldPokemon, false);
+					setSpriteVisibility(topScreen ? topHeldPokemonID : bottomHeldPokemonID, true);
+					drawPokemonInfo(currentPokemon(heldPokemon));
 				}
 			}
-		}
-
-		if(pressed & KEY_Y && heldPokemon == -1 && currentPokemon((arrowY*6)+arrowX)->species() != 0) {
-			// Show Pokemon summary & save edits
-			if(topScreen)
-				Banks::bank->pkm(showPokemonSummary(currentPokemon((arrowY*6)+arrowX)), currentBankBox, (arrowY*6)+arrowX);
-			else
-				save->pkm(showPokemonSummary(currentPokemon((arrowY*6)+arrowX)), currentSaveBox, (arrowY*6)+arrowX, false);
-
-			// Redraw box screen
-			drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
-			drawBox(false);
-			if(topScreen)	drawBox(topScreen);
-
-			// Reset sprite visibility
-			drawPokemonInfo(currentPokemon((arrowY*6)+arrowX));
-			setSpriteVisibility(topArrowID, topScreen);
-			setSpriteVisibility(bottomArrowID, !topScreen);
-			setSpritePosition(bottomArrowID, arrowX, arrowY);
-			updateOam();
 		}
 
 		if(pressed & KEY_X && heldPokemon == -1) {
@@ -498,6 +588,22 @@ void manageBoxes(void) {
 				setSpriteVisibility(topHeldPokemonID, false);
 			}
 
+		}
+
+		if(pressed & KEY_SELECT && heldPokemon == -1) {
+			if(arrowMode < 1)	arrowMode++;
+			else	arrowMode = 0;
+
+			if(arrowMode == 0) {
+				fillSpriteImage(bottomArrowID, arrowRed);
+				fillSpriteImage(topArrowID, arrowRed);
+			} else if(arrowMode == 1) {
+				fillSpriteImage(bottomArrowID, arrowBlue);
+				fillSpriteImage(topArrowID, arrowBlue);
+			} else {
+				fillSpriteImage(bottomArrowID, arrowYellow);
+				fillSpriteImage(topArrowID, arrowYellow);
+			}
 		}
 
 		if((held & KEY_UP || held & KEY_DOWN || held & KEY_LEFT || held & KEY_RIGHT || held & KEY_L || held & KEY_R) && heldPokemon == -1) {
