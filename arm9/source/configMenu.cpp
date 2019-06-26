@@ -67,6 +67,8 @@ void configMenu(void) {
 		} else if(pressed & KEY_A) {
 			optionSelected = true;
 		} else if(pressed & KEY_B) {
+			setSpriteVisibility(bottomArrowID, false);
+			updateOam();
 			return;
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
@@ -143,6 +145,4 @@ void configMenu(void) {
 		setSpritePosition(bottomArrowID, textCP1[selection].x+getTextWidth(textCP1[selection].text), textCP1[selection].y-6);
 		updateOam();
 	}
-	setSpriteVisibility(bottomArrowID, false);
-	updateOam();
 }

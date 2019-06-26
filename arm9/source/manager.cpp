@@ -7,6 +7,7 @@
 #include "graphics/graphics.h"
 #include "keyboard.h"
 #include "loader.h"
+#include "party.h"
 #include "saves/cardSaves.h"
 #include "summary.h"
 #include "utils.hpp"
@@ -16,6 +17,15 @@ int bottomArrowID, topArrowID, shinyID, currentSaveBox, currentBankBox, bottomHe
 std::string savePath;
 std::vector<u16> arrow, ballSheet, bankBox, menuButton, shiny, pokemonSheet, stripes, types;
 ImageData ballSheetData, bankBoxData, menuButtonData, pokemonSheetData, shinyData, stripesData, typesData;
+
+struct button {
+	int x;
+	int y;
+	std::string text;
+} xMenuButtons[] = {
+	{3, 24, "Party"}, {131, 24, "Options"},
+	{3, 72, "Save"}, {131, 72, "Exit"},
+};
 
 int currentBox(void) {
 	return topScreen ? currentBankBox : currentSaveBox;
@@ -289,13 +299,11 @@ void savePrompt(void) {
 	drawRectangle(0, 176, 256, 16, BLACK, false);
 }
 
-void drawXMenuButtons(int menuSelection) {
-	drawImageTinted(3, 24, menuButtonData.width, menuButtonData.height, menuSelection == 0 ? TEAL_RGB : LIGHT_GRAY, menuButton, false);
-	drawImageTinted(131, 24, menuButtonData.width, menuButtonData.height, menuSelection == 1 ? TEAL_RGB : LIGHT_GRAY, menuButton, false);
-	drawImageTinted(3, 72, menuButtonData.width, menuButtonData.height, menuSelection == 2 ? TEAL_RGB : LIGHT_GRAY, menuButton, false);
-	printText("Options", 50, 40, false);
-	printText("Save", 178, 40, false);
-	printText("Exit", 50, 88, false);
+void drawXMenuButtons(uint menuSelection) {
+	for(uint i=0;i<(sizeof(xMenuButtons)/sizeof(xMenuButtons[0]));i++) {
+		drawImageTinted(xMenuButtons[i].x, xMenuButtons[i].y, menuButtonData.width, menuButtonData.height, menuSelection == i ? TEAL_RGB : LIGHT_GRAY, menuButton, false);
+		printText(xMenuButtons[i].text, xMenuButtons[i].x+47, xMenuButtons[i].y+14, false);
+	}
 }
 
 bool xMenu(void) {
@@ -321,21 +329,20 @@ bool xMenu(void) {
 			scanKeys();
 			pressed = keysDown();
 		} while(!pressed);
-		if(menuSelection == -1 && (pressed & KEY_UP || pressed & KEY_DOWN || pressed & KEY_LEFT || pressed & KEY_RIGHT)) {
+		if(menuSelection == -1 && !(pressed & KEY_TOUCH)) {
 			menuSelection = 0;
 		} else if(pressed & KEY_UP) {
 			if(menuSelection > 1)	menuSelection -= 2;
 		} else if(pressed & KEY_DOWN) {
-			if(menuSelection < 1)	menuSelection += 2;
+			if(menuSelection < 2)	menuSelection += 2;
 		} else if(pressed & KEY_LEFT) {
 			if(menuSelection % 2)	menuSelection--;
 		} else if(pressed & KEY_RIGHT) {
 			if(!(menuSelection % 2))	menuSelection++;
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
-			XYCoords menuButtons[] = {{3, 24}, {131, 24}, {3, 72}};
-			for(uint i=0; i<(sizeof(menuButtons)/sizeof(menuButtons[0]));i++) {
-				if(touch.px >= menuButtons[i].x && touch.px <= menuButtons[i].x+menuButtonData.width && touch.py >= menuButtons[i].y && touch.py <= menuButtons[i].y+menuButtonData.height) {
+			for(uint i=0; i<(sizeof(xMenuButtons)/sizeof(xMenuButtons[0]));i++) {
+				if(touch.px >= xMenuButtons[i].x && touch.px <= xMenuButtons[i].x+menuButtonData.width && touch.py >= xMenuButtons[i].y && touch.py <= xMenuButtons[i].y+menuButtonData.height) {
 					selectedOption = i;
 				}
 			}
@@ -350,15 +357,15 @@ bool xMenu(void) {
 		}
 
 		if(selectedOption != -1) {
-			// Flash selected option
-			drawXMenuButtons(selectedOption);
-			for(int i=0;i<6;i++)	swiWaitForVBlank();
-			drawXMenuButtons(-1);
-			for(int i=0;i<6;i++)	swiWaitForVBlank();
-			drawXMenuButtons(selectedOption);
-			for(int i=0;i<6;i++)	swiWaitForVBlank();
-
 			if(selectedOption == 0) {
+				manageParty();
+				
+				// Redraw menu
+				drawRectangle(0, 0, 256, 16, BLACK, false);
+				drawRectangle(0, 16, 256, 160, DARK_GRAY, false);
+				drawRectangle(0, 176, 256, 16, BLACK, false);
+				drawXMenuButtons(1);
+			} else if(selectedOption == 1) {
 				configMenu();
 
 				// Redraw menu
@@ -366,9 +373,9 @@ bool xMenu(void) {
 				drawRectangle(0, 16, 256, 160, DARK_GRAY, false);
 				drawRectangle(0, 176, 256, 16, BLACK, false);
 				drawXMenuButtons(1);
-			} else if(selectedOption == 1) {
-				savePrompt();
 			} else if(selectedOption == 2) {
+				savePrompt();
+			} else if(selectedOption == 3) {
 				savePrompt();
 				// Hide remaining sprites
 				for(uint i=30;i<getSpriteAmount();i++) {
