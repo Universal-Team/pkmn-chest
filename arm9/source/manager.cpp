@@ -180,7 +180,7 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 		printTextTinted(str, 0xCE73, 170, 2, true);
 
 		// Print nickname
-		printTextTinted(pkm->nickname(), (pkm->gender() ? (pkm->gender() == 1 ? 0x801F : WHITE) : 0xFC00), 170, 14, true);
+		printTextTinted(pkm->nickname(), (pkm->gender() ? (pkm->gender() == 1 ? RED_RGB : WHITE) : BLUE_RGB), 170, 14, true);
 
 		// Draw types
 		drawImageFromSheet(170, 33, 32, 12, types, 32, 0, (((pkm->generation() == Generation::FOUR && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1())*12), true);
@@ -228,7 +228,7 @@ void savePrompt(void) {
 		loadSave(savePath);
 		save->cryptBoxData(true);
 		if(savePath == cardSave) {
-			drawRectangle(0, 32, 256, 48, DARK_GRAY, false);
+			drawRectangle(0, 32, 256, 32, DARK_GRAY, false);
 			updateCardInfo();
 			if(!restoreSave()) {
 				drawRectangle(0, 0, 256, 192, DARK_GRAY, true);

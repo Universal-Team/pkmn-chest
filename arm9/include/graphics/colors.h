@@ -13,6 +13,8 @@
 #define WHITE 0xFFFF
 
 // RGB
+#define RED_RGB 0x801F
+#define BLUE_RGB 0xFC00
 #define TEAL_RGB 0xFF20
 
 #endif

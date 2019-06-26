@@ -10,6 +10,8 @@ extern sNDSHeader nds;
 extern char gamename[13];
 extern char gameid[5];
 
+bool isValidTid(char* tid);
+
 bool updateCardInfo(void);
 bool updateCardInfo(sNDSHeader* nds, char* gameid, char* gamename, auxspi_extra* card_type);
 

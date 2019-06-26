@@ -31,6 +31,7 @@
 #include "keyboard.h"
 #include "loader.h"
 #include "saves/cardSaves.h"
+#include <unistd.h>
 #include "utils.hpp"
 
 #define ENTRIES_PER_SCREEN 11
@@ -43,6 +44,11 @@ char sdLabel[12];
 struct DirEntry {
 	std::string name;
 	bool isDirectory;
+};
+
+struct topMenuItem {
+	std::string name;
+	bool valid;
 };
 
 bool nameEndsWith(const std::string& name, const std::vector<std::string> extensionList) {
@@ -159,34 +165,35 @@ void updateDriveLabel(bool fat) {
 	}
 }
 
-void drawSdText(int i) {
+void drawSdText(int i, bool valid) {
 	char str[19];
 	updateDriveLabel(false);
 	snprintf(str, sizeof(str), "sd: (%s)", sdLabel[0] == '\0' ? "SD Card" : sdLabel);
-	printText(str, 10, (i+1)*16, false);
+	printTextTinted(str, valid ? WHITE : RED_RGB, 10, (i+1)*16, false);
 }
 
-void drawFatText(int i) {
+void drawFatText(int i, bool valid) {
 	char str[20];
 	updateDriveLabel(true);
 	snprintf(str, sizeof(str), "fat:/ (%s)", fatLabel[0] == '\0' ? "Flashcard" : fatLabel);
-	printText(str, 10, (i+1)*16, false);
+	printTextTinted(str, valid ? WHITE : RED_RGB, 10, (i+1)*16, false);
 }
 
-void drawSlot1Text(int i) {
+void drawSlot1Text(int i, bool valid) {
 	char slot1Text[34];
 	snprintf(slot1Text, sizeof(slot1Text), "Slot-1: (%s) [%s]", REG_SCFG_MC == 0x11 ? "No card inserted" : gamename, gameid);
-	printText(slot1Text, 10, (i+1)*16, false);
+	printTextTinted(slot1Text, valid ? WHITE : RED_RGB, 10, (i+1)*16, false);
 }
 
-void updateSlot1Text(int &cardWait) {
+bool updateSlot1Text(int &cardWait, bool valid) {
 	if(REG_SCFG_MC == 0x11) {
 		disableSlot1();
 		cardWait = 30;
 		if(!noCardMessageSet) {
 			drawRectangle(10, ((tmSlot1Offset-tmScreenOffset)+1)*16+1, 200, 16, DARK_GRAY, false);
 			printText("Slot-1: (No card inserted)", 10, ((tmSlot1Offset-tmScreenOffset)+1)*16, false);
-			noCardMessageSet = 1;
+			noCardMessageSet = true;
+			return false;
 		}
 	}
 	if(cardWait > 0) {
@@ -195,25 +202,28 @@ void updateSlot1Text(int &cardWait) {
 		cardWait--;
 		enableSlot1();
 		if(updateCardInfo()) {
+			valid = isValidTid(gameid);
 			drawRectangle(10, ((tmSlot1Offset-tmScreenOffset)+1)*16+1, 200, 16, DARK_GRAY, false);
-			drawSlot1Text(tmSlot1Offset-tmScreenOffset);
-			noCardMessageSet = 0;
+			drawSlot1Text(tmSlot1Offset-tmScreenOffset, valid);
+			noCardMessageSet = false;
+			return valid;
 		}
 	}
+	return valid;
 }
 
-void showTopMenu(std::vector<std::string> topMenuContents) {
+void showTopMenu(std::vector<topMenuItem> topMenuContents) {
 	// Draw background
 	drawRectangle(0, 0, 256, 15, BLACK, false);
 	drawRectangle(0, 16, 256, 1, WHITE, false);
 	drawRectangle(0, 17, 256, 175, DARK_GRAY, false);
 
 	for(uint i=0;i<topMenuContents.size() && i<ENTRIES_PER_SCREEN;i++) {
-		if(topMenuContents[i+tmScreenOffset] == "fat:")	drawFatText(i);
-		else if(topMenuContents[i+tmScreenOffset] == "sd:")	drawSdText(i);
-		else if(topMenuContents[i+tmScreenOffset] == "card:")	drawSlot1Text(i);
+		if(topMenuContents[i+tmScreenOffset].name == "fat:")	drawFatText(i, topMenuContents[i+tmScreenOffset].valid);
+		else if(topMenuContents[i+tmScreenOffset].name == "sd:")	drawSdText(i, topMenuContents[i+tmScreenOffset].valid);
+		else if(topMenuContents[i+tmScreenOffset].name == "card:")	drawSlot1Text(i, topMenuContents[i+tmScreenOffset].valid);
 		else {
-			std::u16string name = StringUtils::UTF8toUTF16(topMenuContents[i+tmScreenOffset]);
+			std::u16string name = StringUtils::UTF8toUTF16(topMenuContents[i+tmScreenOffset].name);
 
 			// Trim to fit on screen
 			bool addEllipsis = false;
@@ -223,7 +233,7 @@ void showTopMenu(std::vector<std::string> topMenuContents) {
 			}
 			if(addEllipsis)	name += StringUtils::UTF8toUTF16("...");
 
-			printText(name, 10, i*16+16, false);
+			printTextTinted(name, topMenuContents[i+tmScreenOffset].valid ? WHITE : RED_RGB, 10, i*16+16, false);
 		}
 	}
 }
@@ -239,23 +249,25 @@ std::string topMenuSelect(void) {
 
 	updateCardInfo();
 
-	std::vector<std::string> topMenuContents;
+	std::vector<topMenuItem> topMenuContents;
 
-	if(flashcardFound())	topMenuContents.push_back("fat:");
-	if(sdFound())	topMenuContents.push_back("sd:");
-	topMenuContents.push_back("card:");
+	if(flashcardFound())	topMenuContents.push_back({"fat:", true});
+	if(sdFound())	topMenuContents.push_back({"sd:", true});
+	topMenuContents.push_back({"card:", false});
 	tmSlot1Offset = topMenuContents.size()-1;
 
 	std::ifstream favs(sdFound() ? "sd:/_nds/pkmn-chest/favorites.lst" : "fat:/_nds/pkmn-chest/favorites.lst");
 	std::string line;
 	while(std::getline(favs, line)) {
-		topMenuContents.push_back(line);
+		topMenuContents.push_back({line, (access(line.c_str(), F_OK) == 0)});
 	}
+
+	int cardWait = 0;
+	topMenuContents[tmSlot1Offset].valid = updateSlot1Text(cardWait, topMenuContents[tmSlot1Offset].valid);
 	
 	// Show topMenuContents
 	showTopMenu(topMenuContents);
 
-	int cardWait = 30;
 	bool drawFullScreen = false;
 	while(1) {
 		// Clear old cursors
@@ -272,7 +284,7 @@ std::string topMenuSelect(void) {
 			held = keysDownRepeat();
 
 			if(tmScreenOffset <= tmSlot1Offset) {
-				updateSlot1Text(cardWait);
+				topMenuContents[tmSlot1Offset].valid = updateSlot1Text(cardWait, topMenuContents[tmSlot1Offset].valid);
 			};
 
 		} while(!held);
@@ -286,28 +298,29 @@ std::string topMenuSelect(void) {
 			tmCurPos += ENTRY_PAGE_LENGTH;
 			drawFullScreen = true;
 		} else if(pressed & KEY_A) {
-			if(topMenuContents[tmCurPos] == "fat:") {
+			if(topMenuContents[tmCurPos].name == "fat:") {
 				chdir("fat:/");
-			} else if(topMenuContents[tmCurPos] == "sd:") {
+				return "";
+			} else if(topMenuContents[tmCurPos].name == "sd:") {
 				chdir("sd:/");
-			} else if(topMenuContents[tmCurPos] == "card:") {
+				return "";
+			} else if(topMenuContents[tmCurPos].name == "card:" && topMenuContents[tmSlot1Offset].valid) {
 				dumpSave();
 				showTopMenuOnExit = 1;
 				return cardSave;
-			} else {
+			} else if(topMenuContents[tmCurPos].valid) {
 				showTopMenuOnExit = 1;
-				return topMenuContents[tmCurPos];
+				return topMenuContents[tmCurPos].name;
 			}
-			return "";
 		} else if(pressed & KEY_X) {
-			if((topMenuContents[tmCurPos] != "fat:") && (topMenuContents[tmCurPos] != "sd:") && (topMenuContents[tmCurPos] != "card:")) {
+			if((topMenuContents[tmCurPos].name != "fat:") && (topMenuContents[tmCurPos].name != "sd:") && (topMenuContents[tmCurPos].name != "card:")) {
 				if(Input::getBool("Remove", "Cancel")) {
 					std::ofstream out(sdFound() ? "sd:/_nds/pkmn-chest/favorites.lst" : "fat:/_nds/pkmn-chest/favorites.lst");
 
 					std::string line;
 					for(int i=0;i<(int)topMenuContents.size();i++) {
-						if(i != tmCurPos && topMenuContents[i] != "fat:" && topMenuContents[i] != "sd:" && topMenuContents[i] != "card:") {
-							out << topMenuContents[i] << std::endl;
+						if(i != tmCurPos && topMenuContents[i].name != "fat:" && topMenuContents[i].name != "sd:" && topMenuContents[i].name != "card:") {
+							out << topMenuContents[i].name << std::endl;
 						}
 					}
 
@@ -344,11 +357,11 @@ std::string topMenuSelect(void) {
 				drawRectangle(3, 40, 4, 3, DARK_GRAY, false); // DARK_GRAY out previous cursor mark
 
 				// Draw new entry
-				if(topMenuContents[tmCurPos] == "fat:")	drawFatText(0);
-				else if(topMenuContents[tmCurPos] == "sd:")	drawSdText(0);
-				else if(topMenuContents[tmCurPos] == "card:") drawSlot1Text(0);
+				if(topMenuContents[tmCurPos].name == "fat:")	drawFatText(0, topMenuContents[tmCurPos].valid);
+				else if(topMenuContents[tmCurPos].name == "sd:")	drawSdText(0, topMenuContents[tmCurPos].valid);
+				else if(topMenuContents[tmCurPos].name == "card:") drawSlot1Text(0, topMenuContents[tmCurPos].valid);
 				else {
-					std::u16string name = StringUtils::UTF8toUTF16(topMenuContents[tmScreenOffset]);
+					std::u16string name = StringUtils::UTF8toUTF16(topMenuContents[tmScreenOffset].name);
 
 					// Trim to fit on screen
 					bool addEllipsis = false;
@@ -372,11 +385,11 @@ std::string topMenuSelect(void) {
 				drawRectangle(3, (tmCurPos-tmScreenOffset)*16+24, 4, 3, WHITE, false); // Draw new cursor mark
 
 				// Draw new entry
-				if(topMenuContents[tmCurPos] == "fat:")	drawFatText(ENTRIES_PER_SCREEN*16);
-				else if(topMenuContents[tmCurPos] == "sd:")	drawSdText(ENTRIES_PER_SCREEN*16);
-				else if(topMenuContents[tmCurPos] == "card:")	drawSlot1Text(ENTRIES_PER_SCREEN*16);
+				if(topMenuContents[tmCurPos].name == "fat:")	drawFatText(ENTRIES_PER_SCREEN*16, topMenuContents[tmCurPos].valid);
+				else if(topMenuContents[tmCurPos].name == "sd:")	drawSdText(ENTRIES_PER_SCREEN*16, topMenuContents[tmCurPos].valid);
+				else if(topMenuContents[tmCurPos].name == "card:")	drawSlot1Text(ENTRIES_PER_SCREEN*16, topMenuContents[tmCurPos].valid);
 				else {
-					std::u16string name = StringUtils::UTF8toUTF16(topMenuContents[tmScreenOffset+ENTRIES_PER_SCREEN-1]);
+					std::u16string name = StringUtils::UTF8toUTF16(topMenuContents[tmScreenOffset+ENTRIES_PER_SCREEN-1].name);
 
 					// Trim to fit on screen
 					bool addEllipsis = false;

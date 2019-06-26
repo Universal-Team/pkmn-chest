@@ -58,7 +58,7 @@ void drawSummaryP1(std::shared_ptr<PKX> pkm) {
 	drawRectangle(0, 124, 150, 1, LIGHT_GRAY, false);
 
 	// Print Pokémon name
-	printTextTinted(pkm->nickname(), (pkm->gender() ? (pkm->gender() == 1 ? 0x801F : WHITE) : 0xFC00), 165, 1, false);
+	printTextTinted(pkm->nickname(), (pkm->gender() ? (pkm->gender() == 1 ? RED_RGB : WHITE) : BLUE_RGB), 165, 1, false);
 
 	// Draw Pokémon Pokéball, types, and shiny star (if shiny)
 	XYCoords xy = getPokeballPosition(pkm->ball());
@@ -99,7 +99,7 @@ void drawSummaryP1(std::shared_ptr<PKX> pkm) {
 		if(i!=7)	// OT Name is colored
 			printText(textSP1[i].text, textSP1[i].x, textSP1[i].y, false);
 		else
-			printTextTinted(textSP1[i].text, (pkm->otGender() ? 0x801F : 0xFC00), textSP1[i].x, textSP1[i].y, false);
+			printTextTinted(textSP1[i].text, (pkm->otGender() ? RED_RGB : BLUE_RGB), textSP1[i].x, textSP1[i].y, false);
 	}
 }
 

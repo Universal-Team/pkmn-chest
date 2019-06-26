@@ -8,6 +8,25 @@ sNDSHeader nds;
 char gamename[13];
 char gameid[5];
 
+std::vector<std::string> goodTids = {
+	"ADA", // Diamond
+	"APA", // Pearl
+	"CPU", // Platinum
+	"IPK", // HeartGold
+	"IPG", // SoulSilver
+	"IRB", // Black
+	"IRA", // White
+	"IRE", // Black 2
+	"IRD", // White 2
+};
+
+bool isValidTid(char* tid) {
+	for(uint i=0;i<goodTids.size(); i++) {
+		if(strncmp(tid, goodTids[i].c_str(), 3) == 0)	return true;
+	}
+	return false;
+}
+
 bool updateCardInfo(void) {
 	// nds.gameCode[0] = 0;
 	// nds.gameTitle[0] = 0;
