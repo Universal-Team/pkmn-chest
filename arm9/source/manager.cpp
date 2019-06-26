@@ -311,7 +311,33 @@ bool aMenu(int pkmPos, std::vector<Button>& buttons) {
 				if(topScreen)	drawBox(topScreen);
 				drawAMenuButtons(buttons);
 			} else if(menuSelection == 1) { // Swap
-				
+				std::vector<std::shared_ptr<PKX>> tempBox;
+				// Copy save Pokémon to a buffer
+				for(int i=0;i<30;i++) {
+					if(save->pkm(currentSaveBox, i)->species() != 0)
+						tempBox.push_back(save->pkm(currentSaveBox, i));
+					else
+						tempBox.push_back(save->emptyPkm());
+				}
+
+				// Copy bank Pokémon to the save and add it to the Pokédex
+				for(int i=0;i<30;i++) {
+					if(Banks::bank->pkm(currentBankBox, i)->species() != 0) {
+						save->pkm(Banks::bank->pkm(currentBankBox, i), currentSaveBox, i, false);
+						save->dex(Banks::bank->pkm(currentBankBox, i));
+					} else {
+						save->pkm(save->emptyPkm(), currentSaveBox, i, false);
+					}
+				}
+
+				// Copy the save Pokémon from their buffer to the bank
+				for(int i=0;i<30;i++)
+					Banks::bank->pkm(tempBox[i], currentBankBox, i);
+
+
+				// Update the boxes
+				drawBox(true);
+				drawBox(false);
 			} else if(menuSelection == 2) { // Back
 				goto back;
 			}
