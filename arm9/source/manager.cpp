@@ -3,6 +3,8 @@
 #include "common/banks.hpp"
 #include "config.h"
 #include "configMenu.h"
+#include "flashcard.h"
+#include <fstream>
 #include "graphics/colors.h"
 #include "graphics/graphics.h"
 #include "keyboard.h"
@@ -26,14 +28,16 @@ struct Button {
 };
 
 std::vector<Button> aMenuButtons = {
-	{170, 32, "Edit"},
-	{170, 57, "Move"},
-	{170, 82, "Back"},
+	{170,  32, "Edit"},
+	{170,  57, "Move"},
+	{170,  82, "Dump"},
+	{170, 107, "Back"},
 };
 std::vector<Button> aMenuTopBarButtons = {
-	{170, 32, "Rename"},
-	{170, 57, "Swap"},
-	{170, 82, "Back"},
+	{170,  32, "Rename"},
+	{170,  57, "Swap"},
+	{170,  82, "Dump box"},
+	{170, 107, "Back"},
 };
 Button xMenuButtons[] = {
 	{3, 24, "Party"}, {131, 24, "Options"},
@@ -221,7 +225,7 @@ void setHeldPokemon(int dexNum) {
 
 void drawAMenuButtons(std::vector<Button>& buttons) {
 	for(uint i=0;i<buttons.size();i++) {
-		drawRectangle(buttons[i].x, buttons[i].y, 64, 24, DARKER_GRAY, false);
+		drawRectangle(buttons[i].x, buttons[i].y, 70, 24, DARKER_GRAY, false);
 		printText(buttons[i].text, buttons[i].x+4, buttons[i].y+4, false);
 	}
 }
@@ -247,7 +251,7 @@ bool aMenu(int pkmPos, std::vector<Button>& buttons) {
 		if(pressed & KEY_UP) {
 			if(menuSelection > 0)	menuSelection--;
 		} else if(pressed & KEY_DOWN) {
-			if(menuSelection < 2)	menuSelection++;
+			if(menuSelection < 3)	menuSelection++;
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
 
@@ -280,7 +284,16 @@ bool aMenu(int pkmPos, std::vector<Button>& buttons) {
 				updateOam();
 				drawRectangle(170, 0, 86, 192, DARK_GRAY, false);
 				return true;
-			} else if(menuSelection == 2) { // Back
+			} else if(menuSelection == 2) { // Dump
+				char path[256];
+				if(currentPokemon(pkmPos)->alternativeForm())
+					snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%i-%i - %s - %x%lx.pk%i", sdFound() ? "sd" : "fat", currentPokemon(pkmPos)->species(), currentPokemon(pkmPos)->alternativeForm(), currentPokemon(pkmPos)->nickname().c_str(), currentPokemon(pkmPos)->checksum(), currentPokemon(pkmPos)->encryptionConstant(), currentPokemon(pkmPos)->genNumber());
+				else
+					snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%i - %s - %x%lx.pk%i", sdFound() ? "sd" : "fat", currentPokemon(pkmPos)->species(), currentPokemon(pkmPos)->nickname().c_str(), currentPokemon(pkmPos)->checksum(), currentPokemon(pkmPos)->encryptionConstant(), currentPokemon(pkmPos)->genNumber());
+				std::ofstream out(path);
+				if(out.good())	out.write((char*)currentPokemon(pkmPos)->rawData(), 136);
+				out.close();
+			} else if(menuSelection == 3) { // Back
 				back:
 				if(topScreen) {
 					setSpriteVisibility(bottomArrowID, false);
@@ -338,7 +351,20 @@ bool aMenu(int pkmPos, std::vector<Button>& buttons) {
 				// Update the boxes
 				drawBox(true);
 				drawBox(false);
-			} else if(menuSelection == 2) { // Back
+			} else if(menuSelection == 2) { // Dump box
+				char path[256];
+				for(int i=0;i<30;i++) {
+					if(currentPokemon(i)->species() != 0) {
+						if(currentPokemon(i)->alternativeForm())
+							snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%i-%i - %s - %x%lx.pk%i", sdFound() ? "sd" : "fat", currentPokemon(i)->species(), currentPokemon(i)->alternativeForm(), currentPokemon(i)->nickname().c_str(), currentPokemon(i)->checksum(), currentPokemon(i)->encryptionConstant(), currentPokemon(i)->genNumber());
+						else
+							snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%i - %s - %x%lx.pk%i", sdFound() ? "sd" : "fat", currentPokemon(i)->species(), currentPokemon(i)->nickname().c_str(), currentPokemon(i)->checksum(), currentPokemon(i)->encryptionConstant(), currentPokemon(i)->genNumber());
+						std::ofstream out(path);
+						if(out.good())	out.write((char*)currentPokemon(i)->rawData(), 136);
+						out.close();
+					}
+				}
+			} else if(menuSelection == 3) { // Back
 				goto back;
 			}
 		}
