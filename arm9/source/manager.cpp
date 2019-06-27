@@ -394,23 +394,17 @@ bool aMenu(int pkmPos, std::vector<Button>& buttons) {
 				std::vector<std::string> extList = {"pk4", "pk5"};
 				std::string fileName = browseForFile(extList, false);
 				
-				// If fileName != "", add the Pokémon to the box
+				// If the fileName 
 				if(fileName != "") {
 				std::ifstream in(fileName);
 				u8* buffer = 0;
 				in.read((char*)buffer, 136);
-				if(topScreen)	Banks::bank->pkm(save->emptyPkm()->getPKM(fileName.substr(fileName.size()-1) == "4" ? Generation::FOUR : Generation::FIVE, buffer), currentSaveBox, pkmPos);
-				else save->pkm(save->emptyPkm()->getPKM(fileName.substr(fileName.size()-1) == "4" ? Generation::FOUR : Generation::FIVE, buffer), currentSaveBox, pkmPos, false);
+				save->pkm(save->emptyPkm()->getPKM(fileName.substr(fileName.size()-1) == "4" ? Generation::FOUR : Generation::FIVE, buffer), currentSaveBox, pkmPos, false);
 				}
 				
-				// Reset path and screen
+				// Reset 
 				chdir(path);
-				drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
-				setSpriteVisibility(bottomArrowID, true);
-				drawBox(false);
-				if(topScreen)	drawBox(topScreen);
-				drawPokemonInfo(currentPokemon(pkmPos));
-				goto back;
+				drawBox(topScreen);
 			} else if(menuSelection == 1) {
 				goto back;
 			}
@@ -649,8 +643,8 @@ void manageBoxes(void) {
 						heldPokemon = -1;
 						heldPokemonBox = -1;
 					}
-				} else if(currentPokemon((arrowY*6)+arrowX)->species() != 0 && arrowMode != 0) {
-					if(aMenu((arrowY*6)+arrowX, aMenuButtons)) {
+				} else if(currentPokemon((arrowY*6)+arrowX)->species() != 0) {
+					if(arrowMode != 0 || aMenu((arrowY*6)+arrowX, aMenuButtons)) {
 						// If no pokemon is currently held and there is one at the cursor, pick it up
 						heldPokemon = (arrowY*6)+arrowX;
 						heldPokemonBox = currentBox();
