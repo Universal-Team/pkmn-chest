@@ -3,6 +3,8 @@
 #include "common/banks.hpp"
 #include "config.h"
 #include "configMenu.h"
+#include <dirent.h>
+#include "fileBrowse.h"
 #include "flashcard.h"
 #include <fstream>
 #include "graphics/colors.h"
@@ -10,6 +12,8 @@
 #include "keyboard.h"
 #include "loader.h"
 #include "party.h"
+#include "PK4.hpp"
+#include "PK5.hpp"
 #include "saves/cardSaves.h"
 #include "summary.h"
 #include "utils.hpp"
@@ -32,6 +36,10 @@ std::vector<Button> aMenuButtons = {
 	{170,  57, "Move"},
 	{170,  82, "Dump"},
 	{170, 107, "Back"},
+};
+std::vector<Button> aMenuEmptySlotButtons = {
+	{170,  32, "Inject"},
+	{170, 57, "Back"},
 };
 std::vector<Button> aMenuTopBarButtons = {
 	{170,  32, "Rename"},
@@ -251,7 +259,7 @@ bool aMenu(int pkmPos, std::vector<Button>& buttons) {
 		if(pressed & KEY_UP) {
 			if(menuSelection > 0)	menuSelection--;
 		} else if(pressed & KEY_DOWN) {
-			if(menuSelection < 3)	menuSelection++;
+			if(menuSelection < (int)buttons.size()-1)	menuSelection++;
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
 
@@ -267,7 +275,7 @@ bool aMenu(int pkmPos, std::vector<Button>& buttons) {
 			goto back;
 		}
 
-		if(optionSelected && pkmPos != -1) { // A Pokémon
+		if(optionSelected && pkmPos != -1 && buttons[0].text == "Edit") { // A Pokémon
 			optionSelected = false;
 			if(menuSelection == 0) { // Edit
 				showPokemonSummary(currentPokemon(pkmPos));
@@ -303,7 +311,7 @@ bool aMenu(int pkmPos, std::vector<Button>& buttons) {
 				drawRectangle(170, 0, 86, 192, DARK_GRAY, false);
 				break;
 			}
-		} else if(optionSelected) { // Top bar
+		} else if(optionSelected && pkmPos == -1) { // Top bar
 			optionSelected = false;
 			if(menuSelection == 0) { // Rename
 				// If the arrow is on the box title, rename it
@@ -365,6 +373,45 @@ bool aMenu(int pkmPos, std::vector<Button>& buttons) {
 					}
 				}
 			} else if(menuSelection == 3) { // Back
+				goto back;
+			}
+		} else if(optionSelected) { // Empty slot
+			optionSelected = false;
+			if(menuSelection == 0) { // Inject
+				// Hide sprites
+				for(int i=0;i<30;i++) {
+					setSpriteVisibility(i, false);
+				}
+				setSpriteVisibility(bottomArrowID, false);
+				updateOam();
+
+				// Save path and chane to /_nds/pkmn-chest/in
+				char path[PATH_MAX];
+				getcwd(path, PATH_MAX);
+				chdir(sdFound() ? "sd:/_nds/pkmn-chest/in" : "fat:/_nds/pkmn-chest/in");
+
+				// Get a pk4/5
+				std::vector<std::string> extList = {"pk4", "pk5"};
+				std::string fileName = browseForFile(extList, false);
+				
+				// If fileName != "", add the Pokémon to the box
+				if(fileName != "") {
+				std::ifstream in(fileName);
+				u8* buffer = 0;
+				in.read((char*)buffer, 136);
+				if(topScreen)	Banks::bank->pkm(save->emptyPkm()->getPKM(fileName.substr(fileName.size()-1) == "4" ? Generation::FOUR : Generation::FIVE, buffer), currentSaveBox, pkmPos);
+				else save->pkm(save->emptyPkm()->getPKM(fileName.substr(fileName.size()-1) == "4" ? Generation::FOUR : Generation::FIVE, buffer), currentSaveBox, pkmPos, false);
+				}
+				
+				// Reset path and screen
+				chdir(path);
+				drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+				setSpriteVisibility(bottomArrowID, true);
+				drawBox(false);
+				if(topScreen)	drawBox(topScreen);
+				drawPokemonInfo(currentPokemon(pkmPos));
+				goto back;
+			} else if(menuSelection == 1) {
 				goto back;
 			}
 		}
@@ -602,15 +649,19 @@ void manageBoxes(void) {
 						heldPokemon = -1;
 						heldPokemonBox = -1;
 					}
-				} else if(currentPokemon((arrowY*6)+arrowX)->species() != 0 && (arrowMode != 0 || aMenu((arrowY*6)+arrowX, aMenuButtons))) {
-					// If no pokemon is currently held and there is one at the cursor, pick it up
-					heldPokemon = (arrowY*6)+arrowX;
-					heldPokemonBox = currentBox();
-					heldPokemonScreen = topScreen;
-					setHeldPokemon(currentPokemon(heldPokemon)->species());
-					setSpriteVisibility(heldPokemonScreen ? heldPokemon+30 : heldPokemon, false);
-					setSpriteVisibility(topScreen ? topHeldPokemonID : bottomHeldPokemonID, true);
-					drawPokemonInfo(currentPokemon(heldPokemon));
+				} else if(currentPokemon((arrowY*6)+arrowX)->species() != 0 && arrowMode != 0) {
+					if(aMenu((arrowY*6)+arrowX, aMenuButtons)) {
+						// If no pokemon is currently held and there is one at the cursor, pick it up
+						heldPokemon = (arrowY*6)+arrowX;
+						heldPokemonBox = currentBox();
+						heldPokemonScreen = topScreen;
+						setHeldPokemon(currentPokemon(heldPokemon)->species());
+						setSpriteVisibility(heldPokemonScreen ? heldPokemon+30 : heldPokemon, false);
+						setSpriteVisibility(topScreen ? topHeldPokemonID : bottomHeldPokemonID, true);
+						drawPokemonInfo(currentPokemon(heldPokemon));
+					}
+				} else if(arrowMode == 0) {
+					aMenu((arrowY*6)+arrowX, aMenuEmptySlotButtons);
 				}
 			}
 		}
