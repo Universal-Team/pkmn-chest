@@ -32,22 +32,23 @@ struct Button {
 };
 
 std::vector<Button> aMenuButtons = {
-	{170,  32, "Edit"},
-	{170,  57, "Move"},
-	{170,  82, "Copy"},
-	{170, 107, "Dump"},
-	{170, 132, "Back"},
+	{170,  16, "Edit"},
+	{170,  41, "Move"},
+	{170,  66, "Copy"},
+	{170,  91, "Release"},
+	{170, 116, "Dump"},
+	{170, 141, "Back"},
 };
 std::vector<Button> aMenuEmptySlotButtons = {
-	{170, 32, "Inject"},
-	{170, 57, "Create"},
-	{170, 82, "Back"},
+	{170, 16, "Inject"},
+	{170, 41, "Create"},
+	{170, 66, "Back"},
 };
 std::vector<Button> aMenuTopBarButtons = {
-	{170,  32, "Rename"},
-	{170,  57, "Swap"},
-	{170,  82, "Dump box"},
-	{170, 107, "Back"},
+	{170, 16, "Rename"},
+	{170, 41, "Swap"},
+	{170, 66, "Dump box"},
+	{170, 91, "Back"},
 };
 Button xMenuButtons[] = {
 	{3, 24, "Party"}, {131, 24, "Options"},
@@ -304,7 +305,22 @@ int aMenu(int pkmPos, std::vector<Button>& buttons) {
 				updateOam();
 				drawRectangle(170, 0, 86, 192, DARK_GRAY, false);
 				return 2;
-			} else if(menuSelection == 3) { // Dump
+			} else if(menuSelection == 3) { // Release
+				// Hide sprites below getBool message
+				for(int i=7;i<22;i++)
+					if(i%6)	setSpriteVisibility(i, false);
+				updateOam();
+				if(Input::getBool("Release", "Keep")) {
+					if(topScreen)	Banks::bank->pkm(save->emptyPkm(), currentBankBox, pkmPos);
+					else	save->pkm(save->emptyPkm(), currentSaveBox, pkmPos, false);
+					drawBox(topScreen);
+					drawRectangle(5+bankBoxData.width, 0, 256-(5+bankBoxData.width), 192, DARK_GRAY, false);
+					goto back;
+				}
+				drawBox(topScreen);
+				drawRectangle(5+bankBoxData.width, 66, 256-(5+bankBoxData.width), 60, DARK_GRAY, false);
+				drawAMenuButtons(buttons);
+			} else if(menuSelection == 4) { // Dump
 				char path[256];
 				if(currentPokemon(pkmPos)->alternativeForm())
 					snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%i-%i - %s - %x%lx.pk%i", sdFound() ? "sd" : "fat", currentPokemon(pkmPos)->species(), currentPokemon(pkmPos)->alternativeForm(), currentPokemon(pkmPos)->nickname().c_str(), currentPokemon(pkmPos)->checksum(), currentPokemon(pkmPos)->encryptionConstant(), currentPokemon(pkmPos)->genNumber());
@@ -313,7 +329,7 @@ int aMenu(int pkmPos, std::vector<Button>& buttons) {
 				std::ofstream out(path);
 				if(out.good())	out.write((char*)currentPokemon(pkmPos)->rawData(), 136);
 				out.close();
-			} else if(menuSelection == 4) { // Back
+			} else if(menuSelection == 5) { // Back
 				back:
 				if(topScreen) {
 					setSpriteVisibility(bottomArrowID, false);
