@@ -1,6 +1,5 @@
 #include "manager.h"
 #include "banks.hpp"
-#include "common/banks.hpp"
 #include "config.h"
 #include "configMenu.h"
 #include <dirent.h>
@@ -16,6 +15,7 @@
 #include "PK5.hpp"
 #include "saves/cardSaves.h"
 #include "summary.h"
+#include "trainer.h"
 #include "utils.hpp"
 
 bool topScreen;
@@ -52,7 +52,8 @@ std::vector<Button> aMenuTopBarButtons = {
 };
 Button xMenuButtons[] = {
 	{3, 24, "Party"}, {131, 24, "Options"},
-	{3, 72, "Save"}, {131, 72, "Exit"},
+	{3, 72},		  {131, 72, "Trainer"},
+	{3, 120, "Save"}, {131, 120, "Exit"},
 };
 
 int currentBox(void) {
@@ -250,18 +251,19 @@ int aMenu(int pkmPos, std::vector<Button>& buttons) {
 	drawAMenuButtons(buttons);
 
 	bool optionSelected = false;
-	int pressed, menuSelection = 0;
+	int held, pressed, menuSelection = 0;
 	touchPosition touch;
 	while(1) {
 		do {
 			swiWaitForVBlank();
 			scanKeys();
 			pressed = keysDown();
-		} while(!pressed);
+			held = keysDownRepeat();
+		} while(!held);
 		
-		if(pressed & KEY_UP) {
+		if(held & KEY_UP) {
 			if(menuSelection > 0)	menuSelection--;
-		} else if(pressed & KEY_DOWN) {
+		} else if(held & KEY_DOWN) {
 			if(menuSelection < (int)buttons.size()-1)	menuSelection++;
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
@@ -486,6 +488,8 @@ void savePrompt(void) {
 }
 
 void drawXMenuButtons(uint menuSelection) {
+	xMenuButtons[3].text = save->otName();
+
 	for(uint i=0;i<(sizeof(xMenuButtons)/sizeof(xMenuButtons[0]));i++) {
 		drawImageTinted(xMenuButtons[i].x, xMenuButtons[i].y, menuButtonData.width, menuButtonData.height, menuSelection == i ? TEAL_RGB : LIGHT_GRAY, menuButton, false);
 		printText(xMenuButtons[i].text, xMenuButtons[i].x+47, xMenuButtons[i].y+14, false);
@@ -523,7 +527,7 @@ bool xMenu(void) {
 		} else if(pressed & KEY_UP) {
 			if(menuSelection > 1)	menuSelection -= 2;
 		} else if(pressed & KEY_DOWN) {
-			if(menuSelection < 2)	menuSelection += 2;
+			if(menuSelection < (int)(sizeof(xMenuButtons)/sizeof(xMenuButtons[0]))-2)	menuSelection += 2;
 		} else if(pressed & KEY_LEFT) {
 			if(menuSelection % 2)	menuSelection--;
 		} else if(pressed & KEY_RIGHT) {
@@ -548,33 +552,39 @@ bool xMenu(void) {
 		}
 
 		if(selectedOption != -1) {
-			if(selectedOption == 0) {
-				manageParty();
-				
-				// Redraw menu
-				drawRectangle(0, 0, 256, 16, BLACK, false);
-				drawRectangle(0, 16, 256, 160, DARK_GRAY, false);
-				drawRectangle(0, 176, 256, 16, BLACK, false);
-				drawXMenuButtons(1);
-			} else if(selectedOption == 1) {
-				configMenu();
+			switch(selectedOption) {
+				case 0: // Party
+					manageParty();
+					break;
+				case 1: // Options
+					configMenu();
+					break;
+				case 3: // Trainer
+					showTrainerCard();
 
-				// Redraw menu
-				drawRectangle(0, 0, 256, 16, BLACK, false);
-				drawRectangle(0, 16, 256, 160, DARK_GRAY, false);
-				drawRectangle(0, 176, 256, 16, BLACK, false);
-				drawXMenuButtons(1);
-			} else if(selectedOption == 2) {
-				savePrompt();
-			} else if(selectedOption == 3) {
-				savePrompt();
-				// Hide remaining sprites
-				for(uint i=30;i<getSpriteAmount();i++) {
-					setSpriteVisibility(i, false);
-				}
-				updateOam();
-				return 0;
+					// Hide arrow
+					setSpriteVisibility(bottomArrowID, false);
+					updateOam();
+					break;
+				case 4: // Save
+					savePrompt();
+					break;
+				case 5:
+					savePrompt();
+					// Hide remaining sprites
+					for(uint i=30;i<getSpriteAmount();i++) {
+						setSpriteVisibility(i, false);
+					}
+					updateOam();
+					return 0;
 			}
+
+			// Redraw menu
+			drawRectangle(0, 0, 256, 16, BLACK, false);
+			drawRectangle(0, 16, 256, 160, DARK_GRAY, false);
+			drawRectangle(0, 176, 256, 16, BLACK, false);
+			drawXMenuButtons(1);
+
 			selectedOption = -1;
 		}
 

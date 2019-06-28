@@ -90,7 +90,7 @@ void drawSummaryP1(std::shared_ptr<PKX> pkm) {
 	snprintf(textSP1[3].text,  sizeof(textSP1[3].text), "%i", pkm->level());
 	snprintf(textSP1[4].text,  sizeof(textSP1[4].text), "%i", pkm->nature());
 	snprintf(textSP1[5].text,  sizeof(textSP1[5].text), "%s", pkm->shiny() ? "Yes" : "No");
-	snprintf(textSP1[6].text,  sizeof(textSP1[6].text), "%s", pkm->pkrsDays() ? "Yes" : "No");
+	snprintf(textSP1[6].text,  sizeof(textSP1[6].text), "%s", pkm->pkrs() ? "Yes" : "No");
 	snprintf(textSP1[7].text,  sizeof(textSP1[7].text), "%s", pkm->otName().c_str());
 	snprintf(textSP1[8].text,  sizeof(textSP1[8].text), "%.5i", pkm->TID());
 	snprintf(textSP1[9].text,  sizeof(textSP1[9].text), "%.5i", pkm->SID());
@@ -229,7 +229,7 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 			if(summaryPage == 0) {
 				switch(selection) {
 					case 0: {
-						int num = Input::getInt(649);
+						int num = Input::getInt(save->maxSpecies());
 						if(num > 0)	pkm->species(num);
 						break;
 					} case 1: {
