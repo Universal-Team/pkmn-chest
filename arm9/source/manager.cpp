@@ -34,8 +34,9 @@ struct Button {
 std::vector<Button> aMenuButtons = {
 	{170,  32, "Edit"},
 	{170,  57, "Move"},
-	{170,  82, "Dump"},
-	{170, 107, "Back"},
+	{170,  82, "Copy"},
+	{170, 107, "Dump"},
+	{170, 132, "Back"},
 };
 std::vector<Button> aMenuEmptySlotButtons = {
 	{170,  32, "Inject"},
@@ -238,7 +239,7 @@ void drawAMenuButtons(std::vector<Button>& buttons) {
 	}
 }
 
-bool aMenu(int pkmPos, std::vector<Button>& buttons) {
+int aMenu(int pkmPos, std::vector<Button>& buttons) {
 	setSpritePosition(bottomArrowID, buttons[0].x+getTextWidth(buttons[0].text)+4, buttons[0].y);
 	setSpriteVisibility(topArrowID, false);
 	setSpriteVisibility(bottomArrowID, true);
@@ -291,8 +292,16 @@ bool aMenu(int pkmPos, std::vector<Button>& buttons) {
 				}
 				updateOam();
 				drawRectangle(170, 0, 86, 192, DARK_GRAY, false);
-				return true;
-			} else if(menuSelection == 2) { // Dump
+				return 1;
+			} else if(menuSelection == 2) { // Copy
+				if(topScreen) {
+					setSpriteVisibility(bottomArrowID, false);
+					setSpriteVisibility(topArrowID, true);
+				}
+				updateOam();
+				drawRectangle(170, 0, 86, 192, DARK_GRAY, false);
+				return 2;
+			} else if(menuSelection == 3) { // Dump
 				char path[256];
 				if(currentPokemon(pkmPos)->alternativeForm())
 					snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%i-%i - %s - %x%lx.pk%i", sdFound() ? "sd" : "fat", currentPokemon(pkmPos)->species(), currentPokemon(pkmPos)->alternativeForm(), currentPokemon(pkmPos)->nickname().c_str(), currentPokemon(pkmPos)->checksum(), currentPokemon(pkmPos)->encryptionConstant(), currentPokemon(pkmPos)->genNumber());
@@ -301,7 +310,7 @@ bool aMenu(int pkmPos, std::vector<Button>& buttons) {
 				std::ofstream out(path);
 				if(out.good())	out.write((char*)currentPokemon(pkmPos)->rawData(), 136);
 				out.close();
-			} else if(menuSelection == 3) { // Back
+			} else if(menuSelection == 4) { // Back
 				back:
 				if(topScreen) {
 					setSpriteVisibility(bottomArrowID, false);
@@ -555,7 +564,7 @@ bool xMenu(void) {
 
 void manageBoxes(void) {
 	int arrowX = 0, arrowY = 0, heldPokemon = -1, heldPokemonBox = -1;
-	bool heldPokemonScreen = false;
+	bool heldPokemonScreen = false, heldMode = false;
 	topScreen = false;
 	u16 pressed = 0, held = 0;
 	while(1) {
@@ -588,7 +597,7 @@ void manageBoxes(void) {
 			else if(topScreen) currentBankBox = Banks::bank->boxes()-1;
 			else currentSaveBox = save->maxBoxes()-1;
 			drawBox(topScreen);
-			if(currentBox() == heldPokemonBox && topScreen == heldPokemonScreen)
+			if(!heldMode && currentBox() == heldPokemonBox && topScreen == heldPokemonScreen)
 				setSpriteVisibility(heldPokemon, false);
 		} else if(held & KEY_R) {
 			switchBoxRight:
@@ -596,7 +605,7 @@ void manageBoxes(void) {
 				(topScreen ? currentBankBox : currentSaveBox)++;
 			else (topScreen ? currentBankBox : currentSaveBox) = 0;
 			drawBox(topScreen);
-			if(currentBox() == heldPokemonBox && topScreen == heldPokemonScreen)
+			if(!heldMode && currentBox() == heldPokemonBox && topScreen == heldPokemonScreen)
 				setSpriteVisibility(heldPokemon, false);
 		}
 		if(pressed & KEY_A) {
@@ -612,8 +621,8 @@ void manageBoxes(void) {
 						setSpriteVisibility(topScreen ? topHeldPokemonID : bottomHeldPokemonID, false);
 						heldPokemon = -1;
 						heldPokemonBox = -1;
-					} else {
-						// If the new spot has a Pokémon, swap it with the held one
+					} else if(!heldMode || currentPokemon((arrowY*6)+arrowX)->species() == 0) {
+						// If not copying / there isn't a Pokémon at the new spot, move Pokémon
 						// Save the Pokémon at the cursor's postion to a temp variable
 						std::shared_ptr<PKX> heldPkm = (heldPokemonScreen ? Banks::bank->pkm(heldPokemonBox, heldPokemon) : save->pkm(heldPokemonBox, heldPokemon));
 						std::shared_ptr<PKX> tempPkm;
@@ -625,11 +634,13 @@ void manageBoxes(void) {
 							save->pkm(heldPkm, currentBox(), (arrowY*6)+arrowX, false);
 							save->dex(heldPkm);
 						}
-						// Write the cursor position's previous Pokémon to the held Pokémon's old spot
-						if(heldPokemonScreen)	Banks::bank->pkm(tempPkm, heldPokemonBox, heldPokemon);
-						else {
-							save->pkm(tempPkm, heldPokemonBox, heldPokemon, false);
-							save->dex(heldPkm);
+						// If not copying, write the cursor position's previous Pokémon to the held Pokémon's old spot
+						if(!heldMode) {
+							if(heldPokemonScreen)	Banks::bank->pkm(tempPkm, heldPokemonBox, heldPokemon);
+							else {
+								save->pkm(tempPkm, heldPokemonBox, heldPokemon, false);
+								save->dex(heldPkm);
+							}
 						}
 						// Hide the moving Pokémon
 						setSpriteVisibility(topScreen ? topHeldPokemonID : bottomHeldPokemonID, false);
@@ -644,13 +655,15 @@ void manageBoxes(void) {
 						heldPokemonBox = -1;
 					}
 				} else if(currentPokemon((arrowY*6)+arrowX)->species() != 0) {
-					if(arrowMode != 0 || aMenu((arrowY*6)+arrowX, aMenuButtons)) {
+					int temp = 1;
+					if(arrowMode != 0 || (temp = aMenu((arrowY*6)+arrowX, aMenuButtons))) {
 						// If no pokemon is currently held and there is one at the cursor, pick it up
 						heldPokemon = (arrowY*6)+arrowX;
 						heldPokemonBox = currentBox();
 						heldPokemonScreen = topScreen;
+						heldMode = temp-1; // false = move, true = copy
 						setHeldPokemon(currentPokemon(heldPokemon)->species());
-						setSpriteVisibility(heldPokemonScreen ? heldPokemon+30 : heldPokemon, false);
+						if(!heldMode)	setSpriteVisibility(heldPokemonScreen ? heldPokemon+30 : heldPokemon, false);
 						setSpriteVisibility(topScreen ? topHeldPokemonID : bottomHeldPokemonID, true);
 						drawPokemonInfo(currentPokemon(heldPokemon));
 					}
