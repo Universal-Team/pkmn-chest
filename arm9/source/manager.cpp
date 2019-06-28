@@ -39,8 +39,9 @@ std::vector<Button> aMenuButtons = {
 	{170, 132, "Back"},
 };
 std::vector<Button> aMenuEmptySlotButtons = {
-	{170,  32, "Inject"},
-	{170, 57, "Back"},
+	{170, 32, "Inject"},
+	{170, 57, "Create"},
+	{170, 82, "Back"},
 };
 std::vector<Button> aMenuTopBarButtons = {
 	{170,  32, "Rename"},
@@ -279,7 +280,9 @@ int aMenu(int pkmPos, std::vector<Button>& buttons) {
 		if(optionSelected && pkmPos != -1 && buttons[0].text == "Edit") { // A Pokémon
 			optionSelected = false;
 			if(menuSelection == 0) { // Edit
-				showPokemonSummary(currentPokemon(pkmPos));
+				edit:
+				if(topScreen)	Banks::bank->pkm(showPokemonSummary(currentPokemon(pkmPos)), currentSaveBox, pkmPos);
+				else	save->pkm(showPokemonSummary(currentPokemon(pkmPos)), currentSaveBox, pkmPos, false);
 				
 				// Redraw screen
 				drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
@@ -414,7 +417,9 @@ int aMenu(int pkmPos, std::vector<Button>& buttons) {
 				// Reset 
 				chdir(path);
 				drawBox(topScreen);
-			} else if(menuSelection == 1) {
+			} else if(menuSelection == 1) { // Create
+				goto edit;
+			} else if(menuSelection == 2) {
 				goto back;
 			}
 		}
