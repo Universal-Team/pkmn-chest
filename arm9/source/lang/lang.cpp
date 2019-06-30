@@ -73,7 +73,23 @@ void Lang::loadLangStrings(int lang) {
 	snprintf(path, sizeof(path), "nitro:/lang/%s/app.ini", langs[lang].c_str());
 	CIniFile ini(path);
 
+	// [aMenu]
+	Lang::aMenuText[0] = ini.GetString("aMenu", "edit", Lang::aMenuText[0]);
+	Lang::aMenuText[1] = ini.GetString("aMenu", "move", Lang::aMenuText[1]);
+	Lang::aMenuText[2] = ini.GetString("aMenu", "copy", Lang::aMenuText[2]);
+	Lang::aMenuText[3] = ini.GetString("aMenu", "release", Lang::aMenuText[3]);
+	Lang::aMenuText[4] = ini.GetString("aMenu", "dump", Lang::aMenuText[4]);
+	Lang::aMenuText[5] = ini.GetString("aMenu", "back", Lang::aMenuText[5]);
+	Lang::aMenuEmptySlotText[0] = ini.GetString("aMenu", "inject", Lang::aMenuEmptySlotText[0]);
+	Lang::aMenuEmptySlotText[1] = ini.GetString("aMenu", "create", Lang::aMenuEmptySlotText[1]);
+	Lang::aMenuEmptySlotText[2] = ini.GetString("aMenu", "back", Lang::aMenuEmptySlotText[2]);
+	Lang::aMenuTopBarText[0] = ini.GetString("options", "rename", Lang::aMenuTopBarText[0]);
+	Lang::aMenuTopBarText[1] = ini.GetString("aMenu", "swap", Lang::aMenuTopBarText[1]);
+	Lang::aMenuTopBarText[2] = ini.GetString("aMenu", "dumpBox", Lang::aMenuTopBarText[2]);
+	Lang::aMenuTopBarText[3] = ini.GetString("aMenu", "back", Lang::aMenuTopBarText[3]);
+
 	// [main]
+	Lang::chest = ini.GetString("main", "chest", Lang::chest);
 	Lang::loading = ini.GetString("main", "loading", Lang::loading);
 	Lang::invalidSave = ini.GetString("main", "invalidSave", Lang::invalidSave);
 

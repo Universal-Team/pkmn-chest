@@ -1,5 +1,6 @@
 #include "manager.h"
 #include "banks.hpp"
+#include "cardSaves.h"
 #include "colors.h"
 #include "config.h"
 #include "configMenu.h"
@@ -12,9 +13,6 @@
 #include "langStrings.h"
 #include "loader.h"
 #include "party.h"
-#include "PK4.hpp"
-#include "PK5.hpp"
-#include "saves/cardSaves.h"
 #include "summary.h"
 #include "trainer.h"
 #include "utils.hpp"
@@ -26,32 +24,31 @@ std::string savePath;
 std::vector<u16> arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, menuButton, shiny, pokemonSheet, stripes, types;
 ImageData ballSheetData, bankBoxData, menuButtonData, pokemonSheetData, shinyData, stripesData, typesData;
 
-struct Text {
+struct TextPos {
 	int x;
 	int y;
-	std::string text;
 };
 
-std::vector<Text> aMenuButtons = {
-	{170,  16, "Edit"},
-	{170,  41, "Move"},
-	{170,  66, "Copy"},
-	{170,  91, "Release"},
-	{170, 116, "Dump"},
-	{170, 141, "Back"},
+std::vector<TextPos> aMenuButtons = {
+	{170,  16}, // Edit
+	{170,  41}, // Move
+	{170,  66}, // Copy
+	{170,  91}, // Release
+	{170, 116}, // Dump
+	{170, 141}, // Back
 };
-std::vector<Text> aMenuEmptySlotButtons = {
-	{170, 16, "Inject"},
-	{170, 41, "Create"},
-	{170, 66, "Back"},
+std::vector<TextPos> aMenuEmptySlotButtons = {
+	{170, 16}, // Inject
+	{170, 41}, // Create
+	{170, 66}, // Back
 };
-std::vector<Text> aMenuTopBarButtons = {
-	{170, 16, "Rename"},
-	{170, 41, "Swap"},
-	{170, 66, "Dump box"},
-	{170, 91, "Back"},
+std::vector<TextPos> aMenuTopBarButtons = {
+	{170, 16}, // Rename
+	{170, 41}, // Swap
+	{170, 66}, // Dump box
+	{170, 91}, // Back
 };
-std::vector<Text> xMenuButtons = {
+std::vector<TextPos> xMenuButtons = {
 	{3,  24}, {131,  24},
 	{3,  72}, {131,  72},
 	{3, 120}, {131, 120},
@@ -238,20 +235,26 @@ void setHeldPokemon(int dexNum) {
 	}
 }
 
-void drawAMenuButtons(std::vector<Text>& buttons) {
+std::string aMenuText(int buttonMode, int i) {
+	if(buttonMode == 0)	return Lang::aMenuText[i];
+	else if(buttonMode == 1)	return Lang::aMenuTopBarText[i];
+	else return Lang::aMenuEmptySlotText[i];
+}
+
+void drawAMenuButtons(std::vector<TextPos>& buttons, int buttonMode) {
 	for(uint i=0;i<buttons.size();i++) {
-		drawRectangle(buttons[i].x, buttons[i].y, 70, 24, DARKER_GRAY, false);
-		printText(buttons[i].text, buttons[i].x+4, buttons[i].y+4, false);
+		drawRectangle(buttons[i].x, buttons[i].y, 80, 24, DARKER_GRAY, false);
+		printText(aMenuText(buttonMode, i), buttons[i].x+4, buttons[i].y+4, false);
 	}
 }
 
-int aMenu(int pkmPos, std::vector<Text>& buttons) {
-	setSpritePosition(bottomArrowID, buttons[0].x+getTextWidth(buttons[0].text)+4, buttons[0].y);
+int aMenu(int pkmPos, std::vector<TextPos>& buttons, int buttonMode) {
+	setSpritePosition(bottomArrowID, buttons[0].x+getTextWidth(aMenuText(buttonMode, 0))+4, buttons[0].y);
 	setSpriteVisibility(topArrowID, false);
 	setSpriteVisibility(bottomArrowID, true);
 	updateOam();
 
-	drawAMenuButtons(buttons);
+	drawAMenuButtons(buttons, buttonMode);
 
 	bool optionSelected = false;
 	int held, pressed, menuSelection = 0;
@@ -283,7 +286,7 @@ int aMenu(int pkmPos, std::vector<Text>& buttons) {
 			goto back;
 		}
 
-		if(optionSelected && pkmPos != -1 && buttons[0].text == "Edit") { // A Pokémon
+		if(optionSelected && buttonMode == 0) { // A Pokémon
 			optionSelected = false;
 			if(menuSelection == 0) { // Edit
 				edit:
@@ -294,7 +297,7 @@ int aMenu(int pkmPos, std::vector<Text>& buttons) {
 				drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
 				drawBox(false);
 				drawPokemonInfo(currentPokemon(pkmPos));
-				drawAMenuButtons(buttons);
+				drawAMenuButtons(buttons, buttonMode);
 			} else if(menuSelection == 1) { // Move
 				if(topScreen) {
 					setSpriteVisibility(bottomArrowID, false);
@@ -325,7 +328,7 @@ int aMenu(int pkmPos, std::vector<Text>& buttons) {
 				}
 				drawBox(topScreen);
 				drawRectangle(5+bankBoxData.width, 66, 256-(5+bankBoxData.width), 60, DARK_GRAY, false);
-				drawAMenuButtons(buttons);
+				drawAMenuButtons(buttons, buttonMode);
 			} else if(menuSelection == 4) { // Dump
 				char path[256];
 				if(currentPokemon(pkmPos)->alternativeForm())
@@ -345,7 +348,7 @@ int aMenu(int pkmPos, std::vector<Text>& buttons) {
 				drawRectangle(170, 0, 86, 192, DARK_GRAY, false);
 				break;
 			}
-		} else if(optionSelected && pkmPos == -1) { // Top bar
+		} else if(optionSelected && buttonMode == 1) { // Top bar
 			optionSelected = false;
 			if(menuSelection == 0) { // Rename
 				// If the arrow is on the box title, rename it
@@ -364,7 +367,7 @@ int aMenu(int pkmPos, std::vector<Text>& buttons) {
 				drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
 				drawBox(false);
 				if(topScreen)	drawBox(topScreen);
-				drawAMenuButtons(buttons);
+				drawAMenuButtons(buttons, buttonMode);
 			} else if(menuSelection == 1) { // Swap
 				std::vector<std::shared_ptr<PKX>> tempBox;
 				// Copy save Pokémon to a buffer
@@ -409,7 +412,7 @@ int aMenu(int pkmPos, std::vector<Text>& buttons) {
 			} else if(menuSelection == 3) { // Back
 				goto back;
 			}
-		} else if(optionSelected) { // Empty slot
+		} else if(optionSelected && buttonMode == 2) { // Empty slot
 			optionSelected = false;
 			if(menuSelection == 0) { // Inject
 				// Hide sprites
@@ -446,7 +449,7 @@ int aMenu(int pkmPos, std::vector<Text>& buttons) {
 			}
 		}
 
-		setSpritePosition(bottomArrowID, buttons[menuSelection].x+getTextWidth(buttons[menuSelection].text)+4, buttons[menuSelection].y);
+		setSpritePosition(bottomArrowID, buttons[menuSelection].x+getTextWidth(aMenuText(buttonMode, menuSelection))+4, buttons[menuSelection].y);
 		updateOam();
 	}
 	return false;
@@ -646,7 +649,7 @@ void manageBoxes(void) {
 		if(pressed & KEY_A) {
 			if(arrowY == -1) {
 				if(arrowMode == 0 && heldPokemon == -1)
-					aMenu(-1, aMenuTopBarButtons);
+					aMenu(-1, aMenuTopBarButtons, 1);
 			} else {
 				// Otherwise move Pokémon
 				if(heldPokemon != -1) {
@@ -691,7 +694,7 @@ void manageBoxes(void) {
 					}
 				} else if(currentPokemon((arrowY*6)+arrowX)->species() != 0) {
 					int temp = 1;
-					if(arrowMode != 0 || (temp = aMenu((arrowY*6)+arrowX, aMenuButtons))) {
+					if(arrowMode != 0 || (temp = aMenu((arrowY*6)+arrowX, aMenuButtons, 0))) {
 						// If no pokemon is currently held and there is one at the cursor, pick it up
 						heldPokemon = (arrowY*6)+arrowX;
 						heldPokemonBox = currentBox();
@@ -703,7 +706,7 @@ void manageBoxes(void) {
 						drawPokemonInfo(currentPokemon(heldPokemon));
 					}
 				} else if(arrowMode == 0) {
-					aMenu((arrowY*6)+arrowX, aMenuEmptySlotButtons);
+					aMenu((arrowY*6)+arrowX, aMenuEmptySlotButtons, 2);
 				}
 			}
 		}

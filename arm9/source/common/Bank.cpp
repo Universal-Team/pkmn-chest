@@ -25,12 +25,13 @@
  */
 
 #include "Bank.hpp"
+#include "flashcard.h"
 #include <fstream>
+#include "langStrings.h"
 #include "PK4.hpp"
 #include <unistd.h>
 #include "../fileBrowse.h"
 #include "../graphics/graphics.h"
-#include "flashcard.h"
 
 #define BANK(paths) paths.first
 #define JSON(paths) paths.second
@@ -114,7 +115,7 @@ void Bank::load(int maxBoxes) {
             } else {
                 for(int i = boxNames.size(); i < boxes(); i++) {
                     // boxNames[i] = i18n::localize("STORAGE") + " " + std::to_string(i + 1);
-                    boxNames[i] = "Chest " + std::to_string(i + 1);
+                    boxNames[i] = Lang::chest + " " + std::to_string(i + 1);
                     if(!needSave) {
                         needSave = true;
                     }
@@ -125,7 +126,7 @@ void Bank::load(int maxBoxes) {
             boxNames = nlohmann::json::array();
             for(int i = 0; i < boxes(); i++) {
                 // boxNames[i] = i18n::localize("STORAGE") + " " + std::to_string(i + 1);
-                boxNames[i] = "Chest " + std::to_string(i + 1);
+                boxNames[i] = Lang::chest + " " + std::to_string(i + 1);
             }
 
             needSave = true;
@@ -199,7 +200,7 @@ void Bank::resize(size_t boxes) {
 
         for(size_t i = boxNames.size(); i < boxes; i++) {
             // boxNames[i] = i18n::localize("STORAGE") + " " + std::to_string(i + 1);
-            boxNames[i] = "Chest " + std::to_string(i + 1);
+            boxNames[i] = Lang::chest + " " + std::to_string(i + 1);
         }
 
         save();
@@ -271,7 +272,7 @@ void Bank::createJSON() {
     boxNames = nlohmann::json::array();
     for(int i = 0; i < boxes(); i++) {
         // boxNames[i] = i18n::localize("STORAGE") + " " + std::to_string(i + 1);
-        boxNames[i] = "Chest " + std::to_string(i + 1);
+        boxNames[i] = Lang::chest + " " + std::to_string(i + 1);
     }
 }
 
@@ -362,7 +363,7 @@ void Bank::convert() {
 
     for(int i = 0; i < boxes(); i++) {
         // boxNames[i] = i18n::localize("STORAGE") + " " + std::to_string(i + 1);
-        boxNames[i] = "Chest " + std::to_string(i + 1);
+        boxNames[i] = Lang::chest + " " + std::to_string(i + 1);
     }
 
     stream.open(bankBinBackupPath);

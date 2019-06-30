@@ -9,12 +9,16 @@ namespace Lang {
 	// In game text strings
 	balls, items, locations4, locations5, moves, natures, species,
 	// App strings
+	aMenuText,
+	aMenuEmptySlotText,
+	aMenuTopBarText,
 	optionsTextLabels,
 	optionsText,
 	xMenuText;
 
 	extern std::string
 	// [main]
+	chest,
 	invalidSave,
 	loading;
 }

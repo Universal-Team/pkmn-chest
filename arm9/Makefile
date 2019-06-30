@@ -26,7 +26,7 @@ INCLUDES	:=	include \
 				include/core/ include/core/sav include/core/personal include/core/pkx \
 				include/graphics \
 				include/lang \
-				source/saves
+				include/saves
 DATA		:=
 
 #---------------------------------------------------------------------------------

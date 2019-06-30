@@ -122,7 +122,7 @@ void configMenu(void) {
 					std::vector<std::string> extList;
 					extList.push_back(".bnk");
 					std::string str = browseForFile(extList, false);
-					if(str != Config::chestFile && str != "")	Banks::removeBank(str.substr(0, str.find_last_of(".")));
+					if(str.substr(0, str.find_last_of(".")) != Config::chestFile && str != "")	Banks::removeBank(str.substr(0, str.find_last_of(".")));
 					else if(str != "") {
 						drawRectangle(20, 20, 216, 152, 0xCC00, false);
 						printTextCentered("You can not delete", 0, 24, false);
