@@ -27,94 +27,93 @@
 #ifndef SAV5_HPP
 #define SAV5_HPP
 
-// #include "PGF.hpp"
+#include "personal.hpp"
 #include "PK5.hpp"
 #include "Sav.hpp"
-#include "personal.hpp"
 
 class Sav5 : public Sav {
 protected:
-    int PCLayout, Trainer1, Trainer2, BattleSubway, PokeDexLanguageFlags;
+	int PCLayout, Trainer1, Trainer2, BattleSubway, PokeDexLanguageFlags;
 
 private:
-    int dexFormIndex(int species, int formct) const;
+	int dexFormIndex(int species, int formct) const;
 
 public:
-    virtual void resign(void) = 0;
+	virtual void resign(void) = 0;
 
-    u16 TID(void) const override;
-    void TID(u16 v) override;
-    u16 SID(void) const override;
-    void SID(u16 v) override;
-    u8 version(void) const override;
-    void version(u8 v) override;
-    u8 gender(void) const override;
-    void gender(u8 v) override;
-    u8 subRegion(void) const override;
-    void subRegion(u8 v) override;
-    u8 country(void) const override;
-    void country(u8 v) override;
-    u8 consoleRegion(void) const override;
-    void consoleRegion(u8 v) override;
-    u8 language(void) const override;
-    void language(u8 v) override;
-    std::string otName(void) const override;
-    void otName(const std::string& v) override;
-    u32 money(void) const override;
-    void money(u32 v) override;
-    u32 BP(void) const override;
-    void BP(u32 v) override;
-    u8 badges(void) const override;
-    u16 playedHours(void) const override;
-    void playedHours(u16 v) override;
-    u8 playedMinutes(void) const override;
-    void playedMinutes(u8 v) override;
-    u8 playedSeconds(void) const override;
-    void playedSeconds(u8 v) override;
+	u16 TID(void) const override;
+	void TID(u16 v) override;
+	u16 SID(void) const override;
+	void SID(u16 v) override;
+	u8 version(void) const override;
+	void version(u8 v) override;
+	u8 gender(void) const override;
+	void gender(u8 v) override;
+	u8 subRegion(void) const override;
+	void subRegion(u8 v) override;
+	u8 country(void) const override;
+	void country(u8 v) override;
+	u8 consoleRegion(void) const override;
+	void consoleRegion(u8 v) override;
+	u8 language(void) const override;
+	void language(u8 v) override;
+	std::string otName(void) const override;
+	void otName(const std::string& v) override;
+	u32 money(void) const override;
+	void money(u32 v) override;
+	u32 BP(void) const override;
+	void BP(u32 v) override;
+	u8 badges(void) const override;
+	u16 playedHours(void) const override;
+	void playedHours(u16 v) override;
+	u8 playedMinutes(void) const override;
+	void playedMinutes(u8 v) override;
+	u8 playedSeconds(void) const override;
+	void playedSeconds(u8 v) override;
 
-    u8 currentBox(void) const override;
-    void currentBox(u8 v) override;
-    u32 boxOffset(u8 box, u8 slot) const override;
-    u32 partyOffset(u8 slot) const override;
+	u8 currentBox(void) const override;
+	void currentBox(u8 v) override;
+	u32 boxOffset(u8 box, u8 slot) const override;
+	u32 partyOffset(u8 slot) const override;
 
-    std::shared_ptr<PKX> pkm(u8 slot) const override;
-    std::shared_ptr<PKX> pkm(u8 box, u8 slot, bool ekx = false) const override;
+	std::shared_ptr<PKX> pkm(u8 slot) const override;
+	std::shared_ptr<PKX> pkm(u8 box, u8 slot, bool ekx = false) const override;
 
-    // NOTICE: this sets a pkx into the savefile, not a pkx
-    // that's because pkmn-chest works with decrypted boxes and
-    // crypts them back during resigning
-    void pkm(std::shared_ptr<PKX> pk, u8 box, u8 slot, bool applyTrade) override;
-    void pkm(std::shared_ptr<PKX> pk, u8 slot) override;
+	// NOTICE: this sets a pkx into the savefile, not a pkx
+	// that's because pkmn-chest works with decrypted boxes and
+	// crypts them back during resigning
+	void pkm(std::shared_ptr<PKX> pk, u8 box, u8 slot, bool applyTrade) override;
+	void pkm(std::shared_ptr<PKX> pk, u8 slot) override;
 
-    void trade(std::shared_ptr<PKX> pk) override;
-    std::shared_ptr<PKX> emptyPkm() const override;
+	void trade(std::shared_ptr<PKX> pk) override;
+	std::shared_ptr<PKX> emptyPkm() const override;
 
-    void dex(std::shared_ptr<PKX> pk) override;
-    int dexSeen(void) const override;
-    int dexCaught(void) const override;
-    void cryptBoxData(bool crypted) override;
-    void cryptMysteryGiftData(void);
-    std::string boxName(u8 box) const override;
-    void boxName(u8 box, const std::string& name) override;
-    u8 partyCount(void) const override;
-    void partyCount(u8 count) override;
+	void dex(std::shared_ptr<PKX> pk) override;
+	int dexSeen(void) const override;
+	int dexCaught(void) const override;
+	void cryptBoxData(bool crypted) override;
+	void cryptMysteryGiftData(void);
+	std::string boxName(u8 box) const override;
+	void boxName(u8 box, const std::string& name) override;
+	u8 partyCount(void) const override;
+	void partyCount(u8 count) override;
 
-    int maxBoxes(void) const override { return 24; }
-    size_t maxWondercards(void) const override { return 12; }
-    Generation generation(void) const override { return Generation::FIVE; }
-    int maxSpecies(void) const { return 649; }
-    int maxMove(void) const { return 559; }
-    int maxItem(void) const { return game == Game::BW ? 632 : 638; }
-    int maxAbility(void) const { return 164; }
-    int maxBall(void) const { return 0x19; }
+	int maxBoxes(void) const override { return 24; }
+	size_t maxWondercards(void) const override { return 12; }
+	Generation generation(void) const override { return Generation::FIVE; }
+	int maxSpecies(void) const { return 649; }
+	int maxMove(void) const { return 559; }
+	int maxItem(void) const { return game == Game::BW ? 632 : 638; }
+	int maxAbility(void) const { return 164; }
+	int maxBall(void) const { return 0x19; }
 
-    void item(Item& item, Pouch pouch, u16 slot) override;
-    std::unique_ptr<Item> item(Pouch pouch, u16 slot) const override;
-    std::vector<std::pair<Pouch, int>> pouches(void) const override;
-    virtual std::map<Pouch, std::vector<int>> validItems(void) const = 0;
-    std::string pouchName(Pouch pouch) const override;
+	void item(Item& item, Pouch pouch, u16 slot) override;
+	std::unique_ptr<Item> item(Pouch pouch, u16 slot) const override;
+	std::vector<std::pair<Pouch, int>> pouches(void) const override;
+	virtual std::map<Pouch, std::vector<int>> validItems(void) const = 0;
+	std::string pouchName(Pouch pouch) const override;
 
-    u8 formCount(u16 species) const override { return PersonalBWB2W2::formCount(species); }
+	u8 formCount(u16 species) const override { return PersonalBWB2W2::formCount(species); }
 };
 
 #endif

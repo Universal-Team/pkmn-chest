@@ -28,16 +28,16 @@
 #define Game_HPP
 
 enum Game {
-    DP,
-    Pt,
-    HGSS,
-    BW,
-    B2W2,
-    XY,
-    ORAS,
-    SM,
-    USUM,
-    LGPE
+	DP,
+	Pt,
+	HGSS,
+	BW,
+	B2W2,
+	XY,
+	ORAS,
+	SM,
+	USUM,
+	LGPE
 };
 
 #endif

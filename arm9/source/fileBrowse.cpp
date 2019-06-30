@@ -24,14 +24,15 @@
 #include <algorithm>
 #include <dirent.h>
 #include <fat.h>
-#include "flashcard.h"
 #include <fstream>
-#include "graphics/colors.h"
-#include "graphics/graphics.h"
+#include <unistd.h>
+
+#include "flashcard.h"
+#include "colors.h"
+#include "graphics.h"
 #include "keyboard.h"
 #include "loader.h"
-#include "saves/cardSaves.h"
-#include <unistd.h>
+#include "cardSaves.h"
 #include "utils.hpp"
 
 #define ENTRIES_PER_SCREEN 11

@@ -1,8 +1,9 @@
 #include "configMenu.h"
+#include <dirent.h>
+
 #include "banks.hpp"
 #include "colors.h"
 #include "config.h"
-#include <dirent.h>
 #include "fileBrowse.h"
 #include "flashcard.h"
 #include "graphics.h"

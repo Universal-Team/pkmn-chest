@@ -36,43 +36,43 @@ extern "C" {
 
 class Bank {
 public:
-    Bank(const std::string& name, int maxBoxes);
-    ~Bank() { delete[] data; }
-    std::shared_ptr<PKX> pkm(int box, int slot) const;
-    void pkm(std::shared_ptr<PKX> pkm, int box, int slot);
-    void resize(size_t boxes);
-    void load(int maxBoxes);
-    bool save() const;
-    bool backup() const;
-    std::string boxName(int box) const;
-    std::pair<std::string, std::string> paths() const;
-    void boxName(std::string name, int box);
-    bool hasChanged() const;
-    int boxes() const;
-    const std::string& name() const;
-    bool setName(const std::string& name);
+	Bank(const std::string& name, int maxBoxes);
+	~Bank() { delete[] data; }
+	std::shared_ptr<PKX> pkm(int box, int slot) const;
+	void pkm(std::shared_ptr<PKX> pkm, int box, int slot);
+	void resize(size_t boxes);
+	void load(int maxBoxes);
+	bool save() const;
+	bool backup() const;
+	std::string boxName(int box) const;
+	std::pair<std::string, std::string> paths() const;
+	void boxName(std::string name, int box);
+	bool hasChanged() const;
+	int boxes() const;
+	const std::string& name() const;
+	bool setName(const std::string& name);
 
 private:
-    static constexpr int BANK_VERSION            = 2;
-    static std::string BANK_MAGIC;
-    void createJSON();
-    void createBank(int maxBoxes);
-    void convert();
-    struct BankHeader {
-        const char MAGIC[8];
-        int version;
-        int boxes;
-    };
-    struct BankEntry {
-        Generation gen;
-        u8 data[260];
-    };
-    u8* data = nullptr;
-    nlohmann::json boxNames;
-    size_t size;
-    mutable std::array<u8, SHA256_BLOCK_SIZE> prevHash;
-    mutable bool needsCheck = false;
-    std::string bankName;
+	static constexpr int BANK_VERSION            = 2;
+	static std::string BANK_MAGIC;
+	void createJSON();
+	void createBank(int maxBoxes);
+	void convert();
+	struct BankHeader {
+		const char MAGIC[8];
+		int version;
+		int boxes;
+	};
+	struct BankEntry {
+		Generation gen;
+		u8 data[260];
+	};
+	u8* data = nullptr;
+	nlohmann::json boxNames;
+	size_t size;
+	mutable std::array<u8, SHA256_BLOCK_SIZE> prevHash;
+	mutable bool needsCheck = false;
+	std::string bankName;
 };
 
 #endif

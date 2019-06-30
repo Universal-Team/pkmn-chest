@@ -1,6 +1,5 @@
-#include <fstream>
-
 #include "loader.h"
+#include <fstream>
 
 static bool saveIsFile;
 static std::string saveFileName;

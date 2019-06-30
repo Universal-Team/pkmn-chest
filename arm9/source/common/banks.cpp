@@ -24,10 +24,11 @@
  *         reasonable ways as different from the original version.
  */
 
+#include <fstream>
+
 #include "banks.hpp"
 #include "config.h"
 #include "flashcard.h"
-#include <fstream>
 #include "json.hpp"
 #include "../graphics/graphics.h"
 

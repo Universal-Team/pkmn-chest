@@ -31,10 +31,10 @@
 
 class SavHGSS : public Sav4 {
 public:
-    SavHGSS(u8* dt);
-    virtual ~SavHGSS(){};
+	SavHGSS(u8* dt);
+	virtual ~SavHGSS(){};
 
-    std::map<Pouch, std::vector<int>> validItems(void) const override;
+	std::map<Pouch, std::vector<int>> validItems(void) const override;
 };
 
 #endif

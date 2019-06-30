@@ -1,5 +1,5 @@
 #include "config.h"
-#include "common/inifile.h"
+#include "inifile.h"
 #include "flashcard.h"
 
 std::string Config::chestFile;

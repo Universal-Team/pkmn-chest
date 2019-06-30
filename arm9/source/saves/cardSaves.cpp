@@ -1,7 +1,8 @@
+#include "cardSaves.h"
 #include <fstream>
-#include "saves/cardSaves.h"
-#include "graphics/colors.h"
-#include "graphics/graphics.h"
+
+#include "colors.h"
+#include "graphics.h"
 
 auxspi_extra card_type = AUXSPI_FLASH_CARD;
 sNDSHeader nds;

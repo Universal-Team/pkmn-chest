@@ -31,12 +31,12 @@
 
 class SavBW : public Sav5 {
 public:
-    SavBW(u8* dt);
-    virtual ~SavBW();
+	SavBW(u8* dt);
+	virtual ~SavBW();
 
-    void resign(void) override;
+	void resign(void) override;
 
-    std::map<Pouch, std::vector<int>> validItems(void) const override;
+	std::map<Pouch, std::vector<int>> validItems(void) const override;
 };
 
 #endif

@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "sav/Sav.hpp"
+#include "Sav.hpp"
 
 extern std::shared_ptr<Sav> save;
 

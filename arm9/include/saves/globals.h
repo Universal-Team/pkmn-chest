@@ -27,6 +27,7 @@
 #define GLOBALS_H
 
 #include <nds.h>
+
 #include "auxspi.h"
 
 extern uint8 data[0x8000];

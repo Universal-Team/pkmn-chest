@@ -31,251 +31,251 @@
 #include <vector>
 
 std::u16string StringUtils::UTF8toUTF16(const std::string& src) {
-    std::u16string ret;
-    for(size_t i = 0; i < src.size(); i++) {
-        u16 codepoint = 0xFFFD;
-        int iMod      = 0;
-        if(src[i] & 0x80 && src[i] & 0x40 && src[i] & 0x20 && !(src[i] & 0x10) && i + 2 < src.size()) {
-            codepoint = src[i] & 0x0F;
-            codepoint = codepoint << 6 | (src[i + 1] & 0x3F);
-            codepoint = codepoint << 6 | (src[i + 2] & 0x3F);
-            iMod      = 2;
-        } else if(src[i] & 0x80 && src[i] & 0x40 && !(src[i] & 0x20) && i + 1 < src.size()) {
-            codepoint = src[i] & 0x1F;
-            codepoint = codepoint << 6 | (src[i + 1] & 0x3F);
-            iMod      = 1;
-        } else if(!(src[i] & 0x80)) {
-            codepoint = src[i];
-        }
+	std::u16string ret;
+	for(size_t i = 0; i < src.size(); i++) {
+		u16 codepoint = 0xFFFD;
+		int iMod      = 0;
+		if(src[i] & 0x80 && src[i] & 0x40 && src[i] & 0x20 && !(src[i] & 0x10) && i + 2 < src.size()) {
+			codepoint = src[i] & 0x0F;
+			codepoint = codepoint << 6 | (src[i + 1] & 0x3F);
+			codepoint = codepoint << 6 | (src[i + 2] & 0x3F);
+			iMod      = 2;
+		} else if(src[i] & 0x80 && src[i] & 0x40 && !(src[i] & 0x20) && i + 1 < src.size()) {
+			codepoint = src[i] & 0x1F;
+			codepoint = codepoint << 6 | (src[i + 1] & 0x3F);
+			iMod      = 1;
+		} else if(!(src[i] & 0x80)) {
+			codepoint = src[i];
+		}
 
-        ret.push_back((char16_t)codepoint);
-        i += iMod;
-    }
-    return ret;
+		ret.push_back((char16_t)codepoint);
+		i += iMod;
+	}
+	return ret;
 }
 
 static std::string utf16DataToUtf8(const char16_t* data, size_t size, char16_t delim = 0) {
-    std::string ret;
-    char addChar[4] = {0};
-    for(size_t i = 0; i < size; i++) {
-        if(data[i] == delim) {
-            return ret;
-        } else if(data[i] < 0x0080) {
-            addChar[0] = data[i];
-            addChar[1] = '\0';
-        } else if(data[i] < 0x0800) {
-            addChar[0] = 0xC0 | ((data[i] >> 6) & 0x1F);
-            addChar[1] = 0x80 | (data[i] & 0x3F);
-            addChar[2] = '\0';
-        } else {
-            addChar[0] = 0xE0 | ((data[i] >> 12) & 0x0F);
-            addChar[1] = 0x80 | ((data[i] >> 6) & 0x3F);
-            addChar[2] = 0x80 | (data[i] & 0x3F);
-            addChar[3] = '\0';
-        }
-        ret.append(addChar);
-    }
-    return ret;
+	std::string ret;
+	char addChar[4] = {0};
+	for(size_t i = 0; i < size; i++) {
+		if(data[i] == delim) {
+			return ret;
+		} else if(data[i] < 0x0080) {
+			addChar[0] = data[i];
+			addChar[1] = '\0';
+		} else if(data[i] < 0x0800) {
+			addChar[0] = 0xC0 | ((data[i] >> 6) & 0x1F);
+			addChar[1] = 0x80 | (data[i] & 0x3F);
+			addChar[2] = '\0';
+		} else {
+			addChar[0] = 0xE0 | ((data[i] >> 12) & 0x0F);
+			addChar[1] = 0x80 | ((data[i] >> 6) & 0x3F);
+			addChar[2] = 0x80 | (data[i] & 0x3F);
+			addChar[3] = '\0';
+		}
+		ret.append(addChar);
+	}
+	return ret;
 }
 
 std::string StringUtils::UTF16toUTF8(const std::u16string& src) {
-    return utf16DataToUtf8(src.data(), src.size());
+	return utf16DataToUtf8(src.data(), src.size());
 }
 
 std::string StringUtils::getString(const u8* data, int ofs, int len, char16_t term) {
-    return utf16DataToUtf8((char16_t*)(data + ofs), len, term);
+	return utf16DataToUtf8((char16_t*)(data + ofs), len, term);
 }
 
 void StringUtils::setString(u8* data, const std::u16string& v, int ofs, int len, char16_t terminator, char16_t padding) {
-    int i = 0;
-    for(; i < std::min(len - 1, (int)v.size()); i++) { // len includes terminator
-        *(u16*)(data + ofs + i * 2) = v[i];
-    }
-    *(u16*)(data + ofs + i++ * 2) = terminator; // Set terminator
-    for(; i < len; i++) {
-        *(u16*)(data + ofs + i * 2) = padding; // Set final padding bytes
-    }
+	int i = 0;
+	for(; i < std::min(len - 1, (int)v.size()); i++) { // len includes terminator
+		*(u16*)(data + ofs + i * 2) = v[i];
+	}
+	*(u16*)(data + ofs + i++ * 2) = terminator; // Set terminator
+	for(; i < len; i++) {
+		*(u16*)(data + ofs + i * 2) = padding; // Set final padding bytes
+	}
 }
 
 void StringUtils::setString(u8* data, const std::string& v, int ofs, int len, char16_t terminator, char16_t padding) {
-    setString(data, UTF8toUTF16(v), ofs, len, terminator, padding);
+	setString(data, UTF8toUTF16(v), ofs, len, terminator, padding);
 }
 
 std::string StringUtils::getString4(const u8* data, int ofs, int len) {
-    std::string output;
-    len *= 2;
-    u16 temp;
-    u16 codepoint;
-    for(u8 i = 0; i < len; i += 2) {
-        temp = *(u16*)(data + ofs + i);
-        if(temp == 0xFFFF)
-            break;
-        u16 index = std::distance(G4Values, std::find(G4Values, G4Values + G4TEXT_LENGTH, temp));
-        codepoint = G4Chars[index];
-        if(codepoint == 0xFFFF)
-            break;
+	std::string output;
+	len *= 2;
+	u16 temp;
+	u16 codepoint;
+	for(u8 i = 0; i < len; i += 2) {
+		temp = *(u16*)(data + ofs + i);
+		if(temp == 0xFFFF)
+			break;
+		u16 index = std::distance(G4Values, std::find(G4Values, G4Values + G4TEXT_LENGTH, temp));
+		codepoint = G4Chars[index];
+		if(codepoint == 0xFFFF)
+			break;
 
-        // Stupid stupid stupid
-        switch(codepoint) {
-            case 0x246E:
-                codepoint = 0x2640;
-                break;
-            case 0x246D:
-                codepoint = 0x2642;
-                break;
-        }
+		// Stupid stupid stupid
+		switch(codepoint) {
+			case 0x246E:
+				codepoint = 0x2640;
+				break;
+			case 0x246D:
+				codepoint = 0x2642;
+				break;
+		}
 
-        char* addChar;
-        if(codepoint < 0x0080) {
-            addChar    = new char[2];
-            addChar[0] = codepoint;
-            addChar[1] = '\0';
-        } else if(codepoint < 0x0800) {
-            addChar    = new char[3];
-            addChar[0] = 0xC0 | ((codepoint >> 6) & 0x1F);
-            addChar[1] = 0x80 | (codepoint & 0x3F);
-            addChar[2] = '\0';
-        } else {
-            addChar    = new char[4];
-            addChar[0] = 0xE0 | ((codepoint >> 12) & 0x0F);
-            addChar[1] = 0x80 | ((codepoint >> 6) & 0x3F);
-            addChar[2] = 0x80 | (codepoint & 0x3F);
-            addChar[3] = '\0';
-        }
-        output.append(addChar);
-        delete[] addChar;
-    }
-    return output;
+		char* addChar;
+		if(codepoint < 0x0080) {
+			addChar    = new char[2];
+			addChar[0] = codepoint;
+			addChar[1] = '\0';
+		} else if(codepoint < 0x0800) {
+			addChar    = new char[3];
+			addChar[0] = 0xC0 | ((codepoint >> 6) & 0x1F);
+			addChar[1] = 0x80 | (codepoint & 0x3F);
+			addChar[2] = '\0';
+		} else {
+			addChar    = new char[4];
+			addChar[0] = 0xE0 | ((codepoint >> 12) & 0x0F);
+			addChar[1] = 0x80 | ((codepoint >> 6) & 0x3F);
+			addChar[2] = 0x80 | (codepoint & 0x3F);
+			addChar[3] = '\0';
+		}
+		output.append(addChar);
+		delete[] addChar;
+	}
+	return output;
 }
 
 void StringUtils::setString4(u8* data, const std::string& v, int ofs, int len) {
-    u16 output[len] = {0};
-    u16 outIndex = 0, charIndex = 0;
-    for(; outIndex < len && charIndex < v.length(); charIndex++, outIndex++) {
-        if(v[charIndex] & 0x80) {
-            u16 codepoint = 0;
-            if(v[charIndex] & 0x80 && v[charIndex] & 0x40 && v[charIndex] & 0x20) {
-                codepoint = v[charIndex] & 0x0F;
-                codepoint = codepoint << 6 | (v[charIndex + 1] & 0x3F);
-                codepoint = codepoint << 6 | (v[charIndex + 2] & 0x3F);
-                charIndex += 2;
-            } else if(v[charIndex] & 0x80 && v[charIndex] & 0x40) {
-                codepoint = v[charIndex] & 0x1F;
-                codepoint = codepoint << 6 | (v[charIndex + 1] & 0x3F);
-                charIndex += 1;
-            }
-            // GAHHHHHH WHY
-            switch(codepoint) {
-                case 0x2640:
-                    codepoint = 0x246E; // Female
-                    break;
-                case 0x2642:
-                    codepoint = 0x246D; // Male
-                    break;
-            }
-            size_t index     = std::distance(G4Chars, std::find(G4Chars, G4Chars + G4TEXT_LENGTH, codepoint));
-            output[outIndex] = (index < G4TEXT_LENGTH ? G4Values[index] : 0x0000);
-        } else {
-            size_t index     = std::distance(G4Chars, std::find(G4Chars, G4Chars + G4TEXT_LENGTH, v[charIndex]));
-            output[outIndex] = (index < G4TEXT_LENGTH ? G4Values[index] : 0x0000);
-        }
-    }
-    output[outIndex >= len ? len - 1 : outIndex] = 0xFFFF;
-    memcpy(data + ofs, output, len * 2);
+	u16 output[len] = {0};
+	u16 outIndex = 0, charIndex = 0;
+	for(; outIndex < len && charIndex < v.length(); charIndex++, outIndex++) {
+		if(v[charIndex] & 0x80) {
+			u16 codepoint = 0;
+			if(v[charIndex] & 0x80 && v[charIndex] & 0x40 && v[charIndex] & 0x20) {
+				codepoint = v[charIndex] & 0x0F;
+				codepoint = codepoint << 6 | (v[charIndex + 1] & 0x3F);
+				codepoint = codepoint << 6 | (v[charIndex + 2] & 0x3F);
+				charIndex += 2;
+			} else if(v[charIndex] & 0x80 && v[charIndex] & 0x40) {
+				codepoint = v[charIndex] & 0x1F;
+				codepoint = codepoint << 6 | (v[charIndex + 1] & 0x3F);
+				charIndex += 1;
+			}
+			// GAHHHHHH WHY
+			switch(codepoint) {
+				case 0x2640:
+					codepoint = 0x246E; // Female
+					break;
+				case 0x2642:
+					codepoint = 0x246D; // Male
+					break;
+			}
+			size_t index     = std::distance(G4Chars, std::find(G4Chars, G4Chars + G4TEXT_LENGTH, codepoint));
+			output[outIndex] = (index < G4TEXT_LENGTH ? G4Values[index] : 0x0000);
+		} else {
+			size_t index     = std::distance(G4Chars, std::find(G4Chars, G4Chars + G4TEXT_LENGTH, v[charIndex]));
+			output[outIndex] = (index < G4TEXT_LENGTH ? G4Values[index] : 0x0000);
+		}
+	}
+	output[outIndex >= len ? len - 1 : outIndex] = 0xFFFF;
+	memcpy(data + ofs, output, len * 2);
 }
 
 std::string& StringUtils::toUpper(std::string& in) {
-    std::transform(in.begin(), in.end(), in.begin(), ::toupper);
-    std::u16string otherIn = StringUtils::UTF8toUTF16(in);
-    for(size_t i = 0; i < otherIn.size(); i++) {
-        switch(otherIn[i]) {
-            case u'í':
-                otherIn[i] = u'Í';
-                break;
-            case u'ó':
-                otherIn[i] = u'Ó';
-                break;
-            case u'ú':
-                otherIn[i] = u'Ú';
-                break;
-            case u'é':
-                otherIn[i] = u'É';
-                break;
-            case u'á':
-                otherIn[i] = u'Á';
-                break;
-            case u'ì':
-                otherIn[i] = u'Ì';
-                break;
-            case u'ò':
-                otherIn[i] = u'Ò';
-                break;
-            case u'ù':
-                otherIn[i] = u'Ù';
-                break;
-            case u'è':
-                otherIn[i] = u'È';
-                break;
-            case u'à':
-                otherIn[i] = u'À';
-                break;
-            case u'ñ':
-                otherIn[i] = u'Ñ';
-                break;
-            case u'æ':
-                otherIn[i] = u'Æ';
-                break;
-        }
-    }
-    in = StringUtils::UTF16toUTF8(otherIn);
-    return in;
+	std::transform(in.begin(), in.end(), in.begin(), ::toupper);
+	std::u16string otherIn = StringUtils::UTF8toUTF16(in);
+	for(size_t i = 0; i < otherIn.size(); i++) {
+		switch(otherIn[i]) {
+			case u'í':
+				otherIn[i] = u'Í';
+				break;
+			case u'ó':
+				otherIn[i] = u'Ó';
+				break;
+			case u'ú':
+				otherIn[i] = u'Ú';
+				break;
+			case u'é':
+				otherIn[i] = u'É';
+				break;
+			case u'á':
+				otherIn[i] = u'Á';
+				break;
+			case u'ì':
+				otherIn[i] = u'Ì';
+				break;
+			case u'ò':
+				otherIn[i] = u'Ò';
+				break;
+			case u'ù':
+				otherIn[i] = u'Ù';
+				break;
+			case u'è':
+				otherIn[i] = u'È';
+				break;
+			case u'à':
+				otherIn[i] = u'À';
+				break;
+			case u'ñ':
+				otherIn[i] = u'Ñ';
+				break;
+			case u'æ':
+				otherIn[i] = u'Æ';
+				break;
+		}
+	}
+	in = StringUtils::UTF16toUTF8(otherIn);
+	return in;
 }
 
 std::string& StringUtils::toLower(std::string& in) {
-    std::transform(in.begin(), in.end(), in.begin(), ::tolower);
-    std::u16string otherIn = StringUtils::UTF8toUTF16(in);
-    for(size_t i = 0; i < otherIn.size(); i++) {
-        switch(otherIn[i]) {
-            case u'Í':
-                otherIn[i] = u'í';
-                break;
-            case u'Ó':
-                otherIn[i] = u'ó';
-                break;
-            case u'Ú':
-                otherIn[i] = u'ú';
-                break;
-            case u'É':
-                otherIn[i] = u'é';
-                break;
-            case u'Á':
-                otherIn[i] = u'á';
-                break;
-            case u'Ì':
-                otherIn[i] = u'ì';
-                break;
-            case u'Ò':
-                otherIn[i] = u'ò';
-                break;
-            case u'Ù':
-                otherIn[i] = u'ù';
-                break;
-            case u'È':
-                otherIn[i] = u'è';
-                break;
-            case u'À':
-                otherIn[i] = u'à';
-                break;
-            case u'Ñ':
-                otherIn[i] = u'ñ';
-                break;
-            case u'Æ':
-                otherIn[i] = u'æ';
-                break;
-        }
-    }
-    in = StringUtils::UTF16toUTF8(otherIn);
-    return in;
+	std::transform(in.begin(), in.end(), in.begin(), ::tolower);
+	std::u16string otherIn = StringUtils::UTF8toUTF16(in);
+	for(size_t i = 0; i < otherIn.size(); i++) {
+		switch(otherIn[i]) {
+			case u'Í':
+				otherIn[i] = u'í';
+				break;
+			case u'Ó':
+				otherIn[i] = u'ó';
+				break;
+			case u'Ú':
+				otherIn[i] = u'ú';
+				break;
+			case u'É':
+				otherIn[i] = u'é';
+				break;
+			case u'Á':
+				otherIn[i] = u'á';
+				break;
+			case u'Ì':
+				otherIn[i] = u'ì';
+				break;
+			case u'Ò':
+				otherIn[i] = u'ò';
+				break;
+			case u'Ù':
+				otherIn[i] = u'ù';
+				break;
+			case u'È':
+				otherIn[i] = u'è';
+				break;
+			case u'À':
+				otherIn[i] = u'à';
+				break;
+			case u'Ñ':
+				otherIn[i] = u'ñ';
+				break;
+			case u'Æ':
+				otherIn[i] = u'æ';
+				break;
+		}
+	}
+	in = StringUtils::UTF16toUTF8(otherIn);
+	return in;
 }
 
 // static std::map<u16, charWidthInfo_s*> widthCache;

@@ -30,12 +30,12 @@
 #include <string>
 
 enum class Generation {
-    FOUR,
-    FIVE,
-    SIX,
-    SEVEN,
-    LGPE,
-    UNUSED = 0xFF
+	FOUR,
+	FIVE,
+	SIX,
+	SEVEN,
+	LGPE,
+	UNUSED = 0xFF
 };
 
 std::string genToString(Generation gen);

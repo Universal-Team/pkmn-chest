@@ -1,9 +1,10 @@
 #ifndef MANAGER_H
 #define MANAGER_H
 
-#include "graphics/graphics.h"
 #include <nds.h>
-#include "sav/Sav.hpp"
+
+#include "graphics.h"
+#include "Sav.hpp"
 
 struct XYCoords {
 	int x;

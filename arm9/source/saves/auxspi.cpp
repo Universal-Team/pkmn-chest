@@ -24,47 +24,45 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#include "saves/auxspi.h"
-#include "saves/globals.h"
-
+#include "auxspi.h"
 #include <algorithm>
 #include <stdio.h>
 
+#include "auxspi_core.inc"
+#include "globals.h"
+
 using std::max;
-
-#include "saves/auxspi_core.inc"
-
 
 // ========================================================
 //  local functions
 uint8 jedec_table(uint32 id)
 {
 	switch (id) {
-	// 256 kB
-	case 0x204012:
-	case 0x621600:
-		return 0x12;
-	// 512 kB
-	case 0x204013:
-	case 0x621100:
-		return 0x13;
-	// 1 MB
-	case 0x204014:
-		return 0x14;
-	// 2 MB (not sure if this exists, but I vaguely remember something...)
-	case 0x204015:
-		return 0x15;
-	// 8 MB (Band Brothers DX)
-	case 0x202017: // which one? (more work is required to unlock this save chip!)
-	case 0x204017:
-		return 0x17;
-	default: {
-		for(int i = 0; i < EXTRA_ARRAY_SIZE; i++) {
-			if(extra_id[i] == id)
-				return extra_size[i];
+		// 256 kB
+		case 0x204012:
+		case 0x621600:
+			return 0x12;
+		// 512 kB
+		case 0x204013:
+		case 0x621100:
+			return 0x13;
+		// 1 MB
+		case 0x204014:
+			return 0x14;
+		// 2 MB (not sure if this exists, but I vaguely remember something...)
+		case 0x204015:
+			return 0x15;
+		// 8 MB (Band Brothers DX)
+		case 0x202017: // which one? (more work is required to unlock this save chip!)
+		case 0x204017:
+			return 0x17;
+		default: {
+			for(int i = 0; i < EXTRA_ARRAY_SIZE; i++) {
+				if(extra_id[i] == id)
+					return extra_size[i];
+			}
+			return 0; // unknown save type!
 		}
-		return 0; // unknown save type!
-	}
 	};
 }
 
@@ -162,17 +160,17 @@ void auxspi_read_data(uint32 addr, uint8* buf, uint32 cnt, uint8 type, auxspi_ex
 		auxspi_disable_extra(extra);
 	auxspi_open(0);
 	auxspi_write(0x03 | ((type == 1) ? addr>>8<<3 : 0));
-    if(type == 3) {
+	if(type == 3) {
 		auxspi_write((addr >> 16) & 0xFF);
-    } 
-    if(type >= 2) {
+	} 
+	if(type >= 2) {
 		auxspi_write((addr >> 8) & 0xFF);
-    }
+	}
 	auxspi_write(addr & 0xFF);
-    while(cnt > 0) {
-        *buf++ = auxspi_read();
-        cnt--;
-    }
+	while(cnt > 0) {
+		*buf++ = auxspi_read();
+		cnt--;
+	}
 	auxspi_close();
 }
 
@@ -185,10 +183,10 @@ void auxspi_write_data(uint32 addr, uint8 *buf, uint32 cnt, uint8 type, auxspi_e
 
 	uint32 addr_end = addr + cnt;
 	unsigned int i;
-    unsigned int maxblocks = 32;
-    if(type == 1) maxblocks = 16;
-    if(type == 2) maxblocks = 32;
-    if(type == 3) maxblocks = 256;
+	unsigned int maxblocks = 32;
+	if(type == 1) maxblocks = 16;
+	if(type == 2) maxblocks = 32;
+	if(type == 3) maxblocks = 256;
 
 	// we can only write a finite amount of data at once, so we need a separate loop
 	//  for multiple passes.
@@ -208,25 +206,25 @@ void auxspi_write_data(uint32 addr, uint8 *buf, uint32 cnt, uint8 type, auxspi_e
 		// for(int i = 0; i < 30; i++) { swiWaitForVBlank(); }
 		auxspi_open(0);
 		// send initial "write" command
-        if(type == 1) {
+		if(type == 1) {
 			auxspi_write(0x02 | (addr & BIT(8)) >> (8-3));
 			auxspi_write(addr & 0xFF);
-        }
-        else if(type == 2) {
+		}
+		else if(type == 2) {
 			auxspi_write(0x02);
-            auxspi_write((addr >> 8) & 0xff);
-            auxspi_write(addr & 0xFF);
-        }
-        else if(type == 3) {
+			auxspi_write((addr >> 8) & 0xff);
+			auxspi_write(addr & 0xFF);
+		}
+		else if(type == 3) {
 			auxspi_write(0x02);
-            auxspi_write((addr >> 16) & 0xff);
-            auxspi_write((addr >> 8) & 0xff);
-            auxspi_write(addr & 0xFF);
-        }
+			auxspi_write((addr >> 16) & 0xff);
+			auxspi_write((addr >> 8) & 0xff);
+			auxspi_write(addr & 0xFF);
+		}
 
 		for(i=0; addr < addr_end && i < maxblocks; i++, addr++) { 
 			auxspi_write(*buf++);
-        }
+		}
 		// iprintf("%d\n",addr);
 		auxspi_close_lite();
 		// swiWaitForVBlank();
@@ -248,7 +246,7 @@ void auxspi_write_data(uint32 addr, uint8 *buf, uint32 cnt, uint8 type, auxspi_e
 		auxspi_open(0);
 		auxspi_write(5);
 		auxspi_wait_wip();
-        auxspi_wait_busy();
+		auxspi_wait_busy();
 		auxspi_close();
 		// swiWaitForVBlank();
 		// for(int i = 0; i < 30; i++) { swiWaitForVBlank(); }

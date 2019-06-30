@@ -1,7 +1,7 @@
 #ifndef CARD_SAVES_H
 #define CARD_SAVES_H
 
-#include "saves/auxspi.h"
+#include "auxspi.h"
 
 #define cardSave "sd:/_nds/pkmn-chest/backups/card.sav"
 

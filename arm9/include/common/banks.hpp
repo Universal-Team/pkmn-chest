@@ -26,22 +26,24 @@
 
 #ifndef BANKS_HPP
 #define BANKS_HPP
-#include "Bank.hpp"
+
 #include <nds/ndstypes.h>
+
+#include "Bank.hpp"
 
 #define BANKS_VERSION 1
 #define BANK_DEFAULT_SIZE 50
 #define BANK_MAX_SIZE 500
 
 namespace Banks {
-    extern std::shared_ptr<Bank> bank;
-    int init();
-    // If maxBoxes == 0, the default will be used
-    bool loadBank(const std::string& name, int maxBoxes = 0);
-    void removeBank(const std::string& name);
-    void renameBank(const std::string& oldName, const std::string& newName);
-    void setBankSize(const std::string& name, int size);
-    std::vector<std::pair<std::string, int>> bankNames();
+	extern std::shared_ptr<Bank> bank;
+	int init();
+	// If maxBoxes == 0, the default will be used
+	bool loadBank(const std::string& name, int maxBoxes = 0);
+	void removeBank(const std::string& name);
+	void renameBank(const std::string& oldName, const std::string& newName);
+	void setBankSize(const std::string& name, int size);
+	std::vector<std::pair<std::string, int>> bankNames();
 }
 
 #endif

@@ -1,13 +1,14 @@
 #include "manager.h"
+#include <dirent.h>
+#include <fstream>
+
 #include "banks.hpp"
 #include "cardSaves.h"
 #include "colors.h"
 #include "config.h"
 #include "configMenu.h"
-#include <dirent.h>
 #include "fileBrowse.h"
 #include "flashcard.h"
-#include <fstream>
 #include "graphics.h"
 #include "keyboard.h"
 #include "langStrings.h"
@@ -391,7 +392,6 @@ int aMenu(int pkmPos, std::vector<TextPos>& buttons, int buttonMode) {
 				// Copy the save Pokémon from their buffer to the bank
 				for(int i=0;i<30;i++)
 					Banks::bank->pkm(tempBox[i], currentBankBox, i);
-
 
 				// Update the boxes
 				drawBox(true);

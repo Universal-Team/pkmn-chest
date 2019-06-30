@@ -1,11 +1,12 @@
 #include "keyboard.h"
-#include "config.h"
-#include "graphics/colors.h"
-#include "graphics/graphics.h"
-#include "manager.h"
 #include <string>
 #include <stdio.h>
 #include <ctype.h>
+
+#include "config.h"
+#include "colors.h"
+#include "graphics.h"
+#include "manager.h"
 
 struct Key {
 	std::string character;
