@@ -10,6 +10,10 @@ variables:
 
 steps:
 - script: |
+    echo $(Build.SourceVersion)
+  displayName: 'testing...'
+
+- script: |
     curl -L https://github.com/devkitPro/pacman/releases/download/devkitpro-pacman-1.0.1/devkitpro-pacman-installer.pkg -o devkitpro-pacman-installer.pkg
     sudo installer -pkg devkitpro-pacman-installer.pkg -target /
     sudo dkp-pacman -Sy
@@ -64,6 +68,16 @@ steps:
     assets: '$(Build.ArtifactStagingDirectory)/**/*'
     isPreRelease: true
     addChangeLog: false
+
+- task: GitHubRelease@0
+  displayName: "Release to Universal-Team/pkmn-chest"
+  condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/v')
+  inputs:
+    gitHubConnection: TWLBot
+    repositoryName: Universal-Team/pkmn-chest
+    action: edit
+    target: $(Build.SourceVersion)
+    assets: '$(Build.ArtifactStagingDirectory)/**/*'
 
 - script: |
     curl -o send.sh https://raw.githubusercontent.com/Universal-Team/discord-webhooks/master/send-azure.sh
