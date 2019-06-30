@@ -86,7 +86,8 @@ void drawSummaryP1(std::shared_ptr<PKX> pkm) {
 
 	// Print Pokémon and trainer info
 	snprintf(textSP1[0].text,  sizeof(textSP1[0].text), "%.3i", pkm->species());
-	snprintf(textSP1[1].text,  sizeof(textSP1[1].text), "%s", pkm->nickname().c_str());
+	if(pkm->nicknamed())	snprintf(textSP1[1].text,  sizeof(textSP1[1].text), "%s", pkm->nickname().c_str());
+	else	snprintf(textSP1[1].text,  sizeof(textSP1[1].text), "%s", Lang::species[pkm->species()].c_str());
 	snprintf(textSP1[2].text,  sizeof(textSP1[2].text), "%s", Lang::balls[pkm->ball()].c_str());
 	snprintf(textSP1[3].text,  sizeof(textSP1[3].text), "%i", pkm->level());
 	snprintf(textSP1[4].text,  sizeof(textSP1[4].text), "%s", Lang::natures[pkm->nature()].c_str());
@@ -236,7 +237,10 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 						break;
 					} case 1: {
 						std::string name = Input::getLine(10);
-						if(name != "")	pkm->nickname(name);
+						if(name != "") {
+							pkm->nickname(name);
+							pkm->nicknamed(true);
+						}
 						if(pkm->gender() != 2)	pkm->gender(Input::getBool("Female", "Male"));
 						break;
 					} case 2: {

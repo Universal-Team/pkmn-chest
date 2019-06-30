@@ -1,6 +1,7 @@
 #include "party.h"
-#include "graphics/colors.h"
-#include "graphics/graphics.h"
+#include "colors.h"
+#include "graphics.h"
+#include "langStrings.h"
 #include "loader.h"
 #include "manager.h"
 #include "summary.h"
@@ -20,7 +21,8 @@ void showParty(int selection) {
 		XYCoords xy = getPokemonPosition(save->pkm(i)->species());
 		drawImageTinted(partyButtons[i].x, partyButtons[i].y, menuButtonData.width, menuButtonData.height, selection == i ? TEAL_RGB : LIGHT_GRAY, menuButton, false);
 		drawImageFromSheet(partyButtons[i].x+8, partyButtons[i].y, 32, 32, pokemonSheet, pokemonSheetData.width, xy.x, xy.y, false);
-		printText(save->pkm(i)->nickname(), partyButtons[i].x+47, partyButtons[i].y+14, false);
+		if(save->pkm(i)->nicknamed())	printText(save->pkm(i)->nickname(), partyButtons[i].x+47, partyButtons[i].y+14, false);
+		else	printText(Lang::species[save->pkm(i)->species()], partyButtons[i].x+47, partyButtons[i].y+14, false);
 	}
 }
 

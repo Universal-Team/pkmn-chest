@@ -211,8 +211,10 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 		snprintf(str, sizeof(str), "#%.3i", pkm->species());
 		printTextTinted(str, 0xCE73, 170, 2, true);
 
-		// Print nickname
-		printTextTinted(pkm->nickname(), (pkm->gender() ? (pkm->gender() == 1 ? RED_RGB : WHITE) : BLUE_RGB), 170, 14, true);
+		// Print name
+		if(pkm->nicknamed())	printTextTinted(pkm->nickname(), (pkm->gender() ? (pkm->gender() == 1 ? RED_RGB : WHITE) : BLUE_RGB), 170, 14, true);
+		else	printTextTinted(Lang::species[pkm->species()], (pkm->gender() ? (pkm->gender() == 1 ? RED_RGB : WHITE) : BLUE_RGB), 170, 14, true);
+
 
 		// Draw types
 		drawImageFromSheet(170, 33, 32, 12, types, 32, 0, (((pkm->generation() == Generation::FOUR && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1())*12), true);
@@ -291,6 +293,7 @@ int aMenu(int pkmPos, std::vector<Text>& buttons) {
 				// Redraw screen
 				drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
 				drawBox(false);
+				drawPokemonInfo(currentPokemon(pkmPos));
 				drawAMenuButtons(buttons);
 			} else if(menuSelection == 1) { // Move
 				if(topScreen) {

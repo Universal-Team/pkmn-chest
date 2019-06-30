@@ -25,6 +25,7 @@
  */
 
 #include "PK5.hpp"
+#include "langStrings.h"
 #include "random.hpp"
 #include "../../loader.h"
 
@@ -653,7 +654,7 @@ std::shared_ptr<PKX> PK5::next(void) const {
     pk6->alternativeForm(alternativeForm());
     pk6->nature(nature());
 
-    // pk6->nickname(i18n::species(pk6->language(), pk6->species()));
+    pk6->nickname(Lang::species[pk6->species()]);
     if(nicknamed())
         pk6->nickname(nickname());
 
