@@ -171,6 +171,19 @@ void fillSpriteImage(int id, std::vector<u16> &imageBuffer);
 void fillSpriteFromSheet(int id, std::vector<u16> &imageBuffer, int w, int h, int imageWidth, int xOffset, int yOffset);
 
 /*
+ * Fills a sprite with raw pixel data from a vector of a spritesheet
+ * int id is the id of the sprite
+ * double scale is the Scale to draw the image at
+ * std::vector<u16> &imageBuffer is the raw pixel data
+ * int w is the width of the portion to put in the sprite
+ * int h is the height of the portion to put in the sprite
+ * int imageWidth is the width of the spritesheet
+ * int xOffset is the X position in the sheet to start at
+ * int yOffset is the Y position in the sheet to start at
+ */
+void fillSpriteFromSheetScaled(int id, double scale, std::vector<u16> &imageBuffer, int w, int h, int imageWidth, int xOffset, int yOffset);
+
+/*
  * Sets the sprite to be drawn
  * int id is the id of the sprite
  * int x is the X position of the sprite

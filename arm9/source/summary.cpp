@@ -59,13 +59,13 @@ void drawSummaryP1(std::shared_ptr<PKX> pkm) {
 	drawRectangle(0, 124, 150, 1, LIGHT_GRAY, false);
 
 	// Print Pokémon name
-	printTextTinted(Lang::species[pkm->species()], (pkm->gender() ? (pkm->gender() == 1 ? BLUE_RGB : WHITE) : RED_RGB), 165, 1, false);
+	printTextTinted(Lang::species[pkm->species()], (pkm->gender() ? (pkm->gender() == 1 ? RED_RGB : WHITE) : BLUE_RGB), 165, 1, false);
 
 	// Draw Pokémon Pokéball, types, and shiny star (if shiny)
 	XYCoords xy = getPokeballPosition(pkm->ball());
 	drawImageFromSheet(148, 1, 15, 15, ballSheet, ballSheetData.width, xy.x, xy.y, false);
 	xy = getPokemonPosition(pkm->species());
-	drawImageFromSheetScaled(169, 16, 32, 32, 2, pokemonSheet, pokemonSheetData.width, xy.x, xy.y, false);
+	drawImageFromSheetScaled(169, 16, pokemonSheetSize(), pokemonSheetSize(), 2*pokemonSheetScale(), pokemonSheet, pokemonSheetData.width, xy.x, xy.y, false);
 	drawImageFromSheet(150, 18, 32, 12, types, 32, 0, (((pkm->generation() == Generation::FOUR && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1())*12), false);
 	if(pkm->type1() != pkm->type2())
 		drawImageFromSheet(185, 18, 32, 12, types, 32, 0, (((pkm->generation() == Generation::FOUR && pkm->type2() > 8) ? pkm->type2()-1 : pkm->type2())*12), false);

@@ -32,6 +32,12 @@ std::shared_ptr<PKX> currentPokemon(int slot);
  */
 XYCoords getPokemonPosition(int dexNumber);
 
+// Returns the scale a pokemonSheet sprite should be drawn at
+int pokemonSheetScale(void);
+
+// Returns the size of a sprite from the pokemonSheet
+int pokemonSheetSize(void);
+
 // Loads the images into RAM and creates the sprites
 void loadGraphics(void);
 

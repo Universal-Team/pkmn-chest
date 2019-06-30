@@ -84,12 +84,28 @@ ImageData loadPng(std::string path, std::vector<u16> &imageBuffer) {
 	unsigned width, height;
 	lodepng::decode(image, width, height, path);
 	for(unsigned i=0;i<image.size()/4;i++) {
-  		imageBuffer.push_back(ARGB16(image[(i*4)+3], image[i*4]>>3, image[(i*4)+1]>>3, image[(i*4)+2]>>3));
+		imageBuffer.push_back(ARGB16(image[(i*4)+3], image[i*4]>>3, image[(i*4)+1]>>3, image[(i*4)+2]>>3));
 	}
 
 	ImageData imageData;
 	imageData.width = width;
 	imageData.height = height;
+	return imageData;
+}
+
+ImageData loadPngScaled(std::string path, std::vector<u16> &imageBuffer, int scale) {
+	std::vector<unsigned char> image;
+	unsigned width, height;
+	lodepng::decode(image, width, height, path);
+	for(unsigned y=0;y<height;y+=scale) {
+		for(unsigned x=0;x<width;x+=scale) {
+			imageBuffer.push_back(ARGB16(image[(((y*width)+x)*4)+3], image[((y*width)+x)*4]>>3, image[(((y*width)+x)*4)+1]>>3, image[(((y*width)+x)*4)+2]>>3));
+		}
+	}
+
+	ImageData imageData;
+	imageData.width = width/scale;
+	imageData.height = height/scale;
 	return imageData;
 }
 
@@ -189,6 +205,20 @@ void fillSpriteFromSheet(int id, std::vector<u16> &imageBuffer, int w, int h, in
 	for(int i=0;i<h;i++) {
 		for(int j=0;j<w;j++) {
 			sprites[id].gfx[(i*w)+j] = imageBuffer[((i+yOffset)*imageWidth)+j+xOffset];
+		}
+	}
+}
+
+void fillSpriteFromSheetScaled(int id, double scale, std::vector<u16> &imageBuffer, int w, int h, int imageWidth, int xOffset, int yOffset) {
+	u16 ws = w*(u16)scale;
+	scale = 1/scale;
+	for(double i=0;i<h;i+=scale) {
+		u16 ii = (u16)i;
+		u16 is=(u16)(i/scale);
+		for(double j=0;j<w;j+=scale) {
+			u16 jj=(u16)j;
+			u16 js=(u16)(j/scale);
+			sprites[id].gfx[(is*ws)+js] = imageBuffer[((ii+yOffset)*imageWidth)+jj+xOffset];
 		}
 	}
 }
