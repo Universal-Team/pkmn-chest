@@ -65,7 +65,7 @@ void drawSummaryP1(std::shared_ptr<PKX> pkm) {
 	XYCoords xy = getPokeballPosition(pkm->ball());
 	drawImageFromSheet(148, 1, 15, 15, ballSheet, ballSheetData.width, xy.x, xy.y, false);
 	xy = getPokemonPosition(pkm->species());
-	drawImageFromSheetScaled(169, 16, pokemonSheetSize(), pokemonSheetSize(), 2*pokemonSheetScale(), pokemonSheet, pokemonSheetData.width, xy.x, xy.y, false);
+	drawImageFromSheetScaled(169, 16, pokemonSheetSize, pokemonSheetSize, 2*pokemonSheetScale, pokemonSheet, pokemonSheetData.width, xy.x, xy.y, false);
 	drawImageFromSheet(150, 18, 32, 12, types, 32, 0, (((pkm->generation() == Generation::FOUR && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1())*12), false);
 	if(pkm->type1() != pkm->type2())
 		drawImageFromSheet(185, 18, 32, 12, types, 32, 0, (((pkm->generation() == Generation::FOUR && pkm->type2() > 8) ? pkm->type2()-1 : pkm->type2())*12), false);

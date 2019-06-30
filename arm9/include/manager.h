@@ -11,7 +11,8 @@ struct XYCoords {
 	int y;
 };
 
-extern int bottomArrowID, topArrowID, shinyID, currentSaveBox, currentBankBox, bottomHeldPokemonID, topHeldPokemonID;
+extern int bottomArrowID, topArrowID, shinyID, currentSaveBox, currentBankBox, bottomHeldPokemonID, topHeldPokemonID, 
+pokemonSheetScale, pokemonSheetSize;
 extern std::string savePath;
 extern std::vector<u16> arrow, ballSheet, bankBox, menuButton, shiny, pokemonSheet, stripes, types;
 extern ImageData ballSheetData, bankBoxData, menuButtonData, pokemonSheetData, shinyData, stripesData, typesData;
@@ -31,12 +32,6 @@ std::shared_ptr<PKX> currentPokemon(int slot);
  * Returns an XYCoords of the spritesheet position
  */
 XYCoords getPokemonPosition(int dexNumber);
-
-// Returns the scale a pokemonSheet sprite should be drawn at
-int pokemonSheetScale(void);
-
-// Returns the size of a sprite from the pokemonSheet
-int pokemonSheetSize(void);
 
 // Loads the images into RAM and creates the sprites
 void loadGraphics(void);

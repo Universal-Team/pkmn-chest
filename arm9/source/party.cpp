@@ -20,7 +20,7 @@ void showParty(int selection) {
 	for(int i=0;i<6;i++) {
 		XYCoords xy = getPokemonPosition(save->pkm(i)->species());
 		drawImageTinted(partyButtons[i].x, partyButtons[i].y, menuButtonData.width, menuButtonData.height, selection == i ? TEAL_RGB : LIGHT_GRAY, menuButton, false);
-		drawImageFromSheetScaled(partyButtons[i].x+8, partyButtons[i].y, pokemonSheetSize(), pokemonSheetSize(), pokemonSheetScale(), pokemonSheet, pokemonSheetData.width, xy.x, xy.y, false);
+		drawImageFromSheetScaled(partyButtons[i].x+8, partyButtons[i].y, pokemonSheetSize, pokemonSheetSize, pokemonSheetScale, pokemonSheet, pokemonSheetData.width, xy.x, xy.y, false);
 		if(save->pkm(i)->nicknamed())	printText(save->pkm(i)->nickname(), partyButtons[i].x+47, partyButtons[i].y+14, false);
 		else	printText(Lang::species[save->pkm(i)->species()], partyButtons[i].x+47, partyButtons[i].y+14, false);
 	}
