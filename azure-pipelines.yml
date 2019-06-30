@@ -16,10 +16,6 @@ variables:
 
 steps:
 - script: |
-    echo $(Build.SourceBranchName)
-  displayName: 'testing...'
-
-- script: |
     curl -L https://github.com/devkitPro/pacman/releases/download/devkitpro-pacman-1.0.1/devkitpro-pacman-installer.pkg -o devkitpro-pacman-installer.pkg
     sudo installer -pkg devkitpro-pacman-installer.pkg -target /
     sudo dkp-pacman -Sy
@@ -56,7 +52,6 @@ steps:
     git commit -m "pkmn-chest | $(COMMIT_TAG)"
     git push origin master
     git tag v$CURRENT_DATE
-    echo '##vso[task.setvariable variable=EXTRAS_COMMIT]'$(git log -1 --format="%H")
   displayName: "Commit to Universal-Team/extras"
 
 - task: GitHubRelease@0
@@ -65,7 +60,7 @@ steps:
     gitHubConnection: TWLBot
     repositoryName: Universal-Team/extras
     action: create
-    target: $(EXTRAS_COMMIT)
+    target: '$(Build.SourceVersion)'
     tagSource: 'manual'
     tag: v$(CURRENT_DATE)
     title: pkmn-chest | $(COMMIT_TAG)
@@ -82,8 +77,10 @@ steps:
     gitHubConnection: TWLBot
     repositoryName: Universal-Team/pkmn-chest
     action: edit
-    target: $(Build.SourceBranchName)
+    target: '$(Build.SourceVersion)'
+    tag: $(Build.SourceBranchName)
     assets: '$(Build.ArtifactStagingDirectory)/**/*'
+    isDraft: false
 
 - script: |
     curl -o send.sh https://raw.githubusercontent.com/Universal-Team/discord-webhooks/master/send-azure.sh
