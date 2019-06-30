@@ -101,7 +101,7 @@ void drawSummaryP1(std::shared_ptr<PKX> pkm) {
 		if(i!=7)	// OT Name is colored
 			printText(textSP1[i].text, textSP1[i].x, textSP1[i].y, false);
 		else
-			printTextTinted(textSP1[i].text, (pkm->otGender() ? BLUE_RGB : RED_RGB), textSP1[i].x, textSP1[i].y, false);
+			printTextTinted(textSP1[i].text, (pkm->otGender() ? RED_RGB : BLUE_RGB), textSP1[i].x, textSP1[i].y, false);
 	}
 }
 

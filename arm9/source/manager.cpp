@@ -68,8 +68,8 @@ std::shared_ptr<PKX> currentPokemon(int slot) {
 XYCoords getPokemonPosition(int dexNumber) {
 	if(dexNumber > 649)	return {0, 0};
 	XYCoords xy;
-	xy.y = (dexNumber/16)*(sdFound() ? 32 : 16);
-	xy.x = (dexNumber-((dexNumber/16)*16))*(sdFound() ? 32 : 16);
+	xy.y = (dexNumber/16)*pokemonSheetSize;
+	xy.x = (dexNumber-((dexNumber/16)*16))*pokemonSheetSize;
 	return xy;
 }
 
