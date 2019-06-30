@@ -103,7 +103,8 @@ void showTrainerCard(void) {
 				case 0: {
 					std::string name = Input::getLine(7);
 					if(name != "")	save->otName(name);
-					save->gender(Input::getBool("Female", "Male"));
+					// save->gender(Input::getBool("Female", "Male"));
+					save->gender(Input::getInt());
 					break;
 				} case 1: {
 					int num = Input::getInt(65535);

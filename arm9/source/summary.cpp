@@ -1,5 +1,6 @@
 #include "summary.h"
-#include "graphics/colors.h"
+#include "colors.h"
+#include "lang.h"
 #include "loader.h"
 #include "keyboard.h"
 #include "manager.h"
@@ -58,7 +59,7 @@ void drawSummaryP1(std::shared_ptr<PKX> pkm) {
 	drawRectangle(0, 124, 150, 1, LIGHT_GRAY, false);
 
 	// Print Pokémon name
-	printTextTinted(pkm->nickname(), (pkm->gender() ? (pkm->gender() == 1 ? RED_RGB : WHITE) : BLUE_RGB), 165, 1, false);
+	printTextTinted(pkm->nickname(), (pkm->gender() ? (pkm->gender() == 1 ? BLUE_RGB : WHITE) : RED_RGB), 165, 1, false);
 
 	// Draw Pokémon Pokéball, types, and shiny star (if shiny)
 	XYCoords xy = getPokeballPosition(pkm->ball());
@@ -86,9 +87,9 @@ void drawSummaryP1(std::shared_ptr<PKX> pkm) {
 	// Print Pokémon and trainer info
 	snprintf(textSP1[0].text,  sizeof(textSP1[0].text), "%.3i", pkm->species());
 	snprintf(textSP1[1].text,  sizeof(textSP1[1].text), "%s", pkm->nickname().c_str());
-	snprintf(textSP1[2].text,  sizeof(textSP1[2].text), "%i", pkm->ball());
+	snprintf(textSP1[2].text,  sizeof(textSP1[2].text), "%s", Lang::balls[pkm->ball()].c_str());
 	snprintf(textSP1[3].text,  sizeof(textSP1[3].text), "%i", pkm->level());
-	snprintf(textSP1[4].text,  sizeof(textSP1[4].text), "%i", pkm->nature());
+	snprintf(textSP1[4].text,  sizeof(textSP1[4].text), "%s", Lang::natures[pkm->nature()].c_str());
 	snprintf(textSP1[5].text,  sizeof(textSP1[5].text), "%s", pkm->shiny() ? "Yes" : "No");
 	snprintf(textSP1[6].text,  sizeof(textSP1[6].text), "%s", pkm->pkrs() ? "Yes" : "No");
 	snprintf(textSP1[7].text,  sizeof(textSP1[7].text), "%s", pkm->otName().c_str());
@@ -99,7 +100,7 @@ void drawSummaryP1(std::shared_ptr<PKX> pkm) {
 		if(i!=7)	// OT Name is colored
 			printText(textSP1[i].text, textSP1[i].x, textSP1[i].y, false);
 		else
-			printTextTinted(textSP1[i].text, (pkm->otGender() ? RED_RGB : BLUE_RGB), textSP1[i].x, textSP1[i].y, false);
+			printTextTinted(textSP1[i].text, (pkm->otGender() ? BLUE_RGB : RED_RGB), textSP1[i].x, textSP1[i].y, false);
 	}
 }
 
@@ -116,12 +117,13 @@ void drawSummaryP2(std::shared_ptr<PKX> pkm) {
 	drawRectangle(208, 4, 1, 112, LIGHT_GRAY, false);
 
 	// Print stat info labels
+	int i = pkm->nature();
 	printText("HP", 20, textSP2r1[0].y, false);
-	printText("Attack", 20, textSP2r1[1].y, false);
-	printText("Defense", 20, textSP2r1[2].y, false);
-	printText("Sp. Atk", 20, textSP2r1[3].y, false);
-	printText("Sp. Def", 20, textSP2r1[4].y, false);
-	printText("Speed", 20, textSP2r1[5].y, false);
+	printTextTinted("Attack",  (i!=0&&i<5         ? RED_RGB : i!=0&&!(i%5)      ? BLUE_RGB : WHITE), 20, textSP2r1[1].y, false);
+	printTextTinted("Defense", (i!=6&&i>4&&i<10   ? RED_RGB : i!=6&&!((i-1)%5)  ? BLUE_RGB : WHITE), 20, textSP2r1[2].y, false);
+	printTextTinted("Sp. Atk", (i!=18&&i>14&&i<20 ? RED_RGB : i!=18&&!((i-3)%5) ? BLUE_RGB : WHITE), 20, textSP2r1[3].y, false);
+	printTextTinted("Sp. Def", (i!=24&&i>19       ? RED_RGB : i!=24&&!((i-4)%5) ? BLUE_RGB : WHITE), 20, textSP2r1[4].y, false);
+	printTextTinted("Speed",   (i!=12&&i>9&&i<15  ? RED_RGB : i!=12&&!((i-2)%5) ? BLUE_RGB : WHITE), 20, textSP2r1[5].y, false);
 
 	// Print column titles
 	printTextCentered("Base", textSP2r1[0].x, textSP2r1[0].y-16, false);
@@ -246,7 +248,7 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 						if(num > 0)	pkm->level(num);
 						break;
 					} case 4: {
-						int num = Input::getInt(); // TODO: Add limit and proper selection
+						int num = Input::getInt(24); // TODO: Add proper selection
 						if(num != -1)	pkm->nature(num);
 						break;
 					} case 5: {

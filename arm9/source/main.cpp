@@ -1,11 +1,12 @@
 #include <fat.h>
 
-#include "common/banks.hpp"
+#include "banks.hpp"
+#include "colors.h"
 #include "config.h"
 #include "fileBrowse.h"
 #include "flashcard.h"
-#include "graphics/colors.h"
-#include "graphics/graphics.h"
+#include "graphics.h"
+#include "lang.h"
 #include "loader.h"
 #include "manager.h"
 #include "nitrofs.h"
@@ -54,6 +55,7 @@ int main(int argc, char **argv) {
 
 	Config::loadConfig();
 	Banks::init();
+	Lang::loadLangStrings(0);
 	loadGraphics();
 
 	while(1) {

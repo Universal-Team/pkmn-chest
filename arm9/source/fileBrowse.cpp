@@ -136,7 +136,7 @@ void showDirectoryContents(const std::vector<DirEntry>& dirContents, int startRo
 	}
 }
 
-#define verNumber "v0.3"
+#define verNumber "v0.4"
 
 bool showTopMenuOnExit = true, noCardMessageSet = false;
 int tmCurPos = 0, tmScreenOffset = 0, tmSlot1Offset = 0;
