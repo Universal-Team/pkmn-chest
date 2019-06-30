@@ -16,7 +16,7 @@ variables:
 
 steps:
 - script: |
-    echo $(Build.SourceVersion)
+    echo $(Build.SourceBranchName)
   displayName: 'testing...'
 
 - script: |
@@ -77,12 +77,12 @@ steps:
 
 - task: GitHubRelease@0
   displayName: "Release to Universal-Team/pkmn-chest"
-  condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/v')
+  condition: startsWith(variables['Build.SourceBranchName'], 'v')
   inputs:
     gitHubConnection: TWLBot
     repositoryName: Universal-Team/pkmn-chest
     action: edit
-    target: $(Build.SourceVersion)
+    target: $(Build.SourceBranchName)
     assets: '$(Build.ArtifactStagingDirectory)/**/*'
 
 - script: |
