@@ -1,3 +1,9 @@
+trigger:
+  branches:
+    include: ['*']
+  tags:
+    include: ['*']
+
 name:  $[format('{0:yyyyMMdd\-HHmmss}', pipeline.startTime)]
 
 pool:
