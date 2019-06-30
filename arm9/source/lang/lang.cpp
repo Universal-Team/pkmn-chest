@@ -98,6 +98,7 @@ void Lang::loadLangStrings(int lang) {
 	Lang::optionsTextLabels[0] = ini.GetString("options", "chestFile", Lang::optionsTextLabels[0]);
 	Lang::optionsTextLabels[1] = ini.GetString("options", "chestSize", Lang::optionsTextLabels[1]);
 	Lang::optionsTextLabels[2] = ini.GetString("options", "language", Lang::optionsTextLabels[2]);
+	Lang::optionsTextLabels[3] = ini.GetString("options", "backupAmount", Lang::optionsTextLabels[3]);
 	Lang::optionsText[0] = ini.GetString("options", "new", Lang::optionsText[0]);
 	Lang::optionsText[1] = ini.GetString("options", "rename", Lang::optionsText[1]);
 	Lang::optionsText[2] = ini.GetString("options", "delete", Lang::optionsText[2]);

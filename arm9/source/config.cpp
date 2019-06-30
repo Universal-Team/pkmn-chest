@@ -3,10 +3,11 @@
 #include "flashcard.h"
 
 std::string Config::chestFile;
-int Config::keyboardLayout, Config::keyboardXPos, Config::lang;
+int Config::backupAmount, Config::keyboardLayout, Config::keyboardXPos, Config::lang;
 
 void Config::loadConfig() {
 	CIniFile ini(sdFound() ? "sd:/_nds/pkmn-chest/config.ini" : "fat:/_nds/pkmn-chest/config.ini");
+	Config::backupAmount = ini.GetInt("backup", "amount", 1);
 	Config::chestFile = ini.GetString("chest", "file", "pkmn-chest_1");
 	Config::keyboardLayout = ini.GetInt("keyboard", "layout", 0);
 	Config::keyboardXPos = ini.GetInt("keyboard", "xPos", 0);
@@ -15,6 +16,7 @@ void Config::loadConfig() {
 
 void Config::saveConfig() {
 	CIniFile ini(sdFound() ? "sd:/_nds/pkmn-chest/config.ini" : "fat:/_nds/pkmn-chest/config.ini");
+	ini.SetInt("backup", "amount", Config::backupAmount);
 	ini.SetString("chest", "file", Config::chestFile);
 	ini.SetInt("keyboard", "layout", Config::keyboardLayout);
 	ini.SetInt("keyboard", "xPos", Config::keyboardXPos);

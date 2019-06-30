@@ -37,10 +37,12 @@
 
 #define ENTRIES_PER_SCREEN 11
 #define ENTRY_PAGE_LENGTH 10
+#define copyBufSize 0x8000
 
 char path[PATH_MAX];
 char fatLabel[12];
 char sdLabel[12];
+u32 copyBuf[copyBufSize];
 
 struct DirEntry {
 	std::string name;
@@ -590,18 +592,16 @@ int fcopy(const char *sourcePath, const char *destinationPath) {
 		int numr;
 		while(1)
 		{
-			u32 copyBuf[0x8000];
-
+			drawRectangle(((offset < fsize ? (double)offset/fsize : 1)*227)+5, 33, 19, 16, LIGHT_GRAY, false);
 			// Copy file to destination path
-			numr = fread(copyBuf, 2, sizeof(copyBuf), sourceFile);
+			numr = fread(copyBuf, 2, copyBufSize, sourceFile);
 			fwrite(copyBuf, 2, numr, destinationFile);
-			offset += sizeof(copyBuf);
+			offset += copyBufSize;
+
 
 			if(offset > fsize) {
 				fclose(sourceFile);
 				fclose(destinationFile);
-
-				for(int i = 0; i < 30; i++) swiWaitForVBlank();
 
 				return 1;
 				break;

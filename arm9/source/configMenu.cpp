@@ -21,6 +21,7 @@ Text textCP1Labels[] {
 	{20, 20}, // Chest file
 	{20, 100}, // Chest size
 	{20, 116}, // Language
+	{20, 132}, // Backups
 };
 Text textCP1[] {
 	{24, 36}, // New
@@ -29,6 +30,7 @@ Text textCP1[] {
 	{24, 84}, // Change
 	{96, 100}, // Chest size
 	{96, 116}, // Language
+	{96, 132}, // Backups
 };
 
 std::string langNames[] = { "Deutsche", "English", "Español", "Français", "Italiano", "にほんご" };
@@ -44,6 +46,8 @@ void drawConfigMenu(void) {
 	snprintf(str, sizeof(str), "%i", Banks::bank->boxes());
 	Lang::optionsText[4] = str;
 	Lang::optionsText[5] = langNames[Config::lang];
+	snprintf(str, sizeof(str), "%i", Config::backupAmount);
+	Lang::optionsText[6] = str;
 
 	// Print text
 	for(uint i=0;i<Lang::optionsTextLabels.size();i++) {
@@ -160,6 +164,13 @@ void configMenu(void) {
 						else	Config::lang = 0;
 					}
 					Lang::loadLangStrings(Config::lang);
+				} case 6: {
+					int num = Input::getInt(9);
+					if(num != -1) {
+						Config::backupAmount = num;
+						Config::saveConfig();
+					}
+					break;
 				}
 			}
 			drawConfigMenu();

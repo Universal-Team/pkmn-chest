@@ -471,8 +471,12 @@ void savePrompt(void) {
 
 	printTextTinted("Would you like to save changes", DARK_GRAY, 5, 0, false);
 	printTextTinted("to the chest?", DARK_GRAY, 5, 16, false);
-	if(Input::getBool("Save", "Discard"))	Banks::bank->save();
+	if(Input::getBool("Save", "Discard")) {
+		if(Config::backupAmount != 0) Banks::bank->backup();
+		Banks::bank->save();
+	}
 
+	drawRectangle(5, 33, 246, 16, DARK_GRAY, false);
 	drawRectangle(0, 0, 256, 32, LIGHT_GRAY, false);
 	printTextTinted("Would you like to save changes", DARK_GRAY, 5, 0, false);
 	if(savePath == cardSave)	printTextTinted("to the gamecard?", DARK_GRAY, 5, 16, false);

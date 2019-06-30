@@ -8,8 +8,8 @@ namespace Lang {
 	aMenuText = {"Edit", "Move", "Copy", "Release", "Dump", "Back"},
 	aMenuEmptySlotText = {"Inject", "Create", "Back"},
 	aMenuTopBarText = {"Rename", "Swap", "Dump box", "Back"},
-	optionsTextLabels = {"Chest File:", "Chest Size:", "Language:"},
-	optionsText = {"New", "Rename", "Delete", "Change", "", ""},
+	optionsTextLabels = {"Chest File:", "Chest Size:", "Language:", "Backups:"},
+	optionsText = {"New", "Rename", "Delete", "Change", "", "", ""},
 	xMenuText = {"Party", "Options", "", "", "Save", "Exit"};
 
 	std::string
