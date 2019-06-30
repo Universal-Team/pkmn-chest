@@ -52,6 +52,7 @@ steps:
     git commit -m "pkmn-chest | $(COMMIT_TAG)"
     git push origin master
     git tag v$CURRENT_DATE
+    echo '##vso[task.setvariable variable=EXTRAS_COMMIT]'$(git log -1 --format="%H")
   displayName: "Commit to Universal-Team/extras"
 
 - task: GitHubRelease@0
@@ -60,7 +61,7 @@ steps:
     gitHubConnection: TWLBot
     repositoryName: Universal-Team/extras
     action: create
-    target: '$(Build.SourceVersion)'
+    target: $(EXTRAS_COMMIT)
     tagSource: 'manual'
     tag: v$(CURRENT_DATE)
     title: pkmn-chest | $(COMMIT_TAG)
@@ -80,7 +81,6 @@ steps:
     target: '$(Build.SourceVersion)'
     tag: $(Build.SourceBranchName)
     assets: '$(Build.ArtifactStagingDirectory)/**/*'
-    isDraft: false
 
 - script: |
     curl -o send.sh https://raw.githubusercontent.com/Universal-Team/discord-webhooks/master/send-azure.sh
