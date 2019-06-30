@@ -24,14 +24,13 @@ Text textCP1Labels[] {
 	{20, 132}, // Backups
 };
 Text textCP1[] {
-	{24, 36}, // New
-	{24, 52}, // Rename
-	{24, 68}, // Delete
-	{24, 84}, // Change
-	{96, 100}, // Chest size
-	{96, 116}, // Language
-	{96, 132}, // Backups
+	{28, 36}, // New
+	{28, 52}, // Rename
+	{28, 68}, // Delete
+	{28, 84}, // Change
 };
+
+std::vector<std::string> optionsText = {"", "", ""};
 
 std::string langNames[] = { "Deutsche", "English", "Español", "Français", "Italiano", "にほんご" };
 
@@ -44,18 +43,22 @@ void drawConfigMenu(void) {
 	// Set bank size and language text
 	char str[4];
 	snprintf(str, sizeof(str), "%i", Banks::bank->boxes());
-	Lang::optionsText[4] = str;
-	Lang::optionsText[5] = langNames[Config::lang];
+	optionsText[0] = str;
+	optionsText[1] = langNames[Config::lang];
 	snprintf(str, sizeof(str), "%i", Config::backupAmount);
-	Lang::optionsText[6] = str;
+	optionsText[2] = str;
 
 	// Print text
 	for(uint i=0;i<Lang::optionsTextLabels.size();i++) {
 		printText(Lang::optionsTextLabels[i], textCP1Labels[i].x, textCP1Labels[i].y, false);
 	}
-	for(uint i=0;i<Lang::optionsText.size();i++) {
+	for(uint i=0;i<(sizeof(textCP1)/sizeof(textCP1[0]));i++) {
 		printText(Lang::optionsText[i], textCP1[i].x, textCP1[i].y, false);
 	}
+	for(uint i=0;i<optionsText.size();i++) {
+		printText(optionsText[i], textCP1Labels[i+1].x+getTextWidth(Lang::optionsTextLabels[i+1])+8, textCP1Labels[i+1].y, false);
+	}
+
 }
 
 void configMenu(void) {
@@ -79,7 +82,7 @@ void configMenu(void) {
 		if(held & KEY_UP) {
 			if(selection > 0)	selection--;
 		} else if(held & KEY_DOWN) {
-			if(selection < (int)(sizeof(textCP1)/sizeof(textCP1[0]))-1)	selection++;
+			if(selection < (int)(Lang::optionsText.size()+optionsText.size())-1)	selection++;
 		} else if(selection == 5 && (pressed & KEY_LEFT || pressed & KEY_RIGHT)) {
 			optionSelected = true;
 		} else if(pressed & KEY_A) {
@@ -178,7 +181,8 @@ void configMenu(void) {
 			setSpriteVisibility(bottomArrowID, true);
 		}
 
-		setSpritePosition(bottomArrowID, textCP1[selection].x+getTextWidth(Lang::optionsText[selection]), textCP1[selection].y-6);
+		if(selection < (int)Lang::optionsText.size())	setSpritePosition(bottomArrowID, textCP1[selection].x+getTextWidth(Lang::optionsText[selection]), textCP1[selection].y-6);
+		else	setSpritePosition(bottomArrowID, textCP1Labels[selection-3].x+getTextWidth(Lang::optionsTextLabels[selection-3])+8+getTextWidth(optionsText[selection-4]), textCP1Labels[selection-3].y-6);
 		updateOam();
 	}
 }

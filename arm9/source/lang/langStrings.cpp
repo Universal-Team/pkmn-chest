@@ -9,7 +9,7 @@ namespace Lang {
 	aMenuEmptySlotText = {"Inject", "Create", "Back"},
 	aMenuTopBarText = {"Rename", "Swap", "Dump box", "Back"},
 	optionsTextLabels = {"Chest File:", "Chest Size:", "Language:", "Backups:"},
-	optionsText = {"New", "Rename", "Delete", "Change", "", "", ""},
+	optionsText = {"New", "Rename", "Delete", "Change"},
 	xMenuText = {"Party", "Options", "", "", "Save", "Exit"};
 
 	std::string
