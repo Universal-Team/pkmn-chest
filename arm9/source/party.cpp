@@ -18,11 +18,13 @@ struct button {
 
 void showParty(int selection) {
 	for(int i=0;i<6;i++) {
-		XYCoords xy = getPokemonPosition(save->pkm(i)->species());
 		drawImageTinted(partyButtons[i].x, partyButtons[i].y, menuButtonData.width, menuButtonData.height, selection == i ? TEAL_RGB : LIGHT_GRAY, menuButton, false);
-		drawImageFromSheetScaled(partyButtons[i].x+8, partyButtons[i].y, pokemonSheetSize, pokemonSheetSize, pokemonSheetScale, pokemonSheet, pokemonSheetData.width, xy.x, xy.y, false);
-		if(save->pkm(i)->nicknamed())	printText(save->pkm(i)->nickname(), partyButtons[i].x+47, partyButtons[i].y+14, false);
-		else	printText(Lang::species[save->pkm(i)->species()], partyButtons[i].x+47, partyButtons[i].y+14, false);
+		if(save->pkm(i)->species() != 0) {
+			XYCoords xy = getPokemonPosition(save->pkm(i)->species());
+			drawImageFromSheetScaled(partyButtons[i].x+8, partyButtons[i].y, pokemonSheetSize, pokemonSheetSize, pokemonSheetScale, pokemonSheet, pokemonSheetData.width, xy.x, xy.y, false);
+			if(save->pkm(i)->nicknamed())	printText(save->pkm(i)->nickname(), partyButtons[i].x+47, partyButtons[i].y+14, false);
+			else	printText(Lang::species[save->pkm(i)->species()], partyButtons[i].x+47, partyButtons[i].y+14, false);
+		}
 	}
 }
 
@@ -69,16 +71,18 @@ void manageParty(void) {
 		}
 
 		if(selectedOption != -1) {
-			save->pkm(showPokemonSummary(save->pkm(selectedOption)), selectedOption);
+			if(save->pkm(selectedOption)->species() != 0) {
+				save->pkm(showPokemonSummary(save->pkm(selectedOption)), selectedOption);
 
-			// Redraw background
-			drawRectangle(0, 0, 256, 16, BLACK, false);
-			drawRectangle(0, 16, 256, 160, DARK_GRAY, false);
-			drawRectangle(0, 176, 256, 16, BLACK, false);
-			
-			// Hide arrow
-			setSpriteVisibility(bottomArrowID, false);
-			updateOam();
+				// Redraw background
+				drawRectangle(0, 0, 256, 16, BLACK, false);
+				drawRectangle(0, 16, 256, 160, DARK_GRAY, false);
+				drawRectangle(0, 176, 256, 16, BLACK, false);
+				
+				// Hide arrow
+				setSpriteVisibility(bottomArrowID, false);
+				updateOam();
+			}
 
 			selectedOption = -1;
 		}

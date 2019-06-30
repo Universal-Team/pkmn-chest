@@ -305,6 +305,8 @@ void printTextTinted(std::string text, u16 color, int xPos, int yPos, bool top);
  */
 void printTextTinted(std::u16string text, u16 color, int xPos, int yPos, bool top);
 
+void printTextTintedScaled(std::u16string text, double scaleX, double scaleY, u16 color, int xPos, int yPos, bool top);
+
 /**
  * Gets the width of a std::string of text
  * std::string text is the text to get the width of
