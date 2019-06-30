@@ -5,8 +5,7 @@
 
 namespace Config {
 	extern std::string chestFile;
-	extern int keyboardLayout;
-	extern int keyboardXPos;
+	extern int keyboardLayout, keyboardXPos, lang;
 
 	void loadConfig();
 	void saveConfig();

@@ -8,7 +8,7 @@
 struct Text {
 	int x;
 	int y;
-	char text[11];
+	char text[32];
 };
 
 Text textSP1[] {
@@ -59,7 +59,7 @@ void drawSummaryP1(std::shared_ptr<PKX> pkm) {
 	drawRectangle(0, 124, 150, 1, LIGHT_GRAY, false);
 
 	// Print Pokémon name
-	printTextTinted(pkm->nickname(), (pkm->gender() ? (pkm->gender() == 1 ? BLUE_RGB : WHITE) : RED_RGB), 165, 1, false);
+	printTextTinted(Lang::species[pkm->species()], (pkm->gender() ? (pkm->gender() == 1 ? BLUE_RGB : WHITE) : RED_RGB), 165, 1, false);
 
 	// Draw Pokémon Pokéball, types, and shiny star (if shiny)
 	XYCoords xy = getPokeballPosition(pkm->ball());

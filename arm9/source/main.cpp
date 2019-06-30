@@ -55,7 +55,7 @@ int main(int argc, char **argv) {
 
 	Config::loadConfig();
 	Banks::init();
-	Lang::loadLangStrings(0);
+	Lang::loadLangStrings(Config::lang);
 	loadGraphics();
 
 	while(1) {

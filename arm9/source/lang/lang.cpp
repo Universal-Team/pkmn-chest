@@ -3,9 +3,7 @@
 
 std::vector<std::string> Lang::balls, Lang::items, Lang::locations4, Lang::locations5, Lang::moves, Lang::natures, Lang::species;
 
-std::string langs[] = {
-	"en",
-};
+std::string langs[] = { "de", "en", "es", "fr", "it", "jp"};
 
 void Lang::loadLangStrings(int lang) {
 	// Clear vectors

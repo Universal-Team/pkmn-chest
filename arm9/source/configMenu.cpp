@@ -1,18 +1,19 @@
 #include "configMenu.h"
 #include "banks.hpp"
+#include "colors.h"
+#include "config.h"
 #include <dirent.h>
 #include "fileBrowse.h"
 #include "flashcard.h"
-#include "graphics/colors.h"
-#include "config.h"
-#include "graphics/graphics.h"
+#include "graphics.h"
 #include "keyboard.h"
+#include "lang.h"
 #include "manager.h"
 
 struct Text {
 	int x;
 	int y;
-	char text[11];
+	char text[32];
 };
 
 Text textCP1[] {
@@ -20,8 +21,11 @@ Text textCP1[] {
 	{24, 52, "Rename"},
 	{24, 68, "Delete"},
 	{24, 84, "Change"},
-	{96, 100},
+	{96, 100}, // Resize
+	{96, 116}, // Language
 };
+
+std::string langNames[] = { "Deutsche", "English", "Español", "Français", "Italiano", "にほんご" };
 
 void drawConfigMenu(void) {
 	// Draw background
@@ -30,11 +34,13 @@ void drawConfigMenu(void) {
 	drawRectangle(0, 176, 256, 16, BLACK, false);
 	
 	// Print labels
-	printText("Bank File:", 20, 20, false);
+	printText("Bank File:", 20,  20, false);
 	printText("Bank Size:", 20, 100, false);
+	printText("Language:",  20, 116, false);
 
 	// Get bank size text
-	snprintf(textCP1[4].text, sizeof(textCP1[3].text), "%i", Banks::bank->boxes());
+	snprintf(textCP1[4].text, sizeof(textCP1[4].text), "%i", Banks::bank->boxes());
+	snprintf(textCP1[5].text, sizeof(textCP1[5].text), "%s", langNames[Config::lang].c_str());
 
 	// Print text
 	for(uint i=0;i<(sizeof(textCP1)/sizeof(textCP1[0]));i++) {
@@ -64,9 +70,12 @@ void configMenu(void) {
 			if(selection > 0)	selection--;
 		} else if(held & KEY_DOWN) {
 			if(selection < (int)(sizeof(textCP1)/sizeof(textCP1[0]))-1)	selection++;
+		} else if(selection == 5 && (pressed & KEY_LEFT || pressed & KEY_RIGHT)) {
+			optionSelected = true;
 		} else if(pressed & KEY_A) {
 			optionSelected = true;
 		} else if(pressed & KEY_B) {
+			Config::saveConfig();
 			setSpriteVisibility(bottomArrowID, false);
 			updateOam();
 			return;
@@ -136,6 +145,15 @@ void configMenu(void) {
 					int num = Input::getInt(500);
 					if(num > 0)	Banks::setBankSize(Config::chestFile, num);
 					break;
+				} case 5: {
+					if(pressed & KEY_LEFT) {
+						if(Config::lang > 0)	Config::lang--;
+						else	Config::lang = 5;
+					} else {
+						if(Config::lang < 5)	Config::lang++;
+						else	Config::lang = 0;
+					}
+					Lang::loadLangStrings(Config::lang);
 				}
 			}
 			drawConfigMenu();
