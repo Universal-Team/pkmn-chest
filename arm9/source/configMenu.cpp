@@ -8,20 +8,25 @@
 #include "graphics.h"
 #include "keyboard.h"
 #include "lang.h"
+#include "langStrings.h"
 #include "manager.h"
 
 struct Text {
 	int x;
 	int y;
-	char text[32];
 };
 
+Text textCP1Labels[] {
+	{20, 20}, // Chest file
+	{20, 100}, // Chest size
+	{20, 116}, // Language
+};
 Text textCP1[] {
-	{24, 36, "New"},
-	{24, 52, "Rename"},
-	{24, 68, "Delete"},
-	{24, 84, "Change"},
-	{96, 100}, // Resize
+	{24, 36}, // New
+	{24, 52}, // Rename
+	{24, 68}, // Delete
+	{24, 84}, // Change
+	{96, 100}, // Chest size
 	{96, 116}, // Language
 };
 
@@ -32,19 +37,19 @@ void drawConfigMenu(void) {
 	drawRectangle(0, 0, 256, 16, BLACK, false);
 	drawRectangle(0, 16, 256, 160, DARK_GRAY, false);
 	drawRectangle(0, 176, 256, 16, BLACK, false);
-	
-	// Print labels
-	printText("Bank File:", 20,  20, false);
-	printText("Bank Size:", 20, 100, false);
-	printText("Language:",  20, 116, false);
 
-	// Get bank size text
-	snprintf(textCP1[4].text, sizeof(textCP1[4].text), "%i", Banks::bank->boxes());
-	snprintf(textCP1[5].text, sizeof(textCP1[5].text), "%s", langNames[Config::lang].c_str());
+	// Set bank size and language text
+	char str[4];
+	snprintf(str, sizeof(str), "%i", Banks::bank->boxes());
+	Lang::optionsText[4] = str;
+	Lang::optionsText[5] = langNames[Config::lang];
 
 	// Print text
-	for(uint i=0;i<(sizeof(textCP1)/sizeof(textCP1[0]));i++) {
-		printText(textCP1[i].text, textCP1[i].x, textCP1[i].y, false);
+	for(uint i=0;i<Lang::optionsTextLabels.size();i++) {
+		printText(Lang::optionsTextLabels[i], textCP1Labels[i].x, textCP1Labels[i].y, false);
+	}
+	for(uint i=0;i<Lang::optionsText.size();i++) {
+		printText(Lang::optionsText[i], textCP1[i].x, textCP1[i].y, false);
 	}
 }
 
@@ -52,7 +57,7 @@ void configMenu(void) {
 	drawConfigMenu();
 
 	setSpriteVisibility(bottomArrowID, true);
-	setSpritePosition(bottomArrowID, textCP1[0].x+getTextWidth(textCP1[0].text), textCP1[0].y-6);
+	setSpritePosition(bottomArrowID, textCP1[0].x+getTextWidth(Lang::optionsText[0]), textCP1[0].y-6);
 	updateOam();
 
 	bool optionSelected = false;
@@ -82,7 +87,7 @@ void configMenu(void) {
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
 			for(uint i=0;i<(sizeof(textCP1)/sizeof(textCP1[0]));i++) {
-				if(touch.px >= textCP1[i].x && touch.px <= textCP1[i].x+getTextWidth(textCP1[i].text) && touch.py >= textCP1[i].y && touch.py <= textCP1[i].y+16) {
+				if(touch.px >= textCP1[i].x && touch.px <= textCP1[i].x+getTextWidth(Lang::optionsText[i]) && touch.py >= textCP1[i].y && touch.py <= textCP1[i].y+16) {
 					selection = i;
 					optionSelected = true;
 					break;
@@ -160,7 +165,7 @@ void configMenu(void) {
 			setSpriteVisibility(bottomArrowID, true);
 		}
 
-		setSpritePosition(bottomArrowID, textCP1[selection].x+getTextWidth(textCP1[selection].text), textCP1[selection].y-6);
+		setSpritePosition(bottomArrowID, textCP1[selection].x+getTextWidth(Lang::optionsText[selection]), textCP1[selection].y-6);
 		updateOam();
 	}
 }

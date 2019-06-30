@@ -7,6 +7,7 @@
 #include "flashcard.h"
 #include "graphics.h"
 #include "lang.h"
+#include "langStrings.h"
 #include "loader.h"
 #include "manager.h"
 #include "nitrofs.h"
@@ -51,17 +52,17 @@ int main(int argc, char **argv) {
 		}
 	}
 	loadFont();
-	printTextCentered("Loading...", 0, 32, false);
-
 	Config::loadConfig();
-	Banks::init();
 	Lang::loadLangStrings(Config::lang);
+	printTextCentered(Lang::loading, 0, 32, false);
+
+	Banks::init();
 	loadGraphics();
 
 	while(1) {
 		if(!loadSave(savePath = browseForSave())) {
 			drawRectangle(20, 20, 216, 152, 0xCC00, true);
-			printTextCentered("Invalid save file", 0, 24, true);
+			printTextCentered(Lang::invalidSave, 0, 24, true);
 			for(int i=0;i<120;i++)	swiWaitForVBlank();
 			continue;
 		}

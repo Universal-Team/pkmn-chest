@@ -1,6 +1,6 @@
 #include "summary.h"
 #include "colors.h"
-#include "lang.h"
+#include "langStrings.h"
 #include "loader.h"
 #include "keyboard.h"
 #include "manager.h"

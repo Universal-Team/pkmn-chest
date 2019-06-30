@@ -1,14 +1,15 @@
 #include "manager.h"
 #include "banks.hpp"
+#include "colors.h"
 #include "config.h"
 #include "configMenu.h"
 #include <dirent.h>
 #include "fileBrowse.h"
 #include "flashcard.h"
 #include <fstream>
-#include "graphics/colors.h"
-#include "graphics/graphics.h"
+#include "graphics.h"
 #include "keyboard.h"
+#include "langStrings.h"
 #include "loader.h"
 #include "party.h"
 #include "PK4.hpp"
@@ -25,13 +26,13 @@ std::string savePath;
 std::vector<u16> arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, menuButton, shiny, pokemonSheet, stripes, types;
 ImageData ballSheetData, bankBoxData, menuButtonData, pokemonSheetData, shinyData, stripesData, typesData;
 
-struct Button {
+struct Text {
 	int x;
 	int y;
 	std::string text;
 };
 
-std::vector<Button> aMenuButtons = {
+std::vector<Text> aMenuButtons = {
 	{170,  16, "Edit"},
 	{170,  41, "Move"},
 	{170,  66, "Copy"},
@@ -39,21 +40,21 @@ std::vector<Button> aMenuButtons = {
 	{170, 116, "Dump"},
 	{170, 141, "Back"},
 };
-std::vector<Button> aMenuEmptySlotButtons = {
+std::vector<Text> aMenuEmptySlotButtons = {
 	{170, 16, "Inject"},
 	{170, 41, "Create"},
 	{170, 66, "Back"},
 };
-std::vector<Button> aMenuTopBarButtons = {
+std::vector<Text> aMenuTopBarButtons = {
 	{170, 16, "Rename"},
 	{170, 41, "Swap"},
 	{170, 66, "Dump box"},
 	{170, 91, "Back"},
 };
-Button xMenuButtons[] = {
-	{3, 24, "Party"}, {131, 24, "Options"},
-	{3, 72},		  {131, 72, "Trainer"},
-	{3, 120, "Save"}, {131, 120, "Exit"},
+std::vector<Text> xMenuButtons = {
+	{3,  24}, {131,  24},
+	{3,  72}, {131,  72},
+	{3, 120}, {131, 120},
 };
 
 int currentBox(void) {
@@ -235,14 +236,14 @@ void setHeldPokemon(int dexNum) {
 	}
 }
 
-void drawAMenuButtons(std::vector<Button>& buttons) {
+void drawAMenuButtons(std::vector<Text>& buttons) {
 	for(uint i=0;i<buttons.size();i++) {
 		drawRectangle(buttons[i].x, buttons[i].y, 70, 24, DARKER_GRAY, false);
 		printText(buttons[i].text, buttons[i].x+4, buttons[i].y+4, false);
 	}
 }
 
-int aMenu(int pkmPos, std::vector<Button>& buttons) {
+int aMenu(int pkmPos, std::vector<Text>& buttons) {
 	setSpritePosition(bottomArrowID, buttons[0].x+getTextWidth(buttons[0].text)+4, buttons[0].y);
 	setSpriteVisibility(topArrowID, false);
 	setSpriteVisibility(bottomArrowID, true);
@@ -488,11 +489,11 @@ void savePrompt(void) {
 }
 
 void drawXMenuButtons(uint menuSelection) {
-	xMenuButtons[3].text = save->otName();
+	Lang::xMenuText[3] = save->otName();
 
-	for(uint i=0;i<(sizeof(xMenuButtons)/sizeof(xMenuButtons[0]));i++) {
+	for(uint i=0;i<xMenuButtons.size();i++) {
 		drawImageTinted(xMenuButtons[i].x, xMenuButtons[i].y, menuButtonData.width, menuButtonData.height, menuSelection == i ? TEAL_RGB : LIGHT_GRAY, menuButton, false);
-		printText(xMenuButtons[i].text, xMenuButtons[i].x+47, xMenuButtons[i].y+14, false);
+		printText(Lang::xMenuText[i], xMenuButtons[i].x+47, xMenuButtons[i].y+14, false);
 	}
 }
 
@@ -527,14 +528,14 @@ bool xMenu(void) {
 		} else if(pressed & KEY_UP) {
 			if(menuSelection > 1)	menuSelection -= 2;
 		} else if(pressed & KEY_DOWN) {
-			if(menuSelection < (int)(sizeof(xMenuButtons)/sizeof(xMenuButtons[0]))-2)	menuSelection += 2;
+			if(menuSelection < (int)xMenuButtons.size()-2)	menuSelection += 2;
 		} else if(pressed & KEY_LEFT) {
 			if(menuSelection % 2)	menuSelection--;
 		} else if(pressed & KEY_RIGHT) {
 			if(!(menuSelection % 2))	menuSelection++;
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
-			for(uint i=0; i<(sizeof(xMenuButtons)/sizeof(xMenuButtons[0]));i++) {
+			for(uint i=0; i<xMenuButtons.size();i++) {
 				if(touch.px >= xMenuButtons[i].x && touch.px <= xMenuButtons[i].x+menuButtonData.width && touch.py >= xMenuButtons[i].y && touch.py <= xMenuButtons[i].y+menuButtonData.height) {
 					selectedOption = i;
 				}

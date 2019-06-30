@@ -1,7 +1,7 @@
 #include "lang.h"
 #include <fstream>
-
-std::vector<std::string> Lang::balls, Lang::items, Lang::locations4, Lang::locations5, Lang::moves, Lang::natures, Lang::species;
+#include "inifile.h"
+#include "langStrings.h"
 
 std::string langs[] = { "de", "en", "es", "fr", "it", "jp"};
 
@@ -68,4 +68,27 @@ void Lang::loadLangStrings(int lang) {
 		Lang::species.push_back(line);
 	}
 	in.close();
+
+	// Load app strings
+	snprintf(path, sizeof(path), "nitro:/lang/%s/app.ini", langs[lang].c_str());
+	CIniFile ini(path);
+
+	// [main]
+	Lang::loading = ini.GetString("main", "loading", Lang::loading);
+	Lang::invalidSave = ini.GetString("main", "invalidSave", Lang::invalidSave);
+
+	// [options]
+	Lang::optionsTextLabels[0] = ini.GetString("options", "chestFile", Lang::optionsTextLabels[0]);
+	Lang::optionsTextLabels[1] = ini.GetString("options", "chestSize", Lang::optionsTextLabels[1]);
+	Lang::optionsTextLabels[2] = ini.GetString("options", "language", Lang::optionsTextLabels[2]);
+	Lang::optionsText[0] = ini.GetString("options", "new", Lang::optionsText[0]);
+	Lang::optionsText[1] = ini.GetString("options", "rename", Lang::optionsText[1]);
+	Lang::optionsText[2] = ini.GetString("options", "delete", Lang::optionsText[2]);
+	Lang::optionsText[3] = ini.GetString("options", "change", Lang::optionsText[3]);
+
+	// [xMenu]
+	Lang::xMenuText[0] = ini.GetString("xMenu", "party", Lang::xMenuText[0]);
+	Lang::xMenuText[1] = ini.GetString("xMenu", "options", Lang::xMenuText[1]);
+	Lang::xMenuText[4] = ini.GetString("xMenu", "save", Lang::xMenuText[4]);
+	Lang::xMenuText[5] = ini.GetString("xMenu", "exit", Lang::xMenuText[5]);
 }
