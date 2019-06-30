@@ -155,7 +155,7 @@ void configMenu(void) {
 					int num = Input::getInt(500);
 					if(num > 0)	Banks::setBankSize(Config::chestFile, num);
 					break;
-				} case 5: {
+				} case 5: { // Language
 					if(pressed & KEY_LEFT) {
 						if(Config::lang > 0)	Config::lang--;
 						else	Config::lang = 5;
@@ -164,7 +164,8 @@ void configMenu(void) {
 						else	Config::lang = 0;
 					}
 					Lang::loadLangStrings(Config::lang);
-				} case 6: {
+					break;
+				} case 6: { // Backup Amount
 					int num = Input::getInt(9);
 					if(num != -1) {
 						Config::backupAmount = num;
