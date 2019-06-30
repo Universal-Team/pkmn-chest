@@ -105,7 +105,7 @@ void configMenu(void) {
 					if(str != "") {
 						Config::chestFile = str;
 						Config::saveConfig();
-						Banks::init();
+						Banks::loadBank(str);
 					}
 					drawBox(true);
 					break;
