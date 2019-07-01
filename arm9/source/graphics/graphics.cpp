@@ -305,26 +305,26 @@ void printTextTinted(std::u16string text, u16 color, int xPos, int yPos, bool to
 
 void printTextAbsW(std::string text, double w, double scaleY, int xPos, int yPos, bool top) { printTextTintedScaled(StringUtils::UTF8toUTF16(text), w/getTextWidth(text), scaleY, WHITE, xPos, yPos, top); }
 void printTextAbsW(std::u16string text, double w, double scaleY, int xPos, int yPos, bool top) { printTextTintedScaled(text, w/getTextWidth(text), scaleY, WHITE, xPos, yPos, top); }
-void printTextMaxW(std::string text, double w, double scaleY, int xPos, int yPos, bool top) { printTextTintedScaled(StringUtils::UTF8toUTF16(text), std::min(getTextWidth(text), (int)(w/getTextWidth(text))), scaleY, WHITE, xPos, yPos, top); }
-void printTextMaxW(std::u16string text, double w, double scaleY, int xPos, int yPos, bool top) { printTextTintedScaled(text, std::min(getTextWidth(text), (int)(w/getTextWidth(text))), scaleY, WHITE, xPos, yPos, top); }
+void printTextMaxW(std::string text, double w, double scaleY, int xPos, int yPos, bool top) { printTextTintedScaled(StringUtils::UTF8toUTF16(text), std::min(1.0, w/getTextWidth(text)), scaleY, WHITE, xPos, yPos, top); }
+void printTextMaxW(std::u16string text, double w, double scaleY, int xPos, int yPos, bool top) { printTextTintedScaled(text, std::min(1.0, w/getTextWidth(text)), scaleY, WHITE, xPos, yPos, top); }
 void printTextScaled(std::string text, double scaleX, double scaleY, int xPos, int yPos, bool top) { printTextTintedScaled(StringUtils::UTF8toUTF16(text), scaleX, scaleY, WHITE, xPos, yPos, top); }
 void printTextScaled(std::u16string text, double scaleX, double scaleY, int xPos, int yPos, bool top) { printTextTintedScaled(text, scaleX, scaleY, WHITE, xPos, yPos, top); }
 void printTextCenteredAbsW(std::string text, double w, double scaleY, int xOffset, int yPos, bool top) { printTextTintedScaled(StringUtils::UTF8toUTF16(text), w/getTextWidth(text), scaleY, WHITE, ((256-getTextWidth(text))/2)+xOffset, yPos, top); }
 void printTextCenteredAbsW(std::u16string text, double w, double scaleY, int xOffset, int yPos, bool top) { printTextTintedScaled(text, w/getTextWidth(text), scaleY, WHITE, ((256-getTextWidth(text))/2)+xOffset, yPos, top); }
-void printTextCenteredMaxW(std::string text, double w, double scaleY, int xOffset, int yPos, bool top) { printTextTintedScaled(StringUtils::UTF8toUTF16(text), std::min(getTextWidth(text), (int)(w/getTextWidth(text))), scaleY, WHITE, ((256-getTextWidth(text))/2)+xOffset, yPos, top); }
-void printTextCenteredMaxW(std::u16string text, double w, double scaleY, int xOffset, int yPos, bool top) { printTextTintedScaled(text, std::min(getTextWidth(text), (int)(w/getTextWidth(text))), scaleY, WHITE, ((256-getTextWidth(text))/2)+xOffset, yPos, top); }
-void printTextCenteredScaled(std::string text, double scaleX, double scaleY, int xOffset, int yPos, bool top) { printTextTintedScaled(StringUtils::UTF8toUTF16(text), scaleX, scaleY, WHITE, ((256-getTextWidth(StringUtils::UTF8toUTF16(text)))/2)+xOffset, yPos, top); }
-void printTextCenteredScaled(std::u16string text, double scaleX, double scaleY, int xOffset, int yPos, bool top) { printTextTintedScaled(text, scaleX, scaleY, WHITE, ((256-getTextWidth(text))/2)+xOffset, yPos, top); }
-void printTextCenteredTintedAbsW(std::string text, double w, double scaleY, u16 color, int xOffset, int yPos, bool top) { printTextTintedScaled(StringUtils::UTF8toUTF16(text), w/getTextWidth(text), scaleY, color, ((256-getTextWidth(StringUtils::UTF8toUTF16(text)))/2)+xOffset, yPos, top); }
+void printTextCenteredMaxW(std::string text, double w, double scaleY, int xOffset, int yPos, bool top) { printTextTintedScaled(StringUtils::UTF8toUTF16(text), std::min(1.0, w/getTextWidth(text)), scaleY, WHITE, ((256-getTextWidthMaxW(text, w))/2)+xOffset, yPos, top); }
+void printTextCenteredMaxW(std::u16string text, double w, double scaleY, int xOffset, int yPos, bool top) { printTextTintedScaled(text, std::min(1.0, w/getTextWidth(text)), scaleY, WHITE, ((256-getTextWidthMaxW(text, w))/2)+xOffset, yPos, top); }
+void printTextCenteredScaled(std::string text, double scaleX, double scaleY, int xOffset, int yPos, bool top) { printTextTintedScaled(StringUtils::UTF8toUTF16(text), scaleX, scaleY, WHITE, ((256-getTextWidthScaled(text, scaleX))/2)+xOffset, yPos, top); }
+void printTextCenteredScaled(std::u16string text, double scaleX, double scaleY, int xOffset, int yPos, bool top) { printTextTintedScaled(text, scaleX, scaleY, WHITE, ((256-getTextWidthScaled(text, scaleX))/2)+xOffset, yPos, top); }
+void printTextCenteredTintedAbsW(std::string text, double w, double scaleY, u16 color, int xOffset, int yPos, bool top) { printTextTintedScaled(StringUtils::UTF8toUTF16(text), w/getTextWidth(text), scaleY, color, ((256-getTextWidth(text))/2)+xOffset, yPos, top); }
 void printTextCenteredTintedAbsW(std::u16string text, double w, double scaleY, u16 color, int xOffset, int yPos, bool top) { printTextTintedScaled(text, w/getTextWidth(text), scaleY, color, ((256-getTextWidth(text))/2)+xOffset, yPos, top); }
-void printTextCenteredTintedMaxW(std::string text, double w, double scaleY, u16 color, int xOffset, int yPos, bool top) { printTextTintedScaled(StringUtils::UTF8toUTF16(text), std::min(getTextWidth(text), (int)(w/getTextWidth(text))), scaleY, color, ((256-getTextWidth(StringUtils::UTF8toUTF16(text)))/2)+xOffset, yPos, top); }
-void printTextCenteredTintedMaxW(std::u16string text, double w, double scaleY, u16 color, int xOffset, int yPos, bool top) { printTextTintedScaled(text, std::min(getTextWidth(text), (int)(w/getTextWidth(text))), scaleY, color, ((256-getTextWidth(text))/2)+xOffset, yPos, top); }
-void printTextCenteredTintedScaled(std::string text, double scaleX, double scaleY, u16 color, int xOffset, int yPos, bool top) { printTextTintedScaled(StringUtils::UTF8toUTF16(text), scaleX, scaleY, color, ((256-getTextWidth(StringUtils::UTF8toUTF16(text)))/2)+xOffset, yPos, top); }
+void printTextCenteredTintedMaxW(std::string text, double w, double scaleY, u16 color, int xOffset, int yPos, bool top) { printTextTintedScaled(StringUtils::UTF8toUTF16(text), std::min(1.0, w/getTextWidth(text)), scaleY, color, ((256-getTextWidth(text))/2)+xOffset, yPos, top); }
+void printTextCenteredTintedMaxW(std::u16string text, double w, double scaleY, u16 color, int xOffset, int yPos, bool top) { printTextTintedScaled(text, std::min(1.0, w/getTextWidth(text)), scaleY, color, ((256-getTextWidth(text))/2)+xOffset, yPos, top); }
+void printTextCenteredTintedScaled(std::string text, double scaleX, double scaleY, u16 color, int xOffset, int yPos, bool top) { printTextTintedScaled(StringUtils::UTF8toUTF16(text), scaleX, scaleY, color, ((256-getTextWidth(text))/2)+xOffset, yPos, top); }
 void printTextCenteredTintedScaled(std::u16string text, double scaleX, double scaleY, u16 color, int xOffset, int yPos, bool top) { printTextTintedScaled(text, scaleX, scaleY, color, ((256-getTextWidth(text))/2)+xOffset, yPos, top); }
 void printTextTintedAbsW(std::string text, double w, double scaleY, u16 color, int xPos, int yPos, bool top) { printTextTintedScaled(StringUtils::UTF8toUTF16(text), w/getTextWidth(text), scaleY, color, xPos, yPos, top); }
 void printTextTintedAbsW(std::u16string text, double w,  double scaleY, u16 color, int xPos, int yPos, bool top) { printTextTintedScaled(text, w/getTextWidth(text), scaleY, color, xPos, yPos, top); }
-void printTextTintedMaxW(std::string text, double w, double scaleY, u16 color, int xPos, int yPos, bool top) { printTextTintedScaled(StringUtils::UTF8toUTF16(text), std::min(getTextWidth(text), (int)(w/getTextWidth(text))), scaleY, color, xPos, yPos, top); }
-void printTextTintedMaxW(std::u16string text, double w,  double scaleY, u16 color, int xPos, int yPos, bool top) { printTextTintedScaled(text, std::min(getTextWidth(text), (int)(w/getTextWidth(text))), scaleY, color, xPos, yPos, top); }
+void printTextTintedMaxW(std::string text, double w, double scaleY, u16 color, int xPos, int yPos, bool top) { printTextTintedScaled(StringUtils::UTF8toUTF16(text), std::min(1.0, w/getTextWidth(text)), scaleY, color, xPos, yPos, top); }
+void printTextTintedMaxW(std::u16string text, double w,  double scaleY, u16 color, int xPos, int yPos, bool top) { printTextTintedScaled(text, std::min(1.0, w/getTextWidth(text)), scaleY, color, xPos, yPos, top); }
 void printTextTintedScaled(std::string text, double scaleX, double scaleY, u16 color, int xPos, int yPos, bool top) { printTextTintedScaled(StringUtils::UTF8toUTF16(text), scaleX, scaleY, color, xPos, yPos, top); }
 
 void printTextTintedScaled(std::u16string text, double scaleX,  double scaleY, u16 color, int xPos, int yPos, bool top) {
@@ -351,6 +351,10 @@ void printTextTintedScaled(std::u16string text, double scaleX,  double scaleY, u
 	}
 }
 
+int getTextWidthMaxW(std::string text, int w) { return std::min(w, getTextWidth(StringUtils::UTF8toUTF16(text))); }
+int getTextWidthMaxW(std::u16string text, int w) { return std::min(w, getTextWidth(text)); }
+int getTextWidthScaled(std::string text, double scale) { return getTextWidth(StringUtils::UTF8toUTF16(text))*scale; }
+int getTextWidthScaled(std::u16string text, double scale) { return getTextWidth(text)*scale; }
 int getTextWidth(std::string text) { return getTextWidth(StringUtils::UTF8toUTF16(text)); }
 int getTextWidth(std::u16string text) {
 	int textWidth = 0;

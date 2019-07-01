@@ -584,6 +584,34 @@ void printTextTintedScaled(std::string text, double scaleX, double scaleY, u16 c
 void printTextTintedScaled(std::u16string text, double scaleX, double scaleY, u16 color, int xPos, int yPos, bool top);
 
 /**
+ * Gets the width of a std::string of text with a max
+ * std::string text is the text to get the width of
+ * returns the width of the text
+ */
+int getTextWidthMaxW(std::string text, int w);
+
+/**
+ * Gets the width of a std::u16string of text with a max
+ * std::u16string text is the text to get the width of
+ * returns the width of the text
+ */
+int getTextWidthMaxW(std::u16string text, int w);
+
+/**
+ * Gets the width of a std::string of scaled text
+ * std::string text is the text to get the width of
+ * returns the width of the text
+ */
+int getTextWidthScaled(std::string text, double scale);
+
+/**
+ * Gets the width of a std::u16string of scaled text
+ * std::u16string text is the text to get the width of
+ * returns the width of the text
+ */
+int getTextWidthScaled(std::u16string text, double scale);
+
+/**
  * Gets the width of a std::string of text
  * std::string text is the text to get the width of
  * returns the width of the text
