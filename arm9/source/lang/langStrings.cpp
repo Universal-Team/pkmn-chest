@@ -10,6 +10,8 @@ namespace Lang {
 	aMenuTopBarText = {"Rename", "Swap", "Dump box", "Back"},
 	optionsTextLabels = {"Chest File:", "Chest Size:", "Language:", "Backups:"},
 	optionsText = {"New", "Rename", "Delete", "Change"},
+	summaryP1Labels = {"Dex No.", "Name", "Ball", "Level", "Nature", "Shiny", "Pokérus", "Orig. Trainer", "Trainer ID", "Secret ID", "Friendship"},
+	summaryP2Labels = {"HP.", "Attack", "Defense", "Sp. Atk", "Sp. Def", "Speed", "Base", "IV", "EV", "Total"},
 	xMenuText = {"Party", "Options", "", "", "Save", "Exit"};
 
 	std::string

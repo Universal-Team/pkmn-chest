@@ -104,6 +104,30 @@ void Lang::loadLangStrings(int lang) {
 	Lang::optionsText[2] = ini.GetString("options", "delete", Lang::optionsText[2]);
 	Lang::optionsText[3] = ini.GetString("options", "change", Lang::optionsText[3]);
 
+	// [summary]
+	Lang::summaryP1Labels[0]  = ini.GetString("summary", "dexNo", Lang::summaryP1Labels[0]);
+	Lang::summaryP1Labels[1]  = ini.GetString("summary", "name", Lang::summaryP1Labels[1]);
+	Lang::summaryP1Labels[2]  = ini.GetString("summary", "ball", Lang::summaryP1Labels[2]);
+	Lang::summaryP1Labels[3]  = ini.GetString("summary", "level", Lang::summaryP1Labels[3]);
+	Lang::summaryP1Labels[4]  = ini.GetString("summary", "nature", Lang::summaryP1Labels[4]);
+	Lang::summaryP1Labels[5]  = ini.GetString("summary", "shiny", Lang::summaryP1Labels[5]);
+	Lang::summaryP1Labels[6]  = ini.GetString("summary", "pokerus", Lang::summaryP1Labels[6]);
+	Lang::summaryP1Labels[7]  = ini.GetString("summary", "origTrainer", Lang::summaryP1Labels[7]);
+	Lang::summaryP1Labels[8]  = ini.GetString("summary", "trainerID", Lang::summaryP1Labels[8]);
+	Lang::summaryP1Labels[9]  = ini.GetString("summary", "secretID", Lang::summaryP1Labels[9]);
+	Lang::summaryP1Labels[10] = ini.GetString("summary", "friendship", Lang::summaryP1Labels[10]);
+	
+	Lang::summaryP2Labels[0] = ini.GetString("summary", "hp", Lang::summaryP2Labels[0]);
+	Lang::summaryP2Labels[1] = ini.GetString("summary", "attack", Lang::summaryP2Labels[1]);
+	Lang::summaryP2Labels[2] = ini.GetString("summary", "defense", Lang::summaryP2Labels[2]);
+	Lang::summaryP2Labels[3] = ini.GetString("summary", "spAtk", Lang::summaryP2Labels[3]);
+	Lang::summaryP2Labels[4] = ini.GetString("summary", "spDef", Lang::summaryP2Labels[4]);
+	Lang::summaryP2Labels[5] = ini.GetString("summary", "speed", Lang::summaryP2Labels[5]);
+	Lang::summaryP2Labels[6] = ini.GetString("summary", "base", Lang::summaryP2Labels[6]);
+	Lang::summaryP2Labels[7] = ini.GetString("summary", "iv", Lang::summaryP2Labels[7]);
+	Lang::summaryP2Labels[8] = ini.GetString("summary", "ev", Lang::summaryP2Labels[8]);
+	Lang::summaryP2Labels[9] = ini.GetString("summary", "total", Lang::summaryP2Labels[9]);
+
 	// [xMenu]
 	Lang::xMenuText[0] = ini.GetString("xMenu", "party", Lang::xMenuText[0]);
 	Lang::xMenuText[1] = ini.GetString("xMenu", "options", Lang::xMenuText[1]);

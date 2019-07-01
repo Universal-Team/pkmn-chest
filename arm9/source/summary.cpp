@@ -59,7 +59,7 @@ void drawSummaryP1(std::shared_ptr<PKX> pkm) {
 	drawRectangle(0, 124, 150, 1, LIGHT_GRAY, false);
 
 	// Print Pokémon name
-	printTextTinted(Lang::species[pkm->species()], (pkm->gender() ? (pkm->gender() == 1 ? RED_RGB : WHITE) : BLUE_RGB), 165, 1, false);
+	printTextTintedMaxW(Lang::species[pkm->species()], 90, 1, (pkm->gender() ? (pkm->gender() == 1 ? RED_RGB : WHITE) : BLUE_RGB), 165, 1, false);
 
 	// Draw Pokémon Pokéball, types, and shiny star (if shiny)
 	XYCoords xy = getPokeballPosition(pkm->ball());
@@ -72,17 +72,10 @@ void drawSummaryP1(std::shared_ptr<PKX> pkm) {
 	if(pkm->shiny())	drawImage(150, 32, shinyData.width, shinyData.height, shiny, false);
 
 	// Print Pokémon and trainer info labels
-	printText("Dex #", 20, textSP1[0].y, false);
-	printText("Name", 20, textSP1[1].y, false);
-	printText("Ball", 20, textSP1[2].y, false);
-	printText("Level", 20, textSP1[3].y, false);
-	printText("Nature", 20, textSP1[4].y, false);
-	printText("Shiny", 20, textSP1[5].y, false);
-	printText("Pkrs", 20, textSP1[6].y, false);
-	printText("Orig. Trainer", 20, textSP1[7].y, false);
-	printText("Trainer ID", 20, textSP1[8].y, false);
-	printText("Secret ID", 20, textSP1[9].y, false);
-	printText("Friendship", 20, textSP1[10].y, false);
+	for(uint i=0;i<Lang::summaryP1Labels.size();i++) {
+		printTextMaxW(Lang::summaryP1Labels[i], textSP1[i].x-8, 1, 4, textSP1[i].y, false);
+
+	}
 
 	// Print Pokémon and trainer info
 	snprintf(textSP1[0].text,  sizeof(textSP1[0].text), "%.3i", pkm->species());
@@ -98,11 +91,10 @@ void drawSummaryP1(std::shared_ptr<PKX> pkm) {
 	snprintf(textSP1[9].text,  sizeof(textSP1[9].text), "%.5i", pkm->SID());
 	snprintf(textSP1[10].text, sizeof(textSP1[10].text),"%i", pkm->otFriendship());
 	for(uint i=0;i<(sizeof(textSP1)/sizeof(textSP1[0]));i++) {
-		if(i!=7)	// OT Name is colored
-			printText(textSP1[i].text, textSP1[i].x, textSP1[i].y, false);
-		else
-			printTextTinted(textSP1[i].text, (pkm->otGender() ? RED_RGB : BLUE_RGB), textSP1[i].x, textSP1[i].y, false);
+		if(i!=7)	// Ball is scaled, OT Name is colored
+			printTextMaxW(textSP1[i].text, 80, 1, textSP1[i].x, textSP1[i].y, false);
 	}
+	printTextTinted(textSP1[7].text, (pkm->otGender() ? RED_RGB : BLUE_RGB), textSP1[7].x, textSP1[7].y, false);
 }
 
 void drawSummaryP2(std::shared_ptr<PKX> pkm) {
@@ -119,18 +111,18 @@ void drawSummaryP2(std::shared_ptr<PKX> pkm) {
 
 	// Print stat info labels
 	int i = pkm->nature();
-	printText("HP", 20, textSP2r1[0].y, false);
-	printTextTinted("Attack",  (i!=0&&i<5         ? RED_RGB : i!=0&&!(i%5)      ? BLUE_RGB : WHITE), 20, textSP2r1[1].y, false);
-	printTextTinted("Defense", (i!=6&&i>4&&i<10   ? RED_RGB : i!=6&&!((i-1)%5)  ? BLUE_RGB : WHITE), 20, textSP2r1[2].y, false);
-	printTextTinted("Sp. Atk", (i!=18&&i>14&&i<20 ? RED_RGB : i!=18&&!((i-3)%5) ? BLUE_RGB : WHITE), 20, textSP2r1[3].y, false);
-	printTextTinted("Sp. Def", (i!=24&&i>19       ? RED_RGB : i!=24&&!((i-4)%5) ? BLUE_RGB : WHITE), 20, textSP2r1[4].y, false);
-	printTextTinted("Speed",   (i!=12&&i>9&&i<15  ? RED_RGB : i!=12&&!((i-2)%5) ? BLUE_RGB : WHITE), 20, textSP2r1[5].y, false);
+	printText(Lang::summaryP2Labels[0], 20, textSP2r1[0].y, false);
+	printTextTinted(Lang::summaryP2Labels[1], (i!=0&&i<5         ? RED_RGB : i!=0&&!(i%5)      ? BLUE_RGB : WHITE), 20, textSP2r1[1].y, false);
+	printTextTinted(Lang::summaryP2Labels[2], (i!=6&&i>4&&i<10   ? RED_RGB : i!=6&&!((i-1)%5)  ? BLUE_RGB : WHITE), 20, textSP2r1[2].y, false);
+	printTextTinted(Lang::summaryP2Labels[3], (i!=18&&i>14&&i<20 ? RED_RGB : i!=18&&!((i-3)%5) ? BLUE_RGB : WHITE), 20, textSP2r1[3].y, false);
+	printTextTinted(Lang::summaryP2Labels[4], (i!=24&&i>19       ? RED_RGB : i!=24&&!((i-4)%5) ? BLUE_RGB : WHITE), 20, textSP2r1[4].y, false);
+	printTextTinted(Lang::summaryP2Labels[5], (i!=12&&i>9&&i<15  ? RED_RGB : i!=12&&!((i-2)%5) ? BLUE_RGB : WHITE), 20, textSP2r1[5].y, false);
 
 	// Print column titles
-	printTextCentered("Base", textSP2r1[0].x, textSP2r1[0].y-16, false);
-	printTextCentered("IV", textSP2r2[0].x, textSP2r2[0].y-16, false);
-	printTextCentered("EV", textSP2r3[0].x, textSP2r3[0].y-16, false);
-	printTextCentered("Total", textSP2r4[0].x, textSP2r4[0].y-16, false);
+	printTextCenteredMaxW(Lang::summaryP2Labels[6], 30, 1, textSP2r1[0].x, textSP2r1[0].y-16, false);
+	printTextCentered(Lang::summaryP2Labels[7], textSP2r2[0].x, textSP2r2[0].y-16, false);
+	printTextCentered(Lang::summaryP2Labels[8], textSP2r3[0].x, textSP2r3[0].y-16, false);
+	printTextCenteredMaxW(Lang::summaryP2Labels[9], 30, 1, textSP2r4[0].x, textSP2r4[0].y-16, false);
 
 	// Set base stat info
 	snprintf(textSP2r1[0].text,  sizeof(textSP2r1[0].text), "%i", pkm->baseHP());
@@ -168,7 +160,7 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 	// Move arrow to first option
 	setSpriteVisibility(topArrowID, false);
 	setSpriteVisibility(bottomArrowID, true);
-	setSpritePosition(bottomArrowID, textSP1[0].x+getTextWidth(textSP1[0].text), textSP1[0].y-6);
+	setSpritePosition(bottomArrowID, textSP1[0].x+getTextWidthMaxW(textSP1[0].text, 80), textSP1[0].y-6);
 	updateOam();
 
 	bool optionSelected = false;
@@ -199,7 +191,7 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 			touchRead(&touch);
 			if(summaryPage == 0) {
 				for(uint i=0;i<(sizeof(textSP1)/sizeof(textSP1[0]));i++) {
-					if(touch.px >= textSP1[i].x && touch.px <= textSP1[i].x+getTextWidth(textSP1[i].text) && touch.py >= textSP1[i].y && touch.py <= textSP1[i].y+16) {
+					if(touch.px >= textSP1[i].x && touch.px <= textSP1[i].x+getTextWidthMaxW(textSP1[i].text, 80) && touch.py >= textSP1[i].y && touch.py <= textSP1[i].y+16) {
 						selection = i;
 						optionSelected = true;
 						break;
@@ -308,7 +300,7 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 		}
 
 		if(summaryPage == 0) {
-			setSpritePosition(bottomArrowID, textSP1[selection].x+getTextWidth(textSP1[selection].text), textSP1[selection].y-6);
+			setSpritePosition(bottomArrowID, textSP1[selection].x+getTextWidthMaxW(textSP1[selection].text, 80), textSP1[selection].y-6);
 		} else {
 			if(column == 0) {
 				setSpritePosition(bottomArrowID, 128+(textSP2r2[selection].x+(getTextWidth(textSP2r2[selection].text)/2)), textSP2r2[selection].y-6);

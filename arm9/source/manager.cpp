@@ -211,12 +211,12 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 
 		// Print Pokédex number
 		char str[9];
-		snprintf(str, sizeof(str), "#%.3i", pkm->species());
+		snprintf(str, sizeof(str), "No.%.3i", pkm->species());
 		printTextTinted(str, 0xCE73, 170, 2, true);
 
 		// Print name
-		if(pkm->nicknamed())	printTextTinted(pkm->nickname(), (pkm->gender() ? (pkm->gender() == 1 ? RED_RGB : WHITE) : BLUE_RGB), 170, 14, true);
-		else	printTextTinted(Lang::species[pkm->species()], (pkm->gender() ? (pkm->gender() == 1 ? RED_RGB : WHITE) : BLUE_RGB), 170, 14, true);
+		if(pkm->nicknamed())	printTextTintedMaxW(pkm->nickname(), 80, 1, (pkm->gender() ? (pkm->gender() == 1 ? RED_RGB : WHITE) : BLUE_RGB), 170, 14, true);
+		else	printTextTintedMaxW(Lang::species[pkm->species()], 80, 1, (pkm->gender() ? (pkm->gender() == 1 ? RED_RGB : WHITE) : BLUE_RGB), 170, 14, true);
 
 
 		// Draw types

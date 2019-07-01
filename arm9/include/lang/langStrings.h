@@ -14,6 +14,8 @@ namespace Lang {
 	aMenuTopBarText,
 	optionsTextLabels,
 	optionsText,
+	summaryP1Labels,
+	summaryP2Labels,
 	xMenuText;
 
 	extern std::string
