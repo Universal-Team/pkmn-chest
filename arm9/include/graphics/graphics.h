@@ -233,8 +233,8 @@ uint getSpriteAmount(void);
 /**
  * Prints text to the a screen
  * std::string test is the text that will be printed
- * int x is the X position to print at
- * int y is the Y position to print at
+ * int xPos is the X position to print at
+ * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
  */
 void printText(std::string text, int xPos, int yPos, bool top);
@@ -242,11 +242,11 @@ void printText(std::string text, int xPos, int yPos, bool top);
 /**
  * Prints text to the a screen
  * std::u16string test is the text that will be printed
- * int x is the X position to print at
- * int y is the Y position to print at
+ * int xPos is the X position to print at
+ * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
  */
-void printText(std::u16string text, int x, int y, bool top);
+void printText(std::u16string text, int xPos, int yPos, bool top);
 
 /**
  * Prints text centered on a screen
@@ -289,8 +289,8 @@ void printTextCenteredTinted(std::u16string text, u16 color, int xOffset, int yP
  * Prints colored text to the a screen
  * u16 color is the color to tint the text
  * std::string test is the text that will be printed
- * int x is the X position to print at
- * int y is the Y position to print at
+ * int xPos is the X position to print at
+ * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
  */
 void printTextTinted(std::string text, u16 color, int xPos, int yPos, bool top);
@@ -299,12 +299,196 @@ void printTextTinted(std::string text, u16 color, int xPos, int yPos, bool top);
  * Prints colored text to the a screen
  * u16 color is the color to tint the text
  * std::u16string test is the text that will be printed
- * int x is the X position to print at
- * int y is the Y position to print at
+ * int xPos is the X position to print at
+ * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
  */
 void printTextTinted(std::u16string text, u16 color, int xPos, int yPos, bool top);
 
+
+
+/**
+ * Prints text to the a screen with a set width
+ * std::string test is the text that will be printed
+ * double w is the width the text should be drawn at
+ * double scaleY is the height scale the text should be draw at
+ * int xPos is the X position to print at
+ * int yPos is the Y position to print at
+ * bool top is whether to draw on the top or bottom screen
+ */
+void printTextAbsW(std::string text, double w, double scaleY, int xPos, int yPos, bool top);
+
+/**
+ * Prints text to the a screen with a set width
+ * std::u16string test is the text that will be printed
+ * double w is the width the text should be drawn at
+ * double scaleY is the height scale the text should be draw at
+ * int xPos is the X position to print at
+ * int yPos is the Y position to print at
+ * bool top is whether to draw on the top or bottom screen
+ */
+void printTextAbsW(std::u16string text, double w, double scaleY, int xPos, int yPos, bool top);
+
+/**
+ * Prints text to the a screen at a scaled size
+ * std::string test is the text that will be printed
+ * double scaleX is the width scale the text should be draw at
+ * double scaleY is the height scale the text should be draw at
+ * int xPos is the X position to print at
+ * int yPos is the Y position to print at
+ * bool top is whether to draw on the top or bottom screen
+ */
+void printTextScaled(std::string text, double scaleX, double scaleY, int xPos, int yPos, bool top);
+
+/**
+ * Prints text to the a screen at a scaled size
+ * std::u16string test is the text that will be printed
+ * double scaleX is the width scale the text should be draw at
+ * double scaleY is the height scale the text should be draw at
+ * int xPos is the X position to print at
+ * int yPos is the Y position to print at
+ * bool top is whether to draw on the top or bottom screen
+ */
+void printTextScaled(std::u16string text, double scaleX, double scaleY, int xPos, int yPos, bool top);
+
+/**
+ * Prints centered text to the a screen with a set width
+ * std::string test is the text that will be printed
+ * double w is the width the text should be drawn at
+ * double scaleY is the height scale the text should be draw at
+ * int xOffset is the X offset from the center to center on
+ * int yPos is the Y position to print at
+ * bool top is whether to draw on the top or bottom screen
+ */
+void printTextCenteredAbsW(std::string text, double w, double scaleY, int xOffset, int yPos, bool top);
+
+/**
+ * Prints centered text to the a screen with a set width
+ * std::u16string test is the text that will be printed
+ * double w is the width the text should be drawn at
+ * double scaleY is the height scale the text should be draw at
+ * int xOffset is the X offset from the center to center on
+ * int yPos is the Y position to print at
+ * bool top is whether to draw on the top or bottom screen
+ */
+void printTextCenteredAbsW(std::u16string text, double w, double scaleY, int xOffset, int yPos, bool top);
+
+/**
+ * Prints centered text to the a screen at a scaled size
+ * std::string test is the text that will be printed
+ * double scaleX is the width scale the text should be draw at
+ * double scaleY is the height scale the text should be draw at
+ * int xOffset is the X offset from the center to center on
+ * int yPos is the Y position to print at
+ * bool top is whether to draw on the top or bottom screen
+ */
+void printTextCenteredScaled(std::string text, double scaleX, double scaleY, int xOffset, int yPos, bool top);
+
+/**
+ * Prints centered text to the a screen at a scaled size
+ * std::u16string test is the text that will be printed
+ * double scaleX is the width scale the text should be draw at
+ * double scaleY is the height scale the text should be draw at
+ * int xOffset is the X offset from the center to center on
+ * int yPos is the Y position to print at
+ * bool top is whether to draw on the top or bottom screen
+ */
+void printTextCenteredScaled(std::u16string text, double scaleX, double scaleY, int xOffset, int yPos, bool top);
+
+/**
+ * Prints centered colored text to the a screen with a set width
+ * std::string test is the text that will be printed
+ * double w is the width the text should be drawn at
+ * double scaleY is the height scale the text should be draw at
+ * u16 color is the color to tint the text
+ * int xOffset is the X offset from the center to center on
+ * int yPos is the Y position to print at
+ * bool top is whether to draw on the top or bottom screen
+ */
+void printTextCenteredTintedAbsW(std::string text, double w, double scaleY, u16 color, int xOffset, int yPos, bool top);
+
+/**
+ * Prints centered colored text to the a screen with a set width
+ * std::u16string test is the text that will be printed
+ * double w is the width the text should be drawn at
+ * double scaleY is the height scale the text should be draw at
+ * u16 color is the color to tint the text
+ * int xOffset is the X offset from the center to center on
+ * int yPos is the Y position to print at
+ * bool top is whether to draw on the top or bottom screen
+ */
+void printTextCenteredTintedAbsW(std::u16string text, double w, double scaleY, u16 color, int xOffset, int yPos, bool top);
+
+/**
+ * Prints centered colored text to the a screen at a scaled size
+ * std::string test is the text that will be printed
+ * double scaleX is the width scale the text should be draw at
+ * double scaleY is the height scale the text should be draw at
+ * u16 color is the color to tint the text
+ * int xOffset is the X offset from the center to center on
+ * int yPos is the Y position to print at
+ * bool top is whether to draw on the top or bottom screen
+ */
+void printTextCenteredTintedScaled(std::string text, double scaleX, double scaleY, u16 color, int xOffset, int yPos, bool top);
+
+/**
+ * Prints centered colored text to the a screen at a scaled size
+ * std::u16string test is the text that will be printed
+ * double scaleX is the width scale the text should be draw at
+ * double scaleY is the height scale the text should be draw at
+ * u16 color is the color to tint the text
+ * int xOffset is the X offset from the center to center on
+ * int yPos is the Y position to print at
+ * bool top is whether to draw on the top or bottom screen
+ */
+void printTextCenteredTintedScaled(std::u16string text, double scaleX, double scaleY, u16 color, int xOffset, int yPos, bool top);
+
+/**
+ * Prints colored text to the a screen with a set width
+ * std::string test is the text that will be printed
+ * double scaleX is the width scale the text should be draw at
+ * double scaleY is the height scale the text should be draw at
+ * u16 color is the color to tint the text
+ * int xPos is the X position to print at
+ * int yPos is the Y position to print at
+ * bool top is whether to draw on the top or bottom screen
+ */
+void printTextTintedAbsW(std::string text, double w, double scaleY, u16 color, int xPos, int yPos, bool top);
+
+/**
+ * Prints colored text to the a screen with a set width
+ * std::u16string test is the text that will be printed
+ * double w is the width the text should be drawn at
+ * double scaleY is the height scale the text should be draw at
+ * u16 color is the color to tint the text
+ * int xPos is the X position to print at
+ * int yPos is the Y position to print at
+ * bool top is whether to draw on the top or bottom screen
+ */
+void printTextTintedAbsW(std::u16string text, double w,  double scaleY, u16 color, int xPos, int yPos, bool top);
+
+/**
+ * Prints colored text to the a screen at a scaled size
+ * std::string test is the text that will be printed
+ * double w is the width the text should be drawn at
+ * double scaleY is the height scale the text should be draw at
+ * u16 color is the color to tint the text
+ * int xPos is the X position to print at
+ * int yPos is the Y position to print at
+ * bool top is whether to draw on the top or bottom screen
+ */
+void printTextTintedScaled(std::string text, double scaleX, double scaleY, u16 color, int xPos, int yPos, bool top);
+
+/**
+ * Prints colored text to the a screen at a scaled size
+ * std::u16string test is the text that will be printed
+ * double scaleX is the width scale the text should be draw at
+ * double scaleY is the height scale the text should be draw at
+ * u16 color is the color to tint the text
+ * int xPos is the X position to print at
+ * int yPos is the Y position to print at
+ * bool top is whether to draw on the top or bottom screen
+ */
 void printTextTintedScaled(std::u16string text, double scaleX, double scaleY, u16 color, int xPos, int yPos, bool top);
 
 /**
