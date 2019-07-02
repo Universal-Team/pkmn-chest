@@ -2,6 +2,7 @@
 #include "colors.h"
 #include "graphics.h"
 #include "keyboard.h"
+#include "langStrings.h"
 #include "loader.h"
 #include "manager.h"
 
@@ -56,7 +57,6 @@ void showTrainerCard(void) {
 	drawTrainerCard();
 
 	// Move arrow to first option
-	setSpriteVisibility(topArrowID, false);
 	setSpriteVisibility(bottomArrowID, true);
 	setSpritePosition(bottomArrowID, textTP1[0].x+getTextWidth(textTP1[0].text), textTP1[0].y-6);
 	updateOam();
@@ -103,7 +103,7 @@ void showTrainerCard(void) {
 				case 0: {
 					std::string name = Input::getLine(7);
 					if(name != "")	save->otName(name);
-					save->gender(Input::getBool("Female", "Male"));
+					save->gender(Input::getBool(Lang::female, Lang::male));
 					break;
 				} case 1: {
 					int num = Input::getInt(65535);

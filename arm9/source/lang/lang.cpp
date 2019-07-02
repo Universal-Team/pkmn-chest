@@ -90,9 +90,18 @@ void Lang::loadLangStrings(int lang) {
 	Lang::aMenuTopBarText[3] = ini.GetString("aMenu", "back", Lang::aMenuTopBarText[3]);
 
 	// [main]
+	Lang::cancel = ini.GetString("main", "cancel", Lang::cancel);
 	Lang::chest = ini.GetString("main", "chest", Lang::chest);
-	Lang::loading = ini.GetString("main", "loading", Lang::loading);
+	Lang::discard = ini.GetString("main", "discard", Lang::discard);
+	Lang::female = ini.GetString("main", "female", Lang::female);
 	Lang::invalidSave = ini.GetString("main", "invalidSave", Lang::invalidSave);
+	Lang::loading = ini.GetString("main", "loading", Lang::loading);
+	Lang::male = ini.GetString("main", "male", Lang::male);
+	Lang::no = ini.GetString("main", "no", Lang::no);
+	Lang::release = ini.GetString("aMenu", "release", Lang::release);
+	Lang::remove = ini.GetString("main", "remove", Lang::remove);
+	Lang::save = ini.GetString("main", "save", Lang::save);
+	Lang::yes = ini.GetString("main", "yes", Lang::yes);
 
 	// [options]
 	Lang::optionsTextLabels[0] = ini.GetString("options", "chestFile", Lang::optionsTextLabels[0]);
@@ -128,9 +137,14 @@ void Lang::loadLangStrings(int lang) {
 	Lang::summaryP2Labels[8] = ini.GetString("summary", "ev", Lang::summaryP2Labels[8]);
 	Lang::summaryP2Labels[9] = ini.GetString("summary", "total", Lang::summaryP2Labels[9]);
 
+	// [saveMsg]
+	Lang::saveMsgCard = ini.GetString("saveMsg", "saveMsgCard", Lang::saveMsgCard);
+	Lang::saveMsgChest = ini.GetString("saveMsg", "saveMsgChest", Lang::saveMsgChest);
+	Lang::saveMsgSave = ini.GetString("saveMsg", "saveMsgSave", Lang::saveMsgSave);
+
 	// [xMenu]
 	Lang::xMenuText[0] = ini.GetString("xMenu", "party", Lang::xMenuText[0]);
 	Lang::xMenuText[1] = ini.GetString("xMenu", "options", Lang::xMenuText[1]);
-	Lang::xMenuText[4] = ini.GetString("xMenu", "save", Lang::xMenuText[4]);
+	Lang::xMenuText[4] = ini.GetString("main", "save", Lang::xMenuText[4]);
 	Lang::xMenuText[5] = ini.GetString("xMenu", "exit", Lang::xMenuText[5]);
 }

@@ -158,7 +158,6 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 	drawSummaryP1(pkm);
 
 	// Move arrow to first option
-	setSpriteVisibility(topArrowID, false);
 	setSpriteVisibility(bottomArrowID, true);
 	setSpritePosition(bottomArrowID, textSP1[0].x+getTextWidthMaxW(textSP1[0].text, 80), textSP1[0].y-6);
 	updateOam();
@@ -233,7 +232,7 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 							pkm->nickname(name);
 							pkm->nicknamed(true);
 						}
-						if(pkm->gender() != 2)	pkm->gender(Input::getBool("Female", "Male"));
+						if(pkm->gender() != 2)	pkm->gender(Input::getBool(Lang::female, Lang::male));
 						break;
 					} case 2: {
 						int num = Input::getInt(save->generation() == Generation::FIVE ? 25 : 24);
@@ -256,7 +255,7 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 					} case 7: {
 						std::string name = Input::getLine(7);
 						if(name != "")	pkm->otName(name);
-						pkm->otGender(Input::getBool("Female", "Male"));
+						pkm->otGender(Input::getBool(Lang::female, Lang::male));
 						break;
 					} case 8: {
 						int num = Input::getInt(65535);

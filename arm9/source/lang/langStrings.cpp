@@ -16,7 +16,20 @@ namespace Lang {
 
 	std::string
 	// [main]
+	cancel = "Cancel",
 	chest = "Chest",
+	discard = "Discard",
+	female = "Female",
 	invalidSave = "Invalid save file",
-	loading = "Loading...";
+	loading = "Loading...",
+	male = "Male",
+	no = "False",
+	release = "Release",
+	remove = "Remove",
+	save = "Save",
+	yes = "True",
+	// [saveMsg]
+	saveMsgCard = "Would you like to save changes\nto the gamecard?",
+	saveMsgChest = "Would you like to save changes\nto the chest?",
+	saveMsgSave = "Would you like to save changes\nto the save file?";
 }

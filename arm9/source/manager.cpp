@@ -325,10 +325,11 @@ int aMenu(int pkmPos, std::vector<TextPos>& buttons, int buttonMode) {
 				for(int i=7;i<22;i++)
 					if(i%6)	setSpriteVisibility(i, false);
 				updateOam();
-				if(Input::getBool("Release", "Keep")) {
+				if(Input::getBool(Lang::release, Lang::cancel)) {
 					if(topScreen)	Banks::bank->pkm(save->emptyPkm(), currentBankBox, pkmPos);
 					else	save->pkm(save->emptyPkm(), currentSaveBox, pkmPos, false);
-					drawBox(topScreen);
+					drawBox(false);
+					if(topScreen)	drawBox(topScreen);
 					drawRectangle(5+bankBoxData.width, 0, 256-(5+bankBoxData.width), 192, DARK_GRAY, false);
 					goto back;
 				}
@@ -469,20 +470,18 @@ void savePrompt(void) {
 	drawRectangle(0, 32, 256, 144, DARK_GRAY, false);
 	drawRectangle(0, 176, 256, 16, BLACK, false);
 
-	printTextTinted("Would you like to save changes", DARK_GRAY, 5, 0, false);
-	printTextTinted("to the chest?", DARK_GRAY, 5, 16, false);
-	if(Input::getBool("Save", "Discard")) {
+	printTextTinted(Lang::saveMsgChest, DARK_GRAY, 5, 0, false);
+	if(Input::getBool(Lang::save, Lang::discard)) {
 		if(Config::backupAmount != 0) Banks::bank->backup();
 		Banks::bank->save();
 	}
 
 	drawRectangle(5, 33, 246, 16, DARK_GRAY, false);
 	drawRectangle(0, 0, 256, 32, LIGHT_GRAY, false);
-	printTextTinted("Would you like to save changes", DARK_GRAY, 5, 0, false);
-	if(savePath == cardSave)	printTextTinted("to the gamecard?", DARK_GRAY, 5, 16, false);
-	else	printTextTinted("to the save?", DARK_GRAY, 5, 16, false);
+	if(savePath == cardSave)	printTextTinted(Lang::saveMsgCard, DARK_GRAY, 5, 0, false);
+	else	printTextTinted(Lang::saveMsgSave, DARK_GRAY, 5, 0, false);
 
-	if(Input::getBool("Save", "Discard")) {
+	if(Input::getBool(Lang::save, Lang::discard)) {
 		// Re-encrypt the box data
 		save->cryptBoxData(false);
 		// Save changes to save file
@@ -564,7 +563,8 @@ bool xMenu(void) {
 		} else if(pressed & KEY_B || pressed & KEY_X) {
 			// Reset arrow color
 			fillSpriteImage(bottomArrowID, arrowMode ? arrowBlue : arrowRed);
-			if(!topScreen)	setSpriteVisibility(bottomArrowID, true);
+			setSpriteVisibility(topScreen ? topArrowID : bottomArrowID, true);
+			updateOam();
 			drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
 			drawBox(false);
 			break;

@@ -31,6 +31,7 @@
 #include "colors.h"
 #include "graphics.h"
 #include "keyboard.h"
+#include "langStrings.h"
 #include "loader.h"
 #include "cardSaves.h"
 #include "utils.hpp"
@@ -317,7 +318,7 @@ std::string topMenuSelect(void) {
 			}
 		} else if(pressed & KEY_X) {
 			if((topMenuContents[tmCurPos].name != "fat:") && (topMenuContents[tmCurPos].name != "sd:") && (topMenuContents[tmCurPos].name != "card:")) {
-				if(Input::getBool("Remove", "Cancel")) {
+				if(Input::getBool(Lang::remove, Lang::cancel)) {
 					std::ofstream out(sdFound() ? "sd:/_nds/pkmn-chest/favorites.lst" : "fat:/_nds/pkmn-chest/favorites.lst");
 
 					std::string line;

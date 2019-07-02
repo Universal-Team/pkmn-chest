@@ -20,9 +20,22 @@ namespace Lang {
 
 	extern std::string
 	// [main]
+	cancel,
 	chest,
+	discard,
+	female,
 	invalidSave,
-	loading;
+	loading,
+	male,
+	no,
+	release,
+	remove,
+	save,
+	yes,
+	// [saveMsg]
+	saveMsgCard,
+	saveMsgChest,
+	saveMsgSave;
 }
 
 #endif

@@ -6,6 +6,7 @@
 #include "config.h"
 #include "colors.h"
 #include "graphics.h"
+#include "langStrings.h"
 #include "manager.h"
 
 struct Key {
@@ -431,7 +432,7 @@ int Input::getInt(uint max) {
 	return i;
 }
 
-bool Input::getBool() { return getBool("true", "false"); }
+bool Input::getBool() { return getBool(Lang::yes, Lang::no); }
 bool Input::getBool(std::string optionTrue, std::string optionFalse) {
 	// Draw rectangles
 	drawRectangle(38, 66, 180, 60, DARKER_GRAY, false);
@@ -439,8 +440,8 @@ bool Input::getBool(std::string optionTrue, std::string optionFalse) {
 	drawRectangle(138, 76, 70, 40, LIGHT_GRAY, false);
 
 	// Print text
-	printTextCenteredTinted(optionFalse, DARK_GRAY, -45, 88, false);
-	printTextCenteredTinted(optionTrue, DARK_GRAY, 45, 88, false);
+	printTextCenteredTintedMaxW(optionFalse, 60, 1, DARK_GRAY, -45, 88, false);
+	printTextCenteredTintedMaxW(optionTrue, 60, 1, DARK_GRAY, 45, 88, false);
 
 	int pressed;
 	touchPosition touch;
