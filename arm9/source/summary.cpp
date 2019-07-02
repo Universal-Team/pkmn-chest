@@ -61,7 +61,7 @@ void drawSummaryP1(std::shared_ptr<PKX> pkm) {
 	// Print Pokémon name
 	printTextTintedMaxW(Lang::species[pkm->species()], 90, 1, (pkm->gender() ? (pkm->gender() == 1 ? RED_RGB : WHITE) : BLUE_RGB), 165, 1, false);
 
-	// Draw Pokémon Pokéball, types, and shiny star (if shiny)
+	// Draw Pokémon, Pokéball, types, and shiny star (if shiny)
 	XYCoords xy = getPokeballPosition(pkm->ball());
 	drawImageFromSheet(148, 1, 15, 15, ballSheet, ballSheetData.width, xy.x, xy.y, false);
 	xy = getPokemonPosition(pkm);
@@ -191,10 +191,15 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 			if(summaryPage == 0) {
 				for(uint i=0;i<(sizeof(textSP1)/sizeof(textSP1[0]));i++) {
 					if(touch.px >= textSP1[i].x && touch.px <= textSP1[i].x+getTextWidthMaxW(textSP1[i].text, 80) && touch.py >= textSP1[i].y && touch.py <= textSP1[i].y+16) {
+						column = 0;
 						selection = i;
 						optionSelected = true;
 						break;
 					}
+				}
+				if(touch.px >= 146 && touch.py >= 16 && touch.py <= 80) {
+					column = 1;
+					optionSelected = true;
 				}
 			} else {
 				for(uint i=0;i<(sizeof(textSP2r2)/sizeof(textSP2r2[0]));i++) {
@@ -221,55 +226,60 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 			setSpriteVisibility(bottomArrowID, false);
 			updateOam();
 			if(summaryPage == 0) {
-				switch(selection) {
-					case 0: {
-						int num = Input::getInt(save->maxSpecies());
-						if(num > 0)	pkm->species(num);
-						break;
-					} case 1: {
-						std::string name = Input::getLine(10);
-						if(name != "") {
-							pkm->nickname(name);
-							pkm->nicknamed(true);
+				if(column == 0) {
+					switch(selection) {
+						case 0: {
+							int num = Input::getInt(save->maxSpecies());
+							if(num > 0)	pkm->species(num);
+							break;
+						} case 1: {
+							std::string name = Input::getLine(10);
+							if(name != "") {
+								pkm->nickname(name);
+								pkm->nicknamed(true);
+							}
+							if(pkm->gender() != 2)	pkm->gender(Input::getBool(Lang::female, Lang::male));
+							break;
+						} case 2: {
+							int num = Input::getInt(save->generation() == Generation::FIVE ? 25 : 24);
+							if(num > 0)	pkm->ball(num);
+							break;
+						} case 3: {
+							int num = Input::getInt(100);
+							if(num > 0)	pkm->level(num);
+							break;
+						} case 4: {
+							int num = Input::getInt(24); // TODO: Add proper selection
+							if(num != -1)	pkm->nature(num);
+							break;
+						} case 5: {
+							pkm->shiny(!pkm->shiny());
+							break;
+						} case 6: {
+							pkm->pkrs(pkm->pkrs() ? 0 : 0xF4);
+							break;
+						} case 7: {
+							std::string name = Input::getLine(7);
+							if(name != "")	pkm->otName(name);
+							pkm->otGender(Input::getBool(Lang::female, Lang::male));
+							break;
+						} case 8: {
+							int num = Input::getInt(65535);
+							if(num != -1)	pkm->TID(num);
+							break;
+						} case 9: {
+							int num = Input::getInt(65535);
+							if(num != -1)	pkm->SID(num);
+							break;
+						} case 10: {
+							int num = Input::getInt(255);
+							if(num != -1)	pkm->otFriendship(num);
+							break;
 						}
-						if(pkm->gender() != 2)	pkm->gender(Input::getBool(Lang::female, Lang::male));
-						break;
-					} case 2: {
-						int num = Input::getInt(save->generation() == Generation::FIVE ? 25 : 24);
-						if(num > 0)	pkm->ball(num);
-						break;
-					} case 3: {
-						int num = Input::getInt(100);
-						if(num > 0)	pkm->level(num);
-						break;
-					} case 4: {
-						int num = Input::getInt(24); // TODO: Add proper selection
-						if(num != -1)	pkm->nature(num);
-						break;
-					} case 5: {
-						pkm->shiny(!pkm->shiny());
-						break;
-					} case 6: {
-						pkm->pkrs(pkm->pkrs() ? 0 : 0xF4);
-						break;
-					} case 7: {
-						std::string name = Input::getLine(7);
-						if(name != "")	pkm->otName(name);
-						pkm->otGender(Input::getBool(Lang::female, Lang::male));
-						break;
-					} case 8: {
-						int num = Input::getInt(65535);
-						if(num != -1)	pkm->TID(num);
-						break;
-					} case 9: {
-						int num = Input::getInt(65535);
-						if(num != -1)	pkm->SID(num);
-						break;
-					} case 10: {
-						int num = Input::getInt(255);
-						if(num != -1)	pkm->otFriendship(num);
-						break;
 					}
+				} else {
+					int num = Input::getInt(); // TODO: Add limits
+					if(num != -1)	pkm->alternativeForm(num);
 				}
 			} else {
 				if(column == 0) {
@@ -299,7 +309,11 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 		}
 
 		if(summaryPage == 0) {
-			setSpritePosition(bottomArrowID, textSP1[selection].x+getTextWidthMaxW(textSP1[selection].text, 80), textSP1[selection].y-6);
+			if(column == 0) {
+				setSpritePosition(bottomArrowID, textSP1[selection].x+getTextWidthMaxW(textSP1[selection].text, 80), textSP1[selection].y-6);
+			} else {
+				setSpritePosition(bottomArrowID, 236, 20);
+			}
 		} else {
 			if(column == 0) {
 				setSpritePosition(bottomArrowID, 128+(textSP2r2[selection].x+(getTextWidth(textSP2r2[selection].text)/2)), textSP2r2[selection].y-6);
