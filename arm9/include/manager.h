@@ -24,14 +24,14 @@ int currentBox(void);
  * Returns the Pokémon in the provided slot
  * on the cursor's current screen
  */
-std::shared_ptr<PKX> currentPokemon(int slot);
+std::shared_ptr<PKX> currentPokemon(std::shared_ptr<PKX> pkm);
 
 /*
  * Gets the position of a Pokémon in the spritesheet
  * int dexNumber is the National dex number of the Pokémon
  * Returns an XYCoords of the spritesheet position
  */
-XYCoords getPokemonPosition(int dexNumber);
+XYCoords getPokemonPosition(std::shared_ptr<PKX> pkm);
 
 // Loads the images into RAM and creates the sprites
 void loadGraphics(void);
@@ -46,7 +46,7 @@ void drawBox(bool top);
 void drawPokemonInfo(std::shared_ptr<PKX> pkm);
 
 // Fills the held Pokémon sprite
-void setHeldPokemon(int dexNum);
+void setHeldPokemon(std::shared_ptr<PKX> pkm);
 
 // Main Pokémon box mangaement loop
 void manageBoxes(void);

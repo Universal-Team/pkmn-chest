@@ -65,11 +65,85 @@ std::shared_ptr<PKX> currentPokemon(int slot) {
 	else	return save->pkm(currentBox(), slot);
 }
 
-XYCoords getPokemonPosition(int dexNumber) {
-	if(dexNumber > 649)	return {0, 0};
+XYCoords getPokemonPosition(std::shared_ptr<PKX> pkm) {
+	if(pkm->species() > 649)	return {0, 0};
+	else if(pkm->species() == 201) { // Unown
+		if(pkm->alternativeForm() == 0);
+		else if(pkm->alternativeForm() < 5)
+			return {384+((pkm->alternativeForm()-1)*32), 1280};
+		else if(pkm->alternativeForm() < 21)
+			return {(pkm->alternativeForm()-5)*32, 1312};
+		else
+			return {(pkm->alternativeForm()-21)*32, 1344};
+	} else if(pkm->species() == 386) { // Deoxys
+		if(pkm->alternativeForm() > 0)
+			return {224+((pkm->alternativeForm()-1)*32), 1344};
+	} else if(pkm->species() == 412) { // Burmy
+		if(pkm->alternativeForm() > 0)
+			return {320+((pkm->alternativeForm()-1)*32), 1344};
+	} else if(pkm->species() == 413) { // Wormadam
+		if(pkm->alternativeForm() > 0)
+			return {384+((pkm->alternativeForm()-1)*32), 1344};
+	} else if(pkm->species() == 422) { // Shellos
+		if(pkm->alternativeForm() == 1)
+			return {448, 1344};
+	} else if(pkm->species() == 423) { // Gastrodon
+		if(pkm->alternativeForm() == 1)
+			return {480, 1344};
+	} else if(pkm->species() == 479) { // Rotom
+		if(pkm->alternativeForm() > 0)
+			return {(pkm->alternativeForm()-1)*32, 1376};
+	} else if(pkm->species() == 487) { // Giratina
+		if(pkm->alternativeForm() == 1)
+			return {160, 1376};
+	} else if(pkm->species() == 492) { // Shaymin
+		if(pkm->alternativeForm() == 1)
+			return {192, 1376};
+	} else if(pkm->species() == 521) { // Unfezant
+		if(pkm->gender() == 1)
+			return {224, 1376};
+	} else if(pkm->species() == 550) { // Basculin
+		if(pkm->alternativeForm() == 1)
+			return {256, 1376};
+	} else if(pkm->species() == 555) { // Darmanitan
+		if(pkm->alternativeForm() == 1)
+			return {288, 1376};
+	} else if(pkm->species() == 585) { // Deerling
+		if(pkm->alternativeForm() > 0)
+			return {320+((pkm->alternativeForm()-1)*32), 1376};
+	} else if(pkm->species() == 586) { // Sawsbuck
+		if(pkm->alternativeForm() > 0)
+			return {416+((pkm->alternativeForm()-1)*32), 1376};
+	} else if(pkm->species() == 592) { // Frillish
+		if(pkm->gender() == 1)
+			return {0, 1408};
+	} else if(pkm->species() == 593) { // Jellicent
+		if(pkm->gender() == 1)
+			return {32, 1408};
+	} else if(pkm->species() == 648) { // Meloetta
+		if(pkm->alternativeForm() == 1)
+			return {64, 1408};
+	} else if(pkm->species() == 641) { // Tornadus
+		if(pkm->alternativeForm() == 1)
+			return {96, 1408};
+	} else if(pkm->species() == 642) { // Thunderus
+		if(pkm->alternativeForm() == 1)
+			return {128, 1408};
+	} else if(pkm->species() == 645) { // Landorus
+		if(pkm->alternativeForm() == 1)
+			return {160, 1408};
+	} else if(pkm->species() == 646) { // Kyurem
+		if(pkm->alternativeForm() > 0)
+			return {192+((pkm->alternativeForm()-1)*32), 1408};
+	} else if(pkm->species() == 647) { // Keldeo
+		if(pkm->alternativeForm() == 1)
+			return {256, 1408};
+	}
+
+	// Non-alternate form, get based on dex number
 	XYCoords xy;
-	xy.y = (dexNumber/16)*pokemonSheetSize;
-	xy.x = (dexNumber-((dexNumber/16)*16))*pokemonSheetSize;
+	xy.y = (pkm->species()/16)*pokemonSheetSize;
+	xy.x = (pkm->species()-((pkm->species()/16)*16))*pokemonSheetSize;
 	return xy;
 }
 
@@ -169,7 +243,7 @@ void drawBox(bool top) {
 		for(int i=0;i<30;i++) {
 			// Fill Pokémon Sprites
 			if(Banks::bank->pkm(currentBankBox, i)->species() != 0) {
-				XYCoords xy = getPokemonPosition(Banks::bank->pkm(currentBankBox, i)->species());
+				XYCoords xy = getPokemonPosition(Banks::bank->pkm(currentBankBox, i));
 				fillSpriteFromSheetScaled(i+30, pokemonSheetScale, pokemonSheet, pokemonSheetSize, pokemonSheetSize, pokemonSheetData.width, xy.x, xy.y);
 			}
 		}
@@ -189,7 +263,7 @@ void drawBox(bool top) {
 		for(int i=0;i<30;i++) {
 			// Fill Pokémon Sprites
 			if(save->pkm(currentSaveBox, i)->species() != 0) {
-				XYCoords xy = getPokemonPosition(save->pkm(currentSaveBox, i)->species());
+				XYCoords xy = getPokemonPosition(save->pkm(currentSaveBox, i));
 				fillSpriteFromSheetScaled(i, pokemonSheetScale, pokemonSheet, pokemonSheetSize, pokemonSheetSize, pokemonSheetData.width, xy.x, xy.y);
 			}
 		}
@@ -233,9 +307,9 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 	}
 }
 
-void setHeldPokemon(int dexNum) {
-	if(dexNum != 0) {
-		XYCoords xy = getPokemonPosition(dexNum);
+void setHeldPokemon(std::shared_ptr<PKX> pkm) {
+	if(pkm->species() != 0) {
+		XYCoords xy = getPokemonPosition(pkm);
 		fillSpriteFromSheetScaled(bottomHeldPokemonID, pokemonSheetScale, pokemonSheet, pokemonSheetSize, pokemonSheetSize, pokemonSheetData.width, xy.x, xy.y);
 		fillSpriteFromSheetScaled(topHeldPokemonID, pokemonSheetScale, pokemonSheet, pokemonSheetSize, pokemonSheetSize, pokemonSheetData.width, xy.x, xy.y);
 	}
@@ -250,7 +324,7 @@ std::string aMenuText(int buttonMode, int i) {
 void drawAMenuButtons(std::vector<TextPos>& buttons, int buttonMode) {
 	for(uint i=0;i<buttons.size();i++) {
 		drawRectangle(buttons[i].x, buttons[i].y, 80, 24, DARKER_GRAY, false);
-		printText(aMenuText(buttonMode, i), buttons[i].x+4, buttons[i].y+4, false);
+		printTextMaxW(aMenuText(buttonMode, i), 80, 1, buttons[i].x+4, buttons[i].y+4, false);
 	}
 }
 
@@ -296,12 +370,13 @@ int aMenu(int pkmPos, std::vector<TextPos>& buttons, int buttonMode) {
 			optionSelected = false;
 			if(menuSelection == 0) { // Edit
 				edit:
-				if(topScreen)	Banks::bank->pkm(showPokemonSummary(currentPokemon(pkmPos)), currentSaveBox, pkmPos);
+				if(topScreen)	Banks::bank->pkm(showPokemonSummary(currentPokemon(pkmPos)), currentBankBox, pkmPos);
 				else	save->pkm(showPokemonSummary(currentPokemon(pkmPos)), currentSaveBox, pkmPos, false);
 				
 				// Redraw screen
 				drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
 				drawBox(false);
+				if(topScreen)	drawBox(topScreen);
 				drawPokemonInfo(currentPokemon(pkmPos));
 				drawAMenuButtons(buttons, buttonMode);
 			} else if(menuSelection == 1) { // Move
@@ -334,6 +409,7 @@ int aMenu(int pkmPos, std::vector<TextPos>& buttons, int buttonMode) {
 					goto back;
 				}
 				drawBox(topScreen);
+				drawPokemonInfo(save->emptyPkm());
 				drawRectangle(5+bankBoxData.width, 66, 256-(5+bankBoxData.width), 60, DARK_GRAY, false);
 				drawAMenuButtons(buttons, buttonMode);
 			} else if(menuSelection == 4) { // Dump
@@ -445,12 +521,20 @@ int aMenu(int pkmPos, std::vector<TextPos>& buttons, int buttonMode) {
 				std::ifstream in(fileName);
 				u8* buffer = 0;
 				in.read((char*)buffer, 136);
-				save->pkm(save->emptyPkm()->getPKM(fileName.substr(fileName.size()-1) == "4" ? Generation::FOUR : Generation::FIVE, buffer), currentSaveBox, pkmPos, false);
+				if(topScreen)	Banks::bank->pkm(save->emptyPkm()->getPKM(fileName.substr(fileName.size()-1) == "4" ? Generation::FOUR : Generation::FIVE, buffer), currentSaveBox, pkmPos);
+				else	save->pkm(save->emptyPkm()->getPKM(fileName.substr(fileName.size()-1) == "4" ? Generation::FOUR : Generation::FIVE, buffer), currentSaveBox, pkmPos, false);
 				}
 				
 				// Reset 
 				chdir(path);
-				drawBox(topScreen);
+				drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+				drawBox(false);
+				if(topScreen)	drawBox(topScreen);
+				drawPokemonInfo(currentPokemon(pkmPos));
+
+				if(!topScreen)	setSpriteVisibility(bottomArrowID, true);
+				updateOam();
+				goto back;
 			} else if(menuSelection == 1) { // Create
 				goto edit;
 			} else if(menuSelection == 2) {

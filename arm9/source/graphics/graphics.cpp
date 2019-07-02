@@ -291,7 +291,7 @@ void printTextTinted(std::u16string text, u16 color, int xPos, int yPos, bool to
 	for(uint c = 0; c < text.length(); c++) {
 		unsigned int charIndex = getTopFontSpriteIndex(text[c]);
 
-		if(xPos+x+fontTexcoords[2 + (4 * charIndex)] > 255) {
+		if(xPos+x+fontTexcoords[2 + (4 * charIndex)] > 256) {
 			x = 0;
 			yPos += 16;
 		} else if(text[c] == newline[0]) {
@@ -347,7 +347,7 @@ void printTextTintedScaled(std::u16string text, double scaleX,  double scaleY, u
 		for(uint c = 0; c < text.length(); c++) {
 			unsigned int charIndex = getTopFontSpriteIndex(text[c]);
 
-			if(xPos+x+fontTexcoords[2 + (4 * charIndex)] > 255) {
+			if(xPos+x+fontTexcoords[2 + (4 * charIndex)] > 256) {
 				x = 0;
 				yPos += 16/scaleY;
 			} else if(text[c] == newline[0]) {
