@@ -672,37 +672,39 @@ void manageBoxes(void) {
 						heldPokemon = -1;
 						heldPokemonBox = -1;
 					} else if(!heldMode || currentPokemon((arrowY*6)+arrowX)->species() == 0) {
-						// If not copying / there isn't a Pokémon at the new spot, move Pokémon
-						// Save the Pokémon at the cursor's postion to a temp variable
-						std::shared_ptr<PKX> heldPkm = (heldPokemonScreen ? Banks::bank->pkm(heldPokemonBox, heldPokemon) : save->pkm(heldPokemonBox, heldPokemon));
-						std::shared_ptr<PKX> tempPkm;
-						if(currentPokemon((arrowY*6)+arrowX)->species() != 0)	tempPkm = currentPokemon((arrowY*6)+arrowX);
-						else	tempPkm = save->emptyPkm();
-						// Write the held Pokémon to the cursor position
-						if(topScreen)	Banks::bank->pkm(heldPkm, currentBox(), (arrowY*6)+arrowX);
-						else {
-							save->pkm(heldPkm, currentBox(), (arrowY*6)+arrowX, false);
-							save->dex(heldPkm);
-						}
-						// If not copying, write the cursor position's previous Pokémon to the held Pokémon's old spot
-						if(!heldMode) {
-							if(heldPokemonScreen)	Banks::bank->pkm(tempPkm, heldPokemonBox, heldPokemon);
+						if(topScreen || (heldPokemonScreen ? Banks::bank->pkm(heldPokemonBox, heldPokemon) : save->pkm(heldPokemonBox, heldPokemon))->species() <= save->maxSpecies()) {
+							// If not copying / there isn't a Pokémon at the new spot, move Pokémon
+							// Save the Pokémon at the cursor's postion to a temp variable
+							std::shared_ptr<PKX> heldPkm = (heldPokemonScreen ? Banks::bank->pkm(heldPokemonBox, heldPokemon) : save->pkm(heldPokemonBox, heldPokemon));
+							std::shared_ptr<PKX> tempPkm;
+							if(currentPokemon((arrowY*6)+arrowX)->species() != 0)	tempPkm = currentPokemon((arrowY*6)+arrowX);
+							else	tempPkm = save->emptyPkm();
+							// Write the held Pokémon to the cursor position
+							if(topScreen)	Banks::bank->pkm(heldPkm, currentBox(), (arrowY*6)+arrowX);
 							else {
-								save->pkm(tempPkm, heldPokemonBox, heldPokemon, false);
+								save->pkm(heldPkm, currentBox(), (arrowY*6)+arrowX, false);
 								save->dex(heldPkm);
 							}
-						}
-						// Hide the moving Pokémon
-						setSpriteVisibility(topScreen ? topHeldPokemonID : bottomHeldPokemonID, false);
-						
-						// Update the box(es) for the moved Pokémon
-						drawBox(topScreen);
-						if(heldPokemonScreen != topScreen)	drawBox(heldPokemonScreen);
-						drawPokemonInfo(currentPokemon((arrowY*6)+arrowX));
+							// If not copying, write the cursor position's previous Pokémon to the held Pokémon's old spot
+							if(!heldMode) {
+								if(heldPokemonScreen)	Banks::bank->pkm(tempPkm, heldPokemonBox, heldPokemon);
+								else {
+									save->pkm(tempPkm, heldPokemonBox, heldPokemon, false);
+									save->dex(heldPkm);
+								}
+							}
+							// Hide the moving Pokémon
+							setSpriteVisibility(topScreen ? topHeldPokemonID : bottomHeldPokemonID, false);
+							
+							// Update the box(es) for the moved Pokémon
+							drawBox(topScreen);
+							if(heldPokemonScreen != topScreen)	drawBox(heldPokemonScreen);
+							drawPokemonInfo(currentPokemon((arrowY*6)+arrowX));
 
-						// Not holding a Pokémon anymore
-						heldPokemon = -1;
-						heldPokemonBox = -1;
+							// Not holding a Pokémon anymore
+							heldPokemon = -1;
+							heldPokemonBox = -1;
+						}
 					}
 				} else if(currentPokemon((arrowY*6)+arrowX)->species() != 0) {
 					int temp = 1;
@@ -712,7 +714,7 @@ void manageBoxes(void) {
 						heldPokemonBox = currentBox();
 						heldPokemonScreen = topScreen;
 						heldMode = temp-1; // false = move, true = copy
-						setHeldPokemon(currentPokemon(heldPokemon)->species());
+						setHeldPokemon(currentPokemon(heldPokemon));
 						if(!heldMode)	setSpriteVisibility(heldPokemonScreen ? heldPokemon+30 : heldPokemon, false);
 						setSpriteVisibility(topScreen ? topHeldPokemonID : bottomHeldPokemonID, true);
 						drawPokemonInfo(currentPokemon(heldPokemon));
