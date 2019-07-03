@@ -108,10 +108,19 @@ void Lang::loadLangStrings(int lang) {
 	Lang::optionsTextLabels[1] = ini.GetString("options", "chestSize", Lang::optionsTextLabels[1]);
 	Lang::optionsTextLabels[2] = ini.GetString("options", "language", Lang::optionsTextLabels[2]);
 	Lang::optionsTextLabels[3] = ini.GetString("options", "backupAmount", Lang::optionsTextLabels[3]);
+	Lang::optionsTextLabels[4] = ini.GetString("options", "music", Lang::optionsTextLabels[4]);
+	Lang::optionsTextLabels[5] = ini.GetString("options", "soundFX", Lang::optionsTextLabels[5]);
 	Lang::optionsText[0] = ini.GetString("options", "new", Lang::optionsText[0]);
 	Lang::optionsText[1] = ini.GetString("options", "rename", Lang::optionsText[1]);
 	Lang::optionsText[2] = ini.GetString("options", "delete", Lang::optionsText[2]);
 	Lang::optionsText[3] = ini.GetString("options", "change", Lang::optionsText[3]);
+
+	// [songs]
+	Lang::songs[0] = ini.GetString("songs", "off", Lang::songs[0]);
+	Lang::songs[1] = ini.GetString("songs", "center", Lang::songs[1]);
+	Lang::songs[2] = ini.GetString("songs", "elmLab", Lang::songs[2]);
+	Lang::songs[3] = ini.GetString("songs", "oakLab", Lang::songs[3]);
+	Lang::songs[4] = ini.GetString("songs", "gameCorner", Lang::songs[4]);
 
 	// [summary]
 	Lang::summaryP1Labels[0]  = ini.GetString("summary", "dexNo", Lang::summaryP1Labels[0]);

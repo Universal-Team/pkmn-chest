@@ -34,6 +34,7 @@
 #include "langStrings.h"
 #include "loader.h"
 #include "cardSaves.h"
+#include "sound.h"
 #include "utils.hpp"
 
 #define ENTRIES_PER_SCREEN 11
@@ -309,14 +310,17 @@ std::string topMenuSelect(void) {
 				chdir("sd:/");
 				return "";
 			} else if(topMenuContents[tmCurPos].name == "card:" && topMenuContents[tmSlot1Offset].valid) {
+				Sound::play(Sound::click);
 				dumpSave();
 				showTopMenuOnExit = 1;
 				return cardSave;
 			} else if(topMenuContents[tmCurPos].valid) {
+				Sound::play(Sound::click);
 				showTopMenuOnExit = 1;
 				return topMenuContents[tmCurPos].name;
 			}
 		} else if(pressed & KEY_X) {
+			Sound::play(Sound::click);
 			if((topMenuContents[tmCurPos].name != "fat:") && (topMenuContents[tmCurPos].name != "sd:") && (topMenuContents[tmCurPos].name != "card:")) {
 				if(Input::getBool(Lang::remove, Lang::cancel)) {
 					std::ofstream out(sdFound() ? "sd:/_nds/pkmn-chest/favorites.lst" : "fat:/_nds/pkmn-chest/favorites.lst");
@@ -463,6 +467,7 @@ std::string browseForFile(const std::vector<std::string>& extensionList, bool di
 				fileOffset = 0;
 				showDirectoryContents(dirContents, screenOffset);
 			} else if(!entry->isDirectory) {
+				Sound::play(Sound::click);
 				// Return the chosen file
 				return entry->name;
 			}
@@ -479,9 +484,11 @@ std::string browseForFile(const std::vector<std::string>& extensionList, bool di
 			fileOffset = 0;
 			showDirectoryContents(dirContents, screenOffset);
 		} else if(pressed & KEY_B && !directoryNavigation) {
+			Sound::play(Sound::back);
 			return "";
 		} else if(pressed & KEY_Y && !dirContents[fileOffset].isDirectory && directoryNavigation) {
 			if(loadSave(dirContents[fileOffset].name)) {
+				Sound::play(Sound::click);
 				char path[PATH_MAX];
 				getcwd(path, PATH_MAX);
 				std::ofstream favs(sdFound() ? "sd:/_nds/pkmn-chest/favorites.lst" : "fat:/_nds/pkmn-chest/favorites.lst", std::fstream::app);
@@ -598,7 +605,6 @@ int fcopy(const char *sourcePath, const char *destinationPath) {
 			numr = fread(copyBuf, 2, copyBufSize, sourceFile);
 			fwrite(copyBuf, 2, numr, destinationFile);
 			offset += copyBufSize;
-
 
 			if(offset > fsize) {
 				fclose(sourceFile);

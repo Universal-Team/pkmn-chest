@@ -3,7 +3,8 @@
 #include "flashcard.h"
 
 std::string Config::chestFile;
-int Config::backupAmount, Config::keyboardLayout, Config::keyboardXPos, Config::lang;
+bool Config::playSfx;
+int Config::backupAmount, Config::keyboardLayout, Config::keyboardXPos, Config::lang, Config::music;
 
 void Config::loadConfig() {
 	CIniFile ini(sdFound() ? "sd:/_nds/pkmn-chest/config.ini" : "fat:/_nds/pkmn-chest/config.ini");
@@ -12,6 +13,8 @@ void Config::loadConfig() {
 	Config::keyboardLayout = ini.GetInt("keyboard", "layout", 0);
 	Config::keyboardXPos = ini.GetInt("keyboard", "xPos", 0);
 	Config::lang = ini.GetInt("language", "lang", 1);
+	Config::music = ini.GetInt("sound", "music", 0);
+	Config::playSfx = ini.GetInt("sound", "sfx", 0);
 }
 
 void Config::saveConfig() {
@@ -21,5 +24,7 @@ void Config::saveConfig() {
 	ini.SetInt("keyboard", "layout", Config::keyboardLayout);
 	ini.SetInt("keyboard", "xPos", Config::keyboardXPos);
 	ini.SetInt("language", "lang", Config::lang);
+	ini.SetInt("sound", "music", Config::music);
+	ini.SetInt("sound", "sfx", Config::playSfx);
 	ini.SaveIniFile(sdFound() ? "sd:/_nds/pkmn-chest/config.ini" : "fat:/_nds/pkmn-chest/config.ini");
 }

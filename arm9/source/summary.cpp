@@ -4,6 +4,7 @@
 #include "loader.h"
 #include "keyboard.h"
 #include "manager.h"
+#include "sound.h"
 
 struct Text {
 	int x;
@@ -84,8 +85,8 @@ void drawSummaryP1(std::shared_ptr<PKX> pkm) {
 	snprintf(textSP1[2].text,  sizeof(textSP1[2].text), "%s", Lang::balls[pkm->ball()].c_str());
 	snprintf(textSP1[3].text,  sizeof(textSP1[3].text), "%i", pkm->level());
 	snprintf(textSP1[4].text,  sizeof(textSP1[4].text), "%s", Lang::natures[pkm->nature()].c_str());
-	snprintf(textSP1[5].text,  sizeof(textSP1[5].text), "%s", pkm->shiny() ? "Yes" : "No");
-	snprintf(textSP1[6].text,  sizeof(textSP1[6].text), "%s", pkm->pkrs() ? "Yes" : "No");
+	snprintf(textSP1[5].text,  sizeof(textSP1[5].text), "%s", pkm->shiny() ? Lang::yes.c_str() : Lang::no.c_str());
+	snprintf(textSP1[6].text,  sizeof(textSP1[6].text), "%s", pkm->pkrs() ? Lang::yes.c_str() : Lang::no.c_str());
 	snprintf(textSP1[7].text,  sizeof(textSP1[7].text), "%s", pkm->otName().c_str());
 	snprintf(textSP1[8].text,  sizeof(textSP1[8].text), "%.5i", pkm->TID());
 	snprintf(textSP1[9].text,  sizeof(textSP1[9].text), "%.5i", pkm->SID());
@@ -184,6 +185,7 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 		} else if(pressed & KEY_A) {
 			optionSelected = true;
 		} else if(pressed & KEY_B) {
+			Sound::play(Sound::back);
 			summaryPage = 0;
 			return pkm;
 		} else if(pressed & KEY_TOUCH) {
@@ -222,6 +224,7 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 		}
 
 		if(optionSelected) {
+			Sound::play(Sound::click);
 			optionSelected = false;
 			setSpriteVisibility(bottomArrowID, false);
 			updateOam();

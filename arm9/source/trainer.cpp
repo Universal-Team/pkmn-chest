@@ -5,6 +5,7 @@
 #include "langStrings.h"
 #include "loader.h"
 #include "manager.h"
+#include "sound.h"
 
 struct Text {
 	int x;
@@ -83,6 +84,7 @@ void showTrainerCard(void) {
 		} else if(pressed & KEY_A) {
 			optionSelected = true;
 		} else if(pressed & KEY_B) {
+			Sound::play(Sound::back);
 			return;
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
@@ -96,6 +98,7 @@ void showTrainerCard(void) {
 		}
 
 		if(optionSelected) {
+			Sound::play(Sound::click);
 			optionSelected = false;
 			setSpriteVisibility(bottomArrowID, false);
 			updateOam();

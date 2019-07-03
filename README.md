@@ -10,7 +10,7 @@ A Pokémon Bank for 4<sup>th</sup> and 5<sup>th</sup> generation Pokémon games 
 ## Compiling
 Compiling this app requires [devkitPRO](https://devkitpro.org)'s devkitARM and libnds.
 These can be installed by getting [devkitPro pacman](https://devkitpro.org/wiki/devkitPro_pacman), then running:
-`sudo dkp-pacman -S default-arm7 devkitARM devkitarm-rules libnds libfat-nds`<br/>
+`sudo dkp-pacman -S nds-dev`<br/>
 <sup>(command may be slightly different depending on your OS)</sup>
 
 ## Contact
@@ -26,3 +26,5 @@ If you want to report a bug you can do so [here](https://github.com/Universal-Te
 - [edo9300](https://github.com/edo9300): [ndsi-savedumper](https://github.com/edo9300/ndsi-savedumper)'s gamecard save dumping and injecting code
 - [RocketRobz](https://github.com/RocketRobz): Adding flashcard and SD being used together and code from [TWiLight Menu++](https://github.com/DS-Homebrew/TWiLightMenu)
 - [VoltZ](https://github.com/SuperSaiyajinVoltZ): Idea to make a Pokémon Bank for the DS(i)
+### Music
+- [Pokémon Center](https://modarchive.org/index.php?request=view_by_moduleid&query=181718), [Elm's Lab](https://modarchive.org/index.php?request=view_by_moduleid&query=181711), [Oak's Lab](https://modarchive.org/index.php?request=view_by_moduleid&query=181717), and [Game Corner](https://modarchive.org/index.php?request=view_by_moduleid&query=181756).

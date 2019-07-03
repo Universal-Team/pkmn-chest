@@ -14,6 +14,7 @@ namespace Lang {
 	aMenuTopBarText,
 	optionsTextLabels,
 	optionsText,
+	songs,
 	summaryP1Labels,
 	summaryP2Labels,
 	xMenuText;

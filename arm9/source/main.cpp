@@ -11,6 +11,7 @@
 #include "loader.h"
 #include "manager.h"
 #include "nitrofs.h"
+#include "sound.h"
 
 int main(int argc, char **argv) {
 	initGraphics();
@@ -55,6 +56,7 @@ int main(int argc, char **argv) {
 	}
 	loadFont();
 	Config::loadConfig();
+	Sound::init();
 	Lang::loadLangStrings(Config::lang);
 	printTextCentered(Lang::loading, 0, 32, false);
 

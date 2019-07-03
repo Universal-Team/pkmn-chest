@@ -4,6 +4,7 @@
 #include "langStrings.h"
 #include "loader.h"
 #include "manager.h"
+#include "sound.h"
 #include "summary.h"
 
 struct button {
@@ -67,10 +68,12 @@ void manageParty(void) {
 		} else if(pressed & KEY_A) {
 			selectedOption = menuSelection;
 		} else if(pressed & KEY_B) {
+			Sound::play(Sound::back);
 			break;
 		}
 
 		if(selectedOption != -1) {
+			Sound::play(Sound::click);
 			if(save->pkm(selectedOption)->species() != 0) {
 				save->pkm(showPokemonSummary(save->pkm(selectedOption)), selectedOption);
 

@@ -8,6 +8,7 @@
 #include "graphics.h"
 #include "langStrings.h"
 #include "manager.h"
+#include "sound.h"
 
 struct Key {
 	std::string character;
@@ -361,6 +362,7 @@ std::string Input::getLine(uint maxLength) {
 			printText(string, 0, 192-keyboardData.height-16, false);
 		}
 		if(held & KEY_START || enter) {
+			Sound::play(Sound::click);
 			Config::keyboardLayout = loadedLayout;
 			if(loadedLayout < 3)	Config::keyboardXPos = xPos;
 			Config::saveConfig();
@@ -422,6 +424,7 @@ int Input::getInt(uint max) {
 			printText(string, 0, 192-keyboardData.height-16, false);
 		}
 		if(held & KEY_START || enter) {
+			Sound::play(Sound::click);
 			loadedLayout = -1; // So it doesn't draw the extra rectangle if drawing QWERTY next
 			break;
 		}
@@ -456,14 +459,18 @@ bool Input::getBool(std::string optionTrue, std::string optionFalse) {
 			touchRead(&touch);
 			if(touch.py > 76 && touch.py < 116) {
 				if(touch.px > 48 && touch.px < 118) {
+					Sound::play(Sound::back);
 					return false;
 				} else if(touch.px > 138 && touch.px < 208) {
+					Sound::play(Sound::click);
 					return true;
 				}
 			}
 		} else if(pressed & KEY_A) {
+			Sound::play(Sound::click);
 			return true;
 		} else if(pressed & KEY_B) {
+			Sound::play(Sound::back);
 			return false;
 		}
 	}

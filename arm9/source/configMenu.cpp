@@ -11,6 +11,7 @@
 #include "lang.h"
 #include "langStrings.h"
 #include "manager.h"
+#include "sound.h"
 
 struct Text {
 	int x;
@@ -18,19 +19,21 @@ struct Text {
 };
 
 Text textCP1Labels[] {
-	{20, 20}, // Chest file
-	{20, 100}, // Chest size
-	{20, 116}, // Language
-	{20, 132}, // Backups
+	{4, 16}, // Chest file
+	{4, 96}, // Chest size
+	{4, 110}, // Language
+	{4, 128}, // Backups
+	{4, 144}, // Music
+	{4, 160}, // Sound FX
 };
 Text textCP1[] {
-	{28, 36}, // New
-	{28, 52}, // Rename
-	{28, 68}, // Delete
-	{28, 84}, // Change
+	{12, 32}, // New
+	{12, 48}, // Rename
+	{12, 64}, // Delete
+	{12, 80}, // Change
 };
 
-std::vector<std::string> optionsText = {"", "", ""};
+std::vector<std::string> optionsText = {"", "", "", "", ""}; // Placeholders to be filled
 
 std::string langNames[] = { "Deutsche", "English", "Español", "Français", "Italiano", "にほんご" };
 
@@ -40,13 +43,16 @@ void drawConfigMenu(void) {
 	drawRectangle(0, 16, 256, 160, DARK_GRAY, false);
 	drawRectangle(0, 176, 256, 16, BLACK, false);
 
-	// Set bank size and language text
-	char str[4];
+	// Set variable text
+	char str[16];
 	snprintf(str, sizeof(str), "%i", Banks::bank->boxes());
 	optionsText[0] = str;
 	optionsText[1] = langNames[Config::lang];
 	snprintf(str, sizeof(str), "%i", Config::backupAmount);
 	optionsText[2] = str;
+	snprintf(str, sizeof(str), "%i", Config::music);
+	optionsText[3] = Lang::songs[Config::music];
+	optionsText[4] = Config::playSfx ? Lang::yes : Lang::no;
 
 	// Print text
 	for(uint i=0;i<Lang::optionsTextLabels.size();i++) {
@@ -83,11 +89,12 @@ void configMenu(void) {
 			if(selection > 0)	selection--;
 		} else if(held & KEY_DOWN) {
 			if(selection < (int)(Lang::optionsText.size()+optionsText.size())-1)	selection++;
-		} else if(selection == 5 && (pressed & KEY_LEFT || pressed & KEY_RIGHT)) {
+		} else if((selection == 5 || selection == 7) && (pressed & KEY_LEFT || pressed & KEY_RIGHT)) {
 			optionSelected = true;
 		} else if(pressed & KEY_A) {
 			optionSelected = true;
 		} else if(pressed & KEY_B) {
+			Sound::play(Sound::back);
 			Config::saveConfig();
 			setSpriteVisibility(bottomArrowID, false);
 			updateOam();
@@ -101,9 +108,17 @@ void configMenu(void) {
 					break;
 				}
 			}
+			for(uint i=0;i<optionsText.size();i++) {
+				if(touch.px >= textCP1Labels[i+1].x+getTextWidth(Lang::optionsTextLabels[i+1])+8 && touch.px < textCP1Labels[i+1].x+getTextWidth(Lang::optionsTextLabels[i+1])+8+getTextWidth(optionsText[i]) && touch.py >= textCP1Labels[i+1].y && touch.py <= textCP1Labels[i+1].y+16) {
+					selection = i+(sizeof(textCP1)/sizeof(textCP1[0]));
+					optionSelected = true;
+					break;
+				}
+			}
 		}
 
 		if(optionSelected) {
+			Sound::play(Sound::click);
 			optionSelected = false;
 			setSpriteVisibility(bottomArrowID, false);
 			updateOam();
@@ -174,6 +189,20 @@ void configMenu(void) {
 						Config::backupAmount = num;
 						Config::saveConfig();
 					}
+					break;
+				} case 7: { // Music
+					if(pressed & KEY_LEFT) {
+						if(Config::music > 0)	Config::music--;
+						else	Config::music = 4;
+					} else {
+						if(Config::music < 4)	Config::music++;
+						else	Config::music = 0;
+					}
+					Sound::playBgm(Config::music);
+					break;
+				} case 8: { // Sound FX
+					Config::playSfx = !Config::playSfx;
+					Config::saveConfig();
 					break;
 				}
 			}

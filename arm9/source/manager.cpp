@@ -14,6 +14,7 @@
 #include "langStrings.h"
 #include "loader.h"
 #include "party.h"
+#include "sound.h"
 #include "summary.h"
 #include "trainer.h"
 #include "utils.hpp"
@@ -363,9 +364,11 @@ int aMenu(int pkmPos, std::vector<TextPos>& buttons, int buttonMode) {
 		} else if(pressed & KEY_A) {
 			optionSelected = true;
 		} else if(pressed & KEY_B) {
+			Sound::play(Sound::back);
 			goto back;
 		}
 
+		if(optionSelected) Sound::play(Sound::click);
 		if(optionSelected && buttonMode == 0) { // A Pokémon
 			optionSelected = false;
 			if(menuSelection == 0) { // Edit
@@ -406,10 +409,11 @@ int aMenu(int pkmPos, std::vector<TextPos>& buttons, int buttonMode) {
 					drawBox(false);
 					if(topScreen)	drawBox(topScreen);
 					drawRectangle(5+bankBoxData.width, 0, 256-(5+bankBoxData.width), 192, DARK_GRAY, false);
+					drawPokemonInfo(save->emptyPkm());
 					goto back;
 				}
-				drawBox(topScreen);
-				drawPokemonInfo(save->emptyPkm());
+				drawBox(false);
+				if(topScreen)	drawBox(topScreen);
 				drawRectangle(5+bankBoxData.width, 66, 256-(5+bankBoxData.width), 60, DARK_GRAY, false);
 				drawAMenuButtons(buttons, buttonMode);
 			} else if(menuSelection == 4) { // Dump
@@ -642,9 +646,11 @@ bool xMenu(void) {
 				}
 			}
 			menuSelection = -1;
-		} else if(pressed & KEY_A) {
+		}
+		if(pressed & KEY_A) {
 			selectedOption = menuSelection;
 		} else if(pressed & KEY_B || pressed & KEY_X) {
+			Sound::play(Sound::back);
 			// Reset arrow color
 			fillSpriteImage(bottomArrowID, arrowMode ? arrowBlue : arrowRed);
 			setSpriteVisibility(topScreen ? topArrowID : bottomArrowID, true);
@@ -655,6 +661,7 @@ bool xMenu(void) {
 		}
 
 		if(selectedOption != -1) {
+			Sound::play(Sound::click);
 			switch(selectedOption) {
 				case 0: // Party
 					manageParty();
@@ -686,7 +693,7 @@ bool xMenu(void) {
 			drawRectangle(0, 0, 256, 16, BLACK, false);
 			drawRectangle(0, 16, 256, 160, DARK_GRAY, false);
 			drawRectangle(0, 176, 256, 16, BLACK, false);
-			drawXMenuButtons(1);
+			drawXMenuButtons(menuSelection);
 
 			selectedOption = -1;
 		}
@@ -743,6 +750,7 @@ void manageBoxes(void) {
 				setSpriteVisibility(heldPokemon, false);
 		}
 		if(pressed & KEY_A) {
+			Sound::play(Sound::click);
 			if(arrowY == -1) {
 				if(arrowMode == 0 && heldPokemon == -1)
 					aMenu(-1, aMenuTopBarButtons, 1);
@@ -810,6 +818,7 @@ void manageBoxes(void) {
 		}
 
 		if(pressed & KEY_X && heldPokemon == -1) {
+			Sound::play(Sound::click);
 			if(!xMenu())	break;
 		}
 
