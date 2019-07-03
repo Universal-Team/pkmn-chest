@@ -598,8 +598,7 @@ int fcopy(const char *sourcePath, const char *destinationPath) {
 
 		off_t offset = 0;
 		int numr;
-		while(1)
-		{
+		while(1) {
 			drawRectangle(((offset < fsize ? (double)offset/fsize : 1)*227)+5, 33, 19, 16, LIGHT_GRAY, false);
 			// Copy file to destination path
 			numr = fread(copyBuf, 2, copyBufSize, sourceFile);

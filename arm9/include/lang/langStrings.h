@@ -17,6 +17,7 @@ namespace Lang {
 	songs,
 	summaryP1Labels,
 	summaryP2Labels,
+	trainerText,
 	xMenuText;
 
 	extern std::string

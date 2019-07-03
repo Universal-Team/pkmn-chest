@@ -13,6 +13,7 @@ namespace Lang {
 	songs = {"Off", "Pokémon Center", "Prof. Elm's Lab", "Prof. Oak's Lab", "Game Corner"},
 	summaryP1Labels = {"Dex No.", "Name", "Ball", "Level", "Nature", "Shiny", "Pokérus", "Orig. Trainer", "Trainer ID", "Secret ID", "Friendship"},
 	summaryP2Labels = {"HP.", "Attack", "Defense", "Sp. Atk", "Sp. Def", "Speed", "Base", "IV", "EV", "Total"},
+	trainerText = {"Name", "Trainer ID", "Secret ID", "Money", "BP", "Badges", "Play time"},
 	xMenuText = {"Party", "Options", "", "", "Save", "Exit"};
 
 	std::string

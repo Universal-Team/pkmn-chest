@@ -150,6 +150,15 @@ void Lang::loadLangStrings(int lang) {
 	Lang::saveMsgCard = ini.GetString("saveMsg", "saveMsgCard", Lang::saveMsgCard);
 	Lang::saveMsgChest = ini.GetString("saveMsg", "saveMsgChest", Lang::saveMsgChest);
 	Lang::saveMsgSave = ini.GetString("saveMsg", "saveMsgSave", Lang::saveMsgSave);
+	
+	// [trainer]
+	Lang::trainerText[0] = ini.GetString("summary", "name", Lang::trainerText[0]);
+	Lang::trainerText[1] = ini.GetString("summary", "trainerID", Lang::trainerText[1]);
+	Lang::trainerText[2] = ini.GetString("summary", "secretID", Lang::trainerText[2]);
+	Lang::trainerText[3] = ini.GetString("trainer", "money", Lang::trainerText[3]);
+	Lang::trainerText[4] = ini.GetString("trainer", "bp", Lang::trainerText[4]);
+	Lang::trainerText[5] = ini.GetString("trainer", "badges", Lang::trainerText[5]);
+	Lang::trainerText[6] = ini.GetString("trainer", "playTime", Lang::trainerText[6]);
 
 	// [xMenu]
 	Lang::xMenuText[0] = ini.GetString("xMenu", "party", Lang::xMenuText[0]);

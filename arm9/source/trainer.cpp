@@ -14,14 +14,13 @@ struct Text {
 };
 
 Text textTP1[] {
-	{96, 4},
-	{96, 20},
-	{96, 36},
-	{96, 52},
-	{96, 68},
-	{96, 84},
-	{96, 100},
-
+	{4, 4},
+	{4, 20},
+	{4, 36},
+	{4, 52},
+	{4, 68},
+	{4, 84},
+	{4, 100},
 };
 
 void drawTrainerCard(void) {
@@ -29,13 +28,9 @@ void drawTrainerCard(void) {
 	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
 
 	// Print labels
-	printText("Name", 20, textTP1[0].y, false);
-	printText("Trainer ID", 20, textTP1[1].y, false);
-	printText("Secret ID", 20, textTP1[2].y, false);
-	printText("Money", 20, textTP1[3].y, false);
-	printText("BP", 20, textTP1[4].y, false);
-	printText("Badges", 20, textTP1[5].y, false);
-	printText("Play Time", 20, textTP1[6].y, false);
+	for(uint i=0;i<sizeof(textTP1)/sizeof(textTP1[0]);i++) {
+		printText(Lang::trainerText[i], textTP1[i].x, textTP1[i].y, false);
+	}
 
 	// Set info text
 	snprintf(textTP1[0].text,  sizeof(textTP1[0].text), "%s", save->otName().c_str());
@@ -47,9 +42,9 @@ void drawTrainerCard(void) {
 	snprintf(textTP1[6].text,  sizeof(textTP1[6].text), "%i:%i:%i", save->playedHours(), save->playedMinutes(), save->playedSeconds());
 	
 	// Print info
-	printTextTinted(textTP1[0].text, (save->gender() ? RED_RGB : BLUE_RGB), textTP1[0].x, textTP1[0].y, false);
+	printTextTinted(textTP1[0].text, (save->gender() ? RED_RGB : BLUE_RGB), textTP1[0].x+getTextWidth(Lang::trainerText[0])+8, textTP1[0].y, false);
 	for(uint i=1;i<(sizeof(textTP1)/sizeof(textTP1[0]));i++) {
-			printText(textTP1[i].text, textTP1[i].x, textTP1[i].y, false);
+			printText(textTP1[i].text, textTP1[i].x+getTextWidth(Lang::trainerText[i])+8, textTP1[i].y, false);
 	}
 }
 
@@ -59,7 +54,7 @@ void showTrainerCard(void) {
 
 	// Move arrow to first option
 	setSpriteVisibility(bottomArrowID, true);
-	setSpritePosition(bottomArrowID, textTP1[0].x+getTextWidth(textTP1[0].text), textTP1[0].y-6);
+	setSpritePosition(bottomArrowID, textTP1[0].x+getTextWidth(Lang::trainerText[0])+8+getTextWidth(textTP1[0].text), textTP1[0].y-6);
 	updateOam();
 
 	bool optionSelected = false;
@@ -89,7 +84,7 @@ void showTrainerCard(void) {
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
 			for(uint i=0;i<(sizeof(textTP1)/sizeof(textTP1[0]));i++) {
-				if(touch.px >= textTP1[i].x && touch.px <= textTP1[i].x+getTextWidth(textTP1[i].text) && touch.py >= textTP1[i].y && touch.py <= textTP1[i].y+16) {
+				if(touch.px >= textTP1[i].x+getTextWidth(Lang::trainerText[i])+8 && touch.px <= textTP1[i].x+getTextWidth(Lang::trainerText[i])+8+getTextWidth(textTP1[i].text) && touch.py >= textTP1[i].y && touch.py <= textTP1[i].y+16) {
 					selection = i;
 					optionSelected = true;
 					break;
@@ -138,7 +133,7 @@ void showTrainerCard(void) {
 			setSpriteVisibility(bottomArrowID, true);
 		}
 
-		setSpritePosition(bottomArrowID, textTP1[selection].x+getTextWidth(textTP1[selection].text), textTP1[selection].y-6);
+		setSpritePosition(bottomArrowID, textTP1[selection].x+getTextWidth(Lang::trainerText[selection])+8+getTextWidth(textTP1[selection].text), textTP1[selection].y-6);
 		updateOam();
 	}
 }
