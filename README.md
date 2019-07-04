@@ -24,6 +24,7 @@ If you want to report a bug you can do so [here](https://github.com/Universal-Te
 - [Epicpkmn11](https://github.com/Epicpkmn11): English and Japanese
 - [VoltZ](https://github.com/SuperSaiyajinVoltZ): German
 - [antoine62](https://github.com/antoine62): French
+- [edo9300](https://github.com/edo9300): Italian
 ### Others
 - [devkitPro](https://github.com/devkitPro), [WinterMute](https://github.com/WinterMute): devkitARM, libnds, and libfat.
 - [Flagbrew](https://github.com/FlagBrew): [PKSM](https://github.com/FlagBrew/PKSM)'s save and bank management code
