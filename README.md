@@ -8,7 +8,7 @@
 A Pokémon Bank for 4<sup>th</sup> and 5<sup>th</sup> generation Pokémon games for the Nintendo DS(i).
 
 ## Compiling
-Compiling this app requires [devkitPRO](https://devkitpro.org)'s devkitARM and libnds.
+Compiling this app requires [devkitPro](https://devkitpro.org)'s devkitARM and libnds.
 These can be installed by getting [devkitPro pacman](https://devkitpro.org/wiki/devkitPro_pacman), then running:
 `sudo dkp-pacman -S nds-dev`<br/>
 <sup>(command may be slightly different depending on your OS)</sup>

@@ -11,10 +11,11 @@ struct XYCoords {
 	int y;
 };
 
+extern bool topScreen;
 extern int bottomArrowID, topArrowID, shinyID, currentSaveBox, currentBankBox, bottomHeldPokemonID, topHeldPokemonID, 
-pokemonSheetScale, pokemonSheetSize;
+arrowMode, pokemonSheetScale, pokemonSheetSize;
 extern std::string savePath;
-extern std::vector<u16> arrow, ballSheet, bankBox, menuButton, shiny, pokemonSheet, stripes, types;
+extern std::vector<u16> arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, menuButton, shiny, pokemonSheet, stripes, types;
 extern ImageData ballSheetData, bankBoxData, menuButtonData, pokemonSheetData, shinyData, stripesData, typesData;
 
 // Returns the current box for the cursor's current screen
@@ -24,7 +25,7 @@ int currentBox(void);
  * Returns the Pokémon in the provided slot
  * on the cursor's current screen
  */
-std::shared_ptr<PKX> currentPokemon(std::shared_ptr<PKX> pkm);
+std::shared_ptr<PKX> currentPokemon(int slot);
 
 /*
  * Gets the position of a Pokémon in the spritesheet
