@@ -282,7 +282,7 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 						}
 					}
 				} else {
-					int num = Input::getInt(); // TODO: Add limits
+					int num = selectForm(pkm->species());
 					if(num != -1)	pkm->alternativeForm(num);
 				}
 			} else {

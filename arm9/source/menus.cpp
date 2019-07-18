@@ -431,6 +431,105 @@ bool xMenu(void) {
 	return 1;
 }
 
+int selectForm(int dexNo) {
+	struct FormCount {
+		int dexNo;
+		int noForms;
+	} formCounts[] = {
+		{201, 27}, // Unown
+		{386,  4}, // Deoxys
+		{412,  3}, // Burmy
+		{413,  3}, // Wormadam
+		{422,  2}, // Shellos
+		{423,  2}, // Gastrodon
+		{479,  6}, // Rotom
+		{487,  2}, // Giratina
+		{492,  2}, // Shaymin
+		{550,  2}, // Basculin
+		{555,  2}, // Darmanitan // Not sure if I should have this or not
+		{585,  4}, // Deerling
+		{586,  4}, // Sawsbuck
+		{648,  2}, // Meloetta
+		{641,  2}, // Tornadus
+		{642,  2}, // Thunderus
+		{645,  2}, // Landorus
+		{646,  3}, // Kyurem
+		{647,  2}, // Keldeo
+	};
+	int altIndex = -1;
+	for(uint i=0;i<(sizeof(formCounts)/sizeof(formCounts[0]));i++) {
+		if(formCounts[i].dexNo == dexNo) {
+			altIndex = i;
+			break;
+		}
+	}
+	if(altIndex == -1)	return -1; // No alternate forms
+	else if(altIndex == 0) { // Unown
+		int num = Input::getLine(1)[0];
+
+		if(num == 33)	return 26; // !
+		else if(num == 63)	return 27; // ?
+		else if(num > 96 && num < 123)	return num-97; // a-z
+		else	return -1;
+	}
+
+	// Draw background
+	drawRectangle(0, 60, 256, 72, DARK_GRAY, false);
+
+	// Draw forms
+	std::shared_ptr<PKX> tempPkm = save->emptyPkm();
+	tempPkm->species(dexNo);
+	// for(int y=0;y<5;y++) {
+		for(int x=0;x<formCounts[altIndex].noForms;x++) {
+			tempPkm->alternativeForm(x);
+			std::pair<int, int> xy = getPokemonPosition(tempPkm);
+			drawImageFromSheet((x*32)+(128-((32*formCounts[altIndex].noForms)/2)), 80, 32, 32, pokemonSheet, pokemonSheetData.width, xy.first, xy.second, false);
+		}
+	// }
+
+	// Move arrow to first form
+	setSpriteVisibility(bottomArrowID, true);
+	setSpritePosition(bottomArrowID, (128-((32*formCounts[altIndex].noForms)/2))+32, 88);
+	updateOam();
+
+	int arrowX = 0, pressed, held;
+	while(1) {
+		do {
+			swiWaitForVBlank();
+			scanKeys();
+			pressed = keysDown();
+			held = keysDownRepeat();
+		} while(!held);
+
+		if(held & KEY_LEFT) {
+			if(arrowX > 0)	arrowX--;
+			else	arrowX=formCounts[altIndex].noForms-1;
+		} else if(held & KEY_RIGHT) {
+			if(arrowX < formCounts[altIndex].noForms-1)	arrowX++;
+			else arrowX=0;
+		} else if(pressed & KEY_A) {
+			Sound::play(Sound::click);
+			return arrowX;
+		} else if(pressed & KEY_B) {
+			Sound::play(Sound::back);
+			return -1;
+		} else if(pressed & KEY_TOUCH) {
+			touchPosition touch;
+			touchRead(&touch);
+			for(int x=0;x<5;x++) {
+				if(touch.px > (x*32)+(128-((32*formCounts[altIndex].noForms)/2)) && touch.px < (x*32)+(128-((32*formCounts[altIndex].noForms)/2))+32 && touch.py > 72 && touch.py < 104) {
+					Sound::play(Sound::click);
+					return x;
+				}
+			}
+		}
+
+		// Move arrow
+		setSpritePosition(bottomArrowID, (arrowX*32)+(128-((32*formCounts[altIndex].noForms)/2))+32, 88);
+		updateOam();
+	}
+}
+
 int selectNature(void) {
 	// Clear screen
 	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
@@ -459,7 +558,7 @@ int selectNature(void) {
 		}
 	}
 
-	// Move arrow to first ball
+	// Move arrow to first nature
 	setSpriteVisibility(bottomArrowID, true);
 	setSpritePosition(bottomArrowID, (getTextWidthMaxW(Lang::natures[0], 48)/2)+28, 24);
 	updateOam();
