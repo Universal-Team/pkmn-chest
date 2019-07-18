@@ -356,8 +356,8 @@ void printTextTintedScaled(std::u16string text, double scaleX,  double scaleY, u
 			continue;
 		}
 
-			for(int y = 0; y < 16; y+=scaleY) {
-				int currentCharIndex = ((512*(fontTexcoords[1+(4*charIndex)]+(y/scaleY)))+fontTexcoords[0+(4*charIndex)]);
+			for(double y = 0; y < 16; y+=scaleY) {
+				int currentCharIndex = ((512*(fontTexcoords[1+(4*charIndex)]+(u16)y))+fontTexcoords[0+(4*charIndex)]);
 
 				for(double i = 0; i < fontTexcoords[2 + (4 * charIndex)]; i+=scaleX) {
 					if(font[currentCharIndex+i]>>15 != 0) { // Do not render transparent pixel

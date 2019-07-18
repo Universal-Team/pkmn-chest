@@ -30,6 +30,8 @@ bool xMenu(void);
 
 // Misc Menus //////////////////////////////////////////////////////////////////
 
+int selectNature(void);
+
 int selectPokeball(void);
 
 #endif

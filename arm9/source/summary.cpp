@@ -245,7 +245,6 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 							if(pkm->gender() != 2)	pkm->gender(Input::getBool(Lang::female, Lang::male));
 							break;
 						} case 2: {
-							// int num = Input::getInt(save->generation() == Generation::FIVE ? 25 : 24);
 							int num = selectPokeball();
 							if(num > 0)	pkm->ball(num);
 							break;
@@ -254,7 +253,7 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 							if(num > 0)	pkm->level(num);
 							break;
 						} case 4: {
-							int num = Input::getInt(24); // TODO: Add proper selection
+							int num = selectNature();
 							if(num != -1)	pkm->nature(num);
 							break;
 						} case 5: {

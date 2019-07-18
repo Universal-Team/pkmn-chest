@@ -431,6 +431,82 @@ bool xMenu(void) {
 	return 1;
 }
 
+int selectNature(void) {
+	// Clear screen
+	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+
+	// Draw labels (not a for loop as speed is 3rd)
+	{
+		int x = -2;
+		printTextCenteredTintedMaxW(Lang::summaryP2Labels[1], 48, 1, BLUE_RGB, ((x++)*48), 4, false);
+		printTextCenteredTintedMaxW(Lang::summaryP2Labels[2], 48, 1, BLUE_RGB, ((x++)*48), 4, false);
+		printTextCenteredTintedMaxW(Lang::summaryP2Labels[5], 48, 1, BLUE_RGB, ((x++)*48), 4, false);
+		printTextCenteredTintedMaxW(Lang::summaryP2Labels[3], 48, 1, BLUE_RGB, ((x++)*48), 4, false);
+		printTextCenteredTintedMaxW(Lang::summaryP2Labels[4], 48, 1, BLUE_RGB, ((x++)*48), 4, false);
+		
+		int y = 0;
+		printTextTintedScaled(Lang::summaryP2Labels[1], 0.8, 0.8, RED_RGB, 0, ((y++)*32)+22, false);
+		printTextTintedScaled(Lang::summaryP2Labels[2], 0.8, 0.8, RED_RGB, 0, ((y++)*32)+22, false);
+		printTextTintedScaled(Lang::summaryP2Labels[5], 0.8, 0.8, RED_RGB, 0, ((y++)*32)+22, false);
+		printTextTintedScaled(Lang::summaryP2Labels[3], 0.8, 0.8, RED_RGB, 0, ((y++)*32)+22, false);
+		printTextTintedScaled(Lang::summaryP2Labels[4], 0.8, 0.8, RED_RGB, 0, ((y++)*32)+22, false);
+	}
+
+	// Print natures
+	for(int y=0;y<5;y++) {
+		for(int x=0;x<5;x++) {
+			printTextCenteredMaxW(Lang::natures[(y*5)+x], 48, 1, ((x-2)*48), (y*32)+32, false);
+		}
+	}
+
+	// Move arrow to first ball
+	setSpriteVisibility(bottomArrowID, true);
+	setSpritePosition(bottomArrowID, (getTextWidthMaxW(Lang::natures[0], 48)/2)+28, 24);
+	updateOam();
+
+	int arrowX = 0, arrowY = 0, pressed, held;
+	while(1) {
+		do {
+			swiWaitForVBlank();
+			scanKeys();
+			pressed = keysDown();
+			held = keysDownRepeat();
+		} while(!held);
+
+		if(held & KEY_UP) {
+			if(arrowY > 0)	arrowY--;
+			else	arrowY=4;
+		} else if(held & KEY_DOWN) {
+			if(arrowY < 4)	arrowY++;
+			else	arrowY=0;
+		} else if(held & KEY_LEFT) {
+			if(arrowX > 0)	arrowX--;
+			else	arrowX=4;
+		} else if(held & KEY_RIGHT) {
+			if(arrowX < 4)	arrowX++;
+			else arrowX=0;
+		} else if(pressed & KEY_A) {
+			return (arrowY*5)+arrowX;
+		} else if(pressed & KEY_B) {
+			return -1;
+		} else if(pressed & KEY_TOUCH) {
+			touchPosition touch;
+			touchRead(&touch);
+			for(int y=0;y<5;y++) {
+				for(int x=0;x<5;x++) {
+					if(touch.px > (x*48)+8 && touch.px < (x*48)+56 && touch.py > (y*32)+8 && touch.py < (y*32)+56) {
+						return (y*5)+x;
+					}
+				}
+			}
+		}
+
+		// Move arrow
+		setSpritePosition(bottomArrowID, (arrowX*48)+(getTextWidthMaxW(Lang::natures[(arrowY*5)+arrowX], 48)/2)+28, (arrowY*32)+24);
+		updateOam();
+	}
+}
+
 int selectPokeball(void) {
 	// Clear screen
 	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
