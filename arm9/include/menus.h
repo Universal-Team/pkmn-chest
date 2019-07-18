@@ -28,4 +28,8 @@ void drawXMenuButtons(uint menuSelection);
 
 bool xMenu(void);
 
+// Misc Menus //////////////////////////////////////////////////////////////////
+
+int selectPokeball(void);
+
 #endif

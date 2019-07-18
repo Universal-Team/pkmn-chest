@@ -6,11 +6,6 @@
 #include "graphics.h"
 #include "Sav.hpp"
 
-struct XYCoords {
-	int x;
-	int y;
-};
-
 extern bool topScreen;
 extern int bottomArrowID, topArrowID, shinyID, currentSaveBox, currentBankBox, bottomHeldPokemonID, topHeldPokemonID, 
 arrowMode, pokemonSheetScale, pokemonSheetSize;
@@ -30,9 +25,9 @@ std::shared_ptr<PKX> currentPokemon(int slot);
 /*
  * Gets the position of a Pokémon in the spritesheet
  * int dexNumber is the National dex number of the Pokémon
- * Returns an XYCoords of the spritesheet position
+ * Returns an std::pair<int, int> of the spritesheet position
  */
-XYCoords getPokemonPosition(std::shared_ptr<PKX> pkm);
+std::pair<int, int> getPokemonPosition(std::shared_ptr<PKX> pkm);
 
 // Loads the images into RAM and creates the sprites
 void loadGraphics(void);

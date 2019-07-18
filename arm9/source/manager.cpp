@@ -24,7 +24,7 @@ std::shared_ptr<PKX> currentPokemon(int slot) {
 	else	return save->pkm(currentBox(), slot);
 }
 
-XYCoords getPokemonPosition(std::shared_ptr<PKX> pkm) {
+std::pair<int, int> getPokemonPosition(std::shared_ptr<PKX> pkm) {
 	if(pkm->species() > 649)	return {0, 0};
 	else if(pkm->species() == 201) { // Unown
 		if(pkm->alternativeForm() == 0);
@@ -99,11 +99,8 @@ XYCoords getPokemonPosition(std::shared_ptr<PKX> pkm) {
 			return {256, 1408};
 	}
 
-	// Non-alternate form, get based on dex number
-	XYCoords xy;
-	xy.y = (pkm->species()/16)*pokemonSheetSize;
-	xy.x = (pkm->species()-((pkm->species()/16)*16))*pokemonSheetSize;
-	return xy;
+	// Non-alternate form, return based on dex number
+	return {(pkm->species()-((pkm->species()/16)*16))*pokemonSheetSize, (pkm->species()/16)*pokemonSheetSize};
 }
 
 void loadGraphics(void) {
@@ -202,8 +199,8 @@ void drawBox(bool top) {
 		for(int i=0;i<30;i++) {
 			// Fill Pokémon Sprites
 			if(Banks::bank->pkm(currentBankBox, i)->species() != 0) {
-				XYCoords xy = getPokemonPosition(Banks::bank->pkm(currentBankBox, i));
-				fillSpriteFromSheetScaled(i+30, pokemonSheetScale, pokemonSheet, pokemonSheetSize, pokemonSheetSize, pokemonSheetData.width, xy.x, xy.y);
+				std::pair<int, int> xy = getPokemonPosition(Banks::bank->pkm(currentBankBox, i));
+				fillSpriteFromSheetScaled(i+30, pokemonSheetScale, pokemonSheet, pokemonSheetSize, pokemonSheetSize, pokemonSheetData.width, xy.first, xy.second);
 			}
 		}
 	} else {
@@ -222,8 +219,8 @@ void drawBox(bool top) {
 		for(int i=0;i<30;i++) {
 			// Fill Pokémon Sprites
 			if(save->pkm(currentSaveBox, i)->species() != 0) {
-				XYCoords xy = getPokemonPosition(save->pkm(currentSaveBox, i));
-				fillSpriteFromSheetScaled(i, pokemonSheetScale, pokemonSheet, pokemonSheetSize, pokemonSheetSize, pokemonSheetData.width, xy.x, xy.y);
+				std::pair<int, int> xy = getPokemonPosition(save->pkm(currentSaveBox, i));
+				fillSpriteFromSheetScaled(i, pokemonSheetScale, pokemonSheet, pokemonSheetSize, pokemonSheetSize, pokemonSheetData.width, xy.first, xy.second);
 			}
 		}
 	}
@@ -268,9 +265,9 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 
 void setHeldPokemon(std::shared_ptr<PKX> pkm) {
 	if(pkm->species() != 0) {
-		XYCoords xy = getPokemonPosition(pkm);
-		fillSpriteFromSheetScaled(bottomHeldPokemonID, pokemonSheetScale, pokemonSheet, pokemonSheetSize, pokemonSheetSize, pokemonSheetData.width, xy.x, xy.y);
-		fillSpriteFromSheetScaled(topHeldPokemonID, pokemonSheetScale, pokemonSheet, pokemonSheetSize, pokemonSheetSize, pokemonSheetData.width, xy.x, xy.y);
+		std::pair<int, int> xy = getPokemonPosition(pkm);
+		fillSpriteFromSheetScaled(bottomHeldPokemonID, pokemonSheetScale, pokemonSheet, pokemonSheetSize, pokemonSheetSize, pokemonSheetData.width, xy.first, xy.second);
+		fillSpriteFromSheetScaled(topHeldPokemonID, pokemonSheetScale, pokemonSheet, pokemonSheetSize, pokemonSheetSize, pokemonSheetData.width, xy.first, xy.second);
 	}
 }
 

@@ -430,3 +430,63 @@ bool xMenu(void) {
 	}
 	return 1;
 }
+
+int selectPokeball(void) {
+	// Clear screen
+	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+
+	// Draw Pokéballs
+	for(int y=0;y<5;y++) {
+		for(int x=0;x<5;x++) {
+			std::pair<int, int> xy = getPokeballPosition((y*5)+x+1);
+			drawImageFromSheet((x*48)+24, (y*32)+24, 15, 15, ballSheet, ballSheetData.width, xy.first, xy.second, false);
+		}
+	}
+
+	// Move arrow to first ball
+	setSpriteVisibility(bottomArrowID, true);
+	setSpritePosition(bottomArrowID, 40, 16);
+	updateOam();
+
+	int arrowX = 0, arrowY = 0, pressed, held;
+	while(1) {
+		do {
+			swiWaitForVBlank();
+			scanKeys();
+			pressed = keysDown();
+			held = keysDownRepeat();
+		} while(!held);
+
+		if(held & KEY_UP) {
+			if(arrowY > 0)	arrowY--;
+			else	arrowY=4;
+		} else if(held & KEY_DOWN) {
+			if(arrowY < 4)	arrowY++;
+			else	arrowY=0;
+		} else if(held & KEY_LEFT) {
+			if(arrowX > 0)	arrowX--;
+			else	arrowX=4;
+		} else if(held & KEY_RIGHT) {
+			if(arrowX < 4)	arrowX++;
+			else arrowX=0;
+		} else if(pressed & KEY_A) {
+			return (arrowY*5)+arrowX+1;
+		} else if(pressed & KEY_B) {
+			return -1;
+		} else if(pressed & KEY_TOUCH) {
+			touchPosition touch;
+			touchRead(&touch);
+			for(int y=0;y<5;y++) {
+				for(int x=0;x<5;x++) {
+					if(touch.px > (x*48)+8 && touch.px < (x*48)+56 && touch.py > (y*32)+8 && touch.py < (y*32)+56) {
+						return (y*5)+x+1;
+					}
+				}
+			}
+		}
+
+		// Move arrow
+		setSpritePosition(bottomArrowID, (arrowX*48)+40, (arrowY*32)+16);
+		updateOam();
+	}
+}

@@ -21,8 +21,8 @@ void showParty(int selection) {
 	for(int i=0;i<6;i++) {
 		drawImageTinted(partyButtons[i].x, partyButtons[i].y, menuButtonData.width, menuButtonData.height, selection == i ? TEAL_RGB : LIGHT_GRAY, menuButton, false);
 		if(save->pkm(i)->species() != 0) {
-			XYCoords xy = getPokemonPosition(save->pkm(i));
-			drawImageFromSheetScaled(partyButtons[i].x+8, partyButtons[i].y, pokemonSheetSize, pokemonSheetSize, pokemonSheetScale, pokemonSheet, pokemonSheetData.width, xy.x, xy.y, false);
+			std::pair<int, int> xy = getPokemonPosition(save->pkm(i));
+			drawImageFromSheetScaled(partyButtons[i].x+8, partyButtons[i].y, pokemonSheetSize, pokemonSheetSize, pokemonSheetScale, pokemonSheet, pokemonSheetData.width, xy.first, xy.second, false);
 			if(save->pkm(i)->nicknamed())	printText(save->pkm(i)->nickname(), partyButtons[i].x+47, partyButtons[i].y+14, false);
 			else	printText(Lang::species[save->pkm(i)->species()], partyButtons[i].x+47, partyButtons[i].y+14, false);
 		}

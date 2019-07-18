@@ -4,6 +4,7 @@
 #include "loader.h"
 #include "keyboard.h"
 #include "manager.h"
+#include "menus.h"
 #include "sound.h"
 
 struct Text {
@@ -40,11 +41,11 @@ Text textSP2r4[] {
 
 int summaryPage = 0;
 
-XYCoords getPokeballPosition(u8 ball) {
+std::pair<int, int> getPokeballPosition(u8 ball) {
 	if(ball > 25)	return {0, 0};
-	XYCoords xy;
-	xy.y = (ball/9)*15;
-	xy.x = (ball-((ball/9)*9))*15;
+	std::pair<int, int> xy;
+	xy.second = (ball/9)*15;
+	xy.first = (ball-((ball/9)*9))*15;
 	return xy;
 }
 
@@ -63,10 +64,10 @@ void drawSummaryP1(std::shared_ptr<PKX> pkm) {
 	printTextTintedMaxW(Lang::species[pkm->species()], 90, 1, (pkm->gender() ? (pkm->gender() == 1 ? RED_RGB : WHITE) : BLUE_RGB), 165, 1, false);
 
 	// Draw Pokémon, Pokéball, types, and shiny star (if shiny)
-	XYCoords xy = getPokeballPosition(pkm->ball());
-	drawImageFromSheet(148, 1, 15, 15, ballSheet, ballSheetData.width, xy.x, xy.y, false);
+	std::pair<int, int> xy = getPokeballPosition(pkm->ball());
+	drawImageFromSheet(148, 1, 15, 15, ballSheet, ballSheetData.width, xy.first, xy.second, false);
 	xy = getPokemonPosition(pkm);
-	drawImageFromSheetScaled(169, 16, pokemonSheetSize, pokemonSheetSize, 2*pokemonSheetScale, pokemonSheet, pokemonSheetData.width, xy.x, xy.y, false);
+	drawImageFromSheetScaled(169, 16, pokemonSheetSize, pokemonSheetSize, 2*pokemonSheetScale, pokemonSheet, pokemonSheetData.width, xy.first, xy.second, false);
 	drawImageFromSheet(150, 18, 32, 12, types, 32, 0, (((pkm->generation() == Generation::FOUR && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1())*12), false);
 	if(pkm->type1() != pkm->type2())
 		drawImageFromSheet(185, 18, 32, 12, types, 32, 0, (((pkm->generation() == Generation::FOUR && pkm->type2() > 8) ? pkm->type2()-1 : pkm->type2())*12), false);
@@ -244,7 +245,8 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 							if(pkm->gender() != 2)	pkm->gender(Input::getBool(Lang::female, Lang::male));
 							break;
 						} case 2: {
-							int num = Input::getInt(save->generation() == Generation::FIVE ? 25 : 24);
+							// int num = Input::getInt(save->generation() == Generation::FIVE ? 25 : 24);
+							int num = selectPokeball();
 							if(num > 0)	pkm->ball(num);
 							break;
 						} case 3: {
