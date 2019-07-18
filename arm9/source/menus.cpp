@@ -486,8 +486,10 @@ int selectNature(void) {
 			if(arrowX < 4)	arrowX++;
 			else arrowX=0;
 		} else if(pressed & KEY_A) {
+			Sound::play(Sound::click);
 			return (arrowY*5)+arrowX;
 		} else if(pressed & KEY_B) {
+			Sound::play(Sound::back);
 			return -1;
 		} else if(pressed & KEY_TOUCH) {
 			touchPosition touch;
@@ -495,6 +497,7 @@ int selectNature(void) {
 			for(int y=0;y<5;y++) {
 				for(int x=0;x<5;x++) {
 					if(touch.px > (x*48)+8 && touch.px < (x*48)+56 && touch.py > (y*32)+8 && touch.py < (y*32)+56) {
+						Sound::play(Sound::click);
 						return (y*5)+x;
 					}
 				}
@@ -546,8 +549,10 @@ int selectPokeball(void) {
 			if(arrowX < 4)	arrowX++;
 			else arrowX=0;
 		} else if(pressed & KEY_A) {
+			Sound::play(Sound::click);
 			return (arrowY*5)+arrowX+1;
 		} else if(pressed & KEY_B) {
+			Sound::play(Sound::back);
 			return -1;
 		} else if(pressed & KEY_TOUCH) {
 			touchPosition touch;
@@ -555,6 +560,7 @@ int selectPokeball(void) {
 			for(int y=0;y<5;y++) {
 				for(int x=0;x<5;x++) {
 					if(touch.px > (x*48)+8 && touch.px < (x*48)+56 && touch.py > (y*32)+8 && touch.py < (y*32)+56) {
+						Sound::play(Sound::click);
 						return (y*5)+x+1;
 					}
 				}
