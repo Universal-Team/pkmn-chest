@@ -475,6 +475,7 @@ int selectForm(int dexNo) {
 
 	// Draw background
 	drawRectangle(0, 60, 256, 72, DARK_GRAY, false);
+	drawOutline(0, 60, 256, 72, LIGHT_GRAY, false);
 
 	// Draw forms
 	std::shared_ptr<PKX> tempPkm = save->emptyPkm();
@@ -489,7 +490,7 @@ int selectForm(int dexNo) {
 
 	// Move arrow to first form
 	setSpriteVisibility(bottomArrowID, true);
-	setSpritePosition(bottomArrowID, (128-((32*formCounts[altIndex].noForms)/2))+32, 88);
+	setSpritePosition(bottomArrowID, (128-((32*formCounts[altIndex].noForms)/2))+28, 84);
 	updateOam();
 
 	int arrowX = 0, pressed, held;
@@ -525,7 +526,7 @@ int selectForm(int dexNo) {
 		}
 
 		// Move arrow
-		setSpritePosition(bottomArrowID, (arrowX*32)+(128-((32*formCounts[altIndex].noForms)/2))+32, 88);
+		setSpritePosition(bottomArrowID, (arrowX*32)+(128-((32*formCounts[altIndex].noForms)/2))+28, 84);
 		updateOam();
 	}
 }
