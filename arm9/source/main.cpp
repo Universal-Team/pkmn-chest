@@ -20,7 +20,7 @@ void loadLogo(void) {
 	swiWaitForVBlank();
 	logoGfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_Bmp);
 	std::vector<u16> logo;
-	loadPng("nitro:/graphics/icon.png", logo);
+	loadBmp("nitro:/graphics/icon.bmp", logo);
 	dmaCopyWords(0, logo.data(), logoGfx, 2048);
 
 	oamSet(&oamSub, 100, 112, 80, 0, 15, SpriteSize_32x32, SpriteColorFormat_Bmp, logoGfx, 0, false, false, false, false, false);
