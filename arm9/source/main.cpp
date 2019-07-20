@@ -13,6 +13,26 @@
 #include "nitrofs.h"
 #include "sound.h"
 
+int angle = 0;
+u16* logoGfx;
+
+void loadLogo(void) {
+	swiWaitForVBlank();
+	logoGfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_Bmp);
+	std::vector<u16> logo;
+	loadPng("nitro:/graphics/icon.png", logo);
+	dmaCopyWords(0, logo.data(), logoGfx, 2048);
+
+	oamSet(&oamSub, 100, 112, 80, 0, 15, SpriteSize_32x32, SpriteColorFormat_Bmp, logoGfx, 0, false, false, false, false, false);
+	oamUpdate(&oamSub);
+}
+
+void loadingAnimation(void) {
+	oamRotateScale(&oamSub, 0, angle, (1 << 8), (1<<8));
+	angle -= 226;
+	oamUpdate(&oamSub);
+}
+
 int main(int argc, char **argv) {
 	initGraphics();
 	keysSetRepeat(25,5);
@@ -54,14 +74,22 @@ int main(int argc, char **argv) {
 			}
 		}
 	}
+	loadLogo();
+	irqSet(IRQ_VBLANK, loadingAnimation);
+
 	loadFont();
 	Config::loadConfig();
-	Sound::init();
 	Lang::loadLangStrings(Config::lang);
 	printTextCentered(Lang::loading, 0, 32, false);
 
 	Banks::init();
+	Sound::init();
 	loadGraphics();
+
+	irqSet(IRQ_VBLANK, NULL);
+	oamClearSprite(&oamSub, 100);
+	oamFreeGfx(&oamSub, logoGfx);
+	oamUpdate(&oamSub);
 
 	while(1) {
 		if(!loadSave(savePath = browseForSave())) {
