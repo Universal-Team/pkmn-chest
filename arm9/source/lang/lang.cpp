@@ -117,10 +117,12 @@ void Lang::loadLangStrings(int lang) {
 
 	// [songs]
 	Lang::songs[0] = ini.GetString("songs", "off", Lang::songs[0]);
-	Lang::songs[1] = ini.GetString("songs", "center", Lang::songs[1]);
-	Lang::songs[2] = ini.GetString("songs", "elmLab", Lang::songs[2]);
-	Lang::songs[3] = ini.GetString("songs", "oakLab", Lang::songs[3]);
-	Lang::songs[4] = ini.GetString("songs", "gameCorner", Lang::songs[4]);
+	Lang::songs[1] = ini.GetString("songs", "center1", Lang::songs[1]);
+	Lang::songs[2] = ini.GetString("songs", "center4", Lang::songs[2]);
+	Lang::songs[3] = ini.GetString("songs", "center5", Lang::songs[3]);
+	Lang::songs[4] = ini.GetString("songs", "elmLab", Lang::songs[4]);
+	Lang::songs[5] = ini.GetString("songs", "oakLab", Lang::songs[5]);
+	Lang::songs[6] = ini.GetString("songs", "gameCorner", Lang::songs[6]);
 
 	// [summary]
 	Lang::summaryP1Labels[0]  = ini.GetString("summary", "dexNo", Lang::summaryP1Labels[0]);
