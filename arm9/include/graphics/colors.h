@@ -5,7 +5,7 @@
 #define BLACK 0
 #define DARK_BLUE 0x800C
 #define DARK_GRAY 0x98C6
-#define DARKER_GRAY 0x9084
+#define DARKER_GRAY 0x94A5
 #define GRAY 0xCE73
 #define LIGHT_BLUE 0x8019
 #define LIGHT_GRAY 0xE739

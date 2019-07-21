@@ -14,6 +14,7 @@
 #include "sound.h"
 
 int angle = 0;
+int angleChange = 173;
 u16* logoGfx;
 
 void loadLogo(void) {
@@ -29,7 +30,7 @@ void loadLogo(void) {
 
 void loadingAnimation(void) {
 	oamRotateScale(&oamSub, 0, angle, (1 << 8), (1<<8));
-	angle -= 226;
+	angle -= angleChange;
 	oamUpdate(&oamSub);
 }
 
@@ -38,9 +39,13 @@ int main(int argc, char **argv) {
 	keysSetRepeat(25,5);
 	sysSetCardOwner(BUS_OWNER_ARM9); // Give ARM9 access to Slot-1 (for dumping/injecting saves)
 	defaultExceptionHandler();
+	scanKeys(); // So it doesn't open the SD if A is held
+	srand(time(NULL));
+	if(!(rand() % 100))	angleChange *= 2;
+	if(!(rand() % 128))	angleChange *= -1;
 
-	drawRectangle(0, 0, 256, 192, DARK_GRAY, true);
-	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+	drawRectangle(0, 0, 256, 192, DARKER_GRAY, true);
+	drawRectangle(0, 0, 256, 192, DARKER_GRAY, false);
 
 	// Init filesystem
 	if(!fatInitDefault()) {

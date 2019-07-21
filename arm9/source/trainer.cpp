@@ -1,7 +1,7 @@
 #include "trainer.h"
 #include "colors.h"
 #include "graphics.h"
-#include "keyboard.h"
+#include "input.h"
 #include "langStrings.h"
 #include "loader.h"
 #include "manager.h"
@@ -14,22 +14,22 @@ struct Text {
 };
 
 Text textTP1[] {
-	{4, 4},
-	{4, 20},
-	{4, 36},
-	{4, 52},
-	{4, 68},
-	{4, 84},
-	{4, 100},
+	{4, 14},
+	{4, 30},
+	{4, 46},
+	{4, 62},
+	{4, 78},
+	{4, 94},
+	{4, 110},
 };
 
 void drawTrainerCard(void) {
 	// Draw background
-	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+	drawImage(0, 0, optionsBgData.width, optionsBgData.height, optionsBg, false);
 
 	// Print labels
 	for(uint i=0;i<sizeof(textTP1)/sizeof(textTP1[0]);i++) {
-		printText(Lang::trainerText[i], textTP1[i].x, textTP1[i].y, false);
+		printTextTinted(Lang::trainerText[i]+":", DARK_GRAY, textTP1[i].x, textTP1[i].y, false);
 	}
 
 	// Set info text
@@ -44,7 +44,7 @@ void drawTrainerCard(void) {
 	// Print info
 	printTextTinted(textTP1[0].text, (save->gender() ? RED_RGB : BLUE_RGB), textTP1[0].x+getTextWidth(Lang::trainerText[0])+8, textTP1[0].y, false);
 	for(uint i=1;i<(sizeof(textTP1)/sizeof(textTP1[0]));i++) {
-			printText(textTP1[i].text, textTP1[i].x+getTextWidth(Lang::trainerText[i])+8, textTP1[i].y, false);
+			printTextTinted(textTP1[i].text, DARK_GRAY, textTP1[i].x+getTextWidth(Lang::trainerText[i])+8, textTP1[i].y, false);
 	}
 }
 

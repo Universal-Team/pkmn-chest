@@ -7,7 +7,7 @@
 #include "fileBrowse.h"
 #include "flashcard.h"
 #include "graphics.h"
-#include "keyboard.h"
+#include "input.h"
 #include "lang.h"
 #include "langStrings.h"
 #include "manager.h"
@@ -19,18 +19,18 @@ struct Text {
 };
 
 Text textCP1Labels[] {
-	{4, 16}, // Chest file
-	{4, 96}, // Chest size
+	{4, 14}, // Chest file
+	{4, 94}, // Chest size
 	{4, 110}, // Language
-	{4, 128}, // Backups
-	{4, 144}, // Music
-	{4, 160}, // Sound FX
+	{4, 126}, // Backups
+	{4, 142}, // Music
+	{4, 158}, // Sound FX
 };
 Text textCP1[] {
-	{12, 32}, // New
-	{12, 48}, // Rename
-	{12, 64}, // Delete
-	{12, 80}, // Change
+	{12, 30}, // New
+	{12, 46}, // Rename
+	{12, 62}, // Delete
+	{12, 78}, // Change
 };
 
 std::vector<std::string> optionsText = {"", "", "", "", ""}; // Placeholders to be filled
@@ -39,9 +39,7 @@ std::string langNames[] = { "Deutsche", "English", "Español", "Français", "Ita
 
 void drawConfigMenu(void) {
 	// Draw background
-	drawRectangle(0, 0, 256, 16, BLACK, false);
-	drawRectangle(0, 16, 256, 160, DARK_GRAY, false);
-	drawRectangle(0, 176, 256, 16, BLACK, false);
+	drawImage(0, 0, optionsBgData.width, optionsBgData.height, optionsBg, false);
 
 	// Set variable text
 	char str[16];
@@ -56,13 +54,13 @@ void drawConfigMenu(void) {
 
 	// Print text
 	for(uint i=0;i<Lang::optionsTextLabels.size();i++) {
-		printText(Lang::optionsTextLabels[i], textCP1Labels[i].x, textCP1Labels[i].y, false);
+		printTextTinted(Lang::optionsTextLabels[i]+":", DARK_GRAY, textCP1Labels[i].x, textCP1Labels[i].y, false);
 	}
 	for(uint i=0;i<(sizeof(textCP1)/sizeof(textCP1[0]));i++) {
-		printText(Lang::optionsText[i], textCP1[i].x, textCP1[i].y, false);
+		printTextTinted(Lang::optionsText[i], DARK_GRAY, textCP1[i].x, textCP1[i].y, false);
 	}
 	for(uint i=0;i<optionsText.size();i++) {
-		printText(optionsText[i], textCP1Labels[i+1].x+getTextWidth(Lang::optionsTextLabels[i+1])+8, textCP1Labels[i+1].y, false);
+		printTextTinted(optionsText[i], DARK_GRAY, textCP1Labels[i+1].x+getTextWidth(Lang::optionsTextLabels[i+1])+8, textCP1Labels[i+1].y, false);
 	}
 
 }

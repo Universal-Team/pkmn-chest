@@ -8,7 +8,7 @@ namespace Lang {
 	aMenuText = {"Edit", "Move", "Copy", "Release", "Dump", "Back"},
 	aMenuEmptySlotText = {"Inject", "Create", "Back"},
 	aMenuTopBarText = {"Rename", "Swap", "Dump box", "Back"},
-	optionsTextLabels = {"Chest File:", "Chest Size:", "Language:", "Backups:", "Music:", "Sound Effects:"},
+	optionsTextLabels = {"Chest File", "Chest Size", "Language", "Backups", "Music", "Sound Effects"},
 	optionsText = {"New", "Rename", "Delete", "Change"},
 	songs = {"Off", "Pokémon Center", "Prof. Elm's Lab", "Prof. Oak's Lab", "Game Corner"},
 	summaryP1Labels = {"Dex No.", "Name", "Ball", "Level", "Nature", "Shiny", "Pokérus", "Orig. Trainer", "Trainer ID", "Secret ID", "Friendship"},

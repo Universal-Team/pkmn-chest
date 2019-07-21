@@ -11,9 +11,10 @@
 bool topScreen;
 int bottomArrowID, topArrowID, shinyID, currentSaveBox, currentBankBox, bottomHeldPokemonID, topHeldPokemonID,
 arrowMode = 0, pokemonSheetScale = 1, pokemonSheetSize = 32;
+std::vector<int> menuIconID;
 std::string savePath;
-std::vector<u16> arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, menuButton, shiny, pokemonSheet, stripes, types;
-ImageData ballSheetData, bankBoxData, menuButtonData, pokemonSheetData, shinyData, stripesData, typesData;
+std::vector<u16> arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, boxBgBottom, boxBgTop, boxButton, fileBrowseBg, infoBox, menuBg, menuButton, menuButtonBlue, menuIconSheet, optionsBg, pokemonSheet, shiny, summaryBg, types;
+ImageData ballSheetData, bankBoxData, boxBgBottomData, boxBgTopData, boxButtonData, fileBrowseBgData, infoBoxData, menuBgData, menuButtonData, menuButtonBlueData, menuIconSheetData, optionsBgData, pokemonSheetData, shinyData, summaryBgData, typesData;
 
 int currentBox(void) {
 	return topScreen ? currentBankBox : currentSaveBox;
@@ -107,10 +108,19 @@ void loadGraphics(void) {
 	// Load images into RAM
 	ballSheetData = loadPng("nitro:/graphics/ballSheet.png", ballSheet);
 	bankBoxData = loadPng("nitro:/graphics/bankBox.png", bankBox);
+	boxBgBottomData = loadPng("nitro:/graphics/boxBgBottom.png", boxBgBottom);
+	boxBgTopData = loadPng("nitro:/graphics/boxBgTop.png", boxBgTop);
+	boxButtonData = loadPng("nitro:/graphics/boxButton.png", boxButton);
+	fileBrowseBgData = loadPng("nitro:/graphics/fileBrowseBg.png", fileBrowseBg);
+	infoBoxData = loadPng("nitro:/graphics/infoBox.png", infoBox);
+	menuBgData = loadPng("nitro:/graphics/menuBg.png", menuBg);
 	menuButtonData = loadPng("nitro:/graphics/menuButton.png", menuButton);
+	menuButtonBlueData = loadPng("nitro:/graphics/menuButtonBlue.png", menuButtonBlue);
+	menuIconSheetData = loadPng("nitro:/graphics/menuIconSheet.png", menuIconSheet);
+	optionsBgData = loadPng("nitro:/graphics/optionsBg.png", optionsBg);
 	pokemonSheetData = loadPng(sdFound() ? "nitro:/graphics/pokemonSheet.png" : "nitro:/graphics/pokemonSheetSmall.png", pokemonSheet);
 	shinyData = loadPng("nitro:/graphics/shiny.png", shiny);
-	stripesData = loadPng("nitro:/graphics/stripes.png", stripes);
+	summaryBgData = loadPng("nitro:/graphics/summaryBg.png", summaryBg);
 	typesData = loadPng("nitro:/graphics/types.png", types);
 	loadPng("nitro:/graphics/arrowBlue.png", arrowBlue);
 	loadPng("nitro:/graphics/arrowRed.png", arrowRed);
@@ -129,6 +139,15 @@ void loadGraphics(void) {
 			prepareSprite((y*6)+x, 8+(x*24), 32+(y*24), 2);
 			prepareSprite(((y*6)+x)+30, 8+(x*24), 32+(y*24), 2);
 		}
+	}
+
+	// Prepare menu icon sprites
+	for(int i=0;i<6;i++) {
+		int id = initSprite(SpriteSize_32x32, false);
+		fillSpriteFromSheet(id, menuIconSheet, 32, 32, menuIconSheetData.width, 0, i*32);
+		prepareSprite(id, 0, 0, 0);
+		setSpriteVisibility(id, false);
+		menuIconID.push_back(id);
 	}
 
 	// Prepare bottom arrow sprite
@@ -156,14 +175,16 @@ void loadGraphics(void) {
 	// Prepare shiny sprite
 	shinyID = initSprite(SpriteSize_16x16, true); // 8x8 wasn't working
 	fillSpriteImage(shinyID, shiny);
-	prepareSprite(shinyID, 239, 52, 0);
+	prepareSprite(shinyID, 239, 45, 0);
 	setSpriteVisibility(shinyID, false);
 }
 
 void drawBoxScreen(void) {
 	// Draws backgrounds
-	drawRectangle(0, 0, 256, 192, DARK_GRAY, true);
-	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+	drawImage(0, 0, boxBgTopData.width, boxBgTopData.height, boxBgTop, true);
+	drawImage(164, 2, infoBoxData.width, infoBoxData.height, infoBox, true);
+	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
+	
 
 	// Show bottom arrow
 	setSpriteVisibility(bottomArrowID, true);
@@ -228,12 +249,7 @@ void drawBox(bool top) {
 
 void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 	// Clear previous draw
-	drawRectangle(170, 0, 86, 192, DARK_GRAY, true);
-
-	// Draw dashed lines
-	drawImage(170, 30, stripesData.width, stripesData.height, stripes, true);
-	drawImage(170, 60, stripesData.width, stripesData.height, stripes, true);
-	drawImage(170, 90, stripesData.width, stripesData.height, stripes, true);
+	drawImage(164, 2, infoBoxData.width, infoBoxData.height, infoBox, true);
 
 	if(pkm->species() > 0 && pkm->species() < 650) {
 		// Show shiny star if applicable
@@ -242,21 +258,21 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 		// Print Pokédex number
 		char str[9];
 		snprintf(str, sizeof(str), "No.%.3i", pkm->species());
-		printTextTinted(str, 0xCE73, 170, 2, true);
+		printTextTinted(str, DARK_GRAY, 170, 8, true);
 
 		// Print name
-		if(pkm->nicknamed())	printTextTintedMaxW(pkm->nickname(), 80, 1, (pkm->gender() ? (pkm->gender() == 1 ? RED_RGB : WHITE) : BLUE_RGB), 170, 14, true);
-		else	printTextTintedMaxW(Lang::species[pkm->species()], 80, 1, (pkm->gender() ? (pkm->gender() == 1 ? RED_RGB : WHITE) : BLUE_RGB), 170, 14, true);
+		if(pkm->nicknamed())	printTextTintedMaxW(pkm->nickname(), 80, 1, (pkm->gender() ? (pkm->gender() == 1 ? RED_RGB : DARK_GRAY) : BLUE_RGB), 170, 25, true);
+		else	printTextTintedMaxW(Lang::species[pkm->species()], 80, 1, (pkm->gender() ? (pkm->gender() == 1 ? RED_RGB : DARK_GRAY) : BLUE_RGB), 170, 25, true);
 
 
 		// Draw types
-		drawImageFromSheet(170, 33, 32, 12, types, 32, 0, (((pkm->generation() == Generation::FOUR && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1())*12), true);
+		drawImageFromSheet(170, 43, 32, 12, types, 32, 0, (((pkm->generation() == Generation::FOUR && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1())*12), true);
 		if(pkm->type1() != pkm->type2())
-			drawImageFromSheet(205, 33, 32, 12, types, 32, 0, (((pkm->generation() == Generation::FOUR && pkm->type2() > 8) ? pkm->type2()-1 : pkm->type2())*12), true);
+			drawImageFromSheet(205, 43, 32, 12, types, 32, 0, (((pkm->generation() == Generation::FOUR && pkm->type2() > 8) ? pkm->type2()-1 : pkm->type2())*12), true);
 
 		// Print Level
 		snprintf(str, sizeof(str), "Lv.%i", pkm->level());
-		printText(str, 170, 46, true);
+		printTextTinted(str, DARK_GRAY, 170, 57, true);
 	} else {
 		// Hide shiny star
 		setSpriteVisibility(shinyID, false);

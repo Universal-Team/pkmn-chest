@@ -1,4 +1,4 @@
-#include "keyboard.h"
+#include "input.h"
 #include <string>
 #include <stdio.h>
 #include <ctype.h>
@@ -100,9 +100,9 @@ void drawKeyboard(int layout) {
 				xPos = 0;
 				break;
 		}
-		if(prevLayout != -1)	drawRectangle(0, 192-prevData.height-16, 256, prevData.height+16, DARKER_GRAY, false);
+		if(prevLayout != -1)	drawRectangle(0, 192-prevData.height-16, 256, prevData.height+16, BLACK, false);
 	}
-	drawRectangle(0, 192-keyboardData.height-16, 256, keyboardData.height+16, DARKER_GRAY, false);
+	drawRectangle(0, 192-keyboardData.height-16, 256, keyboardData.height+16, BLACK, false);
 	drawImage(xPos, 192-keyboardData.height, keyboardData.width, keyboardData.height, keyboard, false);
 }
 
@@ -125,7 +125,7 @@ void processTouch123(touchPosition touch, uint maxLength) {
 				while(keysHeld() & KEY_TOUCH) {
 					drawRectangle(keysSpecialKana[i].x+xPos, keysSpecialKana[i].y+(192-keyboardData.height), 32, 32, GRAY, false);
 					string = string.substr(0, string.length()-1);
-					drawRectangle(0, 192-keyboardData.height-16, 256, 16, DARKER_GRAY, false);
+					drawRectangle(0, 192-keyboardData.height-16, 256, 16, BLACK, false);
 					printText(string, 0, 192-keyboardData.height-16, false);
 					for(int i=0;i<10 && keysHeld() & KEY_TOUCH;i++) {
 						swiWaitForVBlank();
@@ -157,10 +157,8 @@ void processTouch123(touchPosition touch, uint maxLength) {
 		}
 	}
 	if(touch.px > xPos+keyboardData.width) {
-		drawRectangle(xPos, 192-keyboardData.height, keyboardData.width, keyboardData.height, DARKER_GRAY, false);
 		xPos = 256-keyboardData.width;
 	} else if(touch.px < xPos) {
-		drawRectangle(xPos, 192-keyboardData.height, keyboardData.width, keyboardData.height, DARKER_GRAY, false);
 		xPos = 0;
 	}
 }
@@ -203,7 +201,7 @@ void processTouchABC(touchPosition touch, uint maxLength) {
 				while(keysHeld() & KEY_TOUCH) {
 					drawRectangle(keysSpecialKana[i].x+xPos, keysSpecialKana[i].y+(192-keyboardData.height), 32, 32, GRAY, false);
 					string = string.substr(0, string.length()-1);
-					drawRectangle(0, 192-keyboardData.height-16, 256, 16, DARKER_GRAY, false);
+					drawRectangle(0, 192-keyboardData.height-16, 256, 16, BLACK, false);
 					printText(string, 0, 192-keyboardData.height-16, false);
 					for(int i=0;i<10 && keysHeld() & KEY_TOUCH;i++) {
 						swiWaitForVBlank();
@@ -243,10 +241,8 @@ void processTouchABC(touchPosition touch, uint maxLength) {
 		}
 	}
 	if(touch.px > xPos+keyboardData.width) {
-		drawRectangle(xPos, 192-keyboardData.height, keyboardData.width, keyboardData.height, DARKER_GRAY, false);
 		xPos = 256-keyboardData.width;
 	} else if(touch.px < xPos) {
-		drawRectangle(xPos, 192-keyboardData.height, keyboardData.width, keyboardData.height, DARKER_GRAY, false);
 		xPos = 0;
 	}
 }
@@ -279,7 +275,7 @@ void processTouchQWE(touchPosition touch, uint maxLength) {
 			if(keysSpecialQWE[i].character == "bksp") {
 				drawRectangle(keysSpecialQWE[i].x, keysSpecialQWE[i].y+(192-keyboardData.height), 16, 16, DARK_GRAY, false);
 				string = string.substr(0, string.length()-1);
-				drawRectangle(0, 192-keyboardData.height-16, 256, 16, DARKER_GRAY, false);
+				drawRectangle(0, 192-keyboardData.height-16, 256, 16, BLACK, false);
 				printText(string, 0, 192-keyboardData.height-16, false);
 			} else if(keysSpecialQWE[i].character == "caps") {
 				caps = !caps;
@@ -327,10 +323,10 @@ std::string Input::getLine(uint maxLength) {
 			held = keysDownRepeat();
 			pressed = keysDown();
 			if(cursorBlink == 30) {
-				drawRectangle(0, 192-keyboardData.height-16, 256, 16, DARKER_GRAY, false);
+				drawRectangle(0, 192-keyboardData.height-16, 256, 16, BLACK, false);
 				printText(string+"_", 0, 192-keyboardData.height-16, false);
 			} else if(cursorBlink == 0) {
-				drawRectangle(0, 192-keyboardData.height-16, 256, 16, DARKER_GRAY, false);
+				drawRectangle(0, 192-keyboardData.height-16, 256, 16, BLACK, false);
 				printText(string, 0, 192-keyboardData.height-16, false);
 			} else if(cursorBlink == -30) {
 				cursorBlink = 31;
@@ -348,7 +344,7 @@ std::string Input::getLine(uint maxLength) {
 			// Redraw keyboard to cover up highlight
 			drawKeyboard(loadedLayout);
 			// Print string
-			drawRectangle(0, 192-keyboardData.height-16, 256, 16, DARKER_GRAY, false);
+			drawRectangle(0, 192-keyboardData.height-16, 256, 16, BLACK, false);
 			printText(string + (cursorBlink ? "_" : ""), 0, 192-keyboardData.height-16, false);
 
 			// If caps lock / shift are on, highlight the key
@@ -358,7 +354,7 @@ std::string Input::getLine(uint maxLength) {
 			if(loadedLayout < 3)	drawRectangle(keysSpecialKana[1].x+xPos, keysSpecialKana[1].y+(192-keyboardData.height), 32, 32, DARK_GRAY, false);
 			else	drawRectangle(keysSpecialQWE[0].x, keysSpecialQWE[0].y+(192-keyboardData.height), 16, 16, DARK_GRAY, false);
 			string = string.substr(0, string.length()-1);
-			drawRectangle(0, 192-keyboardData.height-16, 256, 16, DARKER_GRAY, false);
+			drawRectangle(0, 192-keyboardData.height-16, 256, 16, BLACK, false);
 			printText(string, 0, 192-keyboardData.height-16, false);
 		}
 		if(held & KEY_START || enter) {
@@ -396,10 +392,10 @@ int Input::getInt(uint max) {
 			held = keysDownRepeat();
 			pressed = keysDown();
 			if(cursorBlink == 30) {
-				drawRectangle(0, 192-keyboardData.height-16, 256, 16, DARKER_GRAY, false);
+				drawRectangle(0, 192-keyboardData.height-16, 256, 16, BLACK, false);
 				printText(string+"_", 0, 192-keyboardData.height-16, false);
 			} else if(cursorBlink == 0) {
-				drawRectangle(0, 192-keyboardData.height-16, 256, 16, DARKER_GRAY, false);
+				drawRectangle(0, 192-keyboardData.height-16, 256, 16, BLACK, false);
 				printText(string, 0, 192-keyboardData.height-16, false);
 			} else if(cursorBlink == -30) {
 				cursorBlink = 31;
@@ -415,12 +411,12 @@ int Input::getInt(uint max) {
 			// Redraw keyboard to cover up highlight
 			drawKeyboard(loadedLayout);
 			// Print string
-			drawRectangle(0, 192-keyboardData.height-16, 256, 16, DARKER_GRAY, false);
+			drawRectangle(0, 192-keyboardData.height-16, 256, 16, BLACK, false);
 			printText(string + (cursorBlink ? "_" : ""), 0, 192-keyboardData.height-16, false);
 		} else if(held & KEY_B) {
 			drawRectangle(keysSpecialKana[1].x+xPos, keysSpecialKana[1].y+(192-keyboardData.height), 32, 32, DARK_GRAY, false);
 			string = string.substr(0, string.length()-1);
-			drawRectangle(0, 192-keyboardData.height-16, 256, 16, DARKER_GRAY, false);
+			drawRectangle(0, 192-keyboardData.height-16, 256, 16, BLACK, false);
 			printText(string, 0, 192-keyboardData.height-16, false);
 		}
 		if(held & KEY_START || enter) {
@@ -441,6 +437,7 @@ bool Input::getBool(std::string optionTrue, std::string optionFalse) {
 	drawRectangle(38, 66, 180, 60, DARKER_GRAY, false);
 	drawRectangle(48, 76, 70, 40, LIGHT_GRAY, false);
 	drawRectangle(138, 76, 70, 40, LIGHT_GRAY, false);
+	drawOutline(38, 66, 180, 60, BLACK, false);
 
 	// Print text
 	printTextCenteredTintedMaxW(optionFalse, 60, 1, DARK_GRAY, -45, 88, false);

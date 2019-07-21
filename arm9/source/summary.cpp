@@ -2,7 +2,7 @@
 #include "colors.h"
 #include "langStrings.h"
 #include "loader.h"
-#include "keyboard.h"
+#include "input.h"
 #include "manager.h"
 #include "menus.h"
 #include "sound.h"
@@ -51,27 +51,26 @@ std::pair<int, int> getPokeballPosition(u8 ball) {
 
 void drawSummaryP1(std::shared_ptr<PKX> pkm) {
 	// Clear the screen
-	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+	drawImage(0, 0, summaryBgData.width, summaryBgData.height, summaryBg, false);
 	for(int i=0;i<30;i++) {
 		setSpriteVisibility(i, false);
 	}
 
 	// Draw lines
-	drawOutline(146, -1, 110, 85, LIGHT_GRAY, false);
-	drawRectangle(0, 124, 150, 1, LIGHT_GRAY, false);
+	drawRectangle(0, 124, 256, 1, LIGHT_GRAY, false);
 
 	// Print Pokémon name
-	printTextTintedMaxW(Lang::species[pkm->species()], 90, 1, (pkm->gender() ? (pkm->gender() == 1 ? RED_RGB : WHITE) : BLUE_RGB), 165, 1, false);
+	printTextTintedMaxW(Lang::species[pkm->species()], 90, 1, (pkm->gender() ? (pkm->gender() == 1 ? RED_RGB : DARK_GRAY) : BLUE_RGB), 165, 8, false);
 
 	// Draw Pokémon, Pokéball, types, and shiny star (if shiny)
 	std::pair<int, int> xy = getPokeballPosition(pkm->ball());
-	drawImageFromSheet(148, 1, 15, 15, ballSheet, ballSheetData.width, xy.first, xy.second, false);
+	drawImageFromSheet(148, 8, 15, 15, ballSheet, ballSheetData.width, xy.first, xy.second, false);
 	xy = getPokemonPosition(pkm);
-	drawImageFromSheetScaled(169, 16, pokemonSheetSize, pokemonSheetSize, 2*pokemonSheetScale, pokemonSheet, pokemonSheetData.width, xy.first, xy.second, false);
-	drawImageFromSheet(150, 18, 32, 12, types, 32, 0, (((pkm->generation() == Generation::FOUR && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1())*12), false);
+	drawImageFromSheetScaled(169, 22, pokemonSheetSize, pokemonSheetSize, 2*pokemonSheetScale, pokemonSheet, pokemonSheetData.width, xy.first, xy.second, false);
+	drawImageFromSheet(150, 26, 32, 12, types, 32, 0, (((pkm->generation() == Generation::FOUR && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1())*12), false);
 	if(pkm->type1() != pkm->type2())
-		drawImageFromSheet(185, 18, 32, 12, types, 32, 0, (((pkm->generation() == Generation::FOUR && pkm->type2() > 8) ? pkm->type2()-1 : pkm->type2())*12), false);
-	if(pkm->shiny())	drawImage(150, 32, shinyData.width, shinyData.height, shiny, false);
+		drawImageFromSheet(185, 26, 32, 12, types, 32, 0, (((pkm->generation() == Generation::FOUR && pkm->type2() > 8) ? pkm->type2()-1 : pkm->type2())*12), false);
+	if(pkm->shiny())	drawImage(150, 45, shinyData.width, shinyData.height, shiny, false);
 
 	// Print Pokémon and trainer info labels
 	for(uint i=0;i<Lang::summaryP1Labels.size();i++) {
@@ -101,11 +100,11 @@ void drawSummaryP1(std::shared_ptr<PKX> pkm) {
 
 void drawSummaryP2(std::shared_ptr<PKX> pkm) {
 	// Clear the screen
-	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
 
 	// Draw lines
 	for(uint i=1;i<(sizeof(textSP2r1)/sizeof(textSP2r1[0]));i++) {
-		drawRectangle(16, textSP2r1[i].y, 230, 1, DARKER_GRAY, false);
+		drawRectangle(16, textSP2r1[i].y, 230, 1, LIGHT_GRAY, false);
 	}
 	drawRectangle(128, 4, 1, 112, LIGHT_GRAY, false);
 	drawRectangle(168, 4, 1, 112, LIGHT_GRAY, false);
@@ -316,7 +315,7 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 			if(column == 0) {
 				setSpritePosition(bottomArrowID, textSP1[selection].x+getTextWidthMaxW(textSP1[selection].text, 80), textSP1[selection].y-6);
 			} else {
-				setSpritePosition(bottomArrowID, 236, 20);
+				setSpritePosition(bottomArrowID, 230, 30);
 			}
 		} else {
 			if(column == 0) {

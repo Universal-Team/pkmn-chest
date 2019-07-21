@@ -12,14 +12,14 @@ struct button {
 	int y;
 	std::string text;
 } partyButtons[] = {
-	{3, 24}, {131, 24},
-	{3, 72}, {131, 72},
-	{3, 120}, {131, 120},
+	{2, 24}, {130, 24},
+	{2, 72}, {130, 72},
+	{2, 120}, {130, 120},
 };
 
 void showParty(int selection) {
 	for(int i=0;i<6;i++) {
-		drawImageTinted(partyButtons[i].x, partyButtons[i].y, menuButtonData.width, menuButtonData.height, selection == i ? TEAL_RGB : LIGHT_GRAY, menuButton, false);
+		drawImage(partyButtons[i].x, partyButtons[i].y, menuButtonData.width, menuButtonData.height, selection == i ? menuButtonBlue : menuButton, false);
 		if(save->pkm(i)->species() != 0) {
 			std::pair<int, int> xy = getPokemonPosition(save->pkm(i));
 			drawImageFromSheetScaled(partyButtons[i].x+8, partyButtons[i].y, pokemonSheetSize, pokemonSheetSize, pokemonSheetScale, pokemonSheet, pokemonSheetData.width, xy.first, xy.second, false);
@@ -31,9 +31,7 @@ void showParty(int selection) {
 
 void manageParty(void) {
 	// Draw background
-	drawRectangle(0, 0, 256, 16, BLACK, false);
-	drawRectangle(0, 16, 256, 160, DARK_GRAY, false);
-	drawRectangle(0, 176, 256, 16, BLACK, false);
+	drawImage(0, 0, menuBgData.width, menuBgData.height, menuBg, false);
 
 	showParty(-1);
 
@@ -67,7 +65,9 @@ void manageParty(void) {
 			menuSelection = -1;
 		} else if(pressed & KEY_A) {
 			selectedOption = menuSelection;
-		} else if(pressed & KEY_B) {
+		}
+
+		if(pressed & KEY_B) {
 			Sound::play(Sound::back);
 			break;
 		}
@@ -78,9 +78,7 @@ void manageParty(void) {
 				save->pkm(showPokemonSummary(save->pkm(selectedOption)), selectedOption);
 
 				// Redraw background
-				drawRectangle(0, 0, 256, 16, BLACK, false);
-				drawRectangle(0, 16, 256, 160, DARK_GRAY, false);
-				drawRectangle(0, 176, 256, 16, BLACK, false);
+				drawImage(0, 0, menuBgData.width, menuBgData.height, menuBg, false);
 				
 				// Hide arrow
 				setSpriteVisibility(bottomArrowID, false);
