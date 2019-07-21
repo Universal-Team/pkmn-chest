@@ -35,7 +35,7 @@ Text textCP1[] {
 
 std::vector<std::string> optionsText = {"", "", "", "", ""}; // Placeholders to be filled
 
-std::string langNames[] = { "Deutsche", "English", "Español", "Français", "Italiano", "にほんご" };
+std::string langNames[] = { "Deutsche", "English", "Español", "Français", "Italiano", "にほんご", "русский"};
 
 void drawConfigMenu(void) {
 	// Draw background
@@ -174,9 +174,9 @@ void configMenu(void) {
 				} case 5: { // Language
 					if(pressed & KEY_LEFT) {
 						if(Config::lang > 0)	Config::lang--;
-						else	Config::lang = 5;
+						else	Config::lang = 6;
 					} else {
-						if(Config::lang < 5)	Config::lang++;
+						if(Config::lang < 6)	Config::lang++;
 						else	Config::lang = 0;
 					}
 					Lang::loadLangStrings(Config::lang);

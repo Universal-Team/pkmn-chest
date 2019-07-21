@@ -4,7 +4,7 @@
 #include "inifile.h"
 #include "langStrings.h"
 
-std::string langs[] = { "de", "en", "es", "fr", "it", "jp"};
+std::string langs[] = { "de", "en", "es", "fr", "it", "jp", "ru"};
 
 void Lang::loadLangStrings(int lang) {
 	// Clear vectors
