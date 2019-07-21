@@ -149,7 +149,7 @@ void drawImageTinted(int x, int y, int w, int h, u16 color, std::vector<u16> &im
 	for(int i=0;i<h;i++) {
 		for(int j=0;j<w;j++) {
 			if(imageBuffer[(i*w)+j]>>15 != 0) { // Do not render transparent pixel
-				(top ? BG_GFX : BG_GFX_SUB)[(y+i)*256+j+x] = imageBuffer[(i*w)+j] & color;
+				(top ? BG_GFX : BG_GFX_SUB)[(y+i)*256+j+x] = color & imageBuffer[(i*w)+j];
 			}
 		}
 	}
@@ -213,6 +213,14 @@ void fillSpriteFromSheetScaled(int id, double scale, std::vector<u16> &imageBuff
 				u16 js=j/scale;
 				sprites[id].gfx[(is*ws)+js] = imageBuffer[((ii+yOffset)*imageWidth)+jj+xOffset];
 			}
+		}
+	}
+}
+
+void fillSpriteFromSheetTinted(int id, std::vector<u16> &imageBuffer, u16 color, int w, int h, int imageWidth, int xOffset, int yOffset) {
+	for(int i=0;i<h;i++) {
+		for(int j=0;j<w;j++) {
+			sprites[id].gfx[(i*w)+j] = color & imageBuffer[((i+yOffset)*imageWidth)+j+xOffset];
 		}
 	}
 }
@@ -305,7 +313,7 @@ void printTextTinted(std::u16string text, u16 color, int xPos, int yPos, bool to
 
 			for(u16 i = 0; i < fontTexcoords[2 + (4 * charIndex)]; i++) {
 				if(font[currentCharIndex+i]>>15 != 0) { // Do not render transparent pixel
-					(top ? BG_GFX : BG_GFX_SUB)[(y+yPos)*256+(i+x+xPos)] = font[currentCharIndex+i] & color;
+					(top ? BG_GFX : BG_GFX_SUB)[(y+yPos)*256+(i+x+xPos)] = color & font[currentCharIndex+i];
 				}
 			}
 		}
@@ -361,7 +369,7 @@ void printTextTintedScaled(std::u16string text, double scaleX,  double scaleY, u
 
 				for(double i = 0; i < fontTexcoords[2 + (4 * charIndex)]; i+=scaleX) {
 					if(font[currentCharIndex+i]>>15 != 0) { // Do not render transparent pixel
-						(top ? BG_GFX : BG_GFX_SUB)[((u16)(y/scaleY)+yPos)*256+((u16)(i/scaleX)+x+xPos)] = font[currentCharIndex+i] & color;
+						(top ? BG_GFX : BG_GFX_SUB)[((u16)(y/scaleY)+yPos)*256+((u16)(i/scaleX)+x+xPos)] = color & font[currentCharIndex+i];
 					}
 				}
 			}

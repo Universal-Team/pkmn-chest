@@ -322,6 +322,7 @@ void drawXMenuButtons(unsigned menuSelection) {
 	for(unsigned i=0;i<xMenuButtons.size();i++) {
 		drawImage(xMenuButtons[i].x, xMenuButtons[i].y, menuButtonData.width, menuButtonData.height, menuSelection == i ? menuButtonBlue : menuButton, false);
 		printText(Lang::xMenuText[i], xMenuButtons[i].x+47, xMenuButtons[i].y+14, false);
+		fillSpriteFromSheetTinted(menuIconID[i], menuIconSheet, menuSelection == i ? 0xEACF : WHITE, 32, 32, menuIconSheetData.width, 0, i*32);
 	}
 }
 
