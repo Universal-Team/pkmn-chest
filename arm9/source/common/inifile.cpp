@@ -104,7 +104,7 @@ void CIniFile::SetString(const std::string& Section,const std::string& Item,cons
 void CIniFile::SetInt(const std::string& Section,const std::string& Item,int Value)
 {
 	char strtemp[6];
-	itoa(Value, strtemp, 10);
+	__itoa(Value, strtemp, 10);
 
 	if(GetFileString(Section,Item)!=strtemp)
 	{

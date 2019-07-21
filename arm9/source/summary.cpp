@@ -73,7 +73,7 @@ void drawSummaryP1(std::shared_ptr<PKX> pkm) {
 	if(pkm->shiny())	drawImage(150, 45, shinyData.width, shinyData.height, shiny, false);
 
 	// Print Pokémon and trainer info labels
-	for(uint i=0;i<Lang::summaryP1Labels.size();i++) {
+	for(unsigned i=0;i<Lang::summaryP1Labels.size();i++) {
 		printTextMaxW(Lang::summaryP1Labels[i], textSP1[i].x-8, 1, 4, textSP1[i].y, false);
 
 	}
@@ -91,7 +91,7 @@ void drawSummaryP1(std::shared_ptr<PKX> pkm) {
 	snprintf(textSP1[8].text,  sizeof(textSP1[8].text), "%.5i", pkm->TID());
 	snprintf(textSP1[9].text,  sizeof(textSP1[9].text), "%.5i", pkm->SID());
 	snprintf(textSP1[10].text, sizeof(textSP1[10].text),"%i", pkm->otFriendship());
-	for(uint i=0;i<(sizeof(textSP1)/sizeof(textSP1[0]));i++) {
+	for(unsigned i=0;i<(sizeof(textSP1)/sizeof(textSP1[0]));i++) {
 		if(i!=7)	// Ball is scaled, OT Name is colored
 			printTextMaxW(textSP1[i].text, 80, 1, textSP1[i].x, textSP1[i].y, false);
 	}
@@ -103,7 +103,7 @@ void drawSummaryP2(std::shared_ptr<PKX> pkm) {
 	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
 
 	// Draw lines
-	for(uint i=1;i<(sizeof(textSP2r1)/sizeof(textSP2r1[0]));i++) {
+	for(unsigned i=1;i<(sizeof(textSP2r1)/sizeof(textSP2r1[0]));i++) {
 		drawRectangle(16, textSP2r1[i].y, 230, 1, LIGHT_GRAY, false);
 	}
 	drawRectangle(128, 4, 1, 112, LIGHT_GRAY, false);
@@ -134,7 +134,7 @@ void drawSummaryP2(std::shared_ptr<PKX> pkm) {
 	snprintf(textSP2r1[5].text,  sizeof(textSP2r1[5].text), "%i", pkm->baseSpe());
 
 	// Set & print other stat info and 
-	for(uint i=0;i<(sizeof(textSP2r1)/sizeof(textSP2r1[0]));i++) {
+	for(unsigned i=0;i<(sizeof(textSP2r1)/sizeof(textSP2r1[0]));i++) {
 		snprintf(textSP2r2[i].text,  sizeof(textSP2r2[i].text), "%i", pkm->iv(i));
 		snprintf(textSP2r3[i].text,  sizeof(textSP2r3[i].text), "%i", pkm->ev(i));
 		snprintf(textSP2r4[i].text,  sizeof(textSP2r4[i].text), "%i", pkm->stat(i));
@@ -191,7 +191,7 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
 			if(summaryPage == 0) {
-				for(uint i=0;i<(sizeof(textSP1)/sizeof(textSP1[0]));i++) {
+				for(unsigned i=0;i<(sizeof(textSP1)/sizeof(textSP1[0]));i++) {
 					if(touch.px >= textSP1[i].x && touch.px <= textSP1[i].x+getTextWidthMaxW(textSP1[i].text, 80) && touch.py >= textSP1[i].y && touch.py <= textSP1[i].y+16) {
 						column = 0;
 						selection = i;
@@ -204,7 +204,7 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 					optionSelected = true;
 				}
 			} else {
-				for(uint i=0;i<(sizeof(textSP2r2)/sizeof(textSP2r2[0]));i++) {
+				for(unsigned i=0;i<(sizeof(textSP2r2)/sizeof(textSP2r2[0]));i++) {
 					if(touch.px >= 128+(textSP2r2[selection].x-(getTextWidth(textSP2r2[selection].text)/2)) && touch.px <= 128+(textSP2r2[selection].x+(getTextWidth(textSP2r2[selection].text)/2)) && touch.py >= textSP2r2[i].y && touch.py <= textSP2r2[i].y+16) {
 						column = 0;
 						selection = i;
@@ -212,7 +212,7 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 						break;
 					}
 				}
-				for(uint i=0;i<(sizeof(textSP2r3)/sizeof(textSP2r3[0]));i++) {
+				for(unsigned i=0;i<(sizeof(textSP2r3)/sizeof(textSP2r3[0]));i++) {
 					if(touch.px >= 128+(textSP2r3[selection].x-(getTextWidth(textSP2r3[selection].text)/2)) && touch.px <= 128+(textSP2r3[selection].x+(getTextWidth(textSP2r3[selection].text)/2)) && touch.py >= textSP2r3[i].y && touch.py <= textSP2r3[i].y+16) {
 						column = 1;
 						selection = i;

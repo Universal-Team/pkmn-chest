@@ -25,6 +25,7 @@
 #include <dirent.h>
 #include <fat.h>
 #include <fstream>
+#include <strings.h>
 #include <unistd.h>
 
 #include "flashcard.h"
@@ -220,7 +221,7 @@ void showTopMenu(std::vector<topMenuItem> topMenuContents) {
 	// Draw background
 	drawImage(0, 0, fileBrowseBgData.width, fileBrowseBgData.height, fileBrowseBg, false);
 
-	for(uint i=0;i<topMenuContents.size() && i<ENTRIES_PER_SCREEN;i++) {
+	for(unsigned i=0;i<topMenuContents.size() && i<ENTRIES_PER_SCREEN;i++) {
 		if(topMenuContents[i+tmScreenOffset].name == "fat:")	drawFatText(i, topMenuContents[i+tmScreenOffset].valid);
 		else if(topMenuContents[i+tmScreenOffset].name == "sd:")	drawSdText(i, topMenuContents[i+tmScreenOffset].valid);
 		else if(topMenuContents[i+tmScreenOffset].name == "card:")	drawSlot1Text(i, topMenuContents[i+tmScreenOffset].valid);

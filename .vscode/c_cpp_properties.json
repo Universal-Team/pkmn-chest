@@ -1,20 +1,28 @@
 {
 	"configurations": [
 		{
-			"name": "Mac",
+			"name": "NDS",
 			"includePath": [
 				"${workspaceFolder}/**",
-				"/opt/devkitpro/**",
-				"/opt/devkitpro/libnds/include/nds"
+				"/opt/devkitpro/libnds/include/**",
+				"/opt/devkitpro/devkitARM/include/**",
+				"/opt/devkitpro/devkitARM/arm-none-eabi/include/**"
 			],
-			"defines": [],
-			"macFrameworkPath": [
-				"/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks"
+			"defines": [
+				"NDS"
 			],
+			"macFrameworkPath": [],
 			"compilerPath": "/opt/devkitpro/devkitARM/bin/arm-none-eabi-g++",
 			"cStandard": "c11",
 			"cppStandard": "c++17",
-			"intelliSenseMode": "gcc-x64"
+			"intelliSenseMode": "gcc-x64",
+			"forcedInclude": [
+				"/opt/devkitpro/libnds/include/nds/arm9/input.h",
+				"/opt/devkitpro/devkitARM/arm-none-eabi/include/sys/unistd.h"
+			],
+			"browse": {
+				"path": []
+			}
 		}
 	],
 	"version": 4

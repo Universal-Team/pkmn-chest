@@ -22,7 +22,7 @@ std::vector<std::string> goodTids = {
 };
 
 bool isValidTid(char* tid) {
-	for(uint i=0;i<goodTids.size(); i++) {
+	for(unsigned i=0;i<goodTids.size(); i++) {
 		if(strncmp(tid, goodTids[i].c_str(), 3) == 0)	return true;
 	}
 	return false;

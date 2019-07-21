@@ -106,10 +106,10 @@ void drawKeyboard(int layout) {
 	drawImage(xPos, 192-keyboardData.height, keyboardData.width, keyboardData.height, keyboard, false);
 }
 
-void processTouch123(touchPosition touch, uint maxLength) {
+void processTouch123(touchPosition touch, unsigned maxLength) {
 	if(string.length() < maxLength) {
 		// Check if a number key was pressed
-		for(uint i=0;i<(sizeof(keys123)/sizeof(keys123[0]));i++) {
+		for(unsigned i=0;i<(sizeof(keys123)/sizeof(keys123[0]));i++) {
 			if((touch.px > keys123[i].x+xPos-2 && touch.px < keys123[i].x+xPos+34) && (touch.py > keys123[i].y+(192-keyboardData.height)-2 && touch.py < keys123[i].y+34+(192-keyboardData.height))) {
 				drawRectangle(keys123[i].x+xPos, keys123[i].y+(192-keyboardData.height), 32, 32, (keys123[i].character == " " ? GRAY : DARK_GRAY), false);
 				whileHeld();
@@ -119,7 +119,7 @@ void processTouch123(touchPosition touch, uint maxLength) {
 		}
 	}
 	// Check if a special key was pressed
-	for(uint i=0;i<(sizeof(keysSpecialKana)/sizeof(keysSpecialKana[0]));i++) {
+	for(unsigned i=0;i<(sizeof(keysSpecialKana)/sizeof(keysSpecialKana[0]));i++) {
 		if((touch.px > keysSpecialKana[i].x+xPos-2 && touch.px < keysSpecialKana[i].x+xPos+34) && (touch.py > keysSpecialKana[i].y+(192-keyboardData.height)-2 && touch.py < keysSpecialKana[i].y+34+(192-keyboardData.height))) {
 			if(keysSpecialKana[i].character == "bksp") {
 				while(keysHeld() & KEY_TOUCH) {
@@ -163,10 +163,10 @@ void processTouch123(touchPosition touch, uint maxLength) {
 	}
 }
 
-void processTouchABC(touchPosition touch, uint maxLength) {
+void processTouchABC(touchPosition touch, unsigned maxLength) {
 	if(string.length() < maxLength) {
 		// Check if an ABC key was pressed
-		for(uint i=0;i<(sizeof(keysABC)/sizeof(keysABC[0]));i++) {
+		for(unsigned i=0;i<(sizeof(keysABC)/sizeof(keysABC[0]));i++) {
 			if((touch.px > keysABC[i].x+xPos-2 && touch.px < keysABC[i].x+xPos+34) && (touch.py > keysABC[i].y+(192-keyboardData.height)-2 && touch.py < keysABC[i].y+34+(192-keyboardData.height))) {
 				drawRectangle(keysABC[i].x+xPos, keysABC[i].y+(192-keyboardData.height), 32, 32, (keysABC[i].character == " " ? GRAY : DARK_GRAY), false);
 				char c = '\0';
@@ -195,7 +195,7 @@ void processTouchABC(touchPosition touch, uint maxLength) {
 		}
 	}
 	// Check if a special key was pressed
-	for(uint i=0;i<(sizeof(keysSpecialKana)/sizeof(keysSpecialKana[0]));i++) {
+	for(unsigned i=0;i<(sizeof(keysSpecialKana)/sizeof(keysSpecialKana[0]));i++) {
 		if((touch.px > keysSpecialKana[i].x+xPos-2 && touch.px < keysSpecialKana[i].x+xPos+34) && (touch.py > keysSpecialKana[i].y+(192-keyboardData.height)-2 && touch.py < keysSpecialKana[i].y+34+(192-keyboardData.height))) {
 			if(keysSpecialKana[i].character == "bksp") {
 				while(keysHeld() & KEY_TOUCH) {
@@ -247,10 +247,10 @@ void processTouchABC(touchPosition touch, uint maxLength) {
 	}
 }
 
-void processTouchQWE(touchPosition touch, uint maxLength) {
+void processTouchQWE(touchPosition touch, unsigned maxLength) {
 	if(string.length() < maxLength) {
 		// Check if a regular key was pressed
-		for(uint i=0;i<(sizeof(keysQWE)/sizeof(keysQWE[0]));i++) {
+		for(unsigned i=0;i<(sizeof(keysQWE)/sizeof(keysQWE[0]));i++) {
 			if((touch.px > keysQWE[i].x-2 && touch.px < keysQWE[i].x+18) && (touch.py > keysQWE[i].y+(192-keyboardData.height)-2 && touch.py < keysQWE[i].y+18+(192-keyboardData.height))) {
 				drawRectangle(keysQWE[i].x, keysQWE[i].y+(192-keyboardData.height), 16, 16, DARK_GRAY, false);
 				char c = keysQWE[i].character[0];
@@ -270,7 +270,7 @@ void processTouchQWE(touchPosition touch, uint maxLength) {
 		}
 	}
 	// Check if a special key was pressed
-	for(uint i=0;i<(sizeof(keysSpecialQWE)/sizeof(keysSpecialQWE[0]));i++) {
+	for(unsigned i=0;i<(sizeof(keysSpecialQWE)/sizeof(keysSpecialQWE[0]));i++) {
 		if((touch.px > keysSpecialQWE[i].x-2 && touch.px < keysSpecialQWE[i].x+18) && (touch.py > keysSpecialQWE[i].y+(192-keyboardData.height)-2 && touch.py < keysSpecialQWE[i].y+18+(192-keyboardData.height))) {
 			if(keysSpecialQWE[i].character == "bksp") {
 				drawRectangle(keysSpecialQWE[i].x, keysSpecialQWE[i].y+(192-keyboardData.height), 16, 16, DARK_GRAY, false);
@@ -311,7 +311,7 @@ void processTouchQWE(touchPosition touch, uint maxLength) {
 
 std::string Input::getLine() { return Input::getLine(-1); }
 
-std::string Input::getLine(uint maxLength) {
+std::string Input::getLine(unsigned maxLength) {
 	clearVars();
 	drawKeyboard(Config::keyboardLayout);
 	int held, pressed, cursorBlink = 30;
@@ -377,10 +377,10 @@ std::string Input::getLine(uint maxLength) {
 int Input::getInt() { return Input::getInt(-1); }
 
 // Returns -1 if nothing entered
-int Input::getInt(uint max) {
+int Input::getInt(unsigned max) {
 	char str[4];
-	itoa(max, str, 10);
-	uint maxLength = strlen(str);
+	__itoa(max, str, 10);
+	unsigned maxLength = strlen(str);
 	clearVars();
 	drawKeyboard(0);
 	int held, pressed, cursorBlink = 30;
@@ -426,7 +426,7 @@ int Input::getInt(uint max) {
 		}
 	}
 	if(string == "") return -1;
-	uint i = atoi(string.c_str());
+	unsigned i = atoi(string.c_str());
 	if(i > max)	return max;
 	return i;
 }

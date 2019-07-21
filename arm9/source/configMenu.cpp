@@ -53,13 +53,13 @@ void drawConfigMenu(void) {
 	optionsText[4] = Config::playSfx ? Lang::yes : Lang::no;
 
 	// Print text
-	for(uint i=0;i<Lang::optionsTextLabels.size();i++) {
+	for(unsigned i=0;i<Lang::optionsTextLabels.size();i++) {
 		printTextTinted(Lang::optionsTextLabels[i]+":", DARK_GRAY, textCP1Labels[i].x, textCP1Labels[i].y, false);
 	}
-	for(uint i=0;i<(sizeof(textCP1)/sizeof(textCP1[0]));i++) {
+	for(unsigned i=0;i<(sizeof(textCP1)/sizeof(textCP1[0]));i++) {
 		printTextTinted(Lang::optionsText[i], DARK_GRAY, textCP1[i].x, textCP1[i].y, false);
 	}
-	for(uint i=0;i<optionsText.size();i++) {
+	for(unsigned i=0;i<optionsText.size();i++) {
 		printTextTinted(optionsText[i], DARK_GRAY, textCP1Labels[i+1].x+getTextWidth(Lang::optionsTextLabels[i+1])+8, textCP1Labels[i+1].y, false);
 	}
 
@@ -99,14 +99,14 @@ void configMenu(void) {
 			return;
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
-			for(uint i=0;i<(sizeof(textCP1)/sizeof(textCP1[0]));i++) {
+			for(unsigned i=0;i<(sizeof(textCP1)/sizeof(textCP1[0]));i++) {
 				if(touch.px >= textCP1[i].x && touch.px <= textCP1[i].x+getTextWidth(Lang::optionsText[i]) && touch.py >= textCP1[i].y && touch.py <= textCP1[i].y+16) {
 					selection = i;
 					optionSelected = true;
 					break;
 				}
 			}
-			for(uint i=0;i<optionsText.size();i++) {
+			for(unsigned i=0;i<optionsText.size();i++) {
 				if(touch.px >= textCP1Labels[i+1].x+getTextWidth(Lang::optionsTextLabels[i+1])+8 && touch.px < textCP1Labels[i+1].x+getTextWidth(Lang::optionsTextLabels[i+1])+8+getTextWidth(optionsText[i]) && touch.py >= textCP1Labels[i+1].y && touch.py <= textCP1Labels[i+1].y+16) {
 					selection = i+(sizeof(textCP1)/sizeof(textCP1[0]));
 					optionSelected = true;

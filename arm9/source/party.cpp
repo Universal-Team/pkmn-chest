@@ -57,7 +57,7 @@ void manageParty(void) {
 			if(!(menuSelection % 2))	menuSelection++;
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
-			for(uint i=0; i<(sizeof(partyButtons)/sizeof(partyButtons[0]));i++) {
+			for(unsigned i=0; i<(sizeof(partyButtons)/sizeof(partyButtons[0]));i++) {
 				if(touch.px >= partyButtons[i].x && touch.px <= partyButtons[i].x+menuButtonData.width && touch.py >= partyButtons[i].y && touch.py <= partyButtons[i].y+menuButtonData.height) {
 					selectedOption = i;
 				}

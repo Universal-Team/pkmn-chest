@@ -41,7 +41,7 @@ void saveChanges(std::string savePath) {
 	// Make backups
 	if(Config::backupAmount != 0) {
 		std::string saveFile = savePath.substr(savePath.find_last_of("/")+1);
-		for(uint i=Config::backupAmount;i>1;i--) {
+		for(unsigned i=Config::backupAmount;i>1;i--) {
 			char path1[PATH_MAX];
 			char path2[PATH_MAX];
 			snprintf(path1, sizeof(path1), "%s:/_nds/pkmn-chest/backups/%s.bak%i", sdFound() ? "sd" : "fat", saveFile.c_str(), i);

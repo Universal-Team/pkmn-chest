@@ -28,7 +28,7 @@ void drawTrainerCard(void) {
 	drawImage(0, 0, optionsBgData.width, optionsBgData.height, optionsBg, false);
 
 	// Print labels
-	for(uint i=0;i<sizeof(textTP1)/sizeof(textTP1[0]);i++) {
+	for(unsigned i=0;i<sizeof(textTP1)/sizeof(textTP1[0]);i++) {
 		printTextTinted(Lang::trainerText[i]+":", DARK_GRAY, textTP1[i].x, textTP1[i].y, false);
 	}
 
@@ -43,7 +43,7 @@ void drawTrainerCard(void) {
 	
 	// Print info
 	printTextTinted(textTP1[0].text, (save->gender() ? RED_RGB : BLUE_RGB), textTP1[0].x+getTextWidth(Lang::trainerText[0])+8, textTP1[0].y, false);
-	for(uint i=1;i<(sizeof(textTP1)/sizeof(textTP1[0]));i++) {
+	for(unsigned i=1;i<(sizeof(textTP1)/sizeof(textTP1[0]));i++) {
 			printTextTinted(textTP1[i].text, DARK_GRAY, textTP1[i].x+getTextWidth(Lang::trainerText[i])+8, textTP1[i].y, false);
 	}
 }
@@ -83,7 +83,7 @@ void showTrainerCard(void) {
 			return;
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
-			for(uint i=0;i<(sizeof(textTP1)/sizeof(textTP1[0]));i++) {
+			for(unsigned i=0;i<(sizeof(textTP1)/sizeof(textTP1[0]));i++) {
 				if(touch.px >= textTP1[i].x+getTextWidth(Lang::trainerText[i])+8 && touch.px <= textTP1[i].x+getTextWidth(Lang::trainerText[i])+8+getTextWidth(textTP1[i].text) && touch.py >= textTP1[i].y && touch.py <= textTP1[i].y+16) {
 					selection = i;
 					optionSelected = true;

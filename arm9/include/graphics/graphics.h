@@ -12,8 +12,8 @@
 #define BGR15(b, g, r)   ((b)|((g)<<5)|((r)<<10))
 
 struct ImageData {
-	uint width;
-	uint height;
+	unsigned width;
+	unsigned height;
 };
 
 struct Sprite {
@@ -228,7 +228,7 @@ Sprite getSpriteInfo(int id);
  * Gets the total amount of sprites
  * returns the total amount of sprites
  */
-uint getSpriteAmount(void);
+unsigned getSpriteAmount(void);
 
 /**
  * Prints text to the a screen

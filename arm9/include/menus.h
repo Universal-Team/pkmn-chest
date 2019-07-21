@@ -24,7 +24,7 @@ int aMenu(int pkmPos, std::vector<TextPos>& buttons, int buttonMode);
 
 void savePrompt(void);
 
-void drawXMenuButtons(uint menuSelection);
+void drawXMenuButtons(unsigned menuSelection);
 
 bool xMenu(void);
 

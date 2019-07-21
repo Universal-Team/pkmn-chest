@@ -51,7 +51,7 @@ std::string aMenuText(int buttonMode, int i) {
 }
 
 void drawAMenuButtons(std::vector<TextPos>& buttons, int buttonMode) {
-	for(uint i=0;i<buttons.size();i++) {
+	for(unsigned i=0;i<buttons.size();i++) {
 		drawImage(buttons[i].x, buttons[i].y, boxButtonData.width, boxButtonData.height, boxButton, false);
 		printTextMaxW(aMenuText(buttonMode, i), 80, 1, buttons[i].x+4, buttons[i].y+4, false);
 	}
@@ -83,7 +83,7 @@ int aMenu(int pkmPos, std::vector<TextPos>& buttons, int buttonMode) {
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
 
-			for(uint i=0; i<buttons.size();i++) {
+			for(unsigned i=0; i<buttons.size();i++) {
 				if(touch.px >= buttons[i].x && touch.px <= buttons[i].x+64 && touch.py >= buttons[i].y && touch.py <= buttons[i].y+25) {
 					menuSelection = i;
 					optionSelected = true;
@@ -316,10 +316,10 @@ void savePrompt(void) {
 	}
 }
 
-void drawXMenuButtons(uint menuSelection) {
+void drawXMenuButtons(unsigned menuSelection) {
 	Lang::xMenuText[3] = save->otName();
 
-	for(uint i=0;i<xMenuButtons.size();i++) {
+	for(unsigned i=0;i<xMenuButtons.size();i++) {
 		drawImage(xMenuButtons[i].x, xMenuButtons[i].y, menuButtonData.width, menuButtonData.height, menuSelection == i ? menuButtonBlue : menuButton, false);
 		printText(Lang::xMenuText[i], xMenuButtons[i].x+47, xMenuButtons[i].y+14, false);
 	}
@@ -327,7 +327,7 @@ void drawXMenuButtons(uint menuSelection) {
 
 bool xMenu(void) {
 	// Hide bottom sprites
-	for(uint i=0;i<30;i++) {
+	for(unsigned i=0;i<30;i++) {
 		setSpriteVisibility(i, false);
 	}
 	setSpriteVisibility(bottomArrowID, false);
@@ -340,7 +340,7 @@ bool xMenu(void) {
 	drawImage(0, 0, menuBgData.width, menuBgData.height, menuBg, false);
 
 	// Enable sprites and set positions
-	for(uint i=0;i<menuIconID.size();i++) {
+	for(unsigned i=0;i<menuIconID.size();i++) {
 		setSpritePosition(menuIconID[i], xMenuButtons[i].x+3, xMenuButtons[i].y+6);
 		setSpriteVisibility(menuIconID[i], true);
 	}
@@ -410,7 +410,7 @@ bool xMenu(void) {
 			}
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
-			for(uint i=0; i<xMenuButtons.size();i++) {
+			for(unsigned i=0; i<xMenuButtons.size();i++) {
 				if(touch.px >= xMenuButtons[i].x && touch.px <= xMenuButtons[i].x+menuButtonData.width && touch.py >= xMenuButtons[i].y && touch.py <= xMenuButtons[i].y+menuButtonData.height) {
 					selectedOption = i;
 				}
@@ -464,7 +464,7 @@ bool xMenu(void) {
 				case 5:
 					savePrompt();
 					// Hide remaining sprites
-					for(uint i=30;i<getSpriteAmount();i++) {
+					for(unsigned i=30;i<getSpriteAmount();i++) {
 						setSpriteVisibility(i, false);
 					}
 					updateOam();
@@ -473,7 +473,7 @@ bool xMenu(void) {
 
 			// Redraw menu
 			drawImage(0, 0, menuBgData.width, menuBgData.height, menuBg, false);
-			for(uint i=0;i<menuIconID.size();i++) {
+			for(unsigned i=0;i<menuIconID.size();i++) {
 				setSpritePosition(menuIconID[i], xMenuButtons[i].x+3, xMenuButtons[i].y+6);
 				setSpriteVisibility(menuIconID[i], true);
 			}
@@ -514,7 +514,7 @@ int selectForm(int dexNo) {
 		{647,  2}, // Keldeo
 	};
 	int altIndex = -1;
-	for(uint i=0;i<(sizeof(formCounts)/sizeof(formCounts[0]));i++) {
+	for(unsigned i=0;i<(sizeof(formCounts)/sizeof(formCounts[0]));i++) {
 		if(formCounts[i].dexNo == dexNo) {
 			altIndex = i;
 			break;

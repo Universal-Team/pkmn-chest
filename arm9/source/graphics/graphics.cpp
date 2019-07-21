@@ -64,9 +64,9 @@ ImageData loadBmp(std::string path, std::vector<u16> &imageBuffer) {
 		fseek(file, pixelStart, SEEK_SET);
 		u16 bmpImageBuffer[imageData.width*imageData.height];
 		fread(bmpImageBuffer, 2, imageData.width*imageData.height, file);
-		for(uint y=imageData.height-1; y>0; y--) {
+		for(unsigned y=imageData.height-1; y>0; y--) {
 			u16* src = bmpImageBuffer+y*imageData.width;
-			for(uint x=0;x<imageData.width;x++) {
+			for(unsigned x=0;x<imageData.width;x++) {
 				u16 val = *(src++);
 				if(val == 0xfc1f) { // If a pixel is magenta (#ff00ff)
 					imageBuffer.push_back(0<<15); // Save it as a transparent pixel
@@ -251,7 +251,7 @@ void setSpritePosition(int id, int x, int y) {
 void setSpritePriority(int id, int priority) { oamSetPriority((sprites[id].top ? &oamMain : &oamSub), id, priority); }
 void setSpriteVisibility(int id, int show) { oamSetHidden((sprites[id].top ? &oamMain : &oamSub), id, !show); }
 Sprite getSpriteInfo(int id) { return sprites[id]; }
-uint getSpriteAmount(void) { return sprites.size(); }
+unsigned getSpriteAmount(void) { return sprites.size(); }
 
 /**
  * Get the index in the UV coordinate array where the letter appears
@@ -288,7 +288,7 @@ void printTextTinted(std::string text, u16 color, int xPos, int yPos, bool top) 
 void printTextTinted(std::u16string text, u16 color, int xPos, int yPos, bool top) {
 	int x = 0;
 
-	for(uint c = 0; c < text.length(); c++) {
+	for(unsigned c = 0; c < text.length(); c++) {
 		unsigned int charIndex = getTopFontSpriteIndex(text[c]);
 
 		if(xPos+x+fontTexcoords[2 + (4 * charIndex)] > 256) {
@@ -344,7 +344,7 @@ void printTextTintedScaled(std::u16string text, double scaleX,  double scaleY, u
 		scaleY = 1/scaleY;
 		int x = 0;
 
-		for(uint c = 0; c < text.length(); c++) {
+		for(unsigned c = 0; c < text.length(); c++) {
 			unsigned int charIndex = getTopFontSpriteIndex(text[c]);
 
 			if(xPos+x+fontTexcoords[2 + (4 * charIndex)] > 256) {
@@ -378,7 +378,7 @@ int getTextWidth(std::string text) { return getTextWidth(StringUtils::UTF8toUTF1
 int getTextWidth(std::u16string text) {
 	int textWidth = 0;
 
-	for(uint c = 0; c < text.length(); c++) {
+	for(unsigned c = 0; c < text.length(); c++) {
 		unsigned int charIndex = getTopFontSpriteIndex(text[c]);
 		textWidth += fontTexcoords[2+(4*charIndex)];
 	}

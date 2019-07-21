@@ -5,9 +5,9 @@
 
 namespace Input {
 	std::string getLine();
-	std::string getLine(uint maxLength);
+	std::string getLine(unsigned maxLength);
 	int getInt();
-	int getInt(uint max);
+	int getInt(unsigned max);
 	bool getBool();
 	bool getBool(std::string option1, std::string option2);
 }
