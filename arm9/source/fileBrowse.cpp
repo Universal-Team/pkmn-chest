@@ -137,7 +137,7 @@ void showDirectoryContents(const std::vector<DirEntry>& dirContents, int startRo
 		}
 		if(addEllipsis)	name += StringUtils::UTF8toUTF16("...");
 
-		printTextTinted(name, DARK_GRAY, 10, i*16+16, false);
+		printTextTinted(name, GRAY, 10, i*16+16, false, true);
 	}
 }
 
@@ -174,20 +174,20 @@ void drawSdText(int i, bool valid) {
 	char str[19];
 	updateDriveLabel(false);
 	snprintf(str, sizeof(str), "sd: (%s)", sdLabel[0] == '\0' ? "SD Card" : sdLabel);
-	printTextTinted(str, valid ? DARK_GRAY : RED_RGB, 10, (i+1)*16, false);
+	printTextTinted(str, valid ? GRAY : RED_RGB, 10, (i+1)*16, false, true);
 }
 
 void drawFatText(int i, bool valid) {
 	char str[20];
 	updateDriveLabel(true);
 	snprintf(str, sizeof(str), "fat:/ (%s)", fatLabel[0] == '\0' ? "Flashcard" : fatLabel);
-	printTextTinted(str, valid ? DARK_GRAY : RED_RGB, 10, (i+1)*16, false);
+	printTextTinted(str, valid ? GRAY : RED_RGB, 10, (i+1)*16, false, true);
 }
 
 void drawSlot1Text(int i, bool valid) {
 	char slot1Text[34];
 	snprintf(slot1Text, sizeof(slot1Text), "Slot-1: (%s) [%s]", REG_SCFG_MC == 0x11 ? "No card inserted" : gamename, gameid);
-	printTextTinted(slot1Text, valid ? DARK_GRAY : RED_RGB, 10, (i+1)*16, false);
+	printTextTinted(slot1Text, valid ? GRAY : RED_RGB, 10, (i+1)*16, false, true);
 }
 
 bool updateSlot1Text(int &cardWait, bool valid) {
@@ -196,7 +196,7 @@ bool updateSlot1Text(int &cardWait, bool valid) {
 		cardWait = 30;
 		if(!noCardMessageSet) {
 			drawImageFromSheet(10, ((tmSlot1Offset-tmScreenOffset)+1)*16+1, 200, 16, fileBrowseBg, fileBrowseBgData.width, 10, ((tmSlot1Offset-tmScreenOffset)+1)*16+1, false);
-			printTextTinted("Slot-1: (No card inserted)", DARK_GRAY, 10, ((tmSlot1Offset-tmScreenOffset)+1)*16, false);
+			printTextTinted("Slot-1: (No card inserted)", GRAY, 10, ((tmSlot1Offset-tmScreenOffset)+1)*16, false, true);
 			noCardMessageSet = true;
 			return false;
 		}
@@ -236,7 +236,7 @@ void showTopMenu(std::vector<topMenuItem> topMenuContents) {
 			}
 			if(addEllipsis)	name += StringUtils::UTF8toUTF16("...");
 
-			printTextTinted(name, topMenuContents[i+tmScreenOffset].valid ? DARK_GRAY : RED_RGB, 10, i*16+16, false);
+			printTextTinted(name, topMenuContents[i+tmScreenOffset].valid ? GRAY : RED_RGB, 10, i*16+16, false, true);
 		}
 	}
 }

@@ -29,7 +29,7 @@ void drawTrainerCard(void) {
 
 	// Print labels
 	for(unsigned i=0;i<sizeof(textTP1)/sizeof(textTP1[0]);i++) {
-		printTextTinted(Lang::trainerText[i]+":", DARK_GRAY, textTP1[i].x, textTP1[i].y, false);
+		printTextTinted(Lang::trainerText[i]+":", GRAY, textTP1[i].x, textTP1[i].y, false, true);
 	}
 
 	// Set info text
@@ -44,7 +44,7 @@ void drawTrainerCard(void) {
 	// Print info
 	printTextTinted(textTP1[0].text, (save->gender() ? RED_RGB : BLUE_RGB), textTP1[0].x+getTextWidth(Lang::trainerText[0])+8, textTP1[0].y, false);
 	for(unsigned i=1;i<(sizeof(textTP1)/sizeof(textTP1[0]));i++) {
-			printTextTinted(textTP1[i].text, DARK_GRAY, textTP1[i].x+getTextWidth(Lang::trainerText[i])+8, textTP1[i].y, false);
+			printTextTinted(textTP1[i].text, GRAY, textTP1[i].x+getTextWidth(Lang::trainerText[i])+8, textTP1[i].y, false, true);
 	}
 }
 

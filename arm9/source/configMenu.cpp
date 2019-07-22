@@ -54,13 +54,13 @@ void drawConfigMenu(void) {
 
 	// Print text
 	for(unsigned i=0;i<Lang::optionsTextLabels.size();i++) {
-		printTextTinted(Lang::optionsTextLabels[i]+":", DARK_GRAY, textCP1Labels[i].x, textCP1Labels[i].y, false);
+		printTextTinted(Lang::optionsTextLabels[i]+":", GRAY, textCP1Labels[i].x, textCP1Labels[i].y, false, true);
 	}
 	for(unsigned i=0;i<(sizeof(textCP1)/sizeof(textCP1[0]));i++) {
-		printTextTinted(Lang::optionsText[i], DARK_GRAY, textCP1[i].x, textCP1[i].y, false);
+		printTextTinted(Lang::optionsText[i], GRAY, textCP1[i].x, textCP1[i].y, false, true);
 	}
 	for(unsigned i=0;i<optionsText.size();i++) {
-		printTextTinted(optionsText[i], DARK_GRAY, textCP1Labels[i+1].x+getTextWidth(Lang::optionsTextLabels[i+1])+8, textCP1Labels[i+1].y, false);
+		printTextTinted(optionsText[i], GRAY, textCP1Labels[i+1].x+getTextWidth(Lang::optionsTextLabels[i+1])+8, textCP1Labels[i+1].y, false, true);
 	}
 
 }

@@ -440,8 +440,8 @@ bool Input::getBool(std::string optionTrue, std::string optionFalse) {
 	drawOutline(38, 66, 180, 60, BLACK, false);
 
 	// Print text
-	printTextCenteredTintedMaxW(optionFalse, 60, 1, DARK_GRAY, -45, 88, false);
-	printTextCenteredTintedMaxW(optionTrue, 60, 1, DARK_GRAY, 45, 88, false);
+	printTextCenteredTintedMaxW(optionFalse, 60, 1, GRAY, -45, 88, false, true);
+	printTextCenteredTintedMaxW(optionTrue, 60, 1, GRAY, 45, 88, false, true);
 
 	int pressed;
 	touchPosition touch;

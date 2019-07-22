@@ -60,7 +60,7 @@ void drawSummaryP1(std::shared_ptr<PKX> pkm) {
 	drawRectangle(0, 124, 256, 1, LIGHT_GRAY, false);
 
 	// Print Pokémon name
-	printTextTintedMaxW(Lang::species[pkm->species()], 90, 1, (pkm->gender() ? (pkm->gender() == 1 ? RED_RGB : DARK_GRAY) : BLUE_RGB), 165, 8, false);
+	printTextTintedMaxW(Lang::species[pkm->species()], 90, 1, (pkm->gender() ? (pkm->gender() == 1 ? RED_RGB : GRAY) : BLUE_RGB), 165, 8, false, true);
 
 	// Draw Pokémon, Pokéball, types, and shiny star (if shiny)
 	std::pair<int, int> xy = getPokeballPosition(pkm->ball());

@@ -206,7 +206,7 @@ void drawBox(bool top) {
 
 	if(top) {
 		// Print box names
-		printTextCenteredTinted(Banks::bank->boxName(currentBankBox), DARK_GRAY, -44, 20, true);
+		printTextCenteredTinted(Banks::bank->boxName(currentBankBox), GRAY, -44, 20, true, true);
 
 		for(int i=0;i<30;i++) {
 			// Show/Hide Pokémon sprites for bank box
@@ -226,7 +226,7 @@ void drawBox(bool top) {
 		}
 	} else {
 		// Print box names
-		printTextCenteredTinted(save->boxName(currentSaveBox), DARK_GRAY, -44, 20, false);
+		printTextCenteredTinted(save->boxName(currentSaveBox), GRAY, -44, 20, false, true);
 
 		for(int i=0;i<30;i++) {
 			// Show/Hide Pokémon sprites for save box
@@ -258,11 +258,11 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 		// Print Pokédex number
 		char str[9];
 		snprintf(str, sizeof(str), "No.%.3i", pkm->species());
-		printTextTinted(str, DARK_GRAY, 170, 8, true);
+		printTextTinted(str, GRAY, 170, 8, true, true);
 
 		// Print name
-		if(pkm->nicknamed())	printTextTintedMaxW(pkm->nickname(), 80, 1, (pkm->gender() ? (pkm->gender() == 1 ? RED_RGB : DARK_GRAY) : BLUE_RGB), 170, 25, true);
-		else	printTextTintedMaxW(Lang::species[pkm->species()], 80, 1, (pkm->gender() ? (pkm->gender() == 1 ? RED_RGB : DARK_GRAY) : BLUE_RGB), 170, 25, true);
+		if(pkm->nicknamed())	printTextTintedMaxW(pkm->nickname(), 80, 1, (pkm->gender() ? (pkm->gender() == 1 ? RED_RGB : GRAY) : BLUE_RGB), 170, 25, true, true);
+		else	printTextTintedMaxW(Lang::species[pkm->species()], 80, 1, (pkm->gender() ? (pkm->gender() == 1 ? RED_RGB : GRAY) : BLUE_RGB), 170, 25, true, true);
 
 
 		// Draw types
@@ -272,7 +272,7 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 
 		// Print Level
 		snprintf(str, sizeof(str), "Lv.%i", pkm->level());
-		printTextTinted(str, DARK_GRAY, 170, 57, true);
+		printTextTinted(str, GRAY, 170, 57, true, true);
 	} else {
 		// Hide shiny star
 		setSpriteVisibility(shinyID, false);

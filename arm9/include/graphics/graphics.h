@@ -249,8 +249,9 @@ unsigned getSpriteAmount(void);
  * int xPos is the X position to print at
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
+ * bool invert is whether to swap the colors
  */
-void printText(std::string text, int xPos, int yPos, bool top);
+void printText(std::string text, int xPos, int yPos, bool top, bool invert = false);
 
 /**
  * Prints text to the a screen
@@ -258,8 +259,9 @@ void printText(std::string text, int xPos, int yPos, bool top);
  * int xPos is the X position to print at
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
+ * bool invert is whether to swap the colors
  */
-void printText(std::u16string text, int xPos, int yPos, bool top);
+void printText(std::u16string text, int xPos, int yPos, bool top, bool invert = false);
 
 /**
  * Prints text centered on a screen
@@ -267,8 +269,9 @@ void printText(std::u16string text, int xPos, int yPos, bool top);
  * int xOffset is the X offset from the center to center on
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
+ * bool invert is whether to swap the colors
  */
-void printTextCentered(std::string text, int xOffset, int yPos, bool top);
+void printTextCentered(std::string text, int xOffset, int yPos, bool top, bool invert = false);
 
 /**
  * Prints text centered on a screen
@@ -276,8 +279,9 @@ void printTextCentered(std::string text, int xOffset, int yPos, bool top);
  * int xOffset is the X offset from the center to center on
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
+ * bool invert is whether to swap the colors
  */
-void printTextCentered(std::u16string text, int xOffset, int yPos, bool top);
+void printTextCentered(std::u16string text, int xOffset, int yPos, bool top, bool invert = false);
 
 /**
  * Prints colored text centered on a screen
@@ -286,8 +290,9 @@ void printTextCentered(std::u16string text, int xOffset, int yPos, bool top);
  * int xOffset is the X offset from the center to center on
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
+ * bool invert is whether to swap the colors
  */
-void printTextCenteredTinted(std::string text, u16 color, int xOffset, int yPos, bool top);
+void printTextCenteredTinted(std::string text, u16 color, int xOffset, int yPos, bool top, bool invert = false);
 /**
  * Prints colored text centered on a screen
  * u16 color is the color to tint the text
@@ -295,8 +300,9 @@ void printTextCenteredTinted(std::string text, u16 color, int xOffset, int yPos,
  * int xOffset is the X offset from the center to center on
  * int y is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
+ * bool invert is whether to swap the colors
  */
-void printTextCenteredTinted(std::u16string text, u16 color, int xOffset, int yPos, bool top);
+void printTextCenteredTinted(std::u16string text, u16 color, int xOffset, int yPos, bool top, bool invert = false);
 
 /**
  * Prints colored text to the a screen
@@ -305,8 +311,9 @@ void printTextCenteredTinted(std::u16string text, u16 color, int xOffset, int yP
  * int xPos is the X position to print at
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
+ * bool invert is whether to swap the colors
  */
-void printTextTinted(std::string text, u16 color, int xPos, int yPos, bool top);
+void printTextTinted(std::string text, u16 color, int xPos, int yPos, bool top, bool invert = false);
 
 /**
  * Prints colored text to the a screen
@@ -315,10 +322,9 @@ void printTextTinted(std::string text, u16 color, int xPos, int yPos, bool top);
  * int xPos is the X position to print at
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
+ * bool invert is whether to swap the colors
  */
-void printTextTinted(std::u16string text, u16 color, int xPos, int yPos, bool top);
-
-
+void printTextTinted(std::u16string text, u16 color, int xPos, int yPos, bool top, bool invert = false);
 
 /**
  * Prints text to the a screen with a set width
@@ -328,8 +334,9 @@ void printTextTinted(std::u16string text, u16 color, int xPos, int yPos, bool to
  * int xPos is the X position to print at
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
+ * bool invert is whether to swap the colors
  */
-void printTextAbsW(std::string text, double w, double scaleY, int xPos, int yPos, bool top);
+void printTextAbsW(std::string text, double w, double scaleY, int xPos, int yPos, bool top, bool invert = false);
 
 /**
  * Prints text to the a screen with a set width
@@ -339,8 +346,9 @@ void printTextAbsW(std::string text, double w, double scaleY, int xPos, int yPos
  * int xPos is the X position to print at
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
+ * bool invert is whether to swap the colors
  */
-void printTextAbsW(std::u16string text, double w, double scaleY, int xPos, int yPos, bool top);
+void printTextAbsW(std::u16string text, double w, double scaleY, int xPos, int yPos, bool top, bool invert = false);
 
 /**
  * Prints text to the a screen with a max width
@@ -350,8 +358,9 @@ void printTextAbsW(std::u16string text, double w, double scaleY, int xPos, int y
  * int xPos is the X position to print at
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
+ * bool invert is whether to swap the colors
  */
-void printTextMaxW(std::string text, double w, double scaleY, int xPos, int yPos, bool top);
+void printTextMaxW(std::string text, double w, double scaleY, int xPos, int yPos, bool top, bool invert = false);
 
 /**
  * Prints text to the a screen with a max width
@@ -361,8 +370,9 @@ void printTextMaxW(std::string text, double w, double scaleY, int xPos, int yPos
  * int xPos is the X position to print at
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
+ * bool invert is whether to swap the colors
  */
-void printTextMaxW(std::u16string text, double w, double scaleY, int xPos, int yPos, bool top);
+void printTextMaxW(std::u16string text, double w, double scaleY, int xPos, int yPos, bool top, bool invert = false);
 
 /**
  * Prints text to the a screen at a scaled size
@@ -372,8 +382,9 @@ void printTextMaxW(std::u16string text, double w, double scaleY, int xPos, int y
  * int xPos is the X position to print at
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
+ * bool invert is whether to swap the colors
  */
-void printTextScaled(std::string text, double scaleX, double scaleY, int xPos, int yPos, bool top);
+void printTextScaled(std::string text, double scaleX, double scaleY, int xPos, int yPos, bool top, bool invert = false);
 
 /**
  * Prints text to the a screen at a scaled size
@@ -383,8 +394,9 @@ void printTextScaled(std::string text, double scaleX, double scaleY, int xPos, i
  * int xPos is the X position to print at
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
+ * bool invert is whether to swap the colors
  */
-void printTextScaled(std::u16string text, double scaleX, double scaleY, int xPos, int yPos, bool top);
+void printTextScaled(std::u16string text, double scaleX, double scaleY, int xPos, int yPos, bool top, bool invert = false);
 
 /**
  * Prints centered text to the a screen with a set width
@@ -394,8 +406,9 @@ void printTextScaled(std::u16string text, double scaleX, double scaleY, int xPos
  * int xOffset is the X offset from the center to center on
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
+ * bool invert is whether to swap the colors
  */
-void printTextCenteredAbsW(std::string text, double w, double scaleY, int xOffset, int yPos, bool top);
+void printTextCenteredAbsW(std::string text, double w, double scaleY, int xOffset, int yPos, bool top, bool invert = false);
 
 /**
  * Prints centered text to the a screen with a set width
@@ -405,8 +418,9 @@ void printTextCenteredAbsW(std::string text, double w, double scaleY, int xOffse
  * int xOffset is the X offset from the center to center on
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
+ * bool invert is whether to swap the colors
  */
-void printTextCenteredAbsW(std::u16string text, double w, double scaleY, int xOffset, int yPos, bool top);
+void printTextCenteredAbsW(std::u16string text, double w, double scaleY, int xOffset, int yPos, bool top, bool invert = false);
 
 /**
  * Prints centered text to the a screen with a set width
@@ -416,8 +430,9 @@ void printTextCenteredAbsW(std::u16string text, double w, double scaleY, int xOf
  * int xOffset is the X offset from the center to center on
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
+ * bool invert is whether to swap the colors
  */
-void printTextCenteredMaxW(std::string text, double w, double scaleY, int xOffset, int yPos, bool top);
+void printTextCenteredMaxW(std::string text, double w, double scaleY, int xOffset, int yPos, bool top, bool invert = false);
 
 /**
  * Prints centered text to the a screen with a max width
@@ -427,8 +442,9 @@ void printTextCenteredMaxW(std::string text, double w, double scaleY, int xOffse
  * int xOffset is the X offset from the center to center on
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
+ * bool invert is whether to swap the colors
  */
-void printTextCenteredMaxW(std::u16string text, double w, double scaleY, int xOffset, int yPos, bool top);
+void printTextCenteredMaxW(std::u16string text, double w, double scaleY, int xOffset, int yPos, bool top, bool invert = false);
 
 /**
  * Prints centered text to the a screen at a scaled size
@@ -438,8 +454,9 @@ void printTextCenteredMaxW(std::u16string text, double w, double scaleY, int xOf
  * int xOffset is the X offset from the center to center on
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
+ * bool invert is whether to swap the colors
  */
-void printTextCenteredScaled(std::string text, double scaleX, double scaleY, int xOffset, int yPos, bool top);
+void printTextCenteredScaled(std::string text, double scaleX, double scaleY, int xOffset, int yPos, bool top, bool invert = false);
 
 /**
  * Prints centered text to the a screen at a scaled size
@@ -449,8 +466,9 @@ void printTextCenteredScaled(std::string text, double scaleX, double scaleY, int
  * int xOffset is the X offset from the center to center on
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
+ * bool invert is whether to swap the colors
  */
-void printTextCenteredScaled(std::u16string text, double scaleX, double scaleY, int xOffset, int yPos, bool top);
+void printTextCenteredScaled(std::u16string text, double scaleX, double scaleY, int xOffset, int yPos, bool top, bool invert = false);
 
 /**
  * Prints centered colored text to the a screen with a set width
@@ -461,8 +479,9 @@ void printTextCenteredScaled(std::u16string text, double scaleX, double scaleY, 
  * int xOffset is the X offset from the center to center on
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
+ * bool invert is whether to swap the colors
  */
-void printTextCenteredTintedAbsW(std::string text, double w, double scaleY, u16 color, int xOffset, int yPos, bool top);
+void printTextCenteredTintedAbsW(std::string text, double w, double scaleY, u16 color, int xOffset, int yPos, bool top, bool invert = false);
 
 /**
  * Prints centered colored text to the a screen with a set width
@@ -473,8 +492,9 @@ void printTextCenteredTintedAbsW(std::string text, double w, double scaleY, u16 
  * int xOffset is the X offset from the center to center on
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
+ * bool invert is whether to swap the colors
  */
-void printTextCenteredTintedAbsW(std::u16string text, double w, double scaleY, u16 color, int xOffset, int yPos, bool top);
+void printTextCenteredTintedAbsW(std::u16string text, double w, double scaleY, u16 color, int xOffset, int yPos, bool top, bool invert = false);
 
 /**
  * Prints centered colored text to the a screen with a max width
@@ -485,8 +505,9 @@ void printTextCenteredTintedAbsW(std::u16string text, double w, double scaleY, u
  * int xOffset is the X offset from the center to center on
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
+ * bool invert is whether to swap the colors
  */
-void printTextCenteredTintedMaxW(std::string text, double w, double scaleY, u16 color, int xOffset, int yPos, bool top);
+void printTextCenteredTintedMaxW(std::string text, double w, double scaleY, u16 color, int xOffset, int yPos, bool top, bool invert = false);
 
 /**
  * Prints centered colored text to the a screen with a max width
@@ -497,8 +518,9 @@ void printTextCenteredTintedMaxW(std::string text, double w, double scaleY, u16 
  * int xOffset is the X offset from the center to center on
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
+ * bool invert is whether to swap the colors
  */
-void printTextCenteredTintedMaxW(std::u16string text, double w, double scaleY, u16 color, int xOffset, int yPos, bool top);
+void printTextCenteredTintedMaxW(std::u16string text, double w, double scaleY, u16 color, int xOffset, int yPos, bool top, bool invert = false);
 
 /**
  * Prints centered colored text to the a screen at a scaled size
@@ -509,8 +531,9 @@ void printTextCenteredTintedMaxW(std::u16string text, double w, double scaleY, u
  * int xOffset is the X offset from the center to center on
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
+ * bool invert is whether to swap the colors
  */
-void printTextCenteredTintedScaled(std::string text, double scaleX, double scaleY, u16 color, int xOffset, int yPos, bool top);
+void printTextCenteredTintedScaled(std::string text, double scaleX, double scaleY, u16 color, int xOffset, int yPos, bool top, bool invert = false);
 
 /**
  * Prints centered colored text to the a screen at a scaled size
@@ -521,8 +544,9 @@ void printTextCenteredTintedScaled(std::string text, double scaleX, double scale
  * int xOffset is the X offset from the center to center on
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
+ * bool invert is whether to swap the colors
  */
-void printTextCenteredTintedScaled(std::u16string text, double scaleX, double scaleY, u16 color, int xOffset, int yPos, bool top);
+void printTextCenteredTintedScaled(std::u16string text, double scaleX, double scaleY, u16 color, int xOffset, int yPos, bool top, bool invert = false);
 
 /**
  * Prints colored text to the a screen with a set width
@@ -533,8 +557,9 @@ void printTextCenteredTintedScaled(std::u16string text, double scaleX, double sc
  * int xPos is the X position to print at
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
+ * bool invert is whether to swap the colors
  */
-void printTextTintedAbsW(std::string text, double w, double scaleY, u16 color, int xPos, int yPos, bool top);
+void printTextTintedAbsW(std::string text, double w, double scaleY, u16 color, int xPos, int yPos, bool top, bool invert = false);
 
 /**
  * Prints colored text to the a screen with a set width
@@ -545,8 +570,9 @@ void printTextTintedAbsW(std::string text, double w, double scaleY, u16 color, i
  * int xPos is the X position to print at
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
+ * bool invert is whether to swap the colors
  */
-void printTextTintedAbsW(std::u16string text, double w,  double scaleY, u16 color, int xPos, int yPos, bool top);
+void printTextTintedAbsW(std::u16string text, double w,  double scaleY, u16 color, int xPos, int yPos, bool top, bool invert = false);
 
 /**
  * Prints colored text to the a screen with a max width
@@ -557,8 +583,9 @@ void printTextTintedAbsW(std::u16string text, double w,  double scaleY, u16 colo
  * int xPos is the X position to print at
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
+ * bool invert is whether to swap the colors
  */
-void printTextTintedMaxW(std::string text, double w, double scaleY, u16 color, int xPos, int yPos, bool top);
+void printTextTintedMaxW(std::string text, double w, double scaleY, u16 color, int xPos, int yPos, bool top, bool invert = false);
 
 /**
  * Prints colored text to the a screen with a max width
@@ -569,8 +596,9 @@ void printTextTintedMaxW(std::string text, double w, double scaleY, u16 color, i
  * int xPos is the X position to print at
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
+ * bool invert is whether to swap the colors
  */
-void printTextTintedMaxW(std::u16string text, double w,  double scaleY, u16 color, int xPos, int yPos, bool top);
+void printTextTintedMaxW(std::u16string text, double w,  double scaleY, u16 color, int xPos, int yPos, bool top, bool invert = false);
 
 /**
  * Prints colored text to the a screen at a scaled size
@@ -581,8 +609,9 @@ void printTextTintedMaxW(std::u16string text, double w,  double scaleY, u16 colo
  * int xPos is the X position to print at
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
+ * bool invert is whether to swap the colors
  */
-void printTextTintedScaled(std::string text, double scaleX, double scaleY, u16 color, int xPos, int yPos, bool top);
+void printTextTintedScaled(std::string text, double scaleX, double scaleY, u16 color, int xPos, int yPos, bool top, bool invert = false);
 
 /**
  * Prints colored text to the a screen at a scaled size
@@ -593,8 +622,9 @@ void printTextTintedScaled(std::string text, double scaleX, double scaleY, u16 c
  * int xPos is the X position to print at
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
+ * bool invert is whether to swap the colors
  */
-void printTextTintedScaled(std::u16string text, double scaleX, double scaleY, u16 color, int xPos, int yPos, bool top);
+void printTextTintedScaled(std::u16string text, double scaleX, double scaleY, u16 color, int xPos, int yPos, bool top, bool invert = false);
 
 /**
  * Gets the width of a std::string of text with a max
