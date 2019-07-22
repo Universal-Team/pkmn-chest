@@ -14,7 +14,7 @@
 #include "sound.h"
 
 int angle = 0;
-int angleChange = 170;
+int angleChange = 163;
 u16* logoGfx;
 
 void loadLogo(void) {

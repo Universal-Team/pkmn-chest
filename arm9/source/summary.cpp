@@ -113,11 +113,11 @@ void drawSummaryP2(std::shared_ptr<PKX> pkm) {
 	// Print stat info labels
 	int i = pkm->nature();
 	printText(Lang::summaryP2Labels[0], 20, textSP2r1[0].y, false);
-	printTextTinted(Lang::summaryP2Labels[1], (i!=0&&i<5         ? RED_RGB : i!=0&&!(i%5)      ? BLUE_RGB : WHITE), 20, textSP2r1[1].y, false);
-	printTextTinted(Lang::summaryP2Labels[2], (i!=6&&i>4&&i<10   ? RED_RGB : i!=6&&!((i-1)%5)  ? BLUE_RGB : WHITE), 20, textSP2r1[2].y, false);
-	printTextTinted(Lang::summaryP2Labels[3], (i!=18&&i>14&&i<20 ? RED_RGB : i!=18&&!((i-3)%5) ? BLUE_RGB : WHITE), 20, textSP2r1[3].y, false);
-	printTextTinted(Lang::summaryP2Labels[4], (i!=24&&i>19       ? RED_RGB : i!=24&&!((i-4)%5) ? BLUE_RGB : WHITE), 20, textSP2r1[4].y, false);
-	printTextTinted(Lang::summaryP2Labels[5], (i!=12&&i>9&&i<15  ? RED_RGB : i!=12&&!((i-2)%5) ? BLUE_RGB : WHITE), 20, textSP2r1[5].y, false);
+	printTextTintedMaxW(Lang::summaryP2Labels[1], 80, 1, (i!=0&&i<5         ? RED_RGB : i!=0&&!(i%5)      ? BLUE_RGB : WHITE), 20, textSP2r1[1].y, false);
+	printTextTintedMaxW(Lang::summaryP2Labels[2], 80, 1, (i!=6&&i>4&&i<10   ? RED_RGB : i!=6&&!((i-1)%5)  ? BLUE_RGB : WHITE), 20, textSP2r1[2].y, false);
+	printTextTintedMaxW(Lang::summaryP2Labels[3], 80, 1, (i!=18&&i>14&&i<20 ? RED_RGB : i!=18&&!((i-3)%5) ? BLUE_RGB : WHITE), 20, textSP2r1[3].y, false);
+	printTextTintedMaxW(Lang::summaryP2Labels[4], 80, 1, (i!=24&&i>19       ? RED_RGB : i!=24&&!((i-4)%5) ? BLUE_RGB : WHITE), 20, textSP2r1[4].y, false);
+	printTextTintedMaxW(Lang::summaryP2Labels[5], 80, 1, (i!=12&&i>9&&i<15  ? RED_RGB : i!=12&&!((i-2)%5) ? BLUE_RGB : WHITE), 20, textSP2r1[5].y, false);
 
 	// Print column titles
 	printTextCenteredMaxW(Lang::summaryP2Labels[6], 30, 1, textSP2r1[0].x, textSP2r1[0].y-16, false);
