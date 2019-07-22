@@ -382,7 +382,7 @@ void printTextTintedScaled(std::u16string text, double scaleX,  double scaleY, u
 						if(!invert)	(top ? BG_GFX : BG_GFX_SUB)[((u16)(y/scaleY)+yPos)*256+((u16)(i/scaleX)+x+xPos)] = color & font[currentCharIndex+i];
 						else {
 							if(font[currentCharIndex+i] == 0xFBDE) // Light -> dark
-								(top ? BG_GFX : BG_GFX_SUB)[((u16)(y/scaleY)+yPos)*256+((u16)(i/scaleX)+x+xPos)] = color & 0xC631;
+								(top ? BG_GFX : BG_GFX_SUB)[((u16)(y/scaleY)+yPos)*256+((u16)(i/scaleX)+x+xPos)] = color & 0xBDEF;
 							else // Dark -> light
 								(top ? BG_GFX : BG_GFX_SUB)[((u16)(y/scaleY)+yPos)*256+((u16)(i/scaleX)+x+xPos)] = color & 0xFBDE;
 						}
