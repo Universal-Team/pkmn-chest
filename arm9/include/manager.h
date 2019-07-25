@@ -25,10 +25,19 @@ std::shared_ptr<PKX> currentPokemon(int slot);
 
 /*
  * Gets the position of a Pokémon in the spritesheet
- * int dexNumber is the National dex number of the Pokémon
+ * std::shared_ptr<PKX> pkm is the Pokémon to get the position of
  * Returns an std::pair<int, int> of the spritesheet position
  */
 std::pair<int, int> getPokemonPosition(std::shared_ptr<PKX> pkm);
+
+/*
+ * Gets the position of a Pokémon in the spritesheet
+ * int species is the National dex number of the Pokémon
+ * int alternativeForm is the alternative form of the Pokémon
+ * int gender is the gender of the Pokémon
+ * Returns an std::pair<int, int> of the spritesheet position
+ */
+std::pair<int, int> getPokemonPosition(int species, int alternativeForm = 0, int gender = 0);
 
 // Loads the images into RAM and creates the sprites
 void loadGraphics(void);

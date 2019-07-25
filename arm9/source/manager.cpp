@@ -26,82 +26,86 @@ std::shared_ptr<PKX> currentPokemon(int slot) {
 }
 
 std::pair<int, int> getPokemonPosition(std::shared_ptr<PKX> pkm) {
-	if(pkm->species() > 649)	return {0, 0};
-	else if(pkm->species() == 201) { // Unown
-		if(pkm->alternativeForm() == 0);
-		else if(pkm->alternativeForm() < 5)
-			return {384+((pkm->alternativeForm()-1)*32), 1280};
-		else if(pkm->alternativeForm() < 21)
-			return {(pkm->alternativeForm()-5)*32, 1312};
+	return getPokemonPosition(pkm->species(), pkm->alternativeForm(), pkm->gender());
+}
+
+std::pair<int, int> getPokemonPosition(int species, int alternativeForm, int gender) {
+	if(species > 649)	return {0, 0};
+	else if(species == 201) { // Unown
+		if(alternativeForm == 0);
+		else if(alternativeForm < 5)
+			return {384+((alternativeForm-1)*32), 1280};
+		else if(alternativeForm < 21)
+			return {(alternativeForm-5)*32, 1312};
 		else
-			return {(pkm->alternativeForm()-21)*32, 1344};
-	} else if(pkm->species() == 386) { // Deoxys
-		if(pkm->alternativeForm() > 0)
-			return {224+((pkm->alternativeForm()-1)*32), 1344};
-	} else if(pkm->species() == 412) { // Burmy
-		if(pkm->alternativeForm() > 0)
-			return {320+((pkm->alternativeForm()-1)*32), 1344};
-	} else if(pkm->species() == 413) { // Wormadam
-		if(pkm->alternativeForm() > 0)
-			return {384+((pkm->alternativeForm()-1)*32), 1344};
-	} else if(pkm->species() == 422) { // Shellos
-		if(pkm->alternativeForm() == 1)
+			return {(alternativeForm-21)*32, 1344};
+	} else if(species == 386) { // Deoxys
+		if(alternativeForm > 0)
+			return {224+((alternativeForm-1)*32), 1344};
+	} else if(species == 412) { // Burmy
+		if(alternativeForm > 0)
+			return {320+((alternativeForm-1)*32), 1344};
+	} else if(species == 413) { // Wormadam
+		if(alternativeForm > 0)
+			return {384+((alternativeForm-1)*32), 1344};
+	} else if(species == 422) { // Shellos
+		if(alternativeForm == 1)
 			return {448, 1344};
-	} else if(pkm->species() == 423) { // Gastrodon
-		if(pkm->alternativeForm() == 1)
+	} else if(species == 423) { // Gastrodon
+		if(alternativeForm == 1)
 			return {480, 1344};
-	} else if(pkm->species() == 479) { // Rotom
-		if(pkm->alternativeForm() > 0)
-			return {(pkm->alternativeForm()-1)*32, 1376};
-	} else if(pkm->species() == 487) { // Giratina
-		if(pkm->alternativeForm() == 1)
+	} else if(species == 479) { // Rotom
+		if(alternativeForm > 0)
+			return {(alternativeForm-1)*32, 1376};
+	} else if(species == 487) { // Giratina
+		if(alternativeForm == 1)
 			return {160, 1376};
-	} else if(pkm->species() == 492) { // Shaymin
-		if(pkm->alternativeForm() == 1)
+	} else if(species == 492) { // Shaymin
+		if(alternativeForm == 1)
 			return {192, 1376};
-	} else if(pkm->species() == 521) { // Unfezant
-		if(pkm->gender() == 1)
+	} else if(species == 521) { // Unfezant
+		if(gender == 1)
 			return {224, 1376};
-	} else if(pkm->species() == 550) { // Basculin
-		if(pkm->alternativeForm() == 1)
+	} else if(species == 550) { // Basculin
+		if(alternativeForm == 1)
 			return {256, 1376};
-	} else if(pkm->species() == 555) { // Darmanitan
-		if(pkm->alternativeForm() == 1)
+	} else if(species == 555) { // Darmanitan
+		if(alternativeForm == 1)
 			return {288, 1376};
-	} else if(pkm->species() == 585) { // Deerling
-		if(pkm->alternativeForm() > 0)
-			return {320+((pkm->alternativeForm()-1)*32), 1376};
-	} else if(pkm->species() == 586) { // Sawsbuck
-		if(pkm->alternativeForm() > 0)
-			return {416+((pkm->alternativeForm()-1)*32), 1376};
-	} else if(pkm->species() == 592) { // Frillish
-		if(pkm->gender() == 1)
+	} else if(species == 585) { // Deerling
+		if(alternativeForm > 0)
+			return {320+((alternativeForm-1)*32), 1376};
+	} else if(species == 586) { // Sawsbuck
+		if(alternativeForm > 0)
+			return {416+((alternativeForm-1)*32), 1376};
+	} else if(species == 592) { // Frillish
+		if(gender == 1)
 			return {0, 1408};
-	} else if(pkm->species() == 593) { // Jellicent
-		if(pkm->gender() == 1)
+	} else if(species == 593) { // Jellicent
+		if(gender == 1)
 			return {32, 1408};
-	} else if(pkm->species() == 648) { // Meloetta
-		if(pkm->alternativeForm() == 1)
+	} else if(species == 648) { // Meloetta
+		if(alternativeForm == 1)
 			return {64, 1408};
-	} else if(pkm->species() == 641) { // Tornadus
-		if(pkm->alternativeForm() == 1)
+	} else if(species == 641) { // Tornadus
+		if(alternativeForm == 1)
 			return {96, 1408};
-	} else if(pkm->species() == 642) { // Thunderus
-		if(pkm->alternativeForm() == 1)
+	} else if(species == 642) { // Thunderus
+		if(alternativeForm == 1)
 			return {128, 1408};
-	} else if(pkm->species() == 645) { // Landorus
-		if(pkm->alternativeForm() == 1)
+	} else if(species == 645) { // Landorus
+		if(alternativeForm == 1)
 			return {160, 1408};
-	} else if(pkm->species() == 646) { // Kyurem
-		if(pkm->alternativeForm() > 0)
-			return {192+((pkm->alternativeForm()-1)*32), 1408};
-	} else if(pkm->species() == 647) { // Keldeo
-		if(pkm->alternativeForm() == 1)
+	} else if(species == 646) { // Kyurem
+		if(alternativeForm > 0)
+			return {192+((alternativeForm-1)*32), 1408};
+	} else if(species == 647) { // Keldeo
+		if(alternativeForm == 1)
 			return {256, 1408};
 	}
 
 	// Non-alternate form, return based on dex number
-	return {(pkm->species()-((pkm->species()/16)*16))*pokemonSheetSize, (pkm->species()/16)*pokemonSheetSize};
+	return {(species-((species/16)*16))*pokemonSheetSize, (species/16)*pokemonSheetSize};
 }
 
 void loadGraphics(void) {
