@@ -30,10 +30,10 @@ bool xMenu(void);
 
 // Misc Menus //////////////////////////////////////////////////////////////////
 
-int selectForm(int dexNo);
+int selectForm(int dexNo, int currentForm);
 
-int selectNature(void);
+int selectNature(int currentNature);
 
-int selectPokeball(void);
+int selectPokeball(int currentBall);
 
 #endif

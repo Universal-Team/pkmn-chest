@@ -514,7 +514,7 @@ bool xMenu(void) {
 	return 1;
 }
 
-int selectForm(int dexNo) {
+int selectForm(int dexNo, int currentForm) {
 	int altIndex = -1;
 	for(unsigned i=0;i<(sizeof(formCounts)/sizeof(formCounts[0]));i++) {
 		if(formCounts[i].dexNo == dexNo) {
@@ -542,12 +542,12 @@ int selectForm(int dexNo) {
 		drawImageFromSheet((i*32)+(128-((32*formCounts[altIndex].noForms)/2)), 80, 32, 32, pokemonSheet, pokemonSheetData.width, xy.first, xy.second, false);
 	}
 
-	// Move arrow to first form
+	// Move arrow to current form
 	setSpriteVisibility(bottomArrowID, true);
-	setSpritePosition(bottomArrowID, (128-((32*formCounts[altIndex].noForms)/2))+28, 84);
+	setSpritePosition(bottomArrowID, (currentForm*32)+(128-((32*formCounts[altIndex].noForms)/2))+28, 84);
 	updateOam();
 
-	int arrowX = 0, pressed, held;
+	int pressed, held;
 	while(1) {
 		do {
 			swiWaitForVBlank();
@@ -557,14 +557,14 @@ int selectForm(int dexNo) {
 		} while(!held);
 
 		if(held & KEY_LEFT) {
-			if(arrowX > 0)	arrowX--;
-			else	arrowX=formCounts[altIndex].noForms-1;
+			if(currentForm > 0)	currentForm--;
+			else	currentForm=formCounts[altIndex].noForms-1;
 		} else if(held & KEY_RIGHT) {
-			if(arrowX < formCounts[altIndex].noForms-1)	arrowX++;
-			else arrowX=0;
+			if(currentForm < formCounts[altIndex].noForms-1)	currentForm++;
+			else currentForm=0;
 		} else if(pressed & KEY_A) {
 			Sound::play(Sound::click);
-			return arrowX;
+			return currentForm;
 		} else if(pressed & KEY_B) {
 			Sound::play(Sound::back);
 			return -1;
@@ -580,12 +580,12 @@ int selectForm(int dexNo) {
 		}
 
 		// Move arrow
-		setSpritePosition(bottomArrowID, (arrowX*32)+(128-((32*formCounts[altIndex].noForms)/2))+28, 84);
+		setSpritePosition(bottomArrowID, (currentForm*32)+(128-((32*formCounts[altIndex].noForms)/2))+28, 84);
 		updateOam();
 	}
 }
 
-int selectNature(void) {
+int selectNature(int currentNature) {
 	// Clear screen
 	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
 
@@ -613,12 +613,12 @@ int selectNature(void) {
 		}
 	}
 
-	// Move arrow to first nature
+	int arrowX = currentNature-((currentNature/5)*5), arrowY = currentNature/5, pressed, held;
+	// Move arrow to current nature
 	setSpriteVisibility(bottomArrowID, true);
-	setSpritePosition(bottomArrowID, (getTextWidthMaxW(Lang::natures[0], 48)/2)+28, 24);
+	setSpritePosition(bottomArrowID, (arrowX*48)+(getTextWidthMaxW(Lang::natures[currentNature], 48)/2)+28, (arrowY*32)+24);
 	updateOam();
 
-	int arrowX = 0, arrowY = 0, pressed, held;
 	while(1) {
 		do {
 			swiWaitForVBlank();
@@ -664,7 +664,7 @@ int selectNature(void) {
 	}
 }
 
-int selectPokeball(void) {
+int selectPokeball(int currentBall) {
 	// Clear screen
 	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
 
@@ -678,12 +678,13 @@ int selectPokeball(void) {
 		}
 	}
 
-	// Move arrow to first ball
+	currentBall--;
+	int arrowX = currentBall-((currentBall/5)*5), arrowY = currentBall/5, pressed, held;
+	// Move arrow to current ball
 	setSpriteVisibility(bottomArrowID, true);
-	setSpritePosition(bottomArrowID, 40, 16);
+	setSpritePosition(bottomArrowID, (arrowX*48)+40, (arrowY*32)+16);
 	updateOam();
 
-	int arrowX = 0, arrowY = 0, pressed, held;
 	while(1) {
 		do {
 			swiWaitForVBlank();
