@@ -39,7 +39,8 @@ std::string langNames[] = { "Deutsche", "English", "Español", "Français", "Ita
 
 void drawConfigMenu(void) {
 	// Draw background
-	drawImage(0, 0, optionsBgData.width, optionsBgData.height, optionsBg, false);
+	if(sdFound())	drawImage(0, 0, optionsBgData.width, optionsBgData.height, optionsBg, false);
+	else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
 
 	// Set variable text
 	char str[16];

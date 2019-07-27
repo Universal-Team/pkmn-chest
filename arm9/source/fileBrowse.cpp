@@ -120,7 +120,8 @@ void showDirectoryContents(const std::vector<DirEntry>& dirContents, int startRo
 	getcwd(path, PATH_MAX);
 
 	// Draw background
-	drawImage(0, 0, fileBrowseBgData.width, fileBrowseBgData.height, fileBrowseBg, false);
+	if(sdFound())	drawImage(0, 0, fileBrowseBgData.width, fileBrowseBgData.height, fileBrowseBg, false);
+	else	drawRectangle(0, 0, 256, 192, LIGHT_GRAY, false);
 
 	// Print path
 	printTextMaxW(path, 250, 1, 5, 0, false);
@@ -195,7 +196,8 @@ bool updateSlot1Text(int &cardWait, bool valid) {
 		disableSlot1();
 		cardWait = 30;
 		if(!noCardMessageSet) {
-			drawImageFromSheet(10, ((tmSlot1Offset-tmScreenOffset)+1)*16+1, 200, 16, fileBrowseBg, fileBrowseBgData.width, 10, ((tmSlot1Offset-tmScreenOffset)+1)*16+1, false);
+			if(sdFound())	drawImageFromSheet(10, ((tmSlot1Offset-tmScreenOffset)+1)*16+1, 200, 16, fileBrowseBg, fileBrowseBgData.width, 10, ((tmSlot1Offset-tmScreenOffset)+1)*16+1, false);
+			else	drawRectangle(10, ((tmSlot1Offset-tmScreenOffset)+1)*16+1, 200, 16, LIGHT_GRAY, false);
 			printTextTinted("Slot-1: (No card inserted)", GRAY, 10, ((tmSlot1Offset-tmScreenOffset)+1)*16, false, true);
 			noCardMessageSet = true;
 			return false;
@@ -208,7 +210,8 @@ bool updateSlot1Text(int &cardWait, bool valid) {
 		enableSlot1();
 		if(updateCardInfo()) {
 			valid = isValidTid(gameid);
-			drawImageFromSheet(10, ((tmSlot1Offset-tmScreenOffset)+1)*16+1, 200, 16, fileBrowseBg, fileBrowseBgData.width, 10, ((tmSlot1Offset-tmScreenOffset)+1)*16+1, false);
+			if(sdFound())	drawImageFromSheet(10, ((tmSlot1Offset-tmScreenOffset)+1)*16+1, 200, 16, fileBrowseBg, fileBrowseBgData.width, 10, ((tmSlot1Offset-tmScreenOffset)+1)*16+1, false);
+			else	drawRectangle(10, ((tmSlot1Offset-tmScreenOffset)+1)*16+1, 200, 16, LIGHT_GRAY, false);
 			drawSlot1Text(tmSlot1Offset-tmScreenOffset, valid);
 			noCardMessageSet = false;
 			return valid;
@@ -219,7 +222,11 @@ bool updateSlot1Text(int &cardWait, bool valid) {
 
 void showTopMenu(std::vector<topMenuItem> topMenuContents) {
 	// Draw background
-	drawImage(0, 0, fileBrowseBgData.width, fileBrowseBgData.height, fileBrowseBg, false);
+	if(sdFound())	drawImage(0, 0, fileBrowseBgData.width, fileBrowseBgData.height, fileBrowseBg, false);
+	else {
+		drawRectangle(0, 0, 256, 17, DARK_GRAY, false);
+		drawRectangle(0, 17, 256, 192, LIGHT_GRAY, false);
+	}
 
 	for(unsigned i=0;i<topMenuContents.size() && i<ENTRIES_PER_SCREEN;i++) {
 		if(topMenuContents[i+tmScreenOffset].name == "fat:")	drawFatText(i, topMenuContents[i+tmScreenOffset].valid);
@@ -245,8 +252,14 @@ std::string topMenuSelect(void) {
 	int pressed = 0, held = 0;
 
 	// Clear screens
-	drawImage(0, 0, boxBgTopData.width, boxBgTopData.height, boxBgTop, true);
-	drawImage(0, 0, fileBrowseBgData.width, fileBrowseBgData.height, fileBrowseBg, false);
+	if(sdFound()) {
+		drawImage(0, 0, boxBgTopData.width, boxBgTopData.height, boxBgTop, true);
+		drawImage(0, 0, fileBrowseBgData.width, fileBrowseBgData.height, fileBrowseBg, false);
+	} else {
+		drawRectangle(0, 0, 256, 192, DARK_GRAY, true);
+		drawRectangle(0, 0, 256, 20, DARK_GRAY, false);
+		drawRectangle(0, 20, 256, 192, LIGHT_GRAY, false);
+	}
 
 	// Print version number
 	printText(verNumber, 256-getTextWidth(verNumber), 176, true);
@@ -275,7 +288,8 @@ std::string topMenuSelect(void) {
 	bool bigJump = false;
 	while(1) {
 		// Clear old cursors
-		drawImageFromSheet(0, 17, 10, 175, fileBrowseBg, fileBrowseBgData.width, 0, 17, false);
+		if(sdFound())	drawImageFromSheet(0, 17, 10, 175, fileBrowseBg, fileBrowseBgData.width, 0, 17, false);
+		else	drawRectangle(0, 17, 10, 175, LIGHT_GRAY, false);
 
 		// Draw cursor
 		drawRectangle(3, (tmCurPos-tmScreenOffset)*16+24, 4, 3, DARK_GRAY, false);
@@ -372,7 +386,8 @@ std::string browseForFile(const std::vector<std::string>& extensionList, bool di
 
 	while(1) {
 		// Clear old cursors
-		drawImageFromSheet(0, 17, 10, 175, fileBrowseBg, fileBrowseBgData.width, 0, 17, false);
+		if(sdFound())	drawImageFromSheet(0, 17, 10, 175, fileBrowseBg, fileBrowseBgData.width, 0, 17, false);
+		else	drawRectangle(0, 17, 10, 175, LIGHT_GRAY, false);
 
 		// Draw cursor
 		drawRectangle(3, (fileOffset-screenOffset)*16+24, 4, 3, DARK_GRAY, false);
@@ -464,8 +479,13 @@ std::string browseForSave(void) {
 	}
 
 	// Clear screens
-	drawImage(0, 0, boxBgTopData.width, boxBgTopData.height, boxBgTop, true);
-	drawImage(0, 0, fileBrowseBgData.width, fileBrowseBgData.height, fileBrowseBg, false);
+	if(sdFound()) {
+		drawImage(0, 0, boxBgTopData.width, boxBgTopData.height, boxBgTop, true);
+		drawImage(0, 0, fileBrowseBgData.width, fileBrowseBgData.height, fileBrowseBg, false);
+	} else {
+		drawRectangle(0, 0, 256, 192, DARK_GRAY, true);
+		drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+	}
 
 	// Print version number
 	printText(verNumber, 256-getTextWidth(verNumber), 176, true);

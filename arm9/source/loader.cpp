@@ -18,7 +18,7 @@ bool loadSave(std::string savePath) {
 	char* saveData = nullptr;
 	if(in.good()) {
 		in.seekg(0, in.end);
-		size     = in.tellg();
+		size = in.tellg();
 		in.seekg(0, in.beg);
 		saveData = new char[size];
 		in.read(saveData, size);

@@ -1,5 +1,6 @@
 #include "party.h"
 #include "colors.h"
+#include "flashcard.h"
 #include "graphics.h"
 #include "langStrings.h"
 #include "loader.h"
@@ -31,7 +32,8 @@ void showParty(int selection) {
 
 void manageParty(void) {
 	// Draw background
-	drawImage(0, 0, menuBgData.width, menuBgData.height, menuBg, false);
+	if(sdFound())	drawImage(0, 0, menuBgData.width, menuBgData.height, menuBg, false);
+	else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
 
 	showParty(-1);
 
@@ -78,7 +80,8 @@ void manageParty(void) {
 				save->pkm(showPokemonSummary(save->pkm(selectedOption)), selectedOption);
 
 				// Redraw background
-				drawImage(0, 0, menuBgData.width, menuBgData.height, menuBg, false);
+				if(sdFound())	drawImage(0, 0, menuBgData.width, menuBgData.height, menuBg, false);
+				else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
 				
 				// Hide arrow
 				setSpriteVisibility(bottomArrowID, false);

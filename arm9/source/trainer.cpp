@@ -1,5 +1,6 @@
 #include "trainer.h"
 #include "colors.h"
+#include "flashcard.h"
 #include "graphics.h"
 #include "input.h"
 #include "langStrings.h"
@@ -25,7 +26,8 @@ Text textTP1[] {
 
 void drawTrainerCard(void) {
 	// Draw background
-	drawImage(0, 0, optionsBgData.width, optionsBgData.height, optionsBg, false);
+	if(sdFound())	drawImage(0, 0, optionsBgData.width, optionsBgData.height, optionsBg, false);
+	else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
 
 	// Print labels
 	for(unsigned i=0;i<sizeof(textTP1)/sizeof(textTP1[0]);i++) {

@@ -1,5 +1,6 @@
 #include "summary.h"
 #include "colors.h"
+#include "flashcard.h"
 #include "langStrings.h"
 #include "loader.h"
 #include "input.h"
@@ -51,7 +52,8 @@ std::pair<int, int> getPokeballPosition(u8 ball) {
 
 void drawSummaryP1(std::shared_ptr<PKX> pkm) {
 	// Clear the screen
-	drawImage(0, 0, summaryBgData.width, summaryBgData.height, summaryBg, false);
+	if(sdFound())	drawImage(0, 0, summaryBgData.width, summaryBgData.height, summaryBg, false);
+	else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
 	for(int i=0;i<30;i++) {
 		setSpriteVisibility(i, false);
 	}
@@ -100,7 +102,8 @@ void drawSummaryP1(std::shared_ptr<PKX> pkm) {
 
 void drawSummaryP2(std::shared_ptr<PKX> pkm) {
 	// Clear the screen
-	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
+	if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
+	else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
 
 	// Draw lines
 	for(unsigned i=1;i<(sizeof(textSP2r1)/sizeof(textSP2r1[0]));i++) {

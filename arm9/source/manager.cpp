@@ -112,27 +112,29 @@ void loadGraphics(void) {
 	// Load images into RAM
 	ballSheetData = loadPng("nitro:/graphics/ballSheet.png", ballSheet);
 	bankBoxData = loadPng("nitro:/graphics/bankBox.png", bankBox);
-	boxBgBottomData = loadPng("nitro:/graphics/boxBgBottom.png", boxBgBottom);
-	boxBgTopData = loadPng("nitro:/graphics/boxBgTop.png", boxBgTop);
 	boxButtonData = loadPng("nitro:/graphics/boxButton.png", boxButton);
-	fileBrowseBgData = loadPng("nitro:/graphics/fileBrowseBg.png", fileBrowseBg);
 	infoBoxData = loadPng("nitro:/graphics/infoBox.png", infoBox);
-	menuBgData = loadPng("nitro:/graphics/menuBg.png", menuBg);
 	menuButtonData = loadPng("nitro:/graphics/menuButton.png", menuButton);
 	menuButtonBlueData = loadPng("nitro:/graphics/menuButtonBlue.png", menuButtonBlue);
 	menuIconSheetData = loadPng("nitro:/graphics/menuIconSheet.png", menuIconSheet);
-	optionsBgData = loadPng("nitro:/graphics/optionsBg.png", optionsBg);
 	pokemonSheetData = loadPng(sdFound() ? "nitro:/graphics/pokemonSheet.png" : "nitro:/graphics/pokemonSheetSmall.png", pokemonSheet);
 	shinyData = loadPng("nitro:/graphics/shiny.png", shiny);
-	summaryBgData = loadPng("nitro:/graphics/summaryBg.png", summaryBg);
 	typesData = loadPng("nitro:/graphics/types.png", types);
 	loadPng("nitro:/graphics/arrowBlue.png", arrowBlue);
 	loadPng("nitro:/graphics/arrowRed.png", arrowRed);
 	loadPng("nitro:/graphics/arrowYellow.png", arrowYellow);
+	if(sdFound()) {
+		boxBgBottomData = loadPng("nitro:/graphics/boxBgBottom.png", boxBgBottom);
+		boxBgTopData = loadPng("nitro:/graphics/boxBgTop.png", boxBgTop);
+		fileBrowseBgData = loadPng("nitro:/graphics/fileBrowseBg.png", fileBrowseBg);
+		menuBgData = loadPng("nitro:/graphics/menuBg.png", menuBg);
+		optionsBgData = loadPng("nitro:/graphics/optionsBg.png", optionsBg);
+		summaryBgData = loadPng("nitro:/graphics/summaryBg.png", summaryBg);
+	}
 
 	// Set Pokémon sheet scale and size vars
-	pokemonSheetScale = sdFound() ? 1 : 2;
-	pokemonSheetSize = sdFound() ? 32 : 16;
+	pokemonSheetScale = sdFound() ? 1 : 4;
+	pokemonSheetSize = sdFound() ? 32 : 8;
 
 	// Init Pokémon Sprites
 	for(int i=0;i<30;i++)	initSprite(SpriteSize_32x32, false);
@@ -187,7 +189,8 @@ void drawBoxScreen(void) {
 	// Draws backgrounds
 	drawImage(0, 0, boxBgTopData.width, boxBgTopData.height, boxBgTop, true);
 	drawImage(164, 2, infoBoxData.width, infoBoxData.height, infoBox, true);
-	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
+	if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
+	else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
 	
 
 	// Show bottom arrow
