@@ -311,8 +311,10 @@ void manageBoxes(void) {
 		}
 		if(held & KEY_LEFT && arrowY != -1) {
 			if(arrowX > 0)	arrowX--;
+			else	arrowX = 5;
 		} else if(held & KEY_RIGHT && arrowY != -1) {
 			if(arrowX < 5)	arrowX++;
+			else	arrowX = 0;
 		}
 		if(held & KEY_LEFT && arrowY == -1) {
 			goto switchBoxLeft;
