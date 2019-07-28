@@ -43,7 +43,7 @@ void fillPartySprites(void) {
 					fillSpriteFromSheet(partyIconID[i], pokemonSheet, 32, 32, pokemonSheetData.width, xy.first, xy.second);
 				} else {
 					std::vector<u16> bmp;
-					loadBmp16("nitro:/graphics/pokemon/"+std::to_string(save->pkm(i)->species())+".bmp", bmp);
+					loadBmp16("nitro:/graphics/pokemon/"+std::to_string(getPokemonIndex(save->pkm(i)))+".bmp", bmp);
 					fillSpriteImage(partyIconID[i], bmp);
 				}
 			}

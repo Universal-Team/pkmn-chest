@@ -73,7 +73,7 @@ void drawSummaryP1(std::shared_ptr<PKX> pkm) {
 		drawImageFromSheetScaled(169, 22, 32, 32, 2, pokemonSheet, pokemonSheetData.width, xy.first, xy.second, false);
 	} else {
 		std::vector<u16> bmp;
-		ImageData bmpData = loadBmp16("nitro:/graphics/pokemon/"+std::to_string(pkm->species())+".bmp", bmp);
+		ImageData bmpData = loadBmp16("nitro:/graphics/pokemon/"+std::to_string(getPokemonIndex(pkm))+".bmp", bmp);
 		drawImageScaled(169, 22, bmpData.width, bmpData.height, 2, bmp, false);
 	}
 	drawImageFromSheet(150, 26, 32, 12, types, 32, 0, (((pkm->generation() == Generation::FOUR && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1())*12), false);

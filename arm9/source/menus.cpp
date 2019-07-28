@@ -550,8 +550,14 @@ int selectForm(int dexNo, int currentForm) {
 
 	// Draw forms
 	for(int i=0;i<formCounts[altIndex].noForms;i++) {
-		std::pair<int, int> xy = getPokemonPosition(dexNo, i);
-		drawImageFromSheet((i*32)+(128-((32*formCounts[altIndex].noForms)/2)), 80, 32, 32, pokemonSheet, pokemonSheetData.width, xy.first, xy.second, false);
+		if(sdFound()) {
+			std::pair<int, int> xy = getPokemonPosition(dexNo, i);
+			drawImageFromSheet((i*32)+(128-((32*formCounts[altIndex].noForms)/2)), 80, 32, 32, pokemonSheet, pokemonSheetData.width, xy.first, xy.second, false);
+		} else {
+			std::vector<u16> bmp;
+			loadBmp16("nitro:/graphics/pokemon/"+std::to_string(getPokemonIndex(dexNo, i))+".bmp", bmp);
+			drawImage((i*32)+(128-((32*formCounts[altIndex].noForms)/2)), 80, 32, 32, bmp, false);
+		}
 	}
 
 	// Move arrow to current form

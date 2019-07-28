@@ -122,6 +122,84 @@ std::pair<int, int> getPokemonPosition(int species, int alternativeForm, int gen
 	return {(species-((species/16)*16))*32, (species/16)*32};
 }
 
+int getPokemonIndex(std::shared_ptr<PKX> pkm) {
+	return getPokemonIndex(pkm->species(), pkm->alternativeForm(), pkm->gender());
+}
+
+int getPokemonIndex(int species, int alternativeForm, int gender) {
+	if(species > 649)	return 0;
+	else if(species == 201) { // Unown
+		if(alternativeForm > 0)
+			return 651+alternativeForm;
+	} else if(species == 386) { // Deoxys
+		if(alternativeForm > 0)
+			return 578+alternativeForm;
+	} else if(species == 412) { // Burmy
+		if(alternativeForm > 0)
+			return 681+alternativeForm;
+	} else if(species == 413) { // Wormadam
+		if(alternativeForm > 0)
+			return 683+alternativeForm;
+	} else if(species == 422) { // Shellos
+		if(alternativeForm == 1)
+			return 686;
+	} else if(species == 423) { // Gastrodon
+		if(alternativeForm == 1)
+			return 687;
+	} else if(species == 479) { // Rotom
+		if(alternativeForm > 0)
+			return 687+alternativeForm;
+	} else if(species == 487) { // Giratina
+		if(alternativeForm == 1)
+			return 693;
+	} else if(species == 492) { // Shaymin
+		if(alternativeForm == 1)
+			return 694;
+	} else if(species == 521) { // Unfezant
+		if(gender == 1)
+			return 695;
+	} else if(species == 550) { // Basculin
+		if(alternativeForm == 1)
+			return 696;
+	} else if(species == 555) { // Darmanitan
+		if(alternativeForm == 1)
+			return 697;
+	} else if(species == 585) { // Deerling
+		if(alternativeForm > 0)
+			return 697+alternativeForm;
+	} else if(species == 586) { // Sawsbuck
+		if(alternativeForm > 0)
+			return 700+alternativeForm;
+	} else if(species == 592) { // Frillish
+		if(gender == 1)
+			return 704;
+	} else if(species == 593) { // Jellicent
+		if(gender == 1)
+			return 705;
+	} else if(species == 648) { // Meloetta
+		if(alternativeForm == 1)
+			return 706;
+	} else if(species == 641) { // Tornadus
+		if(alternativeForm == 1)
+			return 707;
+	} else if(species == 642) { // Thunderus
+		if(alternativeForm == 1)
+			return 708;
+	} else if(species == 645) { // Landorus
+		if(alternativeForm == 1)
+			return 709;
+	} else if(species == 646) { // Kyurem
+		if(alternativeForm > 0)
+			return 709+alternativeForm;
+	} else if(species == 647) { // Keldeo
+		if(alternativeForm == 1)
+			return 712;
+	}
+
+	// Non-alternate form, return dex number
+	return species;
+}
+
 void loadGraphics(void) {
 	// Load images into RAM
 	ballSheetData = loadPng("nitro:/graphics/ballSheet.png", ballSheet);
@@ -258,7 +336,7 @@ void drawBox(bool top, bool reloadPokemon) {
 						if(bankBoxPokemon[i] != Banks::bank->pkm(currentBankBox, i)->species()) {
 							bankBoxPokemon[i] = Banks::bank->pkm(currentBankBox, i)->species();
 							std::vector<u16> bmp;
-							loadBmp16("nitro:/graphics/pokemon/"+std::to_string(Banks::bank->pkm(currentBankBox, i)->species())+".bmp", bmp);
+							loadBmp16("nitro:/graphics/pokemon/"+std::to_string(getPokemonIndex(Banks::bank->pkm(currentBankBox, i)))+".bmp", bmp);
 							fillSpriteImage(i+30, bmp);
 						}
 						setSpriteVisibility(i+30, true);
@@ -306,7 +384,7 @@ void drawBox(bool top, bool reloadPokemon) {
 						if(saveBoxPokemon[i] != save->pkm(currentSaveBox, i)->species()) {
 							saveBoxPokemon[i] = save->pkm(currentSaveBox, i)->species();
 							std::vector<u16> bmp;
-							loadBmp16("nitro:/graphics/pokemon/"+std::to_string(save->pkm(currentSaveBox, i)->species())+".bmp", bmp);
+							loadBmp16("nitro:/graphics/pokemon/"+std::to_string(getPokemonIndex(save->pkm(currentSaveBox, i)))+".bmp", bmp);
 							fillSpriteImage(i, bmp);
 						}
 						setSpriteVisibility(i, true);
@@ -362,9 +440,16 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 
 void setHeldPokemon(std::shared_ptr<PKX> pkm) {
 	if(pkm->species() != 0) {
-		std::pair<int, int> xy = getPokemonPosition(pkm);
-		fillSpriteFromSheet(bottomHeldPokemonID, pokemonSheet, 32, 32, pokemonSheetData.width, xy.first, xy.second);
-		fillSpriteFromSheet(topHeldPokemonID, pokemonSheet, 32, 32, pokemonSheetData.width, xy.first, xy.second);
+		if(sdFound()) {
+			std::pair<int, int> xy = getPokemonPosition(pkm);
+			fillSpriteFromSheet(bottomHeldPokemonID, pokemonSheet, 32, 32, pokemonSheetData.width, xy.first, xy.second);
+			fillSpriteFromSheet(topHeldPokemonID, pokemonSheet, 32, 32, pokemonSheetData.width, xy.first, xy.second);
+		} else {
+			std::vector<u16> bmp;
+			loadBmp16("nitro:/graphics/pokemon/"+std::to_string(getPokemonIndex(pkm))+".bmp", bmp);
+			fillSpriteImage(bottomHeldPokemonID, bmp);
+			fillSpriteImage(topHeldPokemonID, bmp);
+		}
 	}
 }
 
