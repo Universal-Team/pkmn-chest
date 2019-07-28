@@ -57,6 +57,7 @@ void drawSummaryP1(std::shared_ptr<PKX> pkm) {
 	for(int i=0;i<30;i++) {
 		setSpriteVisibility(i, false);
 	}
+	updateOam();
 
 	// Draw lines
 	drawRectangle(0, 124, 256, 1, LIGHT_GRAY, false);
@@ -65,10 +66,16 @@ void drawSummaryP1(std::shared_ptr<PKX> pkm) {
 	printTextTintedMaxW(Lang::species[pkm->species()], 90, 1, (pkm->gender() ? (pkm->gender() == 1 ? RED_RGB : GRAY) : BLUE_RGB), 165, 8, false, true);
 
 	// Draw Pokémon, Pokéball, types, and shiny star (if shiny)
-	std::pair<int, int> xy = getPokeballPosition(pkm->ball());
-	drawImageFromSheet(148, 8, 15, 15, ballSheet, ballSheetData.width, xy.first, xy.second, false);
-	xy = getPokemonPosition(pkm);
-	drawImageFromSheetScaled(169, 22, pokemonSheetSize, pokemonSheetSize, 2*pokemonSheetScale, pokemonSheet, pokemonSheetData.width, xy.first, xy.second, false);
+		std::pair<int, int> xy = getPokeballPosition(pkm->ball());
+		drawImageFromSheet(148, 8, 15, 15, ballSheet, ballSheetData.width, xy.first, xy.second, false);
+	if(sdFound()) {
+		xy = getPokemonPosition(pkm);
+		drawImageFromSheetScaled(169, 22, 32, 32, 2, pokemonSheet, pokemonSheetData.width, xy.first, xy.second, false);
+	} else {
+		std::vector<u16> bmp;
+		ImageData bmpData = loadBmp16("nitro:/graphics/pokemon/"+std::to_string(pkm->species())+".bmp", bmp);
+		drawImageScaled(169, 22, bmpData.width, bmpData.height, 2, bmp, false);
+	}
 	drawImageFromSheet(150, 26, 32, 12, types, 32, 0, (((pkm->generation() == Generation::FOUR && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1())*12), false);
 	if(pkm->type1() != pkm->type2())
 		drawImageFromSheet(185, 26, 32, 12, types, 32, 0, (((pkm->generation() == Generation::FOUR && pkm->type2() > 8) ? pkm->type2()-1 : pkm->type2())*12), false);

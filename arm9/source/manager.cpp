@@ -10,9 +10,8 @@
 #include "sound.h"
 
 bool topScreen;
-int bottomArrowID, topArrowID, shinyID, currentSaveBox, currentBankBox, bottomHeldPokemonID, topHeldPokemonID,
-arrowMode = 0, pokemonSheetScale = 1, pokemonSheetSize = 32;
-std::vector<int> menuIconID;
+int bottomArrowID, topArrowID, shinyID, currentSaveBox, currentBankBox, bottomHeldPokemonID, topHeldPokemonID, arrowMode = 0;
+std::vector<int> menuIconID, partyIconID;
 std::string savePath;
 std::vector<u16> arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, boxBgBottom, boxBgTop, boxButton, fileBrowseBg, infoBox, menuBg, menuButton, menuButtonBlue, menuIconSheet, optionsBg, pokemonSheet, shiny, summaryBg, types;
 ImageData ballSheetData, bankBoxData, boxBgBottomData, boxBgTopData, boxButtonData, fileBrowseBgData, infoBoxData, menuBgData, menuButtonData, menuButtonBlueData, menuIconSheetData, optionsBgData, pokemonSheetData, shinyData, summaryBgData, typesData;
@@ -106,7 +105,7 @@ std::pair<int, int> getPokemonPosition(int species, int alternativeForm, int gen
 	}
 
 	// Non-alternate form, return based on dex number
-	return {(species-((species/16)*16))*pokemonSheetSize, (species/16)*pokemonSheetSize};
+	return {(species-((species/16)*16))*32, (species/16)*32};
 }
 
 void loadGraphics(void) {
@@ -118,7 +117,6 @@ void loadGraphics(void) {
 	menuButtonData = loadPng("nitro:/graphics/menuButton.png", menuButton);
 	menuButtonBlueData = loadPng("nitro:/graphics/menuButtonBlue.png", menuButtonBlue);
 	menuIconSheetData = loadPng("nitro:/graphics/menuIconSheet.png", menuIconSheet);
-	// pokemonSheetData = loadPng(sdFound() ? "nitro:/graphics/pokemonSheet.png" : "nitro:/graphics/pokemonSheetSmall.png", pokemonSheet);
 	shinyData = loadPng("nitro:/graphics/shiny.png", shiny);
 	typesData = loadPng("nitro:/graphics/types.png", types);
 	loadPng("nitro:/graphics/arrowBlue.png", arrowBlue);
@@ -130,12 +128,9 @@ void loadGraphics(void) {
 		fileBrowseBgData = loadPng("nitro:/graphics/fileBrowseBg.png", fileBrowseBg);
 		menuBgData = loadPng("nitro:/graphics/menuBg.png", menuBg);
 		optionsBgData = loadPng("nitro:/graphics/optionsBg.png", optionsBg);
+		pokemonSheetData = loadPng("nitro:/graphics/pokemonSheet.png", pokemonSheet);
 		summaryBgData = loadPng("nitro:/graphics/summaryBg.png", summaryBg);
 	}
-
-	// Set Pokémon sheet scale and size vars
-	pokemonSheetScale = sdFound() ? 1 : 4;
-	pokemonSheetSize = sdFound() ? 32 : 8;
 
 	// Init Pokémon Sprites
 	for(int i=0;i<30;i++)	initSprite(SpriteSize_32x32, false);
@@ -155,6 +150,15 @@ void loadGraphics(void) {
 		prepareSprite(id, 0, 0, 0);
 		setSpriteVisibility(id, false);
 		menuIconID.push_back(id);
+	}
+
+	// Prepare party sprites
+	for(int i=0;i<6;i++) {
+		int id = initSprite(SpriteSize_32x32, false);
+		fillSpriteFromSheet(id, menuIconSheet, 32, 32, menuIconSheetData.width, 0, i*32);
+		prepareSprite(id, 0, 0, 0);
+		setSpriteVisibility(id, false);
+		partyIconID.push_back(id);
 	}
 
 	// Prepare bottom arrow sprite
@@ -217,22 +221,35 @@ void drawBox(bool top, bool reloadPokemon) {
 		printTextCenteredTinted(Banks::bank->boxName(currentBankBox), GRAY, -44, 20, true, true);
 
 		if(reloadPokemon) {
-			for(int i=0;i<30;i++) {
-				// Hide all Pokémon sprites for bank box
-				setSpriteVisibility(i+30, false);
-			}
-			showLoadingLogo();
-			for(int i=0;i<30;i++) {
-				// Fill Pokémon Sprites
-				if(Banks::bank->pkm(currentBankBox, i)->species() != 0) {
-					std::vector<u16> bmp;
-					loadBmp16("nitro:/graphics/pokemon/"+std::to_string(Banks::bank->pkm(currentBankBox, i)->species())+".bmp", bmp);
-					fillSpriteImage(i+30, bmp);
-					setSpriteVisibility(i+30, true);
-					updateOam();
+			if(sdFound()) {
+				for(int i=0;i<30;i++) {
+					if(Banks::bank->pkm(currentBankBox, i)->species() == 0) {
+						setSpriteVisibility(i+30, false);
+					} else {
+						std::pair<int, int> xy = getPokemonPosition(Banks::bank->pkm(currentBankBox, i));
+						fillSpriteFromSheet(i+30, pokemonSheet, 32, 32, pokemonSheetData.width, xy.first, xy.second);
+						setSpriteVisibility(i+30, true);
+					}
 				}
+				updateOam();
+			} else {
+				for(int i=0;i<30;i++) {
+					// Hide all Pokémon sprites for bank box
+					setSpriteVisibility(i+30, false);
+				}
+				showLoadingLogo();
+				for(int i=0;i<30;i++) {
+					// Fill Pokémon Sprites
+					if(Banks::bank->pkm(currentBankBox, i)->species() != 0) {
+						std::vector<u16> bmp;
+						loadBmp16("nitro:/graphics/pokemon/"+std::to_string(Banks::bank->pkm(currentBankBox, i)->species())+".bmp", bmp);
+						fillSpriteImage(i+30, bmp);
+						setSpriteVisibility(i+30, true);
+						updateOam();
+					}
+				}
+				hideLoadingLogo();
 			}
-			hideLoadingLogo();
 		} else {
 			for(int i=0;i<30;i++) {
 				// Show/Hide Pokémon sprites for bank box
@@ -249,23 +266,35 @@ void drawBox(bool top, bool reloadPokemon) {
 		printTextCenteredTinted(save->boxName(currentSaveBox), GRAY, -44, 20, false, true);
 
 		if(reloadPokemon) {
-			for(int i=0;i<30;i++) {
-				// Hide all Pokémon sprites for save box
-				setSpriteVisibility(i, false);
-			}
-			showLoadingLogo();
-			for(int i=0;i<30;i++) {
-				// Fill Pokémon Sprites
-				std::vector<u16> bmp;
-				if(save->pkm(currentSaveBox, i)->species() != 0) {
-					bmp.clear();
-					loadBmp16("nitro:/graphics/pokemon/"+std::to_string(save->pkm(currentSaveBox, i)->species())+".bmp", bmp);
-					fillSpriteImage(i, bmp);
-					setSpriteVisibility(i, true);
-					updateOam();
+			if(sdFound()) {
+				for(int i=0;i<30;i++) {
+					if(save->pkm(currentSaveBox, i)->species() == 0) {
+						setSpriteVisibility(i, false);
+					} else {
+						std::pair<int, int> xy = getPokemonPosition(save->pkm(currentSaveBox, i));
+						fillSpriteFromSheet(i, pokemonSheet, 32, 32, pokemonSheetData.width, xy.first, xy.second);
+						setSpriteVisibility(i, true);
+					}
 				}
+				updateOam();
+			} else {
+				for(int i=0;i<30;i++) {
+					// Hide all Pokémon sprites for save box
+					setSpriteVisibility(i, false);
+				}
+				showLoadingLogo();
+				for(int i=0;i<30;i++) {
+					// Fill Pokémon Sprites
+					if(save->pkm(currentSaveBox, i)->species() != 0) {
+						std::vector<u16> bmp;
+						loadBmp16("nitro:/graphics/pokemon/"+std::to_string(save->pkm(currentSaveBox, i)->species())+".bmp", bmp);
+						fillSpriteImage(i, bmp);
+						setSpriteVisibility(i, true);
+						updateOam();
+					}
+				}
+				hideLoadingLogo();
 			}
-			hideLoadingLogo();
 		} else {
 			for(int i=0;i<30;i++) {
 				// Show/Hide Pokémon sprites for save box
@@ -314,8 +343,8 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 void setHeldPokemon(std::shared_ptr<PKX> pkm) {
 	if(pkm->species() != 0) {
 		std::pair<int, int> xy = getPokemonPosition(pkm);
-		fillSpriteFromSheetScaled(bottomHeldPokemonID, pokemonSheetScale, pokemonSheet, pokemonSheetSize, pokemonSheetSize, pokemonSheetData.width, xy.first, xy.second);
-		fillSpriteFromSheetScaled(topHeldPokemonID, pokemonSheetScale, pokemonSheet, pokemonSheetSize, pokemonSheetSize, pokemonSheetData.width, xy.first, xy.second);
+		fillSpriteFromSheet(bottomHeldPokemonID, pokemonSheet, 32, 32, pokemonSheetData.width, xy.first, xy.second);
+		fillSpriteFromSheet(topHeldPokemonID, pokemonSheet, 32, 32, pokemonSheetData.width, xy.first, xy.second);
 	}
 }
 
@@ -407,8 +436,8 @@ void manageBoxes(void) {
 							setSpriteVisibility(topScreen ? topHeldPokemonID : bottomHeldPokemonID, false);
 							
 							// Update the box(es) for the moved Pokémon
-							drawBox(topScreen);
-							if(heldPokemonScreen != topScreen)	drawBox(heldPokemonScreen);
+							drawBox(topScreen, true);
+							if(heldPokemonScreen != topScreen)	drawBox(heldPokemonScreen, true);
 							drawPokemonInfo(currentPokemon((arrowY*6)+arrowX));
 
 							// Not holding a Pokémon anymore
