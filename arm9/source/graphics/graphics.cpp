@@ -76,7 +76,7 @@ ImageData loadBmp16(std::string path, std::vector<u16> &imageBuffer) {
 		fseek(file, (u8)fgetc(file), SEEK_SET); // Seek to pixel start location
 		u8 bmpImageBuffer[imageData.width*imageData.height];
 		fread(bmpImageBuffer, 1, imageData.width*imageData.height, file);
-		for(unsigned y=imageData.height-1; y>0; y--) {
+		for(int y=imageData.height-1; y>=0; y--) {
 			u8* src = bmpImageBuffer+y*(imageData.width/2);
 			for(unsigned x=0;x<imageData.width;x+=2) {
 				u8 val = *(src++);
@@ -117,7 +117,7 @@ ImageData loadBmp(std::string path, std::vector<u16> &imageBuffer) {
 		fseek(file, pixelStart, SEEK_SET);
 		u16 bmpImageBuffer[imageData.width*imageData.height];
 		fread(bmpImageBuffer, 2, imageData.width*imageData.height, file);
-		for(unsigned y=imageData.height-1; y>0; y--) {
+		for(int y=imageData.height-1; y>=0; y--) {
 			u16* src = bmpImageBuffer+y*imageData.width;
 			for(unsigned x=0;x<imageData.width;x++) {
 				u16 val = *(src++);

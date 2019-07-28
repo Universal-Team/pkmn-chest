@@ -5,6 +5,7 @@
 #include "flashcard.h"
 #include "langStrings.h"
 #include "loader.h"
+#include "loading.h"
 #include "menus.h"
 #include "sound.h"
 
@@ -16,22 +17,8 @@ std::string savePath;
 std::vector<u16> arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, boxBgBottom, boxBgTop, boxButton, fileBrowseBg, infoBox, menuBg, menuButton, menuButtonBlue, menuIconSheet, optionsBg, pokemonSheet, shiny, summaryBg, types;
 ImageData ballSheetData, bankBoxData, boxBgBottomData, boxBgTopData, boxButtonData, fileBrowseBgData, infoBoxData, menuBgData, menuButtonData, menuButtonBlueData, menuIconSheetData, optionsBgData, pokemonSheetData, shinyData, summaryBgData, typesData;
 
-extern int angle;
-extern u16* logoGfx;
-
 int currentBox(void) {
 	return topScreen ? currentBankBox : currentSaveBox;
-}
-
-void loadLogo2(void) {
-	angle = 0;
-	logoGfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_Bmp);
-	std::vector<u16> logo;
-	loadBmp("nitro:/graphics/icon.bmp", logo);
-	dmaCopyWords(0, logo.data(), logoGfx, 2048);
-
-	oamSet(&oamSub, 100, 112, 80, 0, 15, SpriteSize_32x32, SpriteColorFormat_Bmp, logoGfx, 0, false, false, false, false, false);
-	oamUpdate(&oamSub);
 }
 
 std::shared_ptr<PKX> currentPokemon(int slot) {
@@ -214,14 +201,14 @@ void drawBoxScreen(void) {
 	setSpritePosition(bottomArrowID, 24, 36);
 
 	// Draw the boxes and Pokémon
-	drawBox(true);
-	drawBox(false);
+	drawBox(true, true);
+	drawBox(false, true);
 
 	// Draw first Pokémon's info
 	drawPokemonInfo(save->pkm(currentBox(), 0));
 }
 
-void drawBox(bool top) {
+void drawBox(bool top, bool reloadPokemon) {
 	// Draw box images
 	drawImage(5, 15, bankBoxData.width, bankBoxData.height, bankBox, top);
 
@@ -229,49 +216,66 @@ void drawBox(bool top) {
 		// Print box names
 		printTextCenteredTinted(Banks::bank->boxName(currentBankBox), GRAY, -44, 20, true, true);
 
-		for(int i=0;i<30;i++) {
-			// Show/Hide Pokémon sprites for bank box
-			if(Banks::bank->pkm(currentBankBox, i)->species() == 0)
+		if(reloadPokemon) {
+			for(int i=0;i<30;i++) {
+				// Hide all Pokémon sprites for bank box
 				setSpriteVisibility(i+30, false);
-			else
-				setSpriteVisibility(i+30, true);
-		}
-		updateOam();
-
-		loadLogo2();
-		for(int i=0;i<30;i++) {
-			// Fill Pokémon Sprites
-			if(Banks::bank->pkm(currentBankBox, i)->species() != 0) {
-				std::vector<u16> bmp;
-				loadBmp16("nitro:/graphics/pokemon/"+std::to_string(Banks::bank->pkm(currentBankBox, i)->species())+".bmp", bmp);
-				fillSpriteImage(i+30, bmp);
 			}
+			showLoadingLogo();
+			for(int i=0;i<30;i++) {
+				// Fill Pokémon Sprites
+				if(Banks::bank->pkm(currentBankBox, i)->species() != 0) {
+					std::vector<u16> bmp;
+					loadBmp16("nitro:/graphics/pokemon/"+std::to_string(Banks::bank->pkm(currentBankBox, i)->species())+".bmp", bmp);
+					fillSpriteImage(i+30, bmp);
+					setSpriteVisibility(i+30, true);
+					updateOam();
+				}
+			}
+			hideLoadingLogo();
+		} else {
+			for(int i=0;i<30;i++) {
+				// Show/Hide Pokémon sprites for bank box
+				if(Banks::bank->pkm(currentBankBox, i)->species() == 0)
+					setSpriteVisibility(i+30, false);
+				else
+					setSpriteVisibility(i+30, true);
+			}
+			updateOam();
 		}
-		oamClearSprite(&oamSub, 100);
+
 	} else {
 		// Print box names
 		printTextCenteredTinted(save->boxName(currentSaveBox), GRAY, -44, 20, false, true);
 
-		for(int i=0;i<30;i++) {
-			// Show/Hide Pokémon sprites for save box
-			if(save->pkm(currentSaveBox, i)->species() == 0)
+		if(reloadPokemon) {
+			for(int i=0;i<30;i++) {
+				// Hide all Pokémon sprites for save box
 				setSpriteVisibility(i, false);
-			else
-				setSpriteVisibility(i, true);
-		}
-		updateOam();
-
-		loadLogo2();
-		for(int i=0;i<30;i++) {
-			// Fill Pokémon Sprites
-			std::vector<u16> bmp;
-			if(save->pkm(currentSaveBox, i)->species() != 0) {
-				bmp.clear();
-				loadBmp16("nitro:/graphics/pokemon/"+std::to_string(save->pkm(currentSaveBox, i)->species())+".bmp", bmp);
-				fillSpriteImage(i, bmp);
 			}
+			showLoadingLogo();
+			for(int i=0;i<30;i++) {
+				// Fill Pokémon Sprites
+				std::vector<u16> bmp;
+				if(save->pkm(currentSaveBox, i)->species() != 0) {
+					bmp.clear();
+					loadBmp16("nitro:/graphics/pokemon/"+std::to_string(save->pkm(currentSaveBox, i)->species())+".bmp", bmp);
+					fillSpriteImage(i, bmp);
+					setSpriteVisibility(i, true);
+					updateOam();
+				}
+			}
+			hideLoadingLogo();
+		} else {
+			for(int i=0;i<30;i++) {
+				// Show/Hide Pokémon sprites for save box
+				if(save->pkm(currentSaveBox, i)->species() == 0)
+					setSpriteVisibility(i, false);
+				else
+					setSpriteVisibility(i, true);
+			}
+			updateOam();
 		}
-		oamClearSprite(&oamSub, 100);
 	}
 }
 
@@ -351,7 +355,7 @@ void manageBoxes(void) {
 				(topScreen ? currentBankBox : currentSaveBox)--;
 			else if(topScreen) currentBankBox = Banks::bank->boxes()-1;
 			else currentSaveBox = save->maxBoxes()-1;
-			drawBox(topScreen);
+			drawBox(topScreen, true);
 			if(!heldMode && currentBox() == heldPokemonBox && topScreen == heldPokemonScreen)
 				setSpriteVisibility(heldPokemon, false);
 		} else if(held & KEY_R) {
@@ -359,7 +363,7 @@ void manageBoxes(void) {
 			if((topScreen ? currentBankBox < Banks::bank->boxes()-1 : currentSaveBox < save->maxBoxes()-1))
 				(topScreen ? currentBankBox : currentSaveBox)++;
 			else (topScreen ? currentBankBox : currentSaveBox) = 0;
-			drawBox(topScreen);
+			drawBox(topScreen, true);
 			if(!heldMode && currentBox() == heldPokemonBox && topScreen == heldPokemonScreen)
 				setSpriteVisibility(heldPokemon, false);
 		}

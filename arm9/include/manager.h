@@ -46,7 +46,7 @@ void loadGraphics(void);
 void drawBoxScreen(void);
 
 // Draws a box
-void drawBox(bool top);
+void drawBox(bool top, bool reloadPokemon = false);
 
 // Draws the info for the Pokémon provided
 void drawPokemonInfo(std::shared_ptr<PKX> pkm);
