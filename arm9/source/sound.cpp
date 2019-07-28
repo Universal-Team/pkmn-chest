@@ -36,9 +36,9 @@ void Sound::init(void) {
 
 	if(Config::music == 1)		mmStart(bgmCenter1, MM_PLAY_LOOP);
 	else if(Config::music == 2)	mmStart(bgmCenter4, MM_PLAY_LOOP);
-	else if(Config::music == 4)	mmStart(bgmElm, MM_PLAY_LOOP);
-	else if(Config::music == 5)	mmStart(bgmOak, MM_PLAY_LOOP);
-	else if(Config::music == 6)	mmStart(bgmGameCorner, MM_PLAY_LOOP);
+	else if(Config::music == 3)	mmStart(bgmElm, MM_PLAY_LOOP);
+	else if(Config::music == 4)	mmStart(bgmOak, MM_PLAY_LOOP);
+	else if(Config::music == 5)	mmStart(bgmGameCorner, MM_PLAY_LOOP);
 }
 
 void Sound::play(mm_sound_effect &sound) {
@@ -49,7 +49,7 @@ void Sound::playBgm(int song) {
 	if(song == 0)		mmStop();
 	else if(song == 1)	mmStart(bgmCenter1, MM_PLAY_LOOP);
 	else if(song == 2)	mmStart(bgmCenter4, MM_PLAY_LOOP);
-	else if(song == 4)	mmStart(bgmElm, MM_PLAY_LOOP);
-	else if(song == 5)	mmStart(bgmOak, MM_PLAY_LOOP);
-	else if(song == 6)	mmStart(bgmGameCorner, MM_PLAY_LOOP);
+	else if(song == 3)	mmStart(bgmElm, MM_PLAY_LOOP);
+	else if(song == 4)	mmStart(bgmOak, MM_PLAY_LOOP);
+	else if(song == 5)	mmStart(bgmGameCorner, MM_PLAY_LOOP);
 }

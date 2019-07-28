@@ -196,9 +196,9 @@ void configMenu(void) {
 				} case 7: { // Music
 					if(pressed & KEY_LEFT) {
 						if(Config::music > 0)	Config::music--;
-						else	Config::music = 6;
+						else	Config::music = 5;
 					} else {
-						if(Config::music < 6)	Config::music++;
+						if(Config::music < 5)	Config::music++;
 						else	Config::music = 0;
 					}
 					Sound::playBgm(Config::music);
