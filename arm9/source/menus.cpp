@@ -371,7 +371,7 @@ bool xMenu(void) {
 	fillSpriteImage(bottomArrowID, arrowRed);
 	
 	// Draw background
-	if(sdFound)	drawImage(0, 0, menuBgData.width, menuBgData.height, menuBg, false);
+	if(sdFound())	drawImage(0, 0, menuBgData.width, menuBgData.height, menuBg, false);
 	else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
 
 	// Enable sprites and set positions

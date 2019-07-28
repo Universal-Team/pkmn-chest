@@ -16,8 +16,22 @@ std::string savePath;
 std::vector<u16> arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, boxBgBottom, boxBgTop, boxButton, fileBrowseBg, infoBox, menuBg, menuButton, menuButtonBlue, menuIconSheet, optionsBg, pokemonSheet, shiny, summaryBg, types;
 ImageData ballSheetData, bankBoxData, boxBgBottomData, boxBgTopData, boxButtonData, fileBrowseBgData, infoBoxData, menuBgData, menuButtonData, menuButtonBlueData, menuIconSheetData, optionsBgData, pokemonSheetData, shinyData, summaryBgData, typesData;
 
+extern int angle;
+extern u16* logoGfx;
+
 int currentBox(void) {
 	return topScreen ? currentBankBox : currentSaveBox;
+}
+
+void loadLogo2(void) {
+	angle = 0;
+	logoGfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_Bmp);
+	std::vector<u16> logo;
+	loadBmp("nitro:/graphics/icon.bmp", logo);
+	dmaCopyWords(0, logo.data(), logoGfx, 2048);
+
+	oamSet(&oamSub, 100, 112, 80, 0, 15, SpriteSize_32x32, SpriteColorFormat_Bmp, logoGfx, 0, false, false, false, false, false);
+	oamUpdate(&oamSub);
 }
 
 std::shared_ptr<PKX> currentPokemon(int slot) {
@@ -117,7 +131,7 @@ void loadGraphics(void) {
 	menuButtonData = loadPng("nitro:/graphics/menuButton.png", menuButton);
 	menuButtonBlueData = loadPng("nitro:/graphics/menuButtonBlue.png", menuButtonBlue);
 	menuIconSheetData = loadPng("nitro:/graphics/menuIconSheet.png", menuIconSheet);
-	pokemonSheetData = loadPng(sdFound() ? "nitro:/graphics/pokemonSheet.png" : "nitro:/graphics/pokemonSheetSmall.png", pokemonSheet);
+	// pokemonSheetData = loadPng(sdFound() ? "nitro:/graphics/pokemonSheet.png" : "nitro:/graphics/pokemonSheetSmall.png", pokemonSheet);
 	shinyData = loadPng("nitro:/graphics/shiny.png", shiny);
 	typesData = loadPng("nitro:/graphics/types.png", types);
 	loadPng("nitro:/graphics/arrowBlue.png", arrowBlue);
@@ -224,13 +238,16 @@ void drawBox(bool top) {
 		}
 		updateOam();
 
+		loadLogo2();
 		for(int i=0;i<30;i++) {
 			// Fill Pokémon Sprites
 			if(Banks::bank->pkm(currentBankBox, i)->species() != 0) {
-				std::pair<int, int> xy = getPokemonPosition(Banks::bank->pkm(currentBankBox, i));
-				fillSpriteFromSheetScaled(i+30, pokemonSheetScale, pokemonSheet, pokemonSheetSize, pokemonSheetSize, pokemonSheetData.width, xy.first, xy.second);
+				std::vector<u16> bmp;
+				loadBmp16("nitro:/graphics/pokemon/"+std::to_string(Banks::bank->pkm(currentBankBox, i)->species())+".bmp", bmp);
+				fillSpriteImage(i+30, bmp);
 			}
 		}
+		oamClearSprite(&oamSub, 100);
 	} else {
 		// Print box names
 		printTextCenteredTinted(save->boxName(currentSaveBox), GRAY, -44, 20, false, true);
@@ -244,13 +261,17 @@ void drawBox(bool top) {
 		}
 		updateOam();
 
+		loadLogo2();
 		for(int i=0;i<30;i++) {
 			// Fill Pokémon Sprites
+			std::vector<u16> bmp;
 			if(save->pkm(currentSaveBox, i)->species() != 0) {
-				std::pair<int, int> xy = getPokemonPosition(save->pkm(currentSaveBox, i));
-				fillSpriteFromSheetScaled(i, pokemonSheetScale, pokemonSheet, pokemonSheetSize, pokemonSheetSize, pokemonSheetData.width, xy.first, xy.second);
+				bmp.clear();
+				loadBmp16("nitro:/graphics/pokemon/"+std::to_string(save->pkm(currentSaveBox, i)->species())+".bmp", bmp);
+				fillSpriteImage(i, bmp);
 			}
 		}
+		oamClearSprite(&oamSub, 100);
 	}
 }
 

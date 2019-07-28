@@ -48,6 +48,55 @@ void loadFont(void) {
 	loadPng("nitro:/graphics/font.png", font);
 }
 
+ImageData loadBmp16(std::string path, std::vector<u16> &imageBuffer) {
+	FILE* file = fopen(path.c_str(), "rb");
+	ImageData imageData = {0, 0};
+
+	if(file) {
+		// Get width and height on image
+		char buffer[4];
+		fseek(file, 0x12, SEEK_SET); // Width
+		fread(buffer, 4, 1, file);
+		imageData.width = *(int*)&buffer[0];
+		fseek(file, 0x16, SEEK_SET); // Height
+		fread(buffer, 4, 1, file);
+		imageData.height = *(int*)&buffer[0];
+
+		// Load palette
+		u32 palTemp[16];
+		u16 pal[16];
+		fseek(file, 0x89, SEEK_SET);
+		fread(palTemp, 4, 16, file);
+		for(int i=0;i<16;i++) {
+			pal[i] = ((palTemp[i]>>27)&31) | ((palTemp[i]>>19)&31)<<5 | ((palTemp[i]>>11)&31)<<10 | 1<<15;
+		}
+
+		// Load pixels
+		fseek(file, 0xA, SEEK_SET); // Get pixel start location
+		fseek(file, (u8)fgetc(file), SEEK_SET); // Seek to pixel start location
+		u8 bmpImageBuffer[imageData.width*imageData.height];
+		fread(bmpImageBuffer, 1, imageData.width*imageData.height, file);
+		for(unsigned y=imageData.height-1; y>0; y--) {
+			u8* src = bmpImageBuffer+y*(imageData.width/2);
+			for(unsigned x=0;x<imageData.width;x+=2) {
+				u8 val = *(src++);
+				if(pal[val>>4] == 0xfc1f) { // First nibble
+					imageBuffer.push_back(0<<15);
+				} else {
+					imageBuffer.push_back(pal[val>>4]);
+				}
+				if(pal[val&0xF] == 0xfc1f) { // Second nibble
+					imageBuffer.push_back(0<<15);
+				} else {
+					imageBuffer.push_back(pal[val&0xF]);
+				}
+			}
+		}
+	}
+	fclose(file);
+	return imageData;
+}
+
 ImageData loadBmp(std::string path, std::vector<u16> &imageBuffer) {
 	FILE* file = fopen(path.c_str(), "rb");
 
@@ -193,7 +242,7 @@ void fillSpriteColor(int id, u16 color) {
 }
 
 void fillSpriteImage(int id, std::vector<u16> &imageBuffer) {
-	dmaCopyWords(0, imageBuffer.data(), sprites[id].gfx, sprites[id].size*2);
+	dmaCopyWords(0, imageBuffer.data(), sprites[id].gfx, 32*32*2);
 }
 
 void fillSpriteFromSheet(int id, std::vector<u16> &imageBuffer, int w, int h, int imageWidth, int xOffset, int yOffset) {

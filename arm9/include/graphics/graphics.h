@@ -42,6 +42,14 @@ void loadFont(void);
 ImageData loadBmp(std::string path, std::vector<u16> &imageBuffer);
 
 /*
+ * Loads a 16 color .bmp image into a vector of raw 16 bit pixel data
+ * std::string path is the path of the .bmp file
+ * std::vector<u16> &imageBuffer is the vector to load the raw pixel data into
+ * Returns an ImageData with the Width and Height of the image
+ */
+ImageData loadBmp16(std::string path, std::vector<u16> &imageBuffer);
+
+/*
  * Loads a .png image into a vector of raw pixel data
  * std::string path is the path of the .png file
  * std::vector<u16> &imageBuffer is the vector to load the raw pixel data into

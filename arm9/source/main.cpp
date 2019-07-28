@@ -18,7 +18,6 @@ int angleChange = 163;
 u16* logoGfx;
 
 void loadLogo(void) {
-	swiWaitForVBlank();
 	logoGfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_Bmp);
 	std::vector<u16> logo;
 	loadBmp("nitro:/graphics/icon.bmp", logo);
@@ -91,9 +90,9 @@ int main(int argc, char **argv) {
 	Sound::init();
 	loadGraphics();
 
-	irqSet(IRQ_VBLANK, NULL);
+	// irqSet(IRQ_VBLANK, NULL);
 	oamClearSprite(&oamSub, 100);
-	oamFreeGfx(&oamSub, logoGfx);
+	// oamFreeGfx(&oamSub, logoGfx);
 	oamUpdate(&oamSub);
 
 	while(1) {
