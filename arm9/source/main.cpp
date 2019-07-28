@@ -9,30 +9,10 @@
 #include "lang.h"
 #include "langStrings.h"
 #include "loader.h"
+#include "loading.h"
 #include "manager.h"
 #include "nitrofs.h"
 #include "sound.h"
-
-int angle = 0;
-int angleChange = 163;
-u16* logoGfx;
-
-void loadLogo(void) {
-	swiWaitForVBlank();
-	logoGfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_Bmp);
-	std::vector<u16> logo;
-	loadBmp("nitro:/graphics/icon.bmp", logo);
-	dmaCopyWords(0, logo.data(), logoGfx, 2048);
-
-	oamSet(&oamSub, 100, 112, 80, 0, 15, SpriteSize_32x32, SpriteColorFormat_Bmp, logoGfx, 0, false, false, false, false, false);
-	oamUpdate(&oamSub);
-}
-
-void loadingAnimation(void) {
-	oamRotateScale(&oamSub, 0, angle, (1 << 8), (1<<8));
-	angle -= angleChange;
-	oamUpdate(&oamSub);
-}
 
 int main(int argc, char **argv) {
 	initGraphics();
@@ -79,8 +59,8 @@ int main(int argc, char **argv) {
 			}
 		}
 	}
-	loadLogo();
-	irqSet(IRQ_VBLANK, loadingAnimation);
+	loadLoadingLogo();
+	showLoadingLogo();
 
 	loadFont();
 	Config::loadConfig();
@@ -91,10 +71,7 @@ int main(int argc, char **argv) {
 	Sound::init();
 	loadGraphics();
 
-	irqSet(IRQ_VBLANK, NULL);
-	oamClearSprite(&oamSub, 100);
-	oamFreeGfx(&oamSub, logoGfx);
-	oamUpdate(&oamSub);
+	hideLoadingLogo();
 
 	while(1) {
 		if(!loadSave(savePath = browseForSave())) {

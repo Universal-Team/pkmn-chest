@@ -11,6 +11,7 @@
 #include "lang.h"
 #include "langStrings.h"
 #include "manager.h"
+#include "menus.h"
 #include "sound.h"
 
 struct Text {
@@ -60,6 +61,7 @@ void drawConfigMenu(void) {
 	for(unsigned i=0;i<(sizeof(textCP1)/sizeof(textCP1[0]));i++) {
 		printTextTinted(Lang::optionsText[i], GRAY, textCP1[i].x, textCP1[i].y, false, true);
 	}
+	printTextTinted(Banks::bank->name(), GRAY, textCP1Labels[0].x+getTextWidth(Lang::optionsTextLabels[0])+8, textCP1Labels[0].y, false, true);
 	for(unsigned i=0;i<optionsText.size();i++) {
 		printTextTinted(optionsText[i], GRAY, textCP1Labels[i+1].x+getTextWidth(Lang::optionsTextLabels[i+1])+8, textCP1Labels[i+1].y, false, true);
 	}
@@ -125,6 +127,7 @@ void configMenu(void) {
 				case 0: { // New
 					std::string str = Input::getLine();
 					if(str != "") {
+						savePrompt();
 						Config::chestFile = str;
 						Config::saveConfig();
 						Banks::loadBank(str);
@@ -161,12 +164,13 @@ void configMenu(void) {
 					extList.push_back(".bnk");
 					std::string str = browseForFile(extList, false);
 					if(str != Config::chestFile && str != "") {
+						savePrompt();
 						Config::chestFile = str.substr(0, str.find_last_of("."));
 						Config::saveConfig();
 						Banks::init();
 					}
 					chdir(path);
-					drawBox(true);
+					drawBox(true, true);
 					break;
 				} case 4: { // Resize
 					int num = Input::getInt(500);

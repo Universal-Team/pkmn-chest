@@ -126,13 +126,14 @@ int aMenu(int pkmPos, std::vector<TextPos>& buttons, int buttonMode) {
 			optionSelected = false;
 			if(menuSelection == 0) { // Edit
 				edit:
+				int species = currentPokemon(pkmPos)->species();
 				if(topScreen)	Banks::bank->pkm(showPokemonSummary(currentPokemon(pkmPos)), currentBankBox, pkmPos);
 				else	save->pkm(showPokemonSummary(currentPokemon(pkmPos)), currentSaveBox, pkmPos, false);
 				
 				// Redraw screen
 				if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
 				else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
-				drawBox(false);
+				drawBox(false, species != currentPokemon(pkmPos)->species());
 				if(topScreen)	drawBox(topScreen);
 				drawPokemonInfo(currentPokemon(pkmPos));
 				drawAMenuButtons(buttons, buttonMode);
@@ -371,7 +372,7 @@ bool xMenu(void) {
 	fillSpriteImage(bottomArrowID, arrowRed);
 	
 	// Draw background
-	if(sdFound)	drawImage(0, 0, menuBgData.width, menuBgData.height, menuBg, false);
+	if(sdFound())	drawImage(0, 0, menuBgData.width, menuBgData.height, menuBg, false);
 	else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
 
 	// Enable sprites and set positions
