@@ -16,6 +16,20 @@ std::string savePath;
 std::vector<u16> arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, boxBgBottom, boxBgTop, boxButton, fileBrowseBg, infoBox, menuBg, menuButton, menuButtonBlue, menuIconSheet, optionsBg, pokemonSheet, shiny, summaryBg, types;
 ImageData ballSheetData, bankBoxData, boxBgBottomData, boxBgTopData, boxButtonData, fileBrowseBgData, infoBoxData, menuBgData, menuButtonData, menuButtonBlueData, menuIconSheetData, optionsBgData, pokemonSheetData, shinyData, summaryBgData, typesData;
 
+int bankBoxPokemon[30] = {
+	0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0,
+},	saveBoxPokemon[30] = {
+	0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0,
+};
+
 int currentBox(void) {
 	return topScreen ? currentBankBox : currentSaveBox;
 }
@@ -241,9 +255,12 @@ void drawBox(bool top, bool reloadPokemon) {
 				for(int i=0;i<30;i++) {
 					// Fill Pokémon Sprites
 					if(Banks::bank->pkm(currentBankBox, i)->species() != 0) {
-						std::vector<u16> bmp;
-						loadBmp16("nitro:/graphics/pokemon/"+std::to_string(Banks::bank->pkm(currentBankBox, i)->species())+".bmp", bmp);
-						fillSpriteImage(i+30, bmp);
+						if(bankBoxPokemon[i] != Banks::bank->pkm(currentBankBox, i)->species()) {
+							bankBoxPokemon[i] = Banks::bank->pkm(currentBankBox, i)->species();
+							std::vector<u16> bmp;
+							loadBmp16("nitro:/graphics/pokemon/"+std::to_string(Banks::bank->pkm(currentBankBox, i)->species())+".bmp", bmp);
+							fillSpriteImage(i+30, bmp);
+						}
 						setSpriteVisibility(i+30, true);
 						updateOam();
 					}
@@ -286,9 +303,12 @@ void drawBox(bool top, bool reloadPokemon) {
 				for(int i=0;i<30;i++) {
 					// Fill Pokémon Sprites
 					if(save->pkm(currentSaveBox, i)->species() != 0) {
-						std::vector<u16> bmp;
-						loadBmp16("nitro:/graphics/pokemon/"+std::to_string(save->pkm(currentSaveBox, i)->species())+".bmp", bmp);
-						fillSpriteImage(i, bmp);
+						if(saveBoxPokemon[i] != save->pkm(currentSaveBox, i)->species()) {
+							saveBoxPokemon[i] = save->pkm(currentSaveBox, i)->species();
+							std::vector<u16> bmp;
+							loadBmp16("nitro:/graphics/pokemon/"+std::to_string(save->pkm(currentSaveBox, i)->species())+".bmp", bmp);
+							fillSpriteImage(i, bmp);
+						}
 						setSpriteVisibility(i, true);
 						updateOam();
 					}
