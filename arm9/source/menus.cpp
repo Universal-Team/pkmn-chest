@@ -20,8 +20,8 @@
 #include "trainer.h"
 
 std::vector<TextPos> aMenuButtons = {
-	{170,  16}, // Edit
-	{170,  42}, // Move
+	{170,  16}, // Move
+	{170,  42}, // Edit
 	{170,  68}, // Copy
 	{170,  94}, // Release
 	{170, 120}, // Dump
@@ -33,10 +33,11 @@ std::vector<TextPos> aMenuEmptySlotButtons = {
 	{170, 68}, // Back
 };
 std::vector<TextPos> aMenuTopBarButtons = {
-	{170, 16}, // Rename
-	{170, 42}, // Swap
-	{170, 68}, // Dump box
-	{170, 94}, // Back
+	{170, 16}, // Jump
+	{170, 42}, // Rename
+	{170, 68}, // Swap
+	{170, 94}, // Dump box
+	{170, 120}, // Back
 };
 std::vector<TextPos> xMenuButtons = {
 	{2,  24}, {130,  24},
@@ -83,7 +84,7 @@ void drawAMenuButtons(std::vector<TextPos>& buttons, int buttonMode) {
 }
 
 int aMenu(int pkmPos, std::vector<TextPos>& buttons, int buttonMode) {
-	setSpritePosition(bottomArrowID, buttons[0].x+getTextWidth(aMenuText(buttonMode, 0))+4, buttons[0].y);
+	setSpritePosition(bottomArrowID, buttons[0].x+getTextWidthMaxW(aMenuText(buttonMode, 0), 80)+4, buttons[0].y);
 	setSpriteVisibility(topArrowID, false);
 	setSpriteVisibility(bottomArrowID, true);
 	updateOam();
@@ -124,7 +125,16 @@ int aMenu(int pkmPos, std::vector<TextPos>& buttons, int buttonMode) {
 		if(optionSelected) Sound::play(Sound::click);
 		if(optionSelected && buttonMode == 0) { // A Pokémon
 			optionSelected = false;
-			if(menuSelection == 0) { // Edit
+			if(menuSelection == 0) { // Move
+				if(topScreen) {
+					setSpriteVisibility(bottomArrowID, false);
+					setSpriteVisibility(topArrowID, true);
+				}
+				updateOam();
+				if(sdFound())	drawImageFromSheet(170, 0, 86, 192, boxBgBottom, boxBgBottomData.width, 170, 0, false);
+				else drawRectangle(170, 0, 86, 192, DARK_GRAY, false);
+				return 1;
+			} else if(menuSelection == 1) { // Edit
 				edit:
 				int species = currentPokemon(pkmPos)->species();
 				if(topScreen)	Banks::bank->pkm(showPokemonSummary(currentPokemon(pkmPos)), currentBankBox, pkmPos);
@@ -137,15 +147,6 @@ int aMenu(int pkmPos, std::vector<TextPos>& buttons, int buttonMode) {
 				if(topScreen)	drawBox(topScreen);
 				drawPokemonInfo(currentPokemon(pkmPos));
 				drawAMenuButtons(buttons, buttonMode);
-			} else if(menuSelection == 1) { // Move
-				if(topScreen) {
-					setSpriteVisibility(bottomArrowID, false);
-					setSpriteVisibility(topArrowID, true);
-				}
-				updateOam();
-				if(sdFound())	drawImageFromSheet(170, 0, 86, 192, boxBgBottom, boxBgBottomData.width, 170, 0, false);
-				else drawRectangle(170, 0, 86, 192, DARK_GRAY, false);
-				return 1;
 			} else if(menuSelection == 2) { // Copy
 				if(topScreen) {
 					setSpriteVisibility(bottomArrowID, false);
@@ -197,8 +198,22 @@ int aMenu(int pkmPos, std::vector<TextPos>& buttons, int buttonMode) {
 			}
 		} else if(optionSelected && buttonMode == 1) { // Top bar
 			optionSelected = false;
-			if(menuSelection == 0) { // Rename
-				// If the arrow is on the box title, rename it
+			if(menuSelection == 0) { // Jump
+				for(int i=0;i<30;i++) {
+					setSpriteVisibility(i, false);
+				}
+				updateOam();
+				
+				int num = Input::getInt(save->maxBoxes());
+				if(num != -1)	(topScreen ? currentBankBox : currentSaveBox) = num;
+
+				// Redraw screen
+				if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
+				else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+				drawBox(false, !topScreen);
+				if(topScreen)	drawBox(topScreen, true);
+				drawAMenuButtons(buttons, buttonMode);
+			} else if(menuSelection == 1) { // Rename
 				// Hide bottom screen sprites
 				for(int i=0;i<30;i++) {
 					setSpriteVisibility(i, false);
@@ -216,7 +231,7 @@ int aMenu(int pkmPos, std::vector<TextPos>& buttons, int buttonMode) {
 				drawBox(false);
 				if(topScreen)	drawBox(topScreen);
 				drawAMenuButtons(buttons, buttonMode);
-			} else if(menuSelection == 1) { // Swap
+			} else if(menuSelection == 2) { // Swap
 				std::vector<std::shared_ptr<PKX>> tempBox;
 				// Copy save Pokémon to a buffer
 				for(int i=0;i<30;i++) {
@@ -243,7 +258,7 @@ int aMenu(int pkmPos, std::vector<TextPos>& buttons, int buttonMode) {
 				// Update the boxes
 				drawBox(true);
 				drawBox(false);
-			} else if(menuSelection == 2) { // Dump box
+			} else if(menuSelection == 3) { // Dump box
 				char path[PATH_MAX];
 				snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%s", sdFound() ? "sd" : "fat", topScreen ? Banks::bank->boxName(currentBankBox).c_str() : save->boxName(currentSaveBox).c_str());
 				mkdir(path, 0777);
@@ -259,7 +274,7 @@ int aMenu(int pkmPos, std::vector<TextPos>& buttons, int buttonMode) {
 						out.close();
 					}
 				}
-			} else if(menuSelection == 3) { // Back
+			} else if(menuSelection == 4) { // Back
 				goto back;
 			}
 		} else if(optionSelected && buttonMode == 2) { // Empty slot
@@ -308,7 +323,7 @@ int aMenu(int pkmPos, std::vector<TextPos>& buttons, int buttonMode) {
 			}
 		}
 
-		setSpritePosition(bottomArrowID, buttons[menuSelection].x+getTextWidth(aMenuText(buttonMode, menuSelection))+4, buttons[menuSelection].y);
+		setSpritePosition(bottomArrowID, buttons[menuSelection].x+getTextWidthMaxW(aMenuText(buttonMode, menuSelection), 80)+4, buttons[menuSelection].y);
 		updateOam();
 	}
 	return false;

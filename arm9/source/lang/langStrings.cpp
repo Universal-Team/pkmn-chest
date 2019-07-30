@@ -5,9 +5,9 @@ namespace Lang {
 	// In game text strings
 	balls, items, locations4, locations5, moves, natures, species,
 	// App strings
-	aMenuText = {"Edit", "Move", "Copy", "Release", "Dump", "Back"},
+	aMenuText = {"Move", "Edit", "Copy", "Release", "Dump", "Back"},
 	aMenuEmptySlotText = {"Inject", "Create", "Back"},
-	aMenuTopBarText = {"Rename", "Swap", "Dump box", "Back"},
+	aMenuTopBarText = {"Jump to box", "Rename", "Swap", "Dump box", "Back"},
 	optionsTextLabels = {"Chest File", "Chest Size", "Language", "Backups", "Music", "Sound Effects"},
 	optionsText = {"New", "Rename", "Delete", "Change"},
 	songs = {"Off", "Pokémon Center (Gen. 1)", "Pokémon Center (Gen. 4)", "Prof. Elm's Lab", "Prof. Oak's Lab", "Game Corner"},

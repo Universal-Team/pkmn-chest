@@ -75,8 +75,8 @@ void Lang::loadLangStrings(int lang) {
 	CIniFile ini(path);
 
 	// [aMenu]
-	Lang::aMenuText[0] = ini.GetString("aMenu", "edit", Lang::aMenuText[0]);
-	Lang::aMenuText[1] = ini.GetString("aMenu", "move", Lang::aMenuText[1]);
+	Lang::aMenuText[0] = ini.GetString("aMenu", "move", Lang::aMenuText[0]);
+	Lang::aMenuText[1] = ini.GetString("aMenu", "edit", Lang::aMenuText[1]);
 	Lang::aMenuText[2] = ini.GetString("aMenu", "copy", Lang::aMenuText[2]);
 	Lang::aMenuText[3] = ini.GetString("aMenu", "release", Lang::aMenuText[3]);
 	Lang::aMenuText[4] = ini.GetString("aMenu", "dump", Lang::aMenuText[4]);
@@ -84,10 +84,11 @@ void Lang::loadLangStrings(int lang) {
 	Lang::aMenuEmptySlotText[0] = ini.GetString("aMenu", "inject", Lang::aMenuEmptySlotText[0]);
 	Lang::aMenuEmptySlotText[1] = ini.GetString("aMenu", "create", Lang::aMenuEmptySlotText[1]);
 	Lang::aMenuEmptySlotText[2] = ini.GetString("aMenu", "back", Lang::aMenuEmptySlotText[2]);
-	Lang::aMenuTopBarText[0] = ini.GetString("options", "rename", Lang::aMenuTopBarText[0]);
-	Lang::aMenuTopBarText[1] = ini.GetString("aMenu", "swap", Lang::aMenuTopBarText[1]);
-	Lang::aMenuTopBarText[2] = ini.GetString("aMenu", "dumpBox", Lang::aMenuTopBarText[2]);
-	Lang::aMenuTopBarText[3] = ini.GetString("aMenu", "back", Lang::aMenuTopBarText[3]);
+	Lang::aMenuTopBarText[0] = ini.GetString("aMenu", "jump", Lang::aMenuTopBarText[0]);
+	Lang::aMenuTopBarText[1] = ini.GetString("options", "rename", Lang::aMenuTopBarText[1]);
+	Lang::aMenuTopBarText[2] = ini.GetString("aMenu", "swap", Lang::aMenuTopBarText[2]);
+	Lang::aMenuTopBarText[3] = ini.GetString("aMenu", "dumpBox", Lang::aMenuTopBarText[3]);
+	Lang::aMenuTopBarText[4] = ini.GetString("aMenu", "back", Lang::aMenuTopBarText[4]);
 
 	// [main]
 	Lang::cancel = ini.GetString("main", "cancel", Lang::cancel);
