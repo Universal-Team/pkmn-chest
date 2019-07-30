@@ -63,7 +63,7 @@ void drawSummaryP1(std::shared_ptr<PKX> pkm) {
 	drawRectangle(0, 124, 256, 1, LIGHT_GRAY, false);
 
 	// Print Pokémon name
-	printTextTintedMaxW(Lang::species[pkm->species()], 90, 1, (pkm->gender() ? (pkm->gender() == 1 ? RED_RGB : GRAY) : BLUE_RGB), 165, 8, false, true);
+	printTextTintedMaxW(Lang::species[pkm->species()], 90, 1, (pkm->gender() ? (pkm->gender() == 1 ? RGB::RED : GRAY) : RGB::BLUE), 165, 8, false, true);
 
 	// Draw Pokémon, Pokéball, types, and shiny star (if shiny)
 		std::pair<int, int> xy = getPokeballPosition(pkm->ball());
@@ -104,7 +104,7 @@ void drawSummaryP1(std::shared_ptr<PKX> pkm) {
 		if(i!=7)	// Ball is scaled, OT Name is colored
 			printTextMaxW(textSP1[i].text, 80, 1, textSP1[i].x, textSP1[i].y, false);
 	}
-	printTextTinted(textSP1[7].text, (pkm->otGender() ? RED_RGB : BLUE_RGB), textSP1[7].x, textSP1[7].y, false);
+	printTextTinted(textSP1[7].text, (pkm->otGender() ? RGB::RED : RGB::BLUE), textSP1[7].x, textSP1[7].y, false);
 }
 
 void drawSummaryP2(std::shared_ptr<PKX> pkm) {
@@ -123,11 +123,11 @@ void drawSummaryP2(std::shared_ptr<PKX> pkm) {
 	// Print stat info labels
 	int i = pkm->nature();
 	printText(Lang::summaryP2Labels[0], 20, textSP2r1[0].y, false);
-	printTextTintedMaxW(Lang::summaryP2Labels[1], 80, 1, (i!=0&&i<5         ? RED_RGB : i!=0&&!(i%5)      ? BLUE_RGB : WHITE), 20, textSP2r1[1].y, false);
-	printTextTintedMaxW(Lang::summaryP2Labels[2], 80, 1, (i!=6&&i>4&&i<10   ? RED_RGB : i!=6&&!((i-1)%5)  ? BLUE_RGB : WHITE), 20, textSP2r1[2].y, false);
-	printTextTintedMaxW(Lang::summaryP2Labels[3], 80, 1, (i!=18&&i>14&&i<20 ? RED_RGB : i!=18&&!((i-3)%5) ? BLUE_RGB : WHITE), 20, textSP2r1[3].y, false);
-	printTextTintedMaxW(Lang::summaryP2Labels[4], 80, 1, (i!=24&&i>19       ? RED_RGB : i!=24&&!((i-4)%5) ? BLUE_RGB : WHITE), 20, textSP2r1[4].y, false);
-	printTextTintedMaxW(Lang::summaryP2Labels[5], 80, 1, (i!=12&&i>9&&i<15  ? RED_RGB : i!=12&&!((i-2)%5) ? BLUE_RGB : WHITE), 20, textSP2r1[5].y, false);
+	printTextTintedMaxW(Lang::summaryP2Labels[1], 80, 1, (i!=0&&i<5         ? RGB::RED : i!=0&&!(i%5)      ? RGB::BLUE : WHITE), 20, textSP2r1[1].y, false);
+	printTextTintedMaxW(Lang::summaryP2Labels[2], 80, 1, (i!=6&&i>4&&i<10   ? RGB::RED : i!=6&&!((i-1)%5)  ? RGB::BLUE : WHITE), 20, textSP2r1[2].y, false);
+	printTextTintedMaxW(Lang::summaryP2Labels[3], 80, 1, (i!=18&&i>14&&i<20 ? RGB::RED : i!=18&&!((i-3)%5) ? RGB::BLUE : WHITE), 20, textSP2r1[3].y, false);
+	printTextTintedMaxW(Lang::summaryP2Labels[4], 80, 1, (i!=24&&i>19       ? RGB::RED : i!=24&&!((i-4)%5) ? RGB::BLUE : WHITE), 20, textSP2r1[4].y, false);
+	printTextTintedMaxW(Lang::summaryP2Labels[5], 80, 1, (i!=12&&i>9&&i<15  ? RGB::RED : i!=12&&!((i-2)%5) ? RGB::BLUE : WHITE), 20, textSP2r1[5].y, false);
 
 	// Print column titles
 	printTextCenteredMaxW(Lang::summaryP2Labels[6], 30, 1, textSP2r1[0].x, textSP2r1[0].y-16, false);

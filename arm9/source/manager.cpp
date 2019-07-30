@@ -420,8 +420,8 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 		printTextTinted(str, GRAY, 170, 8, true, true);
 
 		// Print name
-		if(pkm->nicknamed())	printTextTintedMaxW(pkm->nickname(), 80, 1, (pkm->gender() ? (pkm->gender() == 1 ? RED_RGB : GRAY) : BLUE_RGB), 170, 25, true, true);
-		else	printTextTintedMaxW(Lang::species[pkm->species()], 80, 1, (pkm->gender() ? (pkm->gender() == 1 ? RED_RGB : GRAY) : BLUE_RGB), 170, 25, true, true);
+		if(pkm->nicknamed())	printTextTintedMaxW(pkm->nickname(), 80, 1, (pkm->gender() ? (pkm->gender() == 1 ? RGB::RED : GRAY) : RGB::BLUE), 170, 25, true, true);
+		else	printTextTintedMaxW(Lang::species[pkm->species()], 80, 1, (pkm->gender() ? (pkm->gender() == 1 ? RGB::RED : GRAY) : RGB::BLUE), 170, 25, true, true);
 
 
 		// Draw types

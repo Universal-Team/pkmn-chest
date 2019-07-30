@@ -149,7 +149,7 @@ void configMenu(void) {
 					std::string str = browseForFile(extList, false);
 					if(str.substr(0, str.find_last_of(".")) != Config::chestFile && str != "")	Banks::removeBank(str.substr(0, str.find_last_of(".")));
 					else if(str != "") {
-						drawRectangle(20, 20, 216, 152, 0xCC00, false);
+						drawRectangle(20, 20, 216, 152, RGB::DARK_RED, false);
 						printTextCentered("You can not delete", 0, 24, false);
 						printTextCentered("the current bank.", 0, 40, false);
 						for(int i=0;i<120;i++)	swiWaitForVBlank();

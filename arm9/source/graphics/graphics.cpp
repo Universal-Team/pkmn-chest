@@ -221,7 +221,7 @@ void drawOutline(int x, int y, int w, int h, int color, bool top) {
 void drawRectangle(int x, int y, int w, int h, int color, bool top) {
 	h+=y;
 	for(;y<h;y++) {
-		dmaFillHalfWords(((color>>10)&0x1f) | ((color)&(0x1f<<5)) | (color&0x1f)<<10 | BIT(15), (top ? BG_GFX : BG_GFX_SUB)+((y)*256+x), w*2);
+		dmaFillHalfWords(color | BIT(15), (top ? BG_GFX : BG_GFX_SUB)+((y)*256+x), w*2);
 	}
 }
 

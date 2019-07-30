@@ -112,7 +112,7 @@ bool restoreSave(void) {
 		length = input.tellg();
 		input.seekg(0, input.beg);
 		if(length != (auxspi ? (int)(LEN*num_blocks) : size)) {
-			drawRectangle(20, 20, 216, 152, 0xCC00, true);
+			drawRectangle(20, 20, 216, 152, RGB::DARK_RED, true);
 			printTextCentered("Warning: The size of the save", 0, 24, true);
 			printTextCentered("doesn't match the size of the", 0, 40, true);
 			printTextCentered("current gamecard! Write stopped.", 0, 56, true);

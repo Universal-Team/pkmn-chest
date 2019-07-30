@@ -75,7 +75,7 @@ int main(int argc, char **argv) {
 
 	while(1) {
 		if(!loadSave(savePath = browseForSave())) {
-			drawRectangle(20, 20, 216, 152, 0xCC00, true);
+			drawRectangle(20, 20, 216, 152, RGB::DARK_RED, true);
 			printTextCentered(Lang::invalidSave, 0, 24, true);
 			for(int i=0;i<120;i++)	swiWaitForVBlank();
 			continue;
