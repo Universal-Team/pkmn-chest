@@ -31,7 +31,7 @@ If you want to report a bug you can do so [here](https://github.com/Universal-Te
 - [edo9300](https://github.com/edo9300): [ndsi-savedumper](https://github.com/edo9300/ndsi-savedumper)'s gamecard save dumping and injecting code
 - [Flagbrew](https://github.com/FlagBrew): [PKSM](https://github.com/FlagBrew/PKSM)'s save and bank management code
 - [RocketRobz](https://github.com/RocketRobz): Adding flashcard and SD being used together and code from [TWiLight Menu++](https://github.com/DS-Homebrew/TWiLightMenu)
-- [TotallyNotGuy](https://github.com/TotallyNotGuy): Finding & making graphics and the Pokémon Center generation 4 & 5 songs
+- [TotallyNotGuy](https://github.com/TotallyNotGuy): Finding & making graphics and the Pokémon Center generation 4 song
 - [VoltZ](https://github.com/SuperSaiyajinVoltZ): Idea to make a Pokémon Bank for the DS(i)
 ### Music
 - [Pokémon Center (Gen 1)](https://modarchive.org/index.php?request=view_by_moduleid&query=181718), [Elm's Lab](https://modarchive.org/index.php?request=view_by_moduleid&query=181711), [Oak's Lab](https://modarchive.org/index.php?request=view_by_moduleid&query=181717), and [Game Corner](https://modarchive.org/index.php?request=view_by_moduleid&query=181756).
