@@ -632,7 +632,8 @@ int selectForm(int dexNo, int currentForm) {
 
 int selectNature(int currentNature) {
 	// Clear screen
-	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+	if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
+	else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
 
 	// Draw labels (not a for loop as speed is 3rd)
 	{
@@ -711,7 +712,8 @@ int selectNature(int currentNature) {
 
 int selectPokeball(int currentBall) {
 	// Clear screen
-	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+	if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
+	else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
 
 	// Draw Pokéballs
 	for(int y=0;y<5;y++) {
