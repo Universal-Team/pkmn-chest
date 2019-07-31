@@ -11,8 +11,8 @@ namespace Lang {
 	optionsTextLabels = {"Chest File", "Chest Size", "Language", "Backups", "Music", "Sound Effects"},
 	optionsText = {"New", "Rename", "Delete", "Change"},
 	songs = {"Off", "Pokémon Center (Gen. 1)", "Pokémon Center (Gen. 4)", "Prof. Elm's Lab", "Prof. Oak's Lab", "Game Corner"},
-	summaryP1Labels = {"Dex No.", "Name", "Ball", "Level", "Nature", "Shiny", "Pokérus", "Orig. Trainer", "Trainer ID", "Secret ID", "Friendship"},
-	summaryP2Labels = {"HP.", "Attack", "Defense", "Sp. Atk", "Sp. Def", "Speed", "Base", "IV", "EV", "Total"},
+	summaryLabels = {"Dex No.", "Name", "Ball", "Level", "Nature", "Shiny", "Pokérus", "Orig. Trainer", "Trainer ID", "Secret ID", "Friendship"},
+	statsLabels = {"HP.", "Attack", "Defense", "Sp. Atk", "Sp. Def", "Speed", "Base", "IV", "EV", "Total"},
 	trainerText = {"Name", "Trainer ID", "Secret ID", "Money", "BP", "Badges", "Play time"},
 	xMenuText = {"Party", "Options", "", "", "Save", "Exit"};
 
@@ -25,7 +25,9 @@ namespace Lang {
 	invalidSave = "Invalid save file",
 	loading = "Loading...",
 	male = "Male",
+	movesString = "Moves",
 	no = "False",
+	stats = "Stats",
 	release = "Release",
 	remove = "Remove",
 	save = "Save",

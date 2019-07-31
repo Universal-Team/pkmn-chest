@@ -124,29 +124,33 @@ void Lang::loadLangStrings(int lang) {
 	Lang::songs[4] = ini.GetString("songs", "oakLab", Lang::songs[4]);
 	Lang::songs[5] = ini.GetString("songs", "gameCorner", Lang::songs[5]);
 
+	// Stats
+	Lang::statsLabels[0] = ini.GetString("stats", "hp", Lang::statsLabels[0]);
+	Lang::statsLabels[1] = ini.GetString("stats", "attack", Lang::statsLabels[1]);
+	Lang::statsLabels[2] = ini.GetString("stats", "defense", Lang::statsLabels[2]);
+	Lang::statsLabels[3] = ini.GetString("stats", "spAtk", Lang::statsLabels[3]);
+	Lang::statsLabels[4] = ini.GetString("stats", "spDef", Lang::statsLabels[4]);
+	Lang::statsLabels[5] = ini.GetString("stats", "speed", Lang::statsLabels[5]);
+	Lang::statsLabels[6] = ini.GetString("stats", "base", Lang::statsLabels[6]);
+	Lang::statsLabels[7] = ini.GetString("stats", "iv", Lang::statsLabels[7]);
+	Lang::statsLabels[8] = ini.GetString("stats", "ev", Lang::statsLabels[8]);
+	Lang::statsLabels[9] = ini.GetString("stats", "total", Lang::statsLabels[9]);
+
 	// [summary]
-	Lang::summaryP1Labels[0]  = ini.GetString("summary", "dexNo", Lang::summaryP1Labels[0]);
-	Lang::summaryP1Labels[1]  = ini.GetString("summary", "name", Lang::summaryP1Labels[1]);
-	Lang::summaryP1Labels[2]  = ini.GetString("summary", "ball", Lang::summaryP1Labels[2]);
-	Lang::summaryP1Labels[3]  = ini.GetString("summary", "level", Lang::summaryP1Labels[3]);
-	Lang::summaryP1Labels[4]  = ini.GetString("summary", "nature", Lang::summaryP1Labels[4]);
-	Lang::summaryP1Labels[5]  = ini.GetString("summary", "shiny", Lang::summaryP1Labels[5]);
-	Lang::summaryP1Labels[6]  = ini.GetString("summary", "pokerus", Lang::summaryP1Labels[6]);
-	Lang::summaryP1Labels[7]  = ini.GetString("summary", "origTrainer", Lang::summaryP1Labels[7]);
-	Lang::summaryP1Labels[8]  = ini.GetString("summary", "trainerID", Lang::summaryP1Labels[8]);
-	Lang::summaryP1Labels[9]  = ini.GetString("summary", "secretID", Lang::summaryP1Labels[9]);
-	Lang::summaryP1Labels[10] = ini.GetString("summary", "friendship", Lang::summaryP1Labels[10]);
-	
-	Lang::summaryP2Labels[0] = ini.GetString("summary", "hp", Lang::summaryP2Labels[0]);
-	Lang::summaryP2Labels[1] = ini.GetString("summary", "attack", Lang::summaryP2Labels[1]);
-	Lang::summaryP2Labels[2] = ini.GetString("summary", "defense", Lang::summaryP2Labels[2]);
-	Lang::summaryP2Labels[3] = ini.GetString("summary", "spAtk", Lang::summaryP2Labels[3]);
-	Lang::summaryP2Labels[4] = ini.GetString("summary", "spDef", Lang::summaryP2Labels[4]);
-	Lang::summaryP2Labels[5] = ini.GetString("summary", "speed", Lang::summaryP2Labels[5]);
-	Lang::summaryP2Labels[6] = ini.GetString("summary", "base", Lang::summaryP2Labels[6]);
-	Lang::summaryP2Labels[7] = ini.GetString("summary", "iv", Lang::summaryP2Labels[7]);
-	Lang::summaryP2Labels[8] = ini.GetString("summary", "ev", Lang::summaryP2Labels[8]);
-	Lang::summaryP2Labels[9] = ini.GetString("summary", "total", Lang::summaryP2Labels[9]);
+	Lang::summaryLabels[0]  = ini.GetString("summary", "dexNo", Lang::summaryLabels[0]);
+	Lang::summaryLabels[1]  = ini.GetString("summary", "name", Lang::summaryLabels[1]);
+	Lang::summaryLabels[2]  = ini.GetString("summary", "ball", Lang::summaryLabels[2]);
+	Lang::summaryLabels[3]  = ini.GetString("summary", "level", Lang::summaryLabels[3]);
+	Lang::summaryLabels[4]  = ini.GetString("summary", "nature", Lang::summaryLabels[4]);
+	Lang::summaryLabels[5]  = ini.GetString("summary", "shiny", Lang::summaryLabels[5]);
+	Lang::summaryLabels[6]  = ini.GetString("summary", "pokerus", Lang::summaryLabels[6]);
+	Lang::summaryLabels[7]  = ini.GetString("summary", "origTrainer", Lang::summaryLabels[7]);
+	Lang::summaryLabels[8]  = ini.GetString("summary", "trainerID", Lang::summaryLabels[8]);
+	Lang::summaryLabels[9]  = ini.GetString("summary", "secretID", Lang::summaryLabels[9]);
+	Lang::summaryLabels[10] = ini.GetString("summary", "friendship", Lang::summaryLabels[10]);
+
+	Lang::movesString = ini.GetString("summary", "moves", Lang::movesString);
+	Lang::stats = ini.GetString("summary", "stats", Lang::stats);
 
 	// [saveMsg]
 	Lang::saveMsgCard = ini.GetString("saveMsg", "saveMsgCard", Lang::saveMsgCard);

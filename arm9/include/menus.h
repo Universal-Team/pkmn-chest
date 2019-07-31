@@ -1,7 +1,9 @@
 #ifndef MENUS_H
 #define MENUS_H
 
+#include <memory>
 #include <nds.h>
+#include <Sav.hpp>
 #include <string>
 #include <vector>
 
@@ -37,5 +39,7 @@ int selectNature(int currentNature);
 int selectPokeball(int currentBall);
 
 int selectBox(int currentBox);
+
+std::shared_ptr<PKX> selectStats(std::shared_ptr<PKX> pkm);
 
 #endif

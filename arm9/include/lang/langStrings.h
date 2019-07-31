@@ -15,8 +15,8 @@ namespace Lang {
 	optionsTextLabels,
 	optionsText,
 	songs,
-	summaryP1Labels,
-	summaryP2Labels,
+	summaryLabels,
+	statsLabels,
 	trainerText,
 	xMenuText;
 
@@ -29,7 +29,9 @@ namespace Lang {
 	invalidSave,
 	loading,
 	male,
+	movesString,
 	no,
+	stats,
 	release,
 	remove,
 	save,
