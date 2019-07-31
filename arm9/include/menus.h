@@ -36,4 +36,6 @@ int selectNature(int currentNature);
 
 int selectPokeball(int currentBall);
 
+int selectBox(int currentBox);
+
 #endif

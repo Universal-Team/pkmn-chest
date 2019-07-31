@@ -199,20 +199,32 @@ int aMenu(int pkmPos, std::vector<TextPos>& buttons, int buttonMode) {
 		} else if(optionSelected && buttonMode == 1) { // Top bar
 			optionSelected = false;
 			if(menuSelection == 0) { // Jump
-				for(int i=0;i<30;i++) {
-					setSpriteVisibility(i, false);
-				}
-				updateOam();
+				// Clear buttons
+				if(sdFound())	drawImageFromSheet(170, 0, 86, 192, boxBgBottom, boxBgBottomData.width, 170, 0, false);
+				else	drawRectangle(170, 0, 86, 192, DARK_GRAY, false);
 				
-				int num = Input::getInt(save->maxBoxes());
-				if(num != -1)	(topScreen ? currentBankBox : currentSaveBox) = num;
+				// Select a box
+				int num = selectBox(topScreen ? currentBankBox : currentSaveBox);
+				
+				// Clear mini boxes
+				if(sdFound())	drawImageFromSheet(170, 0, 86, 192, boxBgBottom, boxBgBottomData.width, 170, 0, false);
+				else	drawRectangle(170, 0, 86, 192, DARK_GRAY, false);
+
+				if(num == -1 || num == (topScreen ? currentBankBox : currentSaveBox)) { // If B was pressed or the box wasn't changed
+					drawAMenuButtons(buttons, buttonMode);
+				} else { // If a new box was selected
+					(topScreen ? currentBankBox : currentSaveBox) = num;
+					drawBox(topScreen, true);
+					break;
+				}
+				
+
+				// int num = Input::getInt(save->maxBoxes());
+				// if(num != -1)	(;
 
 				// Redraw screen
-				if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
-				else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
-				drawBox(false, !topScreen);
-				if(topScreen)	drawBox(topScreen, true);
-				drawAMenuButtons(buttons, buttonMode);
+				// if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
+				// else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
 			} else if(menuSelection == 1) { // Rename
 				// Hide bottom screen sprites
 				for(int i=0;i<30;i++) {
@@ -625,18 +637,18 @@ int selectNature(int currentNature) {
 	// Draw labels (not a for loop as speed is 3rd)
 	{
 		int x = -2;
-		printTextCenteredTintedMaxW(Lang::summaryP2Labels[1], 48, 1, BLUE_RGB, ((x++)*48), 4, false);
-		printTextCenteredTintedMaxW(Lang::summaryP2Labels[2], 48, 1, BLUE_RGB, ((x++)*48), 4, false);
-		printTextCenteredTintedMaxW(Lang::summaryP2Labels[5], 48, 1, BLUE_RGB, ((x++)*48), 4, false);
-		printTextCenteredTintedMaxW(Lang::summaryP2Labels[3], 48, 1, BLUE_RGB, ((x++)*48), 4, false);
-		printTextCenteredTintedMaxW(Lang::summaryP2Labels[4], 48, 1, BLUE_RGB, ((x++)*48), 4, false);
+		printTextCenteredTintedMaxW(Lang::summaryP2Labels[1], 48, 1, RGB::BLUE, ((x++)*48), 4, false);
+		printTextCenteredTintedMaxW(Lang::summaryP2Labels[2], 48, 1, RGB::BLUE, ((x++)*48), 4, false);
+		printTextCenteredTintedMaxW(Lang::summaryP2Labels[5], 48, 1, RGB::BLUE, ((x++)*48), 4, false);
+		printTextCenteredTintedMaxW(Lang::summaryP2Labels[3], 48, 1, RGB::BLUE, ((x++)*48), 4, false);
+		printTextCenteredTintedMaxW(Lang::summaryP2Labels[4], 48, 1, RGB::BLUE, ((x++)*48), 4, false);
 		
 		int y = 0;
-		printTextTintedScaled(Lang::summaryP2Labels[1], 0.8, 0.8, RED_RGB, 1, ((y++)*32)+22, false);
-		printTextTintedScaled(Lang::summaryP2Labels[2], 0.8, 0.8, RED_RGB, 1, ((y++)*32)+22, false);
-		printTextTintedScaled(Lang::summaryP2Labels[5], 0.8, 0.8, RED_RGB, 1, ((y++)*32)+22, false);
-		printTextTintedScaled(Lang::summaryP2Labels[3], 0.8, 0.8, RED_RGB, 1, ((y++)*32)+22, false);
-		printTextTintedScaled(Lang::summaryP2Labels[4], 0.8, 0.8, RED_RGB, 1, ((y++)*32)+22, false);
+		printTextTintedScaled(Lang::summaryP2Labels[1], 0.8, 0.8, RGB::RED, 1, ((y++)*32)+22, false);
+		printTextTintedScaled(Lang::summaryP2Labels[2], 0.8, 0.8, RGB::RED, 1, ((y++)*32)+22, false);
+		printTextTintedScaled(Lang::summaryP2Labels[5], 0.8, 0.8, RGB::RED, 1, ((y++)*32)+22, false);
+		printTextTintedScaled(Lang::summaryP2Labels[3], 0.8, 0.8, RGB::RED, 1, ((y++)*32)+22, false);
+		printTextTintedScaled(Lang::summaryP2Labels[4], 0.8, 0.8, RGB::RED, 1, ((y++)*32)+22, false);
 	}
 
 	// Print natures
@@ -763,6 +775,80 @@ int selectPokeball(int currentBall) {
 
 		// Move arrow
 		setSpritePosition(bottomArrowID, (arrowX*48)+40, (arrowY*32)+16);
+		updateOam();
+	}
+}
+
+void drawMiniBoxes(int currentBox) {
+	if(currentBox < 0)	currentBox = (topScreen ? Banks::bank->boxes()-1 : save->maxBoxes()-1)+currentBox;
+	// Clear text
+	if(sdFound())	drawImageFromSheet(210, 0, 46, 192, boxBgBottom, boxBgBottomData.width, 210, 0, false);
+	else	drawRectangle(210, 0, 46, 192, DARK_GRAY, false);
+
+	for(int i=0;i<5;i++) {
+		drawRectangle(170, 10+(i*33), 35, 30, WHITE, false);
+		drawOutline(170, 10+(i*33), 35, 30, DARK_GRAY, false);
+		for(int j=0;j<30;j++) {
+			// Type 1
+			int type = topScreen ? Banks::bank->pkm(currentBox, j)->type1() : save->pkm(currentBox, j)->type1();
+			if(((topScreen ? Banks::bank->pkm(currentBox, j)->generation() : save->pkm(currentBox, j)->generation()) == Generation::FOUR) && type > 8)	type--;
+			drawRectangle(173+((j-((j/6)*6))*5), 13+((j/6)*5)+(i*33), 2, 4, types[(type*384)+34], false);
+
+			// Type 2
+			type = topScreen ? Banks::bank->pkm(currentBox, j)->type2() : save->pkm(currentBox, j)->type2();
+			if(((topScreen ? Banks::bank->pkm(currentBox, j)->generation() : save->pkm(currentBox, j)->generation()) == Generation::FOUR) && type > 8)	type--;
+			drawRectangle(175+((j-((j/6)*6))*5), 13+((j/6)*5)+(i*33), 2, 4, types[(type*384)+33], false);
+		}
+		// Print box number
+		printText(std::to_string(currentBox+1), 210, 20+(i*33), false);
+		if(currentBox < (topScreen ? Banks::bank->boxes()-1 : save->maxBoxes()-1))	currentBox++;
+		else	currentBox = 0;
+	}
+}
+
+int selectBox(int currentBox) {
+	setSpritePosition(bottomArrowID, 205, 14);
+	updateOam();
+	drawMiniBoxes(currentBox);
+
+	int pressed, held, screenPos = currentBox;
+	while(1) {
+		do {
+			swiWaitForVBlank();
+			scanKeys();
+			pressed = keysDown();
+			held = keysDownRepeat();
+		} while(!held);
+
+		if(held & KEY_UP) {
+			if(currentBox > 0)	currentBox--;
+			else {
+				screenPos = (topScreen ? Banks::bank->boxes()-1 : save->maxBoxes()-1)-(currentBox-screenPos-1);
+				currentBox = (topScreen ? Banks::bank->boxes()-1 : save->maxBoxes()-1);
+			}
+		} else if(held & KEY_DOWN) {
+			if(currentBox < (topScreen ? Banks::bank->boxes()-1 : save->maxBoxes()-1))	currentBox++;
+			else {
+				screenPos = 0-(currentBox-screenPos+1);
+				currentBox = 0;
+			}
+		} else if(pressed & KEY_A) {
+			return currentBox;
+		} else if(pressed & KEY_B) {
+			return -1;
+		}
+
+		// Scroll screen if needed
+		if(currentBox < screenPos) {
+			screenPos = currentBox;
+			drawMiniBoxes(screenPos);
+		} else if(currentBox > screenPos+4) {
+			screenPos = currentBox-4;
+			drawMiniBoxes(screenPos);
+		}
+
+		// Move cursor
+		setSpritePosition(bottomArrowID, 205, 14+(33*(currentBox-screenPos)));
 		updateOam();
 	}
 }
