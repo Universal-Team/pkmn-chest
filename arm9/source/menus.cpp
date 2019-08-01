@@ -231,14 +231,6 @@ int aMenu(int pkmPos, std::vector<TextPos>& buttons, int buttonMode) {
 					drawBox(topScreen, true);
 					break;
 				}
-				
-
-				// int num = Input::getInt(save->maxBoxes());
-				// if(num != -1)	(;
-
-				// Redraw screen
-				// if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
-				// else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
 			} else if(menuSelection == 1) { // Rename
 				// Hide bottom screen sprites
 				for(int i=0;i<30;i++) {
@@ -282,8 +274,8 @@ int aMenu(int pkmPos, std::vector<TextPos>& buttons, int buttonMode) {
 					Banks::bank->pkm(tempBox[i], currentBankBox, i);
 
 				// Update the boxes
-				drawBox(true);
-				drawBox(false);
+				drawBox(true, true);
+				drawBox(false, true);
 			} else if(menuSelection == 3) { // Dump box
 				char path[PATH_MAX];
 				snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%s", sdFound() ? "sd" : "fat", topScreen ? Banks::bank->boxName(currentBankBox).c_str() : save->boxName(currentSaveBox).c_str());
