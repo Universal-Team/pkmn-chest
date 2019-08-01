@@ -151,14 +151,16 @@ int aMenu(int pkmPos, std::vector<TextPos>& buttons, int buttonMode) {
 			} else if(menuSelection == 1) { // Edit
 				edit:
 				int species = currentPokemon(pkmPos)->species();
+				int form = currentPokemon(pkmPos)->alternativeForm();
 				if(topScreen)	Banks::bank->pkm(showPokemonSummary(currentPokemon(pkmPos)), currentBankBox, pkmPos);
 				else	save->pkm(showPokemonSummary(currentPokemon(pkmPos)), currentSaveBox, pkmPos, false);
 				
 				// Redraw screen
 				if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
 				else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
-				drawBox(false, species != currentPokemon(pkmPos)->species());
-				if(topScreen)	drawBox(topScreen);
+				bool updateBox = (species == currentPokemon(pkmPos)->species() && form == currentPokemon(pkmPos)->alternativeForm());
+				drawBox(false, !updateBox);
+				if(topScreen)	drawBox(topScreen, !updateBox);
 				drawPokemonInfo(currentPokemon(pkmPos));
 				drawAMenuButtons(buttons, buttonMode);
 			} else if(menuSelection == 2) { // Copy
