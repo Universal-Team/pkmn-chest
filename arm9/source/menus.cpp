@@ -720,6 +720,144 @@ int selectForm(int dexNo, int currentForm) {
 	}
 }
 
+void drawMoveList(int screenPos) {
+	// Clear the screen
+	if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
+	else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+
+	// Print moves
+	for(int i=0;i<9;i++) {
+		printText(Lang::moves[screenPos+i], 4, 4+(i*20), false);
+	}
+}
+
+int selectMove(int currentMove) {
+	// Clear the screen
+	if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
+	else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+
+	// Set arrow position
+	setSpritePosition(bottomArrowID, 4+getTextWidth(Lang::moves[currentMove]), -2);
+	setSpriteVisibility(bottomArrowID, true);
+	updateOam();
+
+	// Print moves
+	for(int i=0;i<9;i++) {
+		printText(Lang::moves[currentMove+i], 4, 4+(i*20), false);
+	}
+
+	int held, pressed, screenPos = currentMove, newMove = currentMove, entriesPerScreen = 9;
+	while(1) {
+		do {
+			swiWaitForVBlank();
+			scanKeys();
+			pressed = keysDown();
+			held = keysDownRepeat();
+		} while(!held);
+
+		if(held & KEY_UP) {
+			if(newMove > 0)	newMove--;
+			else	newMove = save->maxMove();
+		} else if(held & KEY_DOWN) {
+			if(newMove < save->maxMove())	newMove++;
+			else newMove = 0;
+		} else if(held & KEY_LEFT) {
+			newMove -= entriesPerScreen;
+			if(newMove < 0)	newMove = 0;
+		} else if(held & KEY_RIGHT) {
+			newMove += entriesPerScreen;
+			if(newMove > save->maxMove())	newMove = save->maxMove();
+		} else if(pressed & KEY_A) {
+			return newMove;
+		} if(pressed & KEY_B) {
+			return currentMove;
+		}
+
+		// Scroll screen if needed
+		if(newMove < screenPos) {
+			screenPos = newMove;
+			drawMoveList(screenPos);
+		} else if(newMove > screenPos + entriesPerScreen - 1) {
+			screenPos = newMove - entriesPerScreen + 1;
+			drawMoveList(screenPos);
+		}
+
+		// Move cursor
+		setSpritePosition(bottomArrowID, 4+getTextWidth(Lang::moves[newMove]), (20*(newMove-screenPos)-2));
+		updateOam();
+	}
+}
+
+std::shared_ptr<PKX> selectMoves(std::shared_ptr<PKX> pkm) {
+	// Clear the screen
+	if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
+	else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+
+	// Print moves
+	for(int i=0;i<4;i++) {
+		printText(Lang::moves[pkm->move(i)], 4, 4+(i*20), false);
+	}
+
+	// Set arrow position
+	setSpritePosition(bottomArrowID, 4+getTextWidth(Lang::moves[pkm->move(0)]), -2);
+	setSpriteVisibility(bottomArrowID, true);
+	updateOam();
+
+	bool optionSelected = false;
+	int held, pressed, selection = 0;
+	touchPosition touch;
+	while(1) {
+		do {
+			swiWaitForVBlank();
+			scanKeys();
+			pressed = keysDown();
+			held = keysDownRepeat();
+		} while(!held);
+
+		if(held & KEY_UP) {
+			if(selection > 0)	selection--;
+		} else if(held & KEY_DOWN) {
+			if(selection < 3)	selection++;
+		} else if(held & KEY_LEFT) {
+			selection = 0;
+		} else if(held & KEY_RIGHT) {
+			selection = 3;
+		} else if(pressed & KEY_A) {
+			optionSelected = true;
+		} else if(pressed & KEY_B) {
+			Sound::play(Sound::back);
+			return pkm;
+		} else if(pressed & KEY_TOUCH) {
+			touchRead(&touch);
+			for(unsigned i=0;i<4;i++) {
+				if(touch.px >= 4 && touch.px <= 4+getTextWidth(Lang::moves[pkm->move(i)]) && touch.py >= 4+(i*20) && touch.py <= 4+((i+1)*20)) {
+					selection = i;
+					optionSelected = true;
+					break;
+				}
+			}
+		}
+
+		if(optionSelected) {
+			optionSelected = false;
+			int num = selectMove(pkm->move(selection));
+			if(num != -1)	pkm->move(selection, num);
+
+			// Clear the screen
+			if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
+			else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+
+			// Print moves
+			for(int i=0;i<4;i++) {
+				printText(Lang::moves[pkm->move(i)], 4, 4+(i*20), false);
+			}
+		}
+
+		setSpritePosition(bottomArrowID, 4+getTextWidth(Lang::moves[pkm->move(selection)]), (selection*20)-2);
+		updateOam();
+	}
+}
+
 int selectNature(int currentNature) {
 	// Clear screen
 	if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
@@ -973,6 +1111,9 @@ std::shared_ptr<PKX> selectStats(std::shared_ptr<PKX> pkm) {
 		}
 
 		if(optionSelected) {
+			optionSelected = 0;
+			setSpriteVisibility(bottomArrowID, false);
+			updateOam();
 			if(column == 0) {
 				int num = Input::getInt(31);
 				if(num != -1)	pkm->iv(selection, num);
@@ -984,6 +1125,8 @@ std::shared_ptr<PKX> selectStats(std::shared_ptr<PKX> pkm) {
 				int num = Input::getInt(std::min(510-total, 255));
 				if(num != -1)	pkm->ev(selection, num);
 			}
+			setSpriteVisibility(bottomArrowID, false);
+			updateOam();
 			drawStatsPage(pkm);
 		}
 

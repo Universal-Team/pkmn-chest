@@ -226,6 +226,7 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 						if(num != -1)	pkm->alternativeForm(num);
 						break;
 					} case 1: {
+						pkm = selectMoves(pkm);
 						break;
 					} case 2: {
 						pkm = selectStats(pkm);

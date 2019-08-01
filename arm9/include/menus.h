@@ -34,6 +34,8 @@ bool xMenu(void);
 
 int selectForm(int dexNo, int currentForm);
 
+std::shared_ptr<PKX> selectMoves(std::shared_ptr<PKX> pkm);
+
 int selectNature(int currentNature);
 
 int selectPokeball(int currentBall);
