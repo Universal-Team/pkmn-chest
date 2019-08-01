@@ -1081,10 +1081,8 @@ std::shared_ptr<PKX> selectStats(std::shared_ptr<PKX> pkm) {
 			if(selection < 5)	selection++;
 		} else if(pressed & KEY_LEFT) {
 			if(column > 0)	column--;
-			selection = 0;
 		} else if(held & KEY_RIGHT) {
 			if(column < 1)	column++;
-			selection = 0;
 		} else if(pressed & KEY_A) {
 			optionSelected = true;
 		} else if(pressed & KEY_B) {
@@ -1125,7 +1123,7 @@ std::shared_ptr<PKX> selectStats(std::shared_ptr<PKX> pkm) {
 				int num = Input::getInt(std::min(510-total, 255));
 				if(num != -1)	pkm->ev(selection, num);
 			}
-			setSpriteVisibility(bottomArrowID, false);
+			setSpriteVisibility(bottomArrowID, true);
 			updateOam();
 			drawStatsPage(pkm);
 		}
