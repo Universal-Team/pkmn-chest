@@ -181,7 +181,7 @@ void drawSdText(int i, bool valid) {
 void drawFatText(int i, bool valid) {
 	char str[20];
 	updateDriveLabel(true);
-	snprintf(str, sizeof(str), "fat:/ (%s)", fatLabel[0] == '\0' ? "Flashcard" : fatLabel);
+	snprintf(str, sizeof(str), "fat: (%s)", fatLabel[0] == '\0' ? "Flashcard" : fatLabel);
 	printTextTinted(str, valid ? GRAY : RGB::RED, 10, (i+1)*16, false, true);
 }
 
