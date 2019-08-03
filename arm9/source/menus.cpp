@@ -84,6 +84,26 @@ struct Text {
 	{100, 20}, {100, 36}, {100, 52}, {100, 68}, {100, 84}, {100, 100},
 };
 
+int pkmLang(void) {
+	switch(Config::lang) {
+		case 0:
+			return 5; // German
+		case 1:
+		default:
+			return 2; // English
+		case 2:
+			return 6; // Spanish
+		case 3:
+			return 3; // French
+		case 4:
+			return 4; // Italian
+		case 5:
+			return 1; // Japanese
+		case 6:
+			return 2; // Russian (returns English)
+	}
+}
+
 std::string aMenuText(int buttonMode, int i) {
 	if(buttonMode == 0)	return Lang::aMenuText[i];
 	else if(buttonMode == 1)	return Lang::aMenuTopBarText[i];
@@ -149,7 +169,6 @@ int aMenu(int pkmPos, std::vector<TextPos>& buttons, int buttonMode) {
 				else drawRectangle(170, 0, 86, 192, DARK_GRAY, false);
 				return 1;
 			} else if(menuSelection == 1) { // Edit
-				edit:
 				int species = currentPokemon(pkmPos)->species();
 				int form = currentPokemon(pkmPos)->alternativeForm();
 				if(topScreen)	Banks::bank->pkm(showPokemonSummary(currentPokemon(pkmPos)), currentBankBox, pkmPos);
@@ -337,7 +356,50 @@ int aMenu(int pkmPos, std::vector<TextPos>& buttons, int buttonMode) {
 				updateOam();
 				goto back;
 			} else if(menuSelection == 1) { // Create
-				goto edit;
+				std::shared_ptr<PKX> pkm = save->emptyPkm()->clone();
+				pkm->TID(save->TID());
+				pkm->SID(save->SID());
+				pkm->otName(save->otName());
+				pkm->otGender(save->gender());
+				pkm->ball(4);
+				pkm->encryptionConstant((((u32)randomNumbers()) % 0xFFFFFFFF) + 1);
+				pkm->version(save->version());
+				switch (pkm->version()) {
+					case 7:
+					case 8:
+						pkm->metLocation(0x0095); // Route 1 (HGSS)
+						break;
+					case 10:
+					case 11:
+					case 12:
+						pkm->metLocation(0x0010); // Route 201 (DPPt)
+						break;
+					case 20:
+					case 21:
+					case 22:
+					case 23:
+						pkm->metLocation(0x000e); // Route 1 (BWB2W2)
+						break;
+				}
+				pkm->fixMoves();
+				pkm->PID(PKX::getRandomPID(pkm->species(), pkm->gender(), pkm->version(), pkm->nature(), pkm->alternativeForm(), pkm->abilityNumber(), pkm->PID(), pkm->generation()));
+				pkm->language(pkmLang());
+				const time_t current = time(NULL);
+				pkm->metDay(gmtime(&current)->tm_mday);
+				pkm->metMonth(gmtime(&current)->tm_mon);
+				pkm->metYear(gmtime(&current)->tm_year - 2000);
+				pkm->metLevel(1);
+
+				if(topScreen)	Banks::bank->pkm(showPokemonSummary(pkm), currentBankBox, pkmPos);
+				else	save->pkm(showPokemonSummary(pkm), currentSaveBox, pkmPos, false);
+				
+				// Redraw screen
+				if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
+				else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+				drawBox(false, !topScreen);
+				if(topScreen)	drawBox(topScreen, topScreen);
+				drawPokemonInfo(currentPokemon(pkmPos));
+				goto back;
 			} else if(menuSelection == 2) {
 				goto back;
 			}

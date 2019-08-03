@@ -138,6 +138,7 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 			optionSelected = true;
 		} else if(pressed & KEY_B) {
 			Sound::play(Sound::back);
+			pkm->refreshChecksum();
 			return pkm;
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
@@ -172,15 +173,21 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 				switch(selection) {
 					case 0: {
 						int num = Input::getInt(save->maxSpecies());
-						if(num > 0)	pkm->species(num);
+						if(num > 0) {
+							pkm->species(num);
+							if(!pkm->nicknamed())	pkm->nickname(Lang::species[num]);
+						}
 						break;
 					} case 1: {
 						std::string name = Input::getLine(10);
 						if(name != "") {
 							pkm->nickname(name);
-							pkm->nicknamed(true);
+							pkm->nicknamed(name != Lang::species[pkm->species()]);
 						}
-						if(pkm->gender() != 2)	pkm->gender(Input::getBool(Lang::female, Lang::male));
+						if(pkm->gender() != 2) {
+							pkm->gender(Input::getBool(Lang::female, Lang::male));
+							pkm->PID(PKX::getRandomPID(pkm->species(), pkm->gender(), pkm->version(), pkm->nature(), pkm->alternativeForm(), pkm->abilityNumber(), pkm->PID(), pkm->generation()));
+						}
 						break;
 					} case 2: {
 						int num = selectPokeball(pkm->ball());
