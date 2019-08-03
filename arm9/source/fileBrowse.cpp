@@ -250,6 +250,7 @@ void showTopMenu(std::vector<topMenuItem> topMenuContents) {
 
 std::string topMenuSelect(void) {
 	int pressed = 0, held = 0;
+	touchPosition touch;
 
 	// Clear screens
 	if(sdFound()) {
@@ -316,6 +317,7 @@ std::string topMenuSelect(void) {
 			tmCurPos += ENTRY_PAGE_LENGTH;
 			bigJump = true;
 		} else if(pressed & KEY_A) {
+			selection:
 			if(topMenuContents[tmCurPos].name == "fat:") {
 				chdir("fat:/");
 				return "";
@@ -352,6 +354,14 @@ std::string topMenuSelect(void) {
 				showTopMenu(topMenuContents);
 				bigJump = true; // Stay at the bottom of the list
 			}
+		} else if(pressed & KEY_TOUCH) {
+			touchRead(&touch);
+			for(int i=0;i<ENTRIES_PER_SCREEN;i++) {
+				if(touch.py > (i+1)*16 && touch.py < (i+2)*16) {
+					tmCurPos = i;
+					goto selection;
+				}
+			}
 		}
 
 		if(tmCurPos < 0) {
@@ -378,6 +388,7 @@ std::string topMenuSelect(void) {
 
 std::string browseForFile(const std::vector<std::string>& extensionList, bool directoryNavigation) {
 	int pressed = 0, held = 0, screenOffset = 0, fileOffset = 0;
+	touchPosition touch;
 	bool bigJump = false;
 	std::vector<DirEntry> dirContents;
 
@@ -420,6 +431,7 @@ std::string browseForFile(const std::vector<std::string>& extensionList, bool di
 			fileOffset = bigJump ? dirContents.size()-1 : 0;
 			bigJump = true;
 		} else if(pressed & KEY_A) {
+			selection:
 			DirEntry* entry = &dirContents.at(fileOffset);
 			if(entry->isDirectory && directoryNavigation) {
 				// Enter selected directory
@@ -456,6 +468,14 @@ std::string browseForFile(const std::vector<std::string>& extensionList, bool di
 				std::ofstream favs(sdFound() ? "sd:/_nds/pkmn-chest/favorites.lst" : "fat:/_nds/pkmn-chest/favorites.lst", std::fstream::app);
 				favs << path << dirContents[fileOffset].name << std::endl;
 				favs.close();
+			}
+		} else if(pressed & KEY_TOUCH) {
+			touchRead(&touch);
+			for(int i=0;i<ENTRIES_PER_SCREEN;i++) {
+				if(touch.py > (i+1)*16 && touch.py < (i+2)*16) {
+					fileOffset = i;
+					goto selection;
+				}
 			}
 		}
 

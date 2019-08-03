@@ -458,10 +458,12 @@ void manageBoxes(void) {
 	bool heldPokemonScreen = false, heldMode = false;
 	topScreen = false;
 	u16 pressed = 0, held = 0;
+	touchPosition touch;
 	while(1) {
 		do {
 			swiWaitForVBlank();
 			scanKeys();
+			touchRead(&touch);
 			pressed = keysDown();
 			held = keysDownRepeat();
 		} while(!held);
@@ -483,7 +485,7 @@ void manageBoxes(void) {
 		} else if(held & KEY_RIGHT && arrowY == -1) {
 			goto switchBoxRight;
 		}
-		if(held & KEY_L) {
+		if(held & KEY_L || (touch.px > 6 && touch.px < 26 && touch.py > 19 && touch.py < 37)) {
 			switchBoxLeft:
 			if(currentBox() > 0)
 				(topScreen ? currentBankBox : currentSaveBox)--;
@@ -492,7 +494,7 @@ void manageBoxes(void) {
 			drawBox(topScreen, true);
 			if(!heldMode && currentBox() == heldPokemonBox && topScreen == heldPokemonScreen)
 				setSpriteVisibility(heldPokemon, false);
-		} else if(held & KEY_R) {
+		} else if(held & KEY_R || (touch.px > 141 && touch.px < 161 && touch.py > 19 && touch.py < 37)) {
 			switchBoxRight:
 			if((topScreen ? currentBankBox < Banks::bank->boxes()-1 : currentSaveBox < save->maxBoxes()-1))
 				(topScreen ? currentBankBox : currentSaveBox)++;
@@ -502,6 +504,7 @@ void manageBoxes(void) {
 				setSpriteVisibility(heldPokemon, false);
 		}
 		if(pressed & KEY_A) {
+			selection:
 			Sound::play(Sound::click);
 			if(arrowY == -1) {
 				if(arrowMode == 0 && heldPokemon == -1)
@@ -567,6 +570,25 @@ void manageBoxes(void) {
 					aMenu((arrowY*6)+arrowX, aMenuEmptySlotButtons, 2);
 				}
 			}
+		} else if(pressed & KEY_TOUCH) {
+			for(int x=0;x<6;x++) {
+				for(int y=0;y<6;y++) {
+					if(touch.px > 8+(x*24) && touch.px < 8+((x+1)*24) && touch.py > 32+(y*24) && touch.py < 32+((y+1)*24)) {
+						if(arrowX == x && arrowY == y && topScreen == false)	goto selection;
+						else {
+							if(topScreen) {
+								topScreen = false;
+								setSpriteVisibility(topArrowID, false);
+								setSpriteVisibility(topHeldPokemonID, false);
+								setSpriteVisibility(bottomArrowID, true);
+								setSpriteVisibility(bottomHeldPokemonID, true);
+							}
+							arrowX = x;
+							arrowY = y;
+						}
+					}
+				}
+			}
 		}
 
 		if(pressed & KEY_X && heldPokemon == -1) {
@@ -613,7 +635,7 @@ void manageBoxes(void) {
 			}
 		}
 
-		if((held & KEY_UP || held & KEY_DOWN || held & KEY_LEFT || held & KEY_RIGHT || held & KEY_L || held & KEY_R) && heldPokemon == -1) {
+		if((held & KEY_UP || held & KEY_DOWN || held & KEY_LEFT || held & KEY_RIGHT || held & KEY_L || held & KEY_R || held & KEY_TOUCH) && heldPokemon == -1) {
 			// If the cursor is moved and we're not holding a Pokémon, draw the new one
 			if(arrowY != -1)	drawPokemonInfo(currentPokemon((arrowY*6)+arrowX));
 			else	drawPokemonInfo(save->emptyPkm());

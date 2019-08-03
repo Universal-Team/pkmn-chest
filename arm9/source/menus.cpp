@@ -803,6 +803,7 @@ int selectMove(int currentMove) {
 	}
 
 	int held, pressed, screenPos = currentMove, newMove = currentMove, entriesPerScreen = 9;
+	touchPosition touch;
 	while(1) {
 		do {
 			swiWaitForVBlank();
@@ -827,6 +828,14 @@ int selectMove(int currentMove) {
 			return newMove;
 		} if(pressed & KEY_B) {
 			return currentMove;
+		} else if(pressed & KEY_TOUCH) {
+			touchRead(&touch);
+			for(int i=0;i<entriesPerScreen;i++) {
+				if(touch.px >= 4 && touch.px <= 4+getTextWidth(Lang::moves[screenPos+i]) && touch.py >= 4+(i*20) && touch.py <= 4+((i+1)*20)) {
+					return screenPos+i;
+					break;
+				}
+			}
 		}
 
 		// Scroll screen if needed
