@@ -10,8 +10,8 @@ extern bool topScreen;
 extern int bottomArrowID, topArrowID, shinyID, currentSaveBox, currentBankBox, bottomHeldPokemonID, topHeldPokemonID, arrowMode;
 extern std::vector<int> menuIconID, partyIconID;
 extern std::string savePath;
-extern std::vector<u16> arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, boxBgBottom, boxBgTop, boxButton, fileBrowseBg, infoBox, menuBg, menuButton, menuButtonBlue, menuIconSheet, optionsBg, pokemonSheet, shiny, summaryBg, types;
-extern ImageData ballSheetData, bankBoxData, boxBgBottomData, boxBgTopData, boxButtonData, fileBrowseBgData, infoBoxData, menuBgData, menuButtonData, menuButtonBlueData, menuIconSheetData, optionsBgData, pokemonSheetData, shinyData, summaryBgData, typesData;
+extern std::vector<u16> arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, boxBgBottom, boxBgTop, boxButton, fileBrowseBg, infoBox, menuBg, menuButton, menuButtonBlue, menuIconSheet, optionsBg, pokemonSheet, search, shiny, summaryBg, types;
+extern ImageData ballSheetData, bankBoxData, boxBgBottomData, boxBgTopData, boxButtonData, fileBrowseBgData, infoBoxData, menuBgData, menuButtonData, menuButtonBlueData, menuIconSheetData, optionsBgData, pokemonSheetData, searchData, shinyData, summaryBgData, typesData;
 
 // Returns the current box for the cursor's current screen
 int currentBox(void);

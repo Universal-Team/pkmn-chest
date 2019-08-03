@@ -781,6 +781,9 @@ void drawMoveList(int screenPos, std::vector<std::string> moveList) {
 	if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
 	else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
 
+	// Draw search icon
+	drawImage(256-searchData.width, 0, searchData.width, searchData.height, search, false);
+
 	// Print moves
 	for(unsigned i=0;i<std::min(9u, moveList.size());i++) {
 		printText(moveList[screenPos+i], 4, 4+(i*20), false);
@@ -835,12 +838,16 @@ int selectMove(int currentMove) {
 				if(touch.px >= 4 && touch.px <= 4+getTextWidth(moveList[screenPos+i]) && touch.py >= 4+(i*20) && touch.py <= 4+((i+1)*20)) {
 					return screenPos+i;
 					break;
+				} else if(touch.px >= 256-searchData.width && touch.py <= searchData.height) {
+					goto search;
 				}
 			}
 		} else if(pressed & KEY_Y) {
+			search:
 			std::string str = Input::getLine();
 			if(str != "") {
 				moveList.clear();
+				moveList.push_back("-----");
 				for(int i=0;i<save->maxMove();i++) {
 					if(strncasecmp(str.c_str(), Lang::moves[i].c_str(), str.length()) == 0) {
 						moveList.push_back(Lang::moves[i]);
@@ -848,8 +855,8 @@ int selectMove(int currentMove) {
 				}
 				newMove = 0;
 				screenPos = 0;
-				drawMoveList(screenPos, moveList);
 			}
+			drawMoveList(screenPos, moveList);
 		}
 
 		// Scroll screen if needed
