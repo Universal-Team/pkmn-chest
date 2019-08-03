@@ -362,7 +362,6 @@ int aMenu(int pkmPos, std::vector<TextPos>& buttons, int buttonMode) {
 				pkm->otName(save->otName());
 				pkm->otGender(save->gender());
 				pkm->ball(4);
-				pkm->setAbility(0);
 				pkm->encryptionConstant((((u32)randomNumbers()) % 0xFFFFFFFF) + 1);
 				pkm->version(save->version());
 				switch (pkm->version()) {

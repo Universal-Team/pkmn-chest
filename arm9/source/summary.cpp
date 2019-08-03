@@ -176,6 +176,7 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 						if(num > 0) {
 							pkm->species(num);
 							if(!pkm->nicknamed())	pkm->nickname(Lang::species[num]);
+							pkm->setAbility(0);
 						}
 						break;
 					} case 1: {
