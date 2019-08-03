@@ -777,31 +777,26 @@ int selectForm(int dexNo, int currentForm) {
 	}
 }
 
-void drawMoveList(int screenPos) {
+void drawMoveList(int screenPos, std::vector<std::string> moveList) {
 	// Clear the screen
 	if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
 	else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
 
 	// Print moves
-	for(int i=0;i<9;i++) {
-		printText(Lang::moves[screenPos+i], 4, 4+(i*20), false);
+	for(unsigned i=0;i<std::min(9u, moveList.size());i++) {
+		printText(moveList[screenPos+i], 4, 4+(i*20), false);
 	}
 }
 
 int selectMove(int currentMove) {
-	// Clear the screen
-	if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
-	else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
-
 	// Set arrow position
 	setSpritePosition(bottomArrowID, 4+getTextWidth(Lang::moves[currentMove]), -2);
 	setSpriteVisibility(bottomArrowID, true);
 	updateOam();
 
 	// Print moves
-	for(int i=0;i<9;i++) {
-		printText(Lang::moves[currentMove+i], 4, 4+(i*20), false);
-	}
+	std::vector<std::string> moveList = Lang::moves;
+	drawMoveList(currentMove, moveList);
 
 	int held, pressed, screenPos = currentMove, newMove = currentMove, entriesPerScreen = 9;
 	touchPosition touch;
@@ -815,41 +810,60 @@ int selectMove(int currentMove) {
 
 		if(held & KEY_UP) {
 			if(newMove > 0)	newMove--;
-			else	newMove = save->maxMove();
+			else	newMove = std::min(save->maxMove(), (int)moveList.size()-1);
 		} else if(held & KEY_DOWN) {
-			if(newMove < save->maxMove())	newMove++;
+			if(newMove < std::min(save->maxMove(), (int)moveList.size()-1))	newMove++;
 			else newMove = 0;
 		} else if(held & KEY_LEFT) {
 			newMove -= entriesPerScreen;
 			if(newMove < 0)	newMove = 0;
 		} else if(held & KEY_RIGHT) {
 			newMove += entriesPerScreen;
-			if(newMove > save->maxMove())	newMove = save->maxMove();
+			if(newMove > std::min(save->maxMove(), (int)moveList.size()-1))	newMove = std::min(save->maxMove(), (int)moveList.size()-1);
 		} else if(pressed & KEY_A) {
-			return newMove;
+			Sound::play(Sound::click);
+			for(int i=0;i<save->maxMove();i++) {
+				if(moveList[newMove] == Lang::moves[i]) {
+					return i;
+				}
+			}
 		} if(pressed & KEY_B) {
+			Sound::play(Sound::back);
 			return currentMove;
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
 			for(int i=0;i<entriesPerScreen;i++) {
-				if(touch.px >= 4 && touch.px <= 4+getTextWidth(Lang::moves[screenPos+i]) && touch.py >= 4+(i*20) && touch.py <= 4+((i+1)*20)) {
+				if(touch.px >= 4 && touch.px <= 4+getTextWidth(moveList[screenPos+i]) && touch.py >= 4+(i*20) && touch.py <= 4+((i+1)*20)) {
 					return screenPos+i;
 					break;
 				}
+			}
+		} else if(pressed & KEY_Y) {
+			std::string str = Input::getLine();
+			if(str != "") {
+				moveList.clear();
+				for(int i=0;i<save->maxMove();i++) {
+					if(strncasecmp(str.c_str(), Lang::moves[i].c_str(), str.length()) == 0) {
+						moveList.push_back(Lang::moves[i]);
+					}
+				}
+				newMove = 0;
+				screenPos = 0;
+				drawMoveList(screenPos, moveList);
 			}
 		}
 
 		// Scroll screen if needed
 		if(newMove < screenPos) {
 			screenPos = newMove;
-			drawMoveList(screenPos);
+			drawMoveList(screenPos, moveList);
 		} else if(newMove > screenPos + entriesPerScreen - 1) {
 			screenPos = newMove - entriesPerScreen + 1;
-			drawMoveList(screenPos);
+			drawMoveList(screenPos, moveList);
 		}
 
 		// Move cursor
-		setSpritePosition(bottomArrowID, 4+getTextWidth(Lang::moves[newMove]), (20*(newMove-screenPos)-2));
+		setSpritePosition(bottomArrowID, 4+getTextWidth(moveList[newMove]), (20*(newMove-screenPos)-2));
 		updateOam();
 	}
 }
@@ -889,6 +903,7 @@ std::shared_ptr<PKX> selectMoves(std::shared_ptr<PKX> pkm) {
 		} else if(held & KEY_RIGHT) {
 			selection = 3;
 		} else if(pressed & KEY_A) {
+			Sound::play(Sound::click);
 			optionSelected = true;
 		} else if(pressed & KEY_B) {
 			Sound::play(Sound::back);
