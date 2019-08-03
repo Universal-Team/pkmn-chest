@@ -321,7 +321,7 @@ int aMenu(int pkmPos, std::vector<TextPos>& buttons, int buttonMode) {
 					std::ifstream in(fileName);
 					u8* buffer = 0;
 					in.read((char*)buffer, 136);
-					if(topScreen)	Banks::bank->pkm(save->emptyPkm()->getPKM(fileName.substr(fileName.size()-1) == "4" ? Generation::FOUR : Generation::FIVE, buffer), currentSaveBox, pkmPos);
+					if(topScreen)	Banks::bank->pkm(save->emptyPkm()->getPKM(fileName.substr(fileName.size()-1) == "4" ? Generation::FOUR : Generation::FIVE, buffer), currentBankBox, pkmPos);
 					else	save->pkm(save->emptyPkm()->getPKM(fileName.substr(fileName.size()-1) == "4" ? Generation::FOUR : Generation::FIVE, buffer), currentSaveBox, pkmPos, false);
 				}
 				
@@ -329,8 +329,8 @@ int aMenu(int pkmPos, std::vector<TextPos>& buttons, int buttonMode) {
 				chdir(path);
 				if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
 				else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
-				drawBox(false);
-				if(topScreen)	drawBox(topScreen);
+				drawBox(false, !topScreen);
+				if(topScreen)	drawBox(topScreen, topScreen);
 				drawPokemonInfo(currentPokemon(pkmPos));
 
 				if(!topScreen)	setSpriteVisibility(bottomArrowID, true);
