@@ -85,7 +85,7 @@ public:
 	virtual void resign(void) = 0;
 
 	static bool isValidDSSave(u8* dt);
-	static std::unique_ptr<Sav> getSave(u8* dt);
+	static std::unique_ptr<Sav> getSave(u8* dt, size_t length);
 
 	virtual u16 TID(void) const               = 0;
 	virtual void TID(u16 v)                   = 0;

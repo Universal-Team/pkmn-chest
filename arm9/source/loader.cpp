@@ -15,8 +15,8 @@ bool loadSave(std::string savePath) {
 	saveFileName = savePath;
 	std::ifstream in(savePath);
 	char* saveData = nullptr;
+	u32 size;
 	if(in.good()) {
-		u32 size;
 		in.seekg(0, in.end);
 		size = in.tellg();
 		in.seekg(0, in.beg);
@@ -28,7 +28,7 @@ bool loadSave(std::string savePath) {
 		return false;
 	}
 	in.close();
-	save = Sav::getSave((u8*)saveData);
+	save = Sav::getSave((u8*)saveData, size);
 	delete[] saveData;
 	if(!save) {
 		saveFileName = "";

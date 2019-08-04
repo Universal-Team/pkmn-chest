@@ -82,7 +82,9 @@ bool Sav::isValidDSSave(u8* dt) {
 	return false;
 }
 
-	std::unique_ptr<Sav> Sav::getSave(u8* dt) {
+std::unique_ptr<Sav> Sav::getSave(u8* dt, size_t length) {
+	if(length < 0x80000)	return nullptr;
+
 	u16 chk1    = *(u16*)(dt + 0x24000 - 0x100 + 0x8C + 0xE);
 	u16 actual1 = ccitt16(dt + 0x24000 - 0x100, 0x8C);
 	if(chk1 == actual1) {
