@@ -785,7 +785,7 @@ void drawMoveList(int screenPos, std::vector<std::string> moveList) {
 	drawImage(256-searchData.width, 0, searchData.width, searchData.height, search, false);
 
 	// Print moves
-	for(unsigned i=0;i<std::min(9u, moveList.size());i++) {
+	for(unsigned i=0;i<std::min(9u, moveList.size()-screenPos);i++) {
 		printText(moveList[screenPos+i], 4, 4+(i*20), false);
 	}
 }
@@ -797,7 +797,7 @@ int selectMove(int currentMove) {
 	updateOam();
 
 	// Print moves
-	std::vector<std::string> moveList = Lang::moves;
+	std::vector<std::string> moveList(&Lang::moves[0], &Lang::moves[save->maxMove()+1]);
 	drawMoveList(currentMove, moveList);
 
 	int held, pressed, screenPos = currentMove, newMove = currentMove, entriesPerScreen = 9;
@@ -824,7 +824,7 @@ int selectMove(int currentMove) {
 			if(newMove > std::min(save->maxMove(), (int)moveList.size()-1))	newMove = std::min(save->maxMove(), (int)moveList.size()-1);
 		} else if(pressed & KEY_A) {
 			Sound::play(Sound::click);
-			for(int i=0;i<save->maxMove();i++) {
+			for(int i=0;i<save->maxMove()+1;i++) {
 				if(moveList[newMove] == Lang::moves[i]) {
 					return i;
 				}
@@ -845,17 +845,15 @@ int selectMove(int currentMove) {
 		} else if(pressed & KEY_Y) {
 			search:
 			std::string str = Input::getLine();
-			if(str != "") {
 				moveList.clear();
-				moveList.push_back("-----");
-				for(int i=0;i<save->maxMove();i++) {
+				if(str != "")	moveList.push_back("-----");
+				for(int i=0;i<save->maxMove()+1;i++) {
 					if(strncasecmp(str.c_str(), Lang::moves[i].c_str(), str.length()) == 0) {
 						moveList.push_back(Lang::moves[i]);
 					}
 				}
 				newMove = 0;
 				screenPos = 0;
-			}
 			drawMoveList(screenPos, moveList);
 		}
 
