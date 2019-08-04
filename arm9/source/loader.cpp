@@ -14,9 +14,9 @@ std::shared_ptr<Sav> save;
 bool loadSave(std::string savePath) {
 	saveFileName = savePath;
 	std::ifstream in(savePath);
-	u32 size;
 	char* saveData = nullptr;
 	if(in.good()) {
+		u32 size;
 		in.seekg(0, in.end);
 		size = in.tellg();
 		in.seekg(0, in.beg);
@@ -28,7 +28,7 @@ bool loadSave(std::string savePath) {
 		return false;
 	}
 	in.close();
-	save = Sav::getSave((u8*)saveData, size);
+	save = Sav::getSave((u8*)saveData);
 	delete[] saveData;
 	if(!save) {
 		saveFileName = "";

@@ -49,26 +49,6 @@ u16 Sav::ccitt16(const u8* buf, u32 len) {
 	return crc;
 }
 
-std::unique_ptr<Sav> Sav::getSave(u8* dt, size_t length) {
-	switch(length) {
-		case 0x6CC00:
-			// return std::make_unique<SavUSUM>(dt);
-		case 0x6BE00:
-			// return std::make_unique<SavSUMO>(dt);
-		case 0x76000:
-			// return std::make_unique<SavORAS>(dt);
-		case 0x65600:
-			// return std::make_unique<SavXY>(dt);
-		case 0x80000:
-			return checkDSType(dt);
-		case 0xB8800:
-		case 0x100000:
-			// return std::make_unique<SavLGPE>(dt);
-		default:
-			return std::unique_ptr<Sav>(nullptr);
-	}
-}
-
 bool Sav::isValidDSSave(u8* dt) {
 	u16 chk1    = *(u16*)(dt + 0x24000 - 0x100 + 0x8C + 0xE);
 	u16 actual1 = ccitt16(dt + 0x24000 - 0x100, 0x8C);
@@ -102,7 +82,7 @@ bool Sav::isValidDSSave(u8* dt) {
 	return false;
 }
 
-std::unique_ptr<Sav> Sav::checkDSType(u8* dt) {
+	std::unique_ptr<Sav> Sav::getSave(u8* dt) {
 	u16 chk1    = *(u16*)(dt + 0x24000 - 0x100 + 0x8C + 0xE);
 	u16 actual1 = ccitt16(dt + 0x24000 - 0x100, 0x8C);
 	if(chk1 == actual1) {

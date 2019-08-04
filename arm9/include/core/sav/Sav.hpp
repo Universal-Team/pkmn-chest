@@ -76,7 +76,6 @@ class Sav {
 	u32 length = 0;
 	Game game;
 	static u16 ccitt16(const u8* buf, u32 len);
-	static std::unique_ptr<Sav> checkDSType(u8* dt);
 	static bool validSequence(u8* dt, u8* pattern, int shift = 0);
 
 public:
@@ -86,7 +85,7 @@ public:
 	virtual void resign(void) = 0;
 
 	static bool isValidDSSave(u8* dt);
-	static std::unique_ptr<Sav> getSave(u8* dt, size_t length);
+	static std::unique_ptr<Sav> getSave(u8* dt);
 
 	virtual u16 TID(void) const               = 0;
 	virtual void TID(u16 v)                   = 0;
