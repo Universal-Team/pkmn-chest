@@ -4,12 +4,15 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"label": "make",
+			"label": "Make",
 			"command": "make",
 			"args": ["-s"],
 			"group": {
 				"kind": "build",
 				"isDefault": true
+			},
+			"presentation": {
+				"reveal": "silent"
 			}
 		}
 	]
