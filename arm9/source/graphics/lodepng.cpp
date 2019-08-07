@@ -2179,15 +2179,15 @@ unsigned char lodepng_chunk_type_equals(const unsigned char* chunk, const char* 
 }
 
 unsigned char lodepng_chunk_ancillary(const unsigned char* chunk) {
-	return((chunk[4] & 32) != 0);
+	return ((chunk[4] & 32) != 0);
 }
 
 unsigned char lodepng_chunk_private(const unsigned char* chunk) {
-	return((chunk[6] & 32) != 0);
+	return ((chunk[6] & 32) != 0);
 }
 
 unsigned char lodepng_chunk_safetocopy(const unsigned char* chunk) {
-	return((chunk[7] & 32) != 0);
+	return ((chunk[7] & 32) != 0);
 }
 
 unsigned char* lodepng_chunk_data(unsigned char* chunk) {
@@ -3217,11 +3217,11 @@ unsigned lodepng_convert_rgb(
 
 	/* now convert to output format */
 	if(mode_out->colortype == LCT_GREY || mode_out->colortype == LCT_GREY_ALPHA) {
-		*r_out = r >> shift ;
+		*r_out = r >> shift;
 	} else if(mode_out->colortype == LCT_RGB || mode_out->colortype == LCT_RGBA) {
-		*r_out = r >> shift ;
-		*g_out = g >> shift ;
-		*b_out = b >> shift ;
+		*r_out = r >> shift;
+		*g_out = g >> shift;
+		*b_out = b >> shift;
 	} else if(mode_out->colortype == LCT_PALETTE) {
 		unsigned i;
 		/* a 16-bit color cannot be in the palette */

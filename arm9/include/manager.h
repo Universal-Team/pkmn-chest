@@ -16,7 +16,7 @@ extern ImageData ballSheetData, bankBoxData, boxBgBottomData, boxBgTopData, boxB
 // Returns the current box for the cursor's current screen
 int currentBox(void);
 
-/* 
+/*
  * Returns the Pokémon in the provided slot
  * on the cursor's current screen
  */

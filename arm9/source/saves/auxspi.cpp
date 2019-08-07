@@ -8,19 +8,19 @@
  *
  * Copyright (C) Pokedoc (2010)
  */
-/* 
- * This program is free software; you can redistribute it and/or modify 
- * it under the terms of the GNU General Public License as published by 
- * the Free Software Foundation; either version 2 of the License, or 
+/*
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  * for more details.
- * 
- * You should have received a copy of the GNU General Public License along 
- * with this program; if not, write to the Free Software Foundation, Inc., 
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
@@ -30,8 +30,6 @@
 
 #include "auxspi_core.inc"
 #include "globals.h"
-
-using std::max;
 
 // ========================================================
 //  local functions
@@ -91,11 +89,11 @@ uint8 auxspi_save_type(auxspi_extra extra)
 {
 	uint32 jedec = auxspi_save_jedec_id(extra); // 9f
 	int8 sr = auxspi_save_status_register(extra); // 05
-	
+
 	if((sr & 0xfd) == 0xF0 && (jedec == 0x00ffffff)) return 1;
 	if((sr & 0xfd) == 0x00 && (jedec == 0x00ffffff)) return 2;
 	if((sr & 0xfd) == 0x00 && (jedec != 0x00ffffff)) return 3;
-	
+
 	return 0;
 }
 
@@ -127,14 +125,14 @@ uint32 auxspi_save_jedec_id(auxspi_extra extra)
 	uint32 id = 0;
 	if(extra)
 		auxspi_disable_extra(extra);
-	
+
 	auxspi_open(0);
 	auxspi_write(0x9f);
 	id |= auxspi_read() << 16;
 	id |= auxspi_read() << 8;
 	id |= auxspi_read();
 	auxspi_close();
-	
+
 	return id;
 }
 
@@ -162,7 +160,7 @@ void auxspi_read_data(uint32 addr, uint8* buf, uint32 cnt, uint8 type, auxspi_ex
 	auxspi_write(0x03 | ((type == 1) ? addr>>8<<3 : 0));
 	if(type == 3) {
 		auxspi_write((addr >> 16) & 0xFF);
-	} 
+	}
 	if(type >= 2) {
 		auxspi_write((addr >> 8) & 0xFF);
 	}
@@ -199,7 +197,7 @@ void auxspi_write_data(uint32 addr, uint8 *buf, uint32 cnt, uint8 type, auxspi_e
 		// set WEL (Write Enable Latch)
 		auxspi_write(0x06);
 		auxspi_close_lite();
-		
+
 		if(extra)
 			auxspi_disable_extra(extra);
 		// swiWaitForVBlank();
@@ -222,7 +220,7 @@ void auxspi_write_data(uint32 addr, uint8 *buf, uint32 cnt, uint8 type, auxspi_e
 			auxspi_write(addr & 0xFF);
 		}
 
-		for(i=0; addr < addr_end && i < maxblocks; i++, addr++) { 
+		for(i=0; addr < addr_end && i < maxblocks; i++, addr++) {
 			auxspi_write(*buf++);
 		}
 		// iprintf("%d\n",addr);
@@ -284,7 +282,7 @@ void auxspi_disable_big_protection()
 		return;
 	doonce = true;
 	sysSetBusOwners(true, true);
-	
+
 	auxspi_open(3);
 	auxspi_write(0xf1);
 	auxspi_wait_busy();
@@ -294,7 +292,7 @@ void auxspi_disable_big_protection()
 	auxspi_write(0x6);
 	auxspi_wait_busy();
 	auxspi_close_lite();
-	
+
 	auxspi_open(3);
 	auxspi_write(0xfa);
 	auxspi_wait_busy();
@@ -304,7 +302,7 @@ void auxspi_disable_big_protection()
 	auxspi_wait_busy();
 	auxspi_close();
 	// --
-	
+
 	auxspi_open(3);
 	auxspi_write(0x14);
 	auxspi_wait_busy();
@@ -314,7 +312,7 @@ void auxspi_disable_big_protection()
 	auxspi_write(0x6);
 	auxspi_wait_busy();
 	auxspi_close_lite();
-	
+
 	auxspi_open(3);
 	auxspi_write(0xf8);
 	auxspi_wait_busy();
@@ -324,24 +322,24 @@ void auxspi_disable_big_protection()
 	auxspi_wait_busy();
 	auxspi_close();
 	// --
-	
+
 	auxspi_open(3);
 	auxspi_write(0xe);
 	auxspi_wait_busy();
 	auxspi_close();
-	
+
 }
 
 auxspi_extra auxspi_has_extra()
 {
 	sysSetBusOwners(true, true);
-	
+
 	// Trying to read the save size in IR mode will fail on non-IR devices.
 	// If we have success, it is an IR device.
 	u8 size2 = auxspi_save_size_log_2(AUXSPI_INFRARED);
 	if(size2 > 0)
 		return AUXSPI_INFRARED;
-	
+
 	// It is not an IR game, so maybe it is a regular game.
 	u8 size1 = auxspi_save_size_log_2();
 	if(size1 > 0)
@@ -355,9 +353,9 @@ auxspi_extra auxspi_has_extra()
 	if(jedec == 0x00ffffff)
 		return AUXSPI_BBDX;
 #endif
-	
+
 	// TODO: add support for Pokemon Typing DS (as soon as we figure out how)
-	
+
 	return AUXSPI_FLASH_CARD;
 }
 
@@ -374,7 +372,7 @@ void auxspi_erase(auxspi_extra extra)
 			// set WEL (Write Enable Latch)
 			auxspi_write(0x06);
 			auxspi_close_lite();
-			
+
 			if(extra)
 				auxspi_disable_extra(extra);
 			auxspi_open(0);
@@ -383,7 +381,7 @@ void auxspi_erase(auxspi_extra extra)
 			auxspi_write(0);
 			auxspi_write(0);
 			auxspi_close_lite();
-			
+
 			// wait for programming to finish
 			if(extra)
 				auxspi_disable_extra(extra);
@@ -394,7 +392,7 @@ void auxspi_erase(auxspi_extra extra)
 			auxspi_close();
 		}
 	} else {
-		int32 size = 1 << max(0, (auxspi_save_size_log_2(extra) - 15));
+		int32 size = 1 << std::max(0, (auxspi_save_size_log_2(extra) - 15));
 		memset(data, 0, 0x8000);
 		for(int i = 0; i < size; i++) {
 			auxspi_write_data(i << 15, data, 0x8000, type, extra);
@@ -412,7 +410,7 @@ void auxspi_erase_sector(u32 sector, auxspi_extra extra)
 		// set WEL (Write Enable Latch)
 		auxspi_write(0x06);
 		auxspi_close_lite();
-		
+
 		if(extra)
 			auxspi_disable_extra(extra);
 		auxspi_open(0);
@@ -421,7 +419,7 @@ void auxspi_erase_sector(u32 sector, auxspi_extra extra)
 		auxspi_write((sector >> 8) & 0xff);
 		auxspi_write((sector >> 8) & 0xff);
 		auxspi_close_lite();
-		
+
 		// wait for programming to finish
 		if(extra)
 			auxspi_disable_extra(extra);

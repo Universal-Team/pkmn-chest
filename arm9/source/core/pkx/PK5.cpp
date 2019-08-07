@@ -488,8 +488,7 @@ u16 PK5::PSV(void) const {
 u8 PK5::level(void) const {
 	u8 i      = 1;
 	u8 xpType = expType();
-	while(experience() >= expTable(i, xpType) && ++i < 100)
-		;
+	while(experience() >= expTable(i, xpType) && ++i < 100);
 	return i;
 }
 

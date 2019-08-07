@@ -135,7 +135,7 @@ int aMenu(int pkmPos, std::vector<TextPos>& buttons, int buttonMode) {
 			pressed = keysDown();
 			held = keysDownRepeat();
 		} while(!held);
-		
+
 		if(held & KEY_UP) {
 			if(menuSelection > 0)	menuSelection--;
 		} else if(held & KEY_DOWN) {
@@ -173,7 +173,7 @@ int aMenu(int pkmPos, std::vector<TextPos>& buttons, int buttonMode) {
 				int form = currentPokemon(pkmPos)->alternativeForm();
 				if(topScreen)	Banks::bank->pkm(showPokemonSummary(currentPokemon(pkmPos)), currentBankBox, pkmPos);
 				else	save->pkm(showPokemonSummary(currentPokemon(pkmPos)), currentSaveBox, pkmPos, false);
-				
+
 				// Redraw screen
 				if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
 				else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
@@ -237,10 +237,10 @@ int aMenu(int pkmPos, std::vector<TextPos>& buttons, int buttonMode) {
 				// Clear buttons
 				if(sdFound())	drawImageFromSheet(170, 0, 86, 192, boxBgBottom, boxBgBottomData.width, 170, 0, false);
 				else	drawRectangle(170, 0, 86, 192, DARK_GRAY, false);
-				
+
 				// Select a box
 				int num = selectBox(topScreen ? currentBankBox : currentSaveBox);
-				
+
 				// Clear mini boxes
 				if(sdFound())	drawImageFromSheet(170, 0, 86, 192, boxBgBottom, boxBgBottomData.width, 170, 0, false);
 				else	drawRectangle(170, 0, 86, 192, DARK_GRAY, false);
@@ -334,7 +334,7 @@ int aMenu(int pkmPos, std::vector<TextPos>& buttons, int buttonMode) {
 				// Get a pk4/5
 				std::vector<std::string> extList = {"pk4", "pk5"};
 				std::string fileName = browseForFile(extList, false);
-				
+
 				// If the fileName isn't blank, inject the Pokémon
 				if(fileName != "") {
 					std::ifstream in(fileName);
@@ -343,7 +343,7 @@ int aMenu(int pkmPos, std::vector<TextPos>& buttons, int buttonMode) {
 					if(topScreen)	Banks::bank->pkm(save->emptyPkm()->getPKM(fileName.substr(fileName.size()-1) == "4" ? Generation::FOUR : Generation::FIVE, buffer), currentBankBox, pkmPos);
 					else	save->pkm(save->emptyPkm()->getPKM(fileName.substr(fileName.size()-1) == "4" ? Generation::FOUR : Generation::FIVE, buffer), currentSaveBox, pkmPos, false);
 				}
-				
+
 				// Reset & redraw screen
 				chdir(path);
 				if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
@@ -392,7 +392,7 @@ int aMenu(int pkmPos, std::vector<TextPos>& buttons, int buttonMode) {
 
 				if(topScreen)	Banks::bank->pkm(showPokemonSummary(pkm), currentBankBox, pkmPos);
 				else	save->pkm(showPokemonSummary(pkm), currentSaveBox, pkmPos, false);
-				
+
 				// Redraw screen
 				if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
 				else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
@@ -467,7 +467,7 @@ bool xMenu(void) {
 
 	// Make bottom arrow red
 	fillSpriteImage(bottomArrowID, arrowRed);
-	
+
 	// Draw background
 	if(sdFound())	drawImage(0, 0, menuBgData.width, menuBgData.height, menuBg, false);
 	else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
@@ -956,7 +956,7 @@ int selectNature(int currentNature) {
 		printTextCenteredTintedMaxW(Lang::statsLabels[5], 48, 1, RGB::BLUE, ((x++)*48), 4, false);
 		printTextCenteredTintedMaxW(Lang::statsLabels[3], 48, 1, RGB::BLUE, ((x++)*48), 4, false);
 		printTextCenteredTintedMaxW(Lang::statsLabels[4], 48, 1, RGB::BLUE, ((x++)*48), 4, false);
-		
+
 		int y = 0;
 		printTextTintedScaled(Lang::statsLabels[1], 0.8, 0.8, RGB::RED, 1, ((y++)*32)+22, false);
 		printTextTintedScaled(Lang::statsLabels[2], 0.8, 0.8, RGB::RED, 1, ((y++)*32)+22, false);
@@ -1130,7 +1130,7 @@ void drawStatsPage(std::shared_ptr<PKX> pkm) {
 	snprintf(textStatsR1[4].text,  sizeof(textStatsR1[4].text), "%i", pkm->baseSpd());
 	snprintf(textStatsR1[5].text,  sizeof(textStatsR1[5].text), "%i", pkm->baseSpe());
 
-	// Set & print other stat info and 
+	// Set & print other stat info and
 	for(unsigned i=0;i<(sizeof(textStatsR1)/sizeof(textStatsR1[0]));i++) {
 		snprintf(textStatsR2[i].text,  sizeof(textStatsR2[i].text), "%i", pkm->iv(i));
 		snprintf(textStatsR3[i].text,  sizeof(textStatsR3[i].text), "%i", pkm->ev(i));
