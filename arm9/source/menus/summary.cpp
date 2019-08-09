@@ -5,7 +5,7 @@
 #include "loader.h"
 #include "input.h"
 #include "manager.h"
-#include "menus.h"
+#include "misc.h"
 #include "sound.h"
 
 struct Text {

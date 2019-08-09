@@ -82,6 +82,7 @@
 		"variant": "cpp",
 		"filesystem": "cpp",
 		"*.inc": "cpp",
-		"*.tcc": "cpp"
+		"*.tcc": "cpp",
+		"memory_resource": "cpp"
 	}
 }

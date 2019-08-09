@@ -6,7 +6,8 @@
 #include "langStrings.h"
 #include "loader.h"
 #include "loading.h"
-#include "menus.h"
+#include "aMenu.h"
+#include "xMenu.h"
 #include "sound.h"
 
 bool topScreen;

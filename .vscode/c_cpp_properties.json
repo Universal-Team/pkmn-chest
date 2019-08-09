@@ -1,7 +1,7 @@
 {
 	"configurations": [
 		{
-			"name": "NDS | macOS/Linix",
+			"name": "NDS | macOS/Linux",
 			"includePath": [
 				"${workspaceFolder}/**",
 				"/opt/devkitpro/libnds/include/**",

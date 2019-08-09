@@ -20,12 +20,14 @@ SOURCES		:=	source \
 				source/core/ source/core/sav source/core/personal source/core/pkx \
 				source/graphics \
 				source/lang \
+				source/menus \
 				source/saves
 INCLUDES	:=	include \
 				include/common include/common/utils \
 				include/core/ include/core/sav include/core/personal include/core/pkx \
 				include/graphics \
 				include/lang \
+				include/menus \
 				include/saves
 MUSIC		:=	../sound
 

@@ -5,8 +5,8 @@
 #include "langStrings.h"
 #include "loader.h"
 #include "manager.h"
-#include "sound.h"
 #include "summary.h"
+#include "sound.h"
 
 struct button {
 	int x;
