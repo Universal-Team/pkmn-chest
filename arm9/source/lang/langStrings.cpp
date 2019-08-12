@@ -3,7 +3,7 @@
 namespace Lang {
 	std::vector<std::string>
 	// In game text strings
-	balls, games, items, locations4, locations5, moves, natures, species,
+	abilities, games, items, locations4, locations5, moves, natures, species,
 	// App strings
 	aMenuText = {"Move", "Edit", "Copy", "Release", "Dump", "Back"},
 	aMenuEmptySlotText = {"Inject", "Create", "Back"},
@@ -12,7 +12,7 @@ namespace Lang {
 	optionsText = {"New", "Rename", "Delete", "Change"},
 	originLabels = {"Met level", "Met year", "Met month", "Met day", "Met location", "Origin game"},
 	songs = {"Off", "Pokémon Center (Gen. 1)", "Pokémon Center (Gen. 4)", "Prof. Elm's Lab", "Prof. Oak's Lab", "Game Corner"},
-	summaryLabels = {"Dex No.", "Name", "Ball", "Level", "Nature", "Shiny", "Pokérus", "Orig. Trainer", "Trainer ID", "Secret ID", "Friendship"},
+	summaryLabels = {"Dex No.", "Name", "Level", "Ability", "Nature", "Shiny", "Pokérus", "Orig. Trainer", "Trainer ID", "Secret ID", "Friendship"},
 	statsLabels = {"HP.", "Attack", "Defense", "Sp. Atk", "Sp. Def", "Speed", "Base", "IV", "EV", "Total"},
 	trainerText = {"Name", "Trainer ID", "Secret ID", "Money", "BP", "Badges", "Play time"},
 	xMenuText = {"Party", "Options", "", "", "Save", "Exit"};

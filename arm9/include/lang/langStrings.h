@@ -7,7 +7,7 @@
 namespace Lang {
 	extern std::vector<std::string>
 	// In game text strings
-	balls, games, items, locations4, locations5, moves, natures, species,
+	abilities, games, items, locations4, locations5, moves, natures, species,
 	// App strings
 	aMenuText,
 	aMenuEmptySlotText,

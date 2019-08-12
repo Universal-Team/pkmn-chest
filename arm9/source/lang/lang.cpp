@@ -8,7 +8,8 @@ std::string langs[] = { "de", "en", "es", "fr", "it", "jp", "ru"};
 
 void Lang::loadLangStrings(int lang) {
 	// Clear vectors
-	Lang::balls.clear();
+	Lang::abilities.clear();
+	Lang::games.clear();
 	Lang::items.clear();
 	Lang::locations4.clear();
 	Lang::locations5.clear();
@@ -21,10 +22,10 @@ void Lang::loadLangStrings(int lang) {
 	std::string line;
 
 	// Fill vectors from files
-	snprintf(path, sizeof(path), "nitro:/lang/%s/balls", langs[lang].c_str());
+	snprintf(path, sizeof(path), "nitro:/lang/%s/abilities", langs[lang].c_str());
 	std::ifstream in(path);
 	while(std::getline(in, line)) {
-		Lang::balls.push_back(line);
+		Lang::abilities.push_back(line);
 	}
 	in.close();
 
@@ -156,8 +157,8 @@ void Lang::loadLangStrings(int lang) {
 	// [summary]
 	Lang::summaryLabels[0]  = ini.GetString("summary", "dexNo", Lang::summaryLabels[0]);
 	Lang::summaryLabels[1]  = ini.GetString("summary", "name", Lang::summaryLabels[1]);
-	Lang::summaryLabels[2]  = ini.GetString("summary", "ball", Lang::summaryLabels[2]);
-	Lang::summaryLabels[3]  = ini.GetString("summary", "level", Lang::summaryLabels[3]);
+	Lang::summaryLabels[2]  = ini.GetString("summary", "level", Lang::summaryLabels[2]);
+	Lang::summaryLabels[3]  = ini.GetString("summary", "ability", Lang::summaryLabels[3]);
 	Lang::summaryLabels[4]  = ini.GetString("summary", "nature", Lang::summaryLabels[4]);
 	Lang::summaryLabels[5]  = ini.GetString("summary", "shiny", Lang::summaryLabels[5]);
 	Lang::summaryLabels[6]  = ini.GetString("summary", "pokerus", Lang::summaryLabels[6]);

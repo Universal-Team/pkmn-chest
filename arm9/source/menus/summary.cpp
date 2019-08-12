@@ -6,6 +6,7 @@
 #include "input.h"
 #include "manager.h"
 #include "misc.h"
+#include "PK5.hpp"
 #include "sound.h"
 
 struct Text {
@@ -29,6 +30,8 @@ Text textC1[] {
 };
 
 Text textC2[] = {
+	{164, 8},
+	{230, 30},
 	{170, 102},
 	{170, 132},
 	{170, 162},
@@ -42,6 +45,56 @@ std::pair<int, int> getPokeballPosition(u8 ball) {
 	xy.second = (ball/9)*15;
 	xy.first = (ball-((ball/9)*9))*15;
 	return xy;
+}
+
+void changeAbility(std::shared_ptr<PKX> &pkm) {
+	if(pkm->gen4()) {
+		u8 setAbility = pkm->ability();
+		if(pkm->abilities(0) != setAbility && pkm->abilities(0) != 0) {
+			pkm->setAbility(0);
+		} else if(pkm->abilities(1) != 0) {
+			pkm->setAbility(1);
+		} else { // Just in case
+			pkm->setAbility(0);
+		}
+	} else if(pkm->generation() == Generation::FIVE) {
+		PK5* pk5 = (PK5*)pkm.get();
+		switch (pkm->abilityNumber() >> 1) {
+			case 0:
+				if(pkm->abilities(1) != pkm->ability() && pkm->abilities(1) != 0) {
+					pkm->ability(pkm->abilities(1));
+					if(pkm->abilities(1) == pkm->abilities(2)) {
+						pk5->hiddenAbility(true);
+					}
+				} else if(pkm->abilities(2) != 0) {
+					pkm->ability(pkm->abilities(2));
+					pk5->hiddenAbility(true);
+				}
+				break;
+			case 1:
+				if(pkm->abilities(2) != pkm->ability() && pkm->abilities(2) != 0) {
+					pkm->ability(pkm->abilities(2));
+					pk5->hiddenAbility(true);
+				} else if(pkm->abilities(0) != 0) {
+					pkm->ability(pkm->abilities(0));
+					pk5->hiddenAbility(false);
+				}
+				break;
+			case 2:
+				if(pkm->abilities(0) != pkm->ability() && pkm->abilities(0) != 0) {
+					pkm->ability(pkm->abilities(0));
+					pk5->hiddenAbility(false);
+				} else if(pkm->abilities(1) != 0) {
+					pkm->ability(pkm->abilities(1));
+					if(pkm->abilities(1) == pkm->abilities(2)) {
+						pk5->hiddenAbility(true);
+					} else {
+						pk5->hiddenAbility(false);
+					}
+				}
+				break;
+		}
+	}
 }
 
 void drawSummaryPage(std::shared_ptr<PKX> pkm) {
@@ -86,8 +139,8 @@ void drawSummaryPage(std::shared_ptr<PKX> pkm) {
 	snprintf(textC1[0].text,  sizeof(textC1[0].text), "%.3i", pkm->species());
 	if(pkm->nicknamed())	snprintf(textC1[1].text,  sizeof(textC1[1].text), "%s", pkm->nickname().c_str());
 	else	snprintf(textC1[1].text,  sizeof(textC1[1].text), "%s", Lang::species[pkm->species()].c_str());
-	snprintf(textC1[2].text,  sizeof(textC1[2].text), "%s", Lang::balls[pkm->ball()].c_str());
-	snprintf(textC1[3].text,  sizeof(textC1[3].text), "%i", pkm->level());
+	snprintf(textC1[2].text,  sizeof(textC1[2].text), "%i", pkm->level());
+	snprintf(textC1[3].text,  sizeof(textC1[3].text), "%s", Lang::abilities[pkm->ability()].c_str());
 	snprintf(textC1[4].text,  sizeof(textC1[4].text), "%s", Lang::natures[pkm->nature()].c_str());
 	snprintf(textC1[5].text,  sizeof(textC1[5].text), "%s", pkm->shiny() ? Lang::yes.c_str() : Lang::no.c_str());
 	snprintf(textC1[6].text,  sizeof(textC1[6].text), "%s", pkm->pkrs() ? Lang::yes.c_str() : Lang::no.c_str());
@@ -100,14 +153,14 @@ void drawSummaryPage(std::shared_ptr<PKX> pkm) {
 			printTextMaxW(textC1[i].text, 80, 1, textC1[i].x, textC1[i].y, false);
 	}
 	printTextTinted(textC1[7].text, (pkm->otGender() ? RGB::RED : RGB::BLUE), textC1[7].x, textC1[7].y, false);
-	
-	// Draw buttons
-	for(unsigned i=0;i<sizeof(textC2)/sizeof(textC2[0]);i++) {
+
+	// Draw buttons // The first 2 don't have buttons
+	for(unsigned i=2;i<sizeof(textC2)/sizeof(textC2[0]);i++) {
 		drawImage(textC2[i].x-4, textC2[i].y-4, boxButtonData.width, boxButtonData.height, boxButton, false);
 	}
-	snprintf(textC2[0].text, sizeof(textC2[0].text),"%s", Lang::movesString.c_str());
-	snprintf(textC2[1].text, sizeof(textC2[1].text),"%s", Lang::stats.c_str());
-	snprintf(textC2[2].text, sizeof(textC2[2].text),"%s", Lang::origin.c_str());
+	snprintf(textC2[2].text, sizeof(textC2[2].text),"%s", Lang::movesString.c_str());
+	snprintf(textC2[3].text, sizeof(textC2[3].text),"%s", Lang::stats.c_str());
+	snprintf(textC2[4].text, sizeof(textC2[4].text),"%s", Lang::origin.c_str());
 	for(unsigned i=0;i<(sizeof(textC2)/sizeof(textC2[0]));i++) {
 		printTextMaxW(textC2[i].text, 80, 1, textC2[i].x, textC2[i].y, false);
 	}
@@ -136,7 +189,7 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 		if(held & KEY_UP) {
 			if(selection > 0)	selection--;
 		} else if(held & KEY_DOWN) {
-			if(selection < (column == 0 ? 10 : 3))	selection++;
+			if(selection < (int)(column == 0 ? (sizeof(textC1)/sizeof(textC1[0])) : (sizeof(textC2)/sizeof(textC2[0])))-1)	selection++;
 		} else if(pressed & KEY_LEFT) {
 			if(column > 0)	column--;
 			selection = 0;
@@ -159,18 +212,22 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 					break;
 				}
 			}
-			for(unsigned i=0;i<(sizeof(textC2)/sizeof(textC2[0]));i++) {
-				if(touch.px >= textC2[i].x-4 && touch.px <= textC2[i].x-4+boxButtonData.width && touch.py >= textC2[i].y-4 && touch.py <= textC2[i].y-4+boxButtonData.height) {
-					column = 1;
-					selection = i+1;
-					optionSelected = true;
-					break;
-				}
-			}
-			if(touch.px >= 146 && touch.py >= 16 && touch.py <= 80) {
+			if(touch.px >= textC2[0].x-15 && touch.px <= textC2[0].x && touch.py >= textC2[0].y && touch.py <= textC2[0].y+15) { // Ball
 				column = 1;
 				selection = 0;
 				optionSelected = true;
+			} else if(touch.px >= 146 && touch.py >= 16 && touch.py <= 80) { // Pokémon
+				column = 1;
+				selection = 1;
+				optionSelected = true;
+			}
+			for(unsigned i=2;i<(sizeof(textC2)/sizeof(textC2[0]));i++) { // Buttons
+				if(touch.px >= textC2[i].x-4 && touch.px <= textC2[i].x-4+boxButtonData.width && touch.py >= textC2[i].y-4 && touch.py <= textC2[i].y-4+boxButtonData.height) {
+					column = 1;
+					selection = i;
+					optionSelected = true;
+					break;
+				}
 			}
 		}
 
@@ -201,12 +258,11 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 						}
 						break;
 					} case 2: {
-						int num = selectPokeball(pkm->ball());
-						if(num > 0)	pkm->ball(num);
-						break;
-					} case 3: {
 						int num = Input::getInt(100);
 						if(num > 0)	pkm->level(num);
+						break;
+					} case 3: {
+						changeAbility(pkm);
 						break;
 					} case 4: {
 						int num = selectNature(pkm->nature());
@@ -240,17 +296,21 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 			} else {
 				switch(selection) {
 					case 0: {
+						int num = selectPokeball(pkm->ball());
+						if(num > 0)	pkm->ball(num);
+						break;
+					} case 1: {
 						int num = selectForm(pkm->species(), pkm->alternativeForm());
 						if(num != -1)	pkm->alternativeForm(num);
 						break;
-					} case 1: {
-						pkm = selectMoves(pkm);
-						break;
 					} case 2: {
-						pkm = selectStats(pkm);
+						selectMoves(pkm);
 						break;
 					} case 3: {
-						pkm = selectOrigin(pkm);
+						selectStats(pkm);
+						break;
+					} case 4: {
+						selectOrigin(pkm);
 					}
 				}
 			}
@@ -261,8 +321,7 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 		if(column == 0) {
 			setSpritePosition(bottomArrowID, textC1[selection].x+getTextWidthMaxW(textC1[selection].text, 80), textC1[selection].y-6);
 		} else {
-			if(selection == 0)	setSpritePosition(bottomArrowID, 230, 30);
-			else	setSpritePosition(bottomArrowID, textC2[selection-1].x+getTextWidthMaxW(textC2[selection-1].text, 80), textC2[selection-1].y-6);
+			setSpritePosition(bottomArrowID, textC2[selection].x+getTextWidthMaxW(textC2[selection].text, 80), textC2[selection].y-6);
 		}
 		updateOam();
 	}
