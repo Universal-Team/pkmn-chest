@@ -356,7 +356,7 @@ std::string topMenuSelect(void) {
 			}
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
-			for(int i=0;i<ENTRIES_PER_SCREEN;i++) {
+			for(int i=0;i<std::min(ENTRIES_PER_SCREEN, (int)topMenuContents.size());i++) {
 				if(touch.py > (i+1)*16 && touch.py < (i+2)*16) {
 					tmCurPos = i;
 					goto selection;
@@ -471,7 +471,7 @@ std::string browseForFile(const std::vector<std::string>& extensionList, bool di
 			}
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
-			for(int i=0;i<ENTRIES_PER_SCREEN;i++) {
+			for(int i=0;i<std::min(ENTRIES_PER_SCREEN, (int)dirContents.size());i++) {
 				if(touch.py > (i+1)*16 && touch.py < (i+2)*16) {
 					fileOffset = i;
 					goto selection;
