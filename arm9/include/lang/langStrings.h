@@ -7,13 +7,14 @@
 namespace Lang {
 	extern std::vector<std::string>
 	// In game text strings
-	balls, items, locations4, locations5, moves, natures, species,
+	balls, games, items, locations4, locations5, moves, natures, species,
 	// App strings
 	aMenuText,
 	aMenuEmptySlotText,
 	aMenuTopBarText,
 	optionsTextLabels,
 	optionsText,
+	originLabels,
 	songs,
 	summaryLabels,
 	statsLabels,
@@ -26,11 +27,13 @@ namespace Lang {
 	chest,
 	discard,
 	female,
+	hpType,
 	invalidSave,
 	loading,
 	male,
 	movesString,
 	no,
+	origin,
 	stats,
 	release,
 	remove,

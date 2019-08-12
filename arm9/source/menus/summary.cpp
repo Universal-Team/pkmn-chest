@@ -14,7 +14,7 @@ struct Text {
 	char text[32];
 };
 
-Text textSP1[] {
+Text textC1[] {
 	{64, 4},
 	{64, 20},
 	{64, 36},
@@ -26,6 +26,10 @@ Text textSP1[] {
 	{96, 140},
 	{96, 156},
 	{96, 172},
+};
+
+Text textC2[] = {
+	{170, 102},
 	{170, 132},
 	{170, 162},
 };
@@ -73,35 +77,40 @@ void drawSummaryPage(std::shared_ptr<PKX> pkm) {
 
 	// Print Pokémon and trainer info labels
 	for(unsigned i=0;i<Lang::summaryLabels.size();i++) {
-		printTextMaxW(Lang::summaryLabels[i], textSP1[i].x-8, 1, 4, textSP1[i].y, false);
+		printTextMaxW(Lang::summaryLabels[i], textC1[i].x-8, 1, 4, textC1[i].y, false);
 
 	}
 
-	// Draw buttons
-	drawImage(textSP1[11].x-4, textSP1[11].y-4, boxButtonData.width, boxButtonData.height, boxButton, false);
-	drawImage(textSP1[12].x-4, textSP1[12].y-4, boxButtonData.width, boxButtonData.height, boxButton, false);
 
 	// Print Pokémon and trainer info
-	snprintf(textSP1[0].text,  sizeof(textSP1[0].text), "%.3i", pkm->species());
-	if(pkm->nicknamed())	snprintf(textSP1[1].text,  sizeof(textSP1[1].text), "%s", pkm->nickname().c_str());
-	else	snprintf(textSP1[1].text,  sizeof(textSP1[1].text), "%s", Lang::species[pkm->species()].c_str());
-	snprintf(textSP1[2].text,  sizeof(textSP1[2].text), "%s", Lang::balls[pkm->ball()].c_str());
-	snprintf(textSP1[3].text,  sizeof(textSP1[3].text), "%i", pkm->level());
-	snprintf(textSP1[4].text,  sizeof(textSP1[4].text), "%s", Lang::natures[pkm->nature()].c_str());
-	snprintf(textSP1[5].text,  sizeof(textSP1[5].text), "%s", pkm->shiny() ? Lang::yes.c_str() : Lang::no.c_str());
-	snprintf(textSP1[6].text,  sizeof(textSP1[6].text), "%s", pkm->pkrs() ? Lang::yes.c_str() : Lang::no.c_str());
-	snprintf(textSP1[7].text,  sizeof(textSP1[7].text), "%s", pkm->otName().c_str());
-	snprintf(textSP1[8].text,  sizeof(textSP1[8].text), "%.5i", pkm->TID());
-	snprintf(textSP1[9].text,  sizeof(textSP1[9].text), "%.5i", pkm->SID());
-	snprintf(textSP1[10].text, sizeof(textSP1[10].text),"%i", pkm->otFriendship());
-	snprintf(textSP1[11].text, sizeof(textSP1[11].text),"%s", Lang::movesString.c_str());
-	snprintf(textSP1[12].text, sizeof(textSP1[12].text),"%s", Lang::stats.c_str());
-	for(unsigned i=0;i<(sizeof(textSP1)/sizeof(textSP1[0]));i++) {
-		if(i!=7)	// Ball is scaled, OT Name is colored
-			printTextMaxW(textSP1[i].text, 80, 1, textSP1[i].x, textSP1[i].y, false);
+	snprintf(textC1[0].text,  sizeof(textC1[0].text), "%.3i", pkm->species());
+	if(pkm->nicknamed())	snprintf(textC1[1].text,  sizeof(textC1[1].text), "%s", pkm->nickname().c_str());
+	else	snprintf(textC1[1].text,  sizeof(textC1[1].text), "%s", Lang::species[pkm->species()].c_str());
+	snprintf(textC1[2].text,  sizeof(textC1[2].text), "%s", Lang::balls[pkm->ball()].c_str());
+	snprintf(textC1[3].text,  sizeof(textC1[3].text), "%i", pkm->level());
+	snprintf(textC1[4].text,  sizeof(textC1[4].text), "%s", Lang::natures[pkm->nature()].c_str());
+	snprintf(textC1[5].text,  sizeof(textC1[5].text), "%s", pkm->shiny() ? Lang::yes.c_str() : Lang::no.c_str());
+	snprintf(textC1[6].text,  sizeof(textC1[6].text), "%s", pkm->pkrs() ? Lang::yes.c_str() : Lang::no.c_str());
+	snprintf(textC1[7].text,  sizeof(textC1[7].text), "%s", pkm->otName().c_str());
+	snprintf(textC1[8].text,  sizeof(textC1[8].text), "%.5i", pkm->TID());
+	snprintf(textC1[9].text,  sizeof(textC1[9].text), "%.5i", pkm->SID());
+	snprintf(textC1[10].text, sizeof(textC1[10].text),"%i", pkm->otFriendship());
+	for(unsigned i=0;i<(sizeof(textC1)/sizeof(textC1[0]));i++) {
+		if(i!=7)	// OT Name is colored
+			printTextMaxW(textC1[i].text, 80, 1, textC1[i].x, textC1[i].y, false);
 	}
-	printTextTinted(textSP1[7].text, (pkm->otGender() ? RGB::RED : RGB::BLUE), textSP1[7].x, textSP1[7].y, false);
-
+	printTextTinted(textC1[7].text, (pkm->otGender() ? RGB::RED : RGB::BLUE), textC1[7].x, textC1[7].y, false);
+	
+	// Draw buttons
+	for(unsigned i=0;i<sizeof(textC2)/sizeof(textC2[0]);i++) {
+		drawImage(textC2[i].x-4, textC2[i].y-4, boxButtonData.width, boxButtonData.height, boxButton, false);
+	}
+	snprintf(textC2[0].text, sizeof(textC2[0].text),"%s", Lang::movesString.c_str());
+	snprintf(textC2[1].text, sizeof(textC2[1].text),"%s", Lang::stats.c_str());
+	snprintf(textC2[2].text, sizeof(textC2[2].text),"%s", Lang::origin.c_str());
+	for(unsigned i=0;i<(sizeof(textC2)/sizeof(textC2[0]));i++) {
+		printTextMaxW(textC2[i].text, 80, 1, textC2[i].x, textC2[i].y, false);
+	}
 }
 
 std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
@@ -110,7 +119,7 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 
 	// Move arrow to first option
 	setSpriteVisibility(bottomArrowID, true);
-	setSpritePosition(bottomArrowID, textSP1[0].x+getTextWidthMaxW(textSP1[0].text, 80), textSP1[0].y-6);
+	setSpritePosition(bottomArrowID, textC1[0].x+getTextWidthMaxW(textC1[0].text, 80), textC1[0].y-6);
 	updateOam();
 
 	bool optionSelected = false;
@@ -127,7 +136,7 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 		if(held & KEY_UP) {
 			if(selection > 0)	selection--;
 		} else if(held & KEY_DOWN) {
-			if(selection < (column == 0 ? 10 : 2))	selection++;
+			if(selection < (column == 0 ? 10 : 3))	selection++;
 		} else if(pressed & KEY_LEFT) {
 			if(column > 0)	column--;
 			selection = 0;
@@ -142,24 +151,25 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 			return pkm;
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
-			for(unsigned i=0;i<(sizeof(textSP1)/sizeof(textSP1[0]))-2;i++) {
-				if(touch.px >= textSP1[i].x && touch.px <= textSP1[i].x+getTextWidthMaxW(textSP1[i].text, 80) && touch.py >= textSP1[i].y && touch.py <= textSP1[i].y+16) {
+			for(unsigned i=0;i<(sizeof(textC1)/sizeof(textC1[0]));i++) {
+				if(touch.px >= textC1[i].x && touch.px <= textC1[i].x+getTextWidthMaxW(textC1[i].text, 80) && touch.py >= textC1[i].y && touch.py <= textC1[i].y+16) {
 					column = 0;
 					selection = i;
 					optionSelected = true;
 					break;
 				}
 			}
-			for(unsigned i=11;i<(sizeof(textSP1)/sizeof(textSP1[0]));i++) {
-				if(touch.px >= textSP1[i].x-4 && touch.px <= textSP1[i].x-4+boxButtonData.width && touch.py >= textSP1[i].y-4 && touch.py <= textSP1[i].y-4+boxButtonData.height) {
+			for(unsigned i=0;i<(sizeof(textC2)/sizeof(textC2[0]));i++) {
+				if(touch.px >= textC2[i].x-4 && touch.px <= textC2[i].x-4+boxButtonData.width && touch.py >= textC2[i].y-4 && touch.py <= textC2[i].y-4+boxButtonData.height) {
 					column = 1;
-					selection = i-10;
+					selection = i+1;
 					optionSelected = true;
 					break;
 				}
 			}
 			if(touch.px >= 146 && touch.py >= 16 && touch.py <= 80) {
 				column = 1;
+				selection = 0;
 				optionSelected = true;
 			}
 		}
@@ -239,6 +249,8 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 					} case 2: {
 						pkm = selectStats(pkm);
 						break;
+					} case 3: {
+						pkm = selectOrigin(pkm);
 					}
 				}
 			}
@@ -247,10 +259,10 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 		}
 
 		if(column == 0) {
-			setSpritePosition(bottomArrowID, textSP1[selection].x+getTextWidthMaxW(textSP1[selection].text, 80), textSP1[selection].y-6);
+			setSpritePosition(bottomArrowID, textC1[selection].x+getTextWidthMaxW(textC1[selection].text, 80), textC1[selection].y-6);
 		} else {
 			if(selection == 0)	setSpritePosition(bottomArrowID, 230, 30);
-			else	setSpritePosition(bottomArrowID, textSP1[selection+10].x+getTextWidthMaxW(textSP1[selection+10].text, 80), textSP1[selection+10].y-6);
+			else	setSpritePosition(bottomArrowID, textC2[selection-1].x+getTextWidthMaxW(textC2[selection-1].text, 80), textC2[selection-1].y-6);
 		}
 		updateOam();
 	}

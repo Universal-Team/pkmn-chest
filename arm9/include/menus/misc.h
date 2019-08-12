@@ -21,6 +21,9 @@ int selectPokeball(int currentBall);
 // Shows the box selection menu
 int selectBox(int currentBox);
 
+// Shows the origin editing menu
+std::shared_ptr<PKX> selectOrigin(std::shared_ptr<PKX> pkm);
+
 // Shows the stat editing menu
 std::shared_ptr<PKX> selectStats(std::shared_ptr<PKX> pkm);
 

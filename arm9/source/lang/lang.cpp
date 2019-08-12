@@ -28,6 +28,13 @@ void Lang::loadLangStrings(int lang) {
 	}
 	in.close();
 
+	snprintf(path, sizeof(path), "nitro:/lang/%s/games", langs[lang].c_str());
+	in.open(path);
+	while(std::getline(in, line)) {
+		Lang::games.push_back(line);
+	}
+	in.close();
+
 	snprintf(path, sizeof(path), "nitro:/lang/%s/items", langs[lang].c_str());
 	in.open(path);
 	while(std::getline(in, line)) {
@@ -95,10 +102,12 @@ void Lang::loadLangStrings(int lang) {
 	Lang::chest = ini.GetString("main", "chest", Lang::chest);
 	Lang::discard = ini.GetString("main", "discard", Lang::discard);
 	Lang::female = ini.GetString("main", "female", Lang::female);
+	Lang::hpType = ini.GetString("main", "hpType", Lang::hpType);
 	Lang::invalidSave = ini.GetString("main", "invalidSave", Lang::invalidSave);
 	Lang::loading = ini.GetString("main", "loading", Lang::loading);
 	Lang::male = ini.GetString("main", "male", Lang::male);
 	Lang::no = ini.GetString("main", "no", Lang::no);
+	Lang::origin = ini.GetString("main", "origin", Lang::origin);
 	Lang::release = ini.GetString("aMenu", "release", Lang::release);
 	Lang::remove = ini.GetString("main", "remove", Lang::remove);
 	Lang::save = ini.GetString("main", "save", Lang::save);
@@ -115,6 +124,14 @@ void Lang::loadLangStrings(int lang) {
 	Lang::optionsText[1] = ini.GetString("options", "rename", Lang::optionsText[1]);
 	Lang::optionsText[2] = ini.GetString("options", "delete", Lang::optionsText[2]);
 	Lang::optionsText[3] = ini.GetString("options", "change", Lang::optionsText[3]);
+
+	// [origin]
+	Lang::originLabels[0] = ini.GetString("origin", "metLevel", Lang::originLabels[0]);
+	Lang::originLabels[1] = ini.GetString("origin", "metYear", Lang::originLabels[1]);
+	Lang::originLabels[2] = ini.GetString("origin", "metMonth", Lang::originLabels[2]);
+	Lang::originLabels[3] = ini.GetString("origin", "metDay", Lang::originLabels[3]);
+	Lang::originLabels[4] = ini.GetString("origin", "metLocation", Lang::originLabels[4]);
+	Lang::originLabels[5] = ini.GetString("origin", "originGame", Lang::originLabels[5]);
 
 	// [songs]
 	Lang::songs[0] = ini.GetString("songs", "off", Lang::songs[0]);

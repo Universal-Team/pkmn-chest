@@ -319,8 +319,8 @@ int aMenu(int pkmPos, std::vector<std::pair<int, int>>& buttons, int buttonMode)
 				pkm->language(pkmLang());
 				const time_t current = time(NULL);
 				pkm->metDay(gmtime(&current)->tm_mday);
-				pkm->metMonth(gmtime(&current)->tm_mon);
-				pkm->metYear(gmtime(&current)->tm_year - 2000);
+				pkm->metMonth(gmtime(&current)->tm_mon + 1);
+				pkm->metYear(gmtime(&current)->tm_year - 100);
 				pkm->metLevel(1);
 
 				if(topScreen)	Banks::bank->pkm(showPokemonSummary(pkm), currentBankBox, pkmPos);
