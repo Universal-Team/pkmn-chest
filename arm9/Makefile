@@ -5,6 +5,12 @@ ifeq ($(strip $(DEVKITARM)),)
 $(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>devkitARM")
 endif
 
+ifeq ($(shell echo $(Build.SourceBranchName) | head -c 1), v)
+GIT_VER := $(Build.SourceBranchName)
+else
+GIT_VER := $(shell git rev-parse --short HEAD)
+endif
+
 include $(DEVKITARM)/ds_rules
 
 #---------------------------------------------------------------------------------
@@ -39,6 +45,7 @@ ARCH	:=	-mthumb-interwork
 CFLAGS	:=	-g -Wall -O2\
  			-march=armv5te -mtune=arm946e-s -fomit-frame-pointer\
 			-ffast-math \
+			-DVER_NUMBER=\"$(GIT_VER)\" \
 			$(ARCH)
 
 CFLAGS	+=	$(INCLUDE) -DARM9

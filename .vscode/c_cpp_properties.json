@@ -9,7 +9,8 @@
 				"/opt/devkitpro/devkitARM/arm-none-eabi/include/**"
 			],
 			"defines": [
-				"ARM9"
+				"ARM9",
+				"VERNUMBER=vX.X"
 			],
 			"macFrameworkPath": [],
 			"compilerPath": "/opt/devkitpro/devkitARM/bin/arm-none-eabi-g++",
@@ -33,7 +34,8 @@
 				"/devkitpro/devkitARM/arm-none-eabi/include/**"
 			],
 			"defines": [
-				"ARM9"
+				"ARM9",
+				"VERNUMBER=vX.X"
 			],
 			"macFrameworkPath": [],
 			"compilerPath": "/devkitpro/devkitARM/bin/arm-none-eabi-g++.exe",

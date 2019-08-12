@@ -142,8 +142,6 @@ void showDirectoryContents(const std::vector<DirEntry>& dirContents, int startRo
 	}
 }
 
-#define verNumber "v0.9"
-
 bool showTopMenuOnExit = true, noCardMessageSet = false;
 int tmCurPos = 0, tmScreenOffset = 0, tmSlot1Offset = 0;
 
@@ -263,7 +261,7 @@ std::string topMenuSelect(void) {
 	}
 
 	// Print version number
-	printText(verNumber, 256-getTextWidth(verNumber), 176, true);
+	printText(VER_NUMBER, 256-getTextWidth(VER_NUMBER), 176, true);
 
 	updateCardInfo();
 
@@ -508,7 +506,7 @@ std::string browseForSave(void) {
 	}
 
 	// Print version number
-	printText(verNumber, 256-getTextWidth(verNumber), 176, true);
+	printText(VER_NUMBER, 256-getTextWidth(VER_NUMBER), 176, true);
 
 	std::vector<std::string> extensionList;
 	extensionList.push_back("sav");
