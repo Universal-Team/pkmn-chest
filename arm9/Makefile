@@ -5,9 +5,9 @@ ifeq ($(strip $(DEVKITARM)),)
 $(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>devkitARM")
 endif
 
-# If the branch starts with 'v', assume it's a release build
-ifeq ($(shell echo $(shell git rev-parse --abbrev-ref HEAD) | head -c 1), v)
-GIT_VER := $(shell git rev-parse --abbrev-ref HEAD)
+# If on a tagged commit, use the tag instead of the commit
+ifneq ($(shell echo $(shell git describe --contains) | head -c 1),)
+GIT_VER := $(shell git describe --contains)
 else
 GIT_VER := $(shell git rev-parse --short HEAD)
 endif
