@@ -41,11 +41,12 @@ std::shared_ptr<PKX> currentPokemon(int slot) {
 }
 
 std::pair<int, int> getPokemonPosition(std::shared_ptr<PKX> pkm) {
-	return getPokemonPosition(pkm->species(), pkm->alternativeForm(), pkm->gender());
+	return getPokemonPosition(pkm->species(), pkm->alternativeForm(), pkm->gender(), pkm->egg());
 }
 
-std::pair<int, int> getPokemonPosition(int species, int alternativeForm, int gender) {
+std::pair<int, int> getPokemonPosition(int species, int alternativeForm, int gender, bool egg) {
 	if(species > 649)	return {0, 0};
+	else if(egg)	return {352, 1280};
 	else if(species == 201) { // Unown
 		if(alternativeForm == 0);
 		else if(alternativeForm < 5)
@@ -124,11 +125,12 @@ std::pair<int, int> getPokemonPosition(int species, int alternativeForm, int gen
 }
 
 int getPokemonIndex(std::shared_ptr<PKX> pkm) {
-	return getPokemonIndex(pkm->species(), pkm->alternativeForm(), pkm->gender());
+	return getPokemonIndex(pkm->species(), pkm->alternativeForm(), pkm->gender(), pkm->egg());
 }
 
-int getPokemonIndex(int species, int alternativeForm, int gender) {
+int getPokemonIndex(int species, int alternativeForm, int gender, bool egg) {
 	if(species > 649)	return 0;
+	else if(egg)	return 651;
 	else if(species == 201) { // Unown
 		if(alternativeForm > 0)
 			return 651+alternativeForm;
