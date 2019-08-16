@@ -288,7 +288,8 @@ void loadGraphics(void) {
 
 void drawBoxScreen(void) {
 	// Draws backgrounds
-	drawImage(0, 0, boxBgTopData.width, boxBgTopData.height, boxBgTop, true);
+	if(sdFound())	drawImage(0, 0, boxBgTopData.width, boxBgTopData.height, boxBgTop, true);
+	else	drawRectangle(0, 0, 256, 192, DARK_GRAY, true);
 	drawImage(164, 2, infoBoxData.width, infoBoxData.height, infoBox, true);
 	if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
 	else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
@@ -426,7 +427,6 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 		// Print name
 		if(pkm->nicknamed())	printTextTintedMaxW(pkm->nickname(), 80, 1, (pkm->gender() ? (pkm->gender() == 1 ? RGB::RED : GRAY) : RGB::BLUE), 170, 25, true, true);
 		else	printTextTintedMaxW(Lang::species[pkm->species()], 80, 1, (pkm->gender() ? (pkm->gender() == 1 ? RGB::RED : GRAY) : RGB::BLUE), 170, 25, true, true);
-
 
 		// Draw types
 		drawImageFromSheet(170, 43, 32, 12, types, 32, 0, (((pkm->generation() == Generation::FOUR && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1())*12), true);

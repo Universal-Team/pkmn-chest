@@ -27,7 +27,11 @@ Text textTP1[] {
 void drawTrainerCard(void) {
 	// Draw background
 	if(sdFound())	drawImage(0, 0, optionsBgData.width, optionsBgData.height, optionsBg, false);
-	else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+	else {
+		drawRectangle(0, 0, 256, 14, DARKER_GRAY, false);
+		drawRectangle(0, 14, 256, 164, LIGHT_GRAY, false);
+		drawRectangle(0, 176, 256, 14, DARKER_GRAY, false);
+	}
 
 	// Print labels
 	for(unsigned i=0;i<sizeof(textTP1)/sizeof(textTP1[0]);i++) {

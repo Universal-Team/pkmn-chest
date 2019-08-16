@@ -177,7 +177,11 @@ bool xMenu(void) {
 			}
 			updateOam();
 			if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
-			else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+			else {
+		drawRectangle(0, 0, 256, 16, BLACK, false);
+		drawRectangle(0, 16, 256, 160, DARK_GRAY, false);
+		drawRectangle(0, 176, 256, 16, BLACK, false);
+	}
 			drawBox(false);
 			break;
 		}
@@ -220,7 +224,11 @@ bool xMenu(void) {
 
 			// Redraw menu
 			if(sdFound())	drawImage(0, 0, menuBgData.width, menuBgData.height, menuBg, false);
-			else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+			else {
+				drawRectangle(0, 0, 256, 16, BLACK, false);
+				drawRectangle(0, 16, 256, 160, DARK_GRAY, false);
+				drawRectangle(0, 176, 256, 16, BLACK, false);
+			}
 			for(unsigned i=0;i<menuIconID.size();i++) {
 				setSpritePosition(menuIconID[i], xMenuButtons[i].first+3, xMenuButtons[i].second+6);
 				setSpriteVisibility(menuIconID[i], true);

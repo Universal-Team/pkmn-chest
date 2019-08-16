@@ -121,7 +121,10 @@ void showDirectoryContents(const std::vector<DirEntry>& dirContents, int startRo
 
 	// Draw background
 	if(sdFound())	drawImage(0, 0, fileBrowseBgData.width, fileBrowseBgData.height, fileBrowseBg, false);
-	else	drawRectangle(0, 0, 256, 192, LIGHT_GRAY, false);
+	else{
+		drawRectangle(0, 0, 256, 17, DARK_GRAY, false);
+		drawRectangle(0, 17, 256, 192, LIGHT_GRAY, false);
+	}
 
 	// Print path
 	printTextMaxW(path, 250, 1, 5, 0, false);
@@ -256,8 +259,8 @@ std::string topMenuSelect(void) {
 		drawImage(0, 0, fileBrowseBgData.width, fileBrowseBgData.height, fileBrowseBg, false);
 	} else {
 		drawRectangle(0, 0, 256, 192, DARK_GRAY, true);
-		drawRectangle(0, 0, 256, 20, DARK_GRAY, false);
-		drawRectangle(0, 20, 256, 192, LIGHT_GRAY, false);
+		drawRectangle(0, 0, 256, 17, DARK_GRAY, false);
+		drawRectangle(0, 17, 256, 192, LIGHT_GRAY, false);
 	}
 
 	// Print version number
@@ -502,7 +505,8 @@ std::string browseForSave(void) {
 		drawImage(0, 0, fileBrowseBgData.width, fileBrowseBgData.height, fileBrowseBg, false);
 	} else {
 		drawRectangle(0, 0, 256, 192, DARK_GRAY, true);
-		drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+		drawRectangle(0, 0, 256, 17, DARK_GRAY, false);
+		drawRectangle(0, 17, 256, 192, LIGHT_GRAY, false);
 	}
 
 	// Print version number

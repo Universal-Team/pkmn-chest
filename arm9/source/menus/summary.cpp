@@ -98,16 +98,20 @@ void changeAbility(std::shared_ptr<PKX> &pkm) {
 }
 
 void drawSummaryPage(std::shared_ptr<PKX> pkm) {
-	// Clear the screen
+	// Draw background
 	if(sdFound())	drawImage(0, 0, summaryBgData.width, summaryBgData.height, summaryBg, false);
-	else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+	else {
+		drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+		drawOutline(145, -1, 111, 88, LIGHT_GRAY, false);
+	}
+	// Draw lines
+	drawOutline(0, 124, 160, 69, LIGHT_GRAY, false);
+
+	// Hide sprites
 	for(int i=0;i<30;i++) {
 		setSpriteVisibility(i, false);
 	}
 	updateOam();
-
-	// Draw lines
-	drawOutline(0, 124, 160, 69, LIGHT_GRAY, false);
 
 	// Print Pokémon name
 	printTextTintedMaxW(Lang::species[pkm->species()], 90, 1, (pkm->gender() ? (pkm->gender() == 1 ? RGB::RED : GRAY) : RGB::BLUE), 165, 8, false, true);
