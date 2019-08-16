@@ -57,7 +57,11 @@ void fillPartySprites(void) {
 void manageParty(void) {
 	// Draw background
 	if(sdFound())	drawImage(0, 0, menuBgData.width, menuBgData.height, menuBg, false);
-	else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+	else	{
+		drawRectangle(0, 0, 256, 16, BLACK, false);
+		drawRectangle(0, 16, 256, 160, DARK_GRAY, false);
+		drawRectangle(0, 176, 256, 16, BLACK, false);
+	}
 
 	showParty(-1);
 	fillPartySprites();
@@ -114,7 +118,11 @@ void manageParty(void) {
 
 				// Redraw background
 				if(sdFound())	drawImage(0, 0, menuBgData.width, menuBgData.height, menuBg, false);
-				else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+				else	{
+					drawRectangle(0, 0, 256, 16, BLACK, false);
+					drawRectangle(0, 16, 256, 160, DARK_GRAY, false);
+					drawRectangle(0, 176, 256, 16, BLACK, false);
+				}
 
 				// Show sprites
 				showParty(menuSelection);

@@ -516,7 +516,7 @@ void manageBoxes(void) {
 			} else {
 				// Otherwise move Pokémon
 				if(heldPokemon != -1) {
-					if(heldPokemon == (arrowY*6)+arrowX && heldPokemonBox == currentBox()) {
+					if(heldPokemon == (arrowY*6)+arrowX && heldPokemonBox == currentBox() && heldPokemonScreen == topScreen) {
 						// If in the held Pokémon's previous spot, just put it back down
 						setSpriteVisibility((heldPokemonScreen ? heldPokemon+30 : heldPokemon), true);
 						setSpriteVisibility(topScreen ? topHeldPokemonID : bottomHeldPokemonID, false);
