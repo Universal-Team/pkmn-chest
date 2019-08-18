@@ -497,7 +497,7 @@ void manageBoxes(void) {
 			else currentSaveBox = save->maxBoxes()-1;
 			drawBox(topScreen, true);
 			if(!heldMode && currentBox() == heldPokemonBox && topScreen == heldPokemonScreen)
-				setSpriteVisibility(heldPokemon, false);
+				setSpriteVisibility(heldPokemon+(heldPokemonScreen ? 30 : 0), false);
 		} else if(held & KEY_R || (touch.px > 141 && touch.px < 161 && touch.py > 19 && touch.py < 37)) {
 			switchBoxRight:
 			if((topScreen ? currentBankBox < Banks::bank->boxes()-1 : currentSaveBox < save->maxBoxes()-1))
@@ -505,7 +505,7 @@ void manageBoxes(void) {
 			else (topScreen ? currentBankBox : currentSaveBox) = 0;
 			drawBox(topScreen, true);
 			if(!heldMode && currentBox() == heldPokemonBox && topScreen == heldPokemonScreen)
-				setSpriteVisibility(heldPokemon, false);
+				setSpriteVisibility(heldPokemon+(heldPokemonScreen ? 30 : 0), false);
 		}
 		if(pressed & KEY_A) {
 			selection:
