@@ -63,6 +63,7 @@ void drawXMenuButtons(unsigned menuSelection) {
 		drawImage(xMenuButtons[i].first, xMenuButtons[i].second, menuButtonData.width, menuButtonData.height, menuSelection == i ? menuButtonBlue : menuButton, false);
 		printText(Lang::xMenuText[i], xMenuButtons[i].first+47, xMenuButtons[i].second+14, false);
 		oamSetAlpha(&oamSub, menuIconID[i], menuSelection == i ? 8 : 15);
+		updateOam();
 	}
 }
 
@@ -102,25 +103,23 @@ bool xMenu(void) {
 			swiWaitForVBlank();
 			scanKeys();
 			pressed = keysDown();
-			if(iconDirection) {
-				if(iconOffset < 6)	iconOffset++;
-				else if(iconOffset < 12)	iconOffset++;
-				else	iconDirection = false;
-			} else {
-				if(iconOffset > -6)	iconOffset--;
-				else	iconDirection = true;
-			}
-			if(iconOffset < 7) {
-				setSpritePosition(menuIconID[menuSelection], xMenuButtons[menuSelection].first+3, xMenuButtons[menuSelection].second+6-(iconOffset/3));
-				updateOam();
+			if(menuSelection != -1) {
+				if(iconDirection) {
+					if(iconOffset < 6)	iconOffset++;
+					else if(iconOffset < 12)	iconOffset++;
+					else	iconDirection = false;
+				} else {
+					if(iconOffset > -6)	iconOffset--;
+					else	iconDirection = true;
+				}
+				if(iconOffset < 7) {
+					setSpritePosition(menuIconID[menuSelection], xMenuButtons[menuSelection].first+3, xMenuButtons[menuSelection].second+6-(iconOffset/3));
+					updateOam();
+				}
 			}
 		} while(!pressed);
 
 		if(menuSelection == -1 && !(pressed & KEY_TOUCH)) {
-			setSpritePosition(menuIconID[menuSelection], xMenuButtons[menuSelection].first+3, xMenuButtons[menuSelection].second+6);
-			iconOffset = 0;
-			iconDirection = true;
-
 			menuSelection = 0;
 		} else if(pressed & KEY_UP) {
 			if(menuSelection > 1) {
@@ -161,7 +160,13 @@ bool xMenu(void) {
 					selectedOption = i;
 				}
 			}
-			menuSelection = -1;
+			if(menuSelection != -1) {
+				setSpritePosition(menuIconID[menuSelection], xMenuButtons[menuSelection].first+3, xMenuButtons[menuSelection].second+6);
+				iconOffset = 0;
+				iconDirection = true;
+
+				menuSelection = -1;
+			}
 		} else if(pressed & KEY_A) {
 			selectedOption = menuSelection;
 		}
