@@ -121,7 +121,7 @@ void showDirectoryContents(const std::vector<DirEntry>& dirContents, int startRo
 
 	// Draw background
 	if(sdFound())	drawImage(0, 0, fileBrowseBgData.width, fileBrowseBgData.height, fileBrowseBg, false);
-	else{
+	else {
 		drawRectangle(0, 0, 256, 17, DARK_GRAY, false);
 		drawRectangle(0, 17, 256, 192, LIGHT_GRAY, false);
 	}
@@ -235,6 +235,7 @@ void showTopMenu(std::vector<topMenuItem> topMenuContents) {
 		else if(topMenuContents[i+tmScreenOffset].name == "card:")	drawSlot1Text(i, topMenuContents[i+tmScreenOffset].valid);
 		else {
 			std::u16string name = StringUtils::UTF8toUTF16(topMenuContents[i+tmScreenOffset].name);
+			name = name.substr(name.find_last_of(StringUtils::UTF8toUTF16("/"))+1); // Remove path to the file
 
 			// Trim to fit on screen
 			bool addEllipsis = false;
@@ -384,6 +385,17 @@ std::string topMenuSelect(void) {
 			showTopMenu(topMenuContents);
 		}
 		bigJump = 0;
+
+		if(held & KEY_UP || held & KEY_DOWN || held & KEY_LEFT || held & KEY_RIGHT) {
+			// Clear the path area of the screen
+			if(sdFound())	drawImage(0, 0, fileBrowseBgData.width, 17, fileBrowseBg, false);
+			else	drawRectangle(0, 0, 256, 17, DARK_GRAY, false);
+
+			// Print the path to the currently selected file
+			std::u16string path = StringUtils::UTF8toUTF16(topMenuContents[tmCurPos].name);
+			path = path.substr(0, path.find_last_of(StringUtils::UTF8toUTF16("/"))+1); // Cut to just the path
+			printTextMaxW(path, 250, 1, 5, 0, false);
+		}
 	}
 }
 
