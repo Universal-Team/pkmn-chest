@@ -16,7 +16,7 @@ std::vector<int> menuIconID, partyIconID;
 std::string savePath;
 std::vector<u16> arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, boxBgBottom, boxBgTop, boxButton, fileBrowseBg, infoBox, menuBg, menuButton, menuButtonBlue, menuIconSheet, optionsBg, search, shiny, summaryBg, types;
 ImageData ballSheetData, bankBoxData, boxBgBottomData, boxBgTopData, boxButtonData, fileBrowseBgData, infoBoxData, menuBgData, menuButtonData, menuButtonBlueData, menuIconSheetData, optionsBgData, searchData, shinyData, summaryBgData, typesData;
-FILE* pokemonSheetFC;
+FILE* pokemonSheet;
 
 int bankBoxPokemon[30] = {
 	0, 0, 0, 0, 0, 0,
@@ -124,30 +124,30 @@ ImageData loadPokemonSprite(int dexNo, std::vector<u16> &imageBuffer) {
 	dexNo *= 714;
 	ImageData imageData = {0, 0};
 
-	if(pokemonSheetFC) {
+	if(pokemonSheet) {
 		// Get width and height on image
 		char buffer[4];
-		fseek(pokemonSheetFC, dexNo+0x12, SEEK_SET); // Width
-		fread(buffer, 4, 1, pokemonSheetFC);
+		fseek(pokemonSheet, dexNo+0x12, SEEK_SET); // Width
+		fread(buffer, 4, 1, pokemonSheet);
 		imageData.width = *(int*)&buffer[0];
-		fseek(pokemonSheetFC, dexNo+0x16, SEEK_SET); // Height
-		fread(buffer, 4, 1, pokemonSheetFC);
+		fseek(pokemonSheet, dexNo+0x16, SEEK_SET); // Height
+		fread(buffer, 4, 1, pokemonSheet);
 		imageData.height = *(int*)&buffer[0];
 
 		// Load palette
 		u32 palTemp[16];
 		u16 pal[16];
-		fseek(pokemonSheetFC, dexNo+0x89, SEEK_SET);
-		fread(palTemp, 4, 16, pokemonSheetFC);
+		fseek(pokemonSheet, dexNo+0x89, SEEK_SET);
+		fread(palTemp, 4, 16, pokemonSheet);
 		for(int i=0;i<16;i++) {
 			pal[i] = ((palTemp[i]>>27)&31) | ((palTemp[i]>>19)&31)<<5 | ((palTemp[i]>>11)&31)<<10 | 1<<15;
 		}
 
 		// Load pixels
-		fseek(pokemonSheetFC, dexNo+0xA, SEEK_SET); // Get pixel start location
-		fseek(pokemonSheetFC, dexNo+(u8)fgetc(pokemonSheetFC), SEEK_SET); // Seek to pixel start location
+		fseek(pokemonSheet, dexNo+0xA, SEEK_SET); // Get pixel start location
+		fseek(pokemonSheet, dexNo+(u8)fgetc(pokemonSheet), SEEK_SET); // Seek to pixel start location
 		u8 bmpImageBuffer[imageData.width*imageData.height];
-		fread(bmpImageBuffer, 1, imageData.width*imageData.height, pokemonSheetFC);
+		fread(bmpImageBuffer, 1, imageData.width*imageData.height, pokemonSheet);
 		for(int y=imageData.height-1; y>=0; y--) {
 			u8* src = bmpImageBuffer+y*(imageData.width/2);
 			for(unsigned x=0;x<imageData.width;x+=2) {
@@ -191,7 +191,7 @@ void loadGraphics(void) {
 		optionsBgData = loadPng("nitro:/graphics/optionsBg.png", optionsBg);
 		summaryBgData = loadPng("nitro:/graphics/summaryBg.png", summaryBg);
 	}
-	pokemonSheetFC = fopen("nitro:/graphics/pokemonSheet.bmps", "rb");
+	pokemonSheet = fopen("nitro:/graphics/pokemonSheet.bmps", "rb");
 
 	// Init Pokémon Sprites
 	for(int i=0;i<30;i++)	initSprite(SpriteSize_32x32, false);
