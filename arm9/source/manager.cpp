@@ -14,8 +14,9 @@ bool topScreen;
 int bottomArrowID, topArrowID, shinyID, currentSaveBox, currentBankBox, bottomHeldPokemonID, topHeldPokemonID, arrowMode = 0;
 std::vector<int> menuIconID, partyIconID;
 std::string savePath;
-std::vector<u16> arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, boxBgBottom, boxBgTop, boxButton, fileBrowseBg, infoBox, menuBg, menuButton, menuButtonBlue, menuIconSheet, optionsBg, pokemonSheet, search, shiny, summaryBg, types;
-ImageData ballSheetData, bankBoxData, boxBgBottomData, boxBgTopData, boxButtonData, fileBrowseBgData, infoBoxData, menuBgData, menuButtonData, menuButtonBlueData, menuIconSheetData, optionsBgData, pokemonSheetData, searchData, shinyData, summaryBgData, typesData;
+std::vector<u16> arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, boxBgBottom, boxBgTop, boxButton, fileBrowseBg, infoBox, menuBg, menuButton, menuButtonBlue, menuIconSheet, optionsBg, search, shiny, summaryBg, types;
+ImageData ballSheetData, bankBoxData, boxBgBottomData, boxBgTopData, boxButtonData, fileBrowseBgData, infoBoxData, menuBgData, menuButtonData, menuButtonBlueData, menuIconSheetData, optionsBgData, searchData, shinyData, summaryBgData, typesData;
+FILE* pokemonSheetFC;
 
 int bankBoxPokemon[30] = {
 	0, 0, 0, 0, 0, 0,
@@ -38,90 +39,6 @@ int currentBox(void) {
 std::shared_ptr<PKX> currentPokemon(int slot) {
 	if(topScreen)	return Banks::bank->pkm(currentBox(), slot);
 	else	return save->pkm(currentBox(), slot);
-}
-
-std::pair<int, int> getPokemonPosition(std::shared_ptr<PKX> pkm) {
-	return getPokemonPosition(pkm->species(), pkm->alternativeForm(), pkm->gender(), pkm->egg());
-}
-
-std::pair<int, int> getPokemonPosition(int species, int alternativeForm, int gender, bool egg) {
-	if(species > 649)	return {0, 0};
-	else if(egg)	return {352, 1280};
-	else if(species == 201) { // Unown
-		if(alternativeForm == 0);
-		else if(alternativeForm < 5)
-			return {384+((alternativeForm-1)*32), 1280};
-		else if(alternativeForm < 21)
-			return {(alternativeForm-5)*32, 1312};
-		else
-			return {(alternativeForm-21)*32, 1344};
-	} else if(species == 386) { // Deoxys
-		if(alternativeForm > 0)
-			return {224+((alternativeForm-1)*32), 1344};
-	} else if(species == 412) { // Burmy
-		if(alternativeForm > 0)
-			return {320+((alternativeForm-1)*32), 1344};
-	} else if(species == 413) { // Wormadam
-		if(alternativeForm > 0)
-			return {384+((alternativeForm-1)*32), 1344};
-	} else if(species == 422) { // Shellos
-		if(alternativeForm == 1)
-			return {448, 1344};
-	} else if(species == 423) { // Gastrodon
-		if(alternativeForm == 1)
-			return {480, 1344};
-	} else if(species == 479) { // Rotom
-		if(alternativeForm > 0)
-			return {(alternativeForm-1)*32, 1376};
-	} else if(species == 487) { // Giratina
-		if(alternativeForm == 1)
-			return {160, 1376};
-	} else if(species == 492) { // Shaymin
-		if(alternativeForm == 1)
-			return {192, 1376};
-	} else if(species == 521) { // Unfezant
-		if(gender == 1)
-			return {224, 1376};
-	} else if(species == 550) { // Basculin
-		if(alternativeForm == 1)
-			return {256, 1376};
-	} else if(species == 555) { // Darmanitan
-		if(alternativeForm == 1)
-			return {288, 1376};
-	} else if(species == 585) { // Deerling
-		if(alternativeForm > 0)
-			return {320+((alternativeForm-1)*32), 1376};
-	} else if(species == 586) { // Sawsbuck
-		if(alternativeForm > 0)
-			return {416+((alternativeForm-1)*32), 1376};
-	} else if(species == 592) { // Frillish
-		if(gender == 1)
-			return {0, 1408};
-	} else if(species == 593) { // Jellicent
-		if(gender == 1)
-			return {32, 1408};
-	} else if(species == 648) { // Meloetta
-		if(alternativeForm == 1)
-			return {64, 1408};
-	} else if(species == 641) { // Tornadus
-		if(alternativeForm == 1)
-			return {96, 1408};
-	} else if(species == 642) { // Thunderus
-		if(alternativeForm == 1)
-			return {128, 1408};
-	} else if(species == 645) { // Landorus
-		if(alternativeForm == 1)
-			return {160, 1408};
-	} else if(species == 646) { // Kyurem
-		if(alternativeForm > 0)
-			return {192+((alternativeForm-1)*32), 1408};
-	} else if(species == 647) { // Keldeo
-		if(alternativeForm == 1)
-			return {256, 1408};
-	}
-
-	// Non-alternate form, return based on dex number
-	return {(species-((species/16)*16))*32, (species/16)*32};
 }
 
 int getPokemonIndex(std::shared_ptr<PKX> pkm) {
@@ -203,6 +120,54 @@ int getPokemonIndex(int species, int alternativeForm, int gender, bool egg) {
 	return species;
 }
 
+ImageData loadPokemonSprite(int dexNo, std::vector<u16> &imageBuffer) {
+	dexNo *= 714;
+	ImageData imageData = {0, 0};
+
+	if(pokemonSheetFC) {
+		// Get width and height on image
+		char buffer[4];
+		fseek(pokemonSheetFC, dexNo+0x12, SEEK_SET); // Width
+		fread(buffer, 4, 1, pokemonSheetFC);
+		imageData.width = *(int*)&buffer[0];
+		fseek(pokemonSheetFC, dexNo+0x16, SEEK_SET); // Height
+		fread(buffer, 4, 1, pokemonSheetFC);
+		imageData.height = *(int*)&buffer[0];
+
+		// Load palette
+		u32 palTemp[16];
+		u16 pal[16];
+		fseek(pokemonSheetFC, dexNo+0x89, SEEK_SET);
+		fread(palTemp, 4, 16, pokemonSheetFC);
+		for(int i=0;i<16;i++) {
+			pal[i] = ((palTemp[i]>>27)&31) | ((palTemp[i]>>19)&31)<<5 | ((palTemp[i]>>11)&31)<<10 | 1<<15;
+		}
+
+		// Load pixels
+		fseek(pokemonSheetFC, dexNo+0xA, SEEK_SET); // Get pixel start location
+		fseek(pokemonSheetFC, dexNo+(u8)fgetc(pokemonSheetFC), SEEK_SET); // Seek to pixel start location
+		u8 bmpImageBuffer[imageData.width*imageData.height];
+		fread(bmpImageBuffer, 1, imageData.width*imageData.height, pokemonSheetFC);
+		for(int y=imageData.height-1; y>=0; y--) {
+			u8* src = bmpImageBuffer+y*(imageData.width/2);
+			for(unsigned x=0;x<imageData.width;x+=2) {
+				u8 val = *(src++);
+				if(pal[val>>4] == 0xfc1f) { // First nibble
+					imageBuffer.push_back(0<<15);
+				} else {
+					imageBuffer.push_back(pal[val>>4]);
+				}
+				if(pal[val&0xF] == 0xfc1f) { // Second nibble
+					imageBuffer.push_back(0<<15);
+				} else {
+					imageBuffer.push_back(pal[val&0xF]);
+				}
+			}
+		}
+	}
+	return imageData;
+}
+
 void loadGraphics(void) {
 	// Load images into RAM
 	ballSheetData = loadPng("nitro:/graphics/ballSheet.png", ballSheet);
@@ -224,9 +189,9 @@ void loadGraphics(void) {
 		fileBrowseBgData = loadPng("nitro:/graphics/fileBrowseBg.png", fileBrowseBg);
 		menuBgData = loadPng("nitro:/graphics/menuBg.png", menuBg);
 		optionsBgData = loadPng("nitro:/graphics/optionsBg.png", optionsBg);
-		pokemonSheetData = loadPng("nitro:/graphics/pokemonSheet.png", pokemonSheet);
 		summaryBgData = loadPng("nitro:/graphics/summaryBg.png", summaryBg);
 	}
+	pokemonSheetFC = fopen("nitro:/graphics/pokemonSheet.bmps", "rb");
 
 	// Init Pokémon Sprites
 	for(int i=0;i<30;i++)	initSprite(SpriteSize_32x32, false);
@@ -302,14 +267,14 @@ void drawBoxScreen(void) {
 	setSpritePosition(bottomArrowID, 24, 36);
 
 	// Draw the boxes and Pokémon
-	drawBox(true, true);
-	drawBox(false, true);
+	drawBox(true);
+	drawBox(false);
 
 	// Draw first Pokémon's info
 	drawPokemonInfo(save->pkm(currentBox(), 0));
 }
 
-void drawBox(bool top, bool reloadPokemon) {
+void drawBox(bool top) {
 	// Draw box images
 	drawImage(5, 15, bankBoxData.width, bankBoxData.height, bankBox, top);
 
@@ -317,97 +282,46 @@ void drawBox(bool top, bool reloadPokemon) {
 		// Print box names
 		printTextCenteredTinted(Banks::bank->boxName(currentBankBox), GRAY, -44, 20, true, true);
 
-		if(reloadPokemon) {
-			if(sdFound()) {
-				for(int i=0;i<30;i++) {
-					if(Banks::bank->pkm(currentBankBox, i)->species() == 0) {
-						setSpriteVisibility(i+30, false);
-					} else {
-						std::pair<int, int> xy = getPokemonPosition(Banks::bank->pkm(currentBankBox, i));
-						fillSpriteFromSheet(i+30, pokemonSheet, 32, 32, pokemonSheetData.width, xy.first, xy.second);
-						setSpriteVisibility(i+30, true);
-					}
-				}
-				updateOam();
-			} else {
-				for(int i=0;i<30;i++) {
-					// Hide all Pokémon sprites for bank box
-					setSpriteVisibility(i+30, false);
-				}
-				showLoadingLogo();
-				for(int i=0;i<30;i++) {
-					// Fill Pokémon Sprites
-					if(Banks::bank->pkm(currentBankBox, i)->species() != 0) {
-						if(bankBoxPokemon[i] != Banks::bank->pkm(currentBankBox, i)->species()) {
-							bankBoxPokemon[i] = Banks::bank->pkm(currentBankBox, i)->species();
-							std::vector<u16> bmp;
-							loadBmp16("nitro:/graphics/pokemon/"+std::to_string(getPokemonIndex(Banks::bank->pkm(currentBankBox, i)))+".bmp", bmp);
-							fillSpriteImage(i+30, bmp);
-						}
-						setSpriteVisibility(i+30, true);
-						updateOam();
-					}
-				}
-				hideLoadingLogo();
-			}
-		} else {
-			for(int i=0;i<30;i++) {
-				// Show/Hide Pokémon sprites for bank box
-				if(Banks::bank->pkm(currentBankBox, i)->species() == 0)
-					setSpriteVisibility(i+30, false);
-				else
-					setSpriteVisibility(i+30, true);
-			}
-			updateOam();
+		// Hide all Pokémon sprites for bank box
+		for(int i=0;i<30;i++) {
+			setSpriteVisibility(i+30, false);
 		}
-
+		updateOam();
+		for(int i=0;i<30;i++) {
+			// Fill Pokémon Sprites
+			if(Banks::bank->pkm(currentBankBox, i)->species() != 0) {
+				if(bankBoxPokemon[i] != Banks::bank->pkm(currentBankBox, i)->species()) {
+					bankBoxPokemon[i] = Banks::bank->pkm(currentBankBox, i)->species();
+					std::vector<u16> bmp;
+					loadPokemonSprite(getPokemonIndex(Banks::bank->pkm(currentBankBox, i)), bmp);
+					fillSpriteImage(i+30, bmp);
+				}
+				setSpriteVisibility(i+30, true);
+			}
+		}
+		updateOam();
 	} else {
 		// Print box names
 		printTextCenteredTinted(save->boxName(currentSaveBox), GRAY, -44, 20, false, true);
 
-		if(reloadPokemon) {
-			if(sdFound()) {
-				for(int i=0;i<30;i++) {
-					if(save->pkm(currentSaveBox, i)->species() == 0) {
-						setSpriteVisibility(i, false);
-					} else {
-						std::pair<int, int> xy = getPokemonPosition(save->pkm(currentSaveBox, i));
-						fillSpriteFromSheet(i, pokemonSheet, 32, 32, pokemonSheetData.width, xy.first, xy.second);
-						setSpriteVisibility(i, true);
-					}
-				}
-				updateOam();
-			} else {
-				for(int i=0;i<30;i++) {
-					// Hide all Pokémon sprites for save box
-					setSpriteVisibility(i, false);
-				}
-				showLoadingLogo();
-				for(int i=0;i<30;i++) {
-					// Fill Pokémon Sprites
-					if(save->pkm(currentSaveBox, i)->species() != 0) {
-						if(saveBoxPokemon[i] != save->pkm(currentSaveBox, i)->species()) {
-							saveBoxPokemon[i] = save->pkm(currentSaveBox, i)->species();
-							std::vector<u16> bmp;
-							loadBmp16("nitro:/graphics/pokemon/"+std::to_string(getPokemonIndex(save->pkm(currentSaveBox, i)))+".bmp", bmp);
-							fillSpriteImage(i, bmp);
-						}
-						setSpriteVisibility(i, true);
-						updateOam();
-					}
-				}
-				hideLoadingLogo();
-			}
-		} else {
-			for(int i=0;i<30;i++) {
-				// Show/Hide Pokémon sprites for save box
-				if(save->pkm(currentSaveBox, i)->species() == 0)
-					setSpriteVisibility(i, false);
-				else
-					setSpriteVisibility(i, true);
-			}
-			updateOam();
+		// Hide all Pokémon sprites for save box
+		for(int i=0;i<30;i++) {
+			setSpriteVisibility(i, false);
 		}
+		updateOam();
+		for(int i=0;i<30;i++) {
+			// Fill Pokémon Sprites
+			if(save->pkm(currentSaveBox, i)->species() != 0) {
+				if(saveBoxPokemon[i] != save->pkm(currentSaveBox, i)->species()) {
+					saveBoxPokemon[i] = save->pkm(currentSaveBox, i)->species();
+					std::vector<u16> bmp;
+					loadPokemonSprite(getPokemonIndex(save->pkm(currentSaveBox, i)), bmp);
+					fillSpriteImage(i, bmp);
+				}
+				setSpriteVisibility(i, true);
+			}
+		}
+		updateOam();
 	}
 }
 
@@ -444,16 +358,10 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 
 void setHeldPokemon(std::shared_ptr<PKX> pkm) {
 	if(pkm->species() != 0) {
-		if(sdFound()) {
-			std::pair<int, int> xy = getPokemonPosition(pkm);
-			fillSpriteFromSheet(bottomHeldPokemonID, pokemonSheet, 32, 32, pokemonSheetData.width, xy.first, xy.second);
-			fillSpriteFromSheet(topHeldPokemonID, pokemonSheet, 32, 32, pokemonSheetData.width, xy.first, xy.second);
-		} else {
-			std::vector<u16> bmp;
-			loadBmp16("nitro:/graphics/pokemon/"+std::to_string(getPokemonIndex(pkm))+".bmp", bmp);
-			fillSpriteImage(bottomHeldPokemonID, bmp);
-			fillSpriteImage(topHeldPokemonID, bmp);
-		}
+		std::vector<u16> bmp;
+		loadPokemonSprite(getPokemonIndex(pkm), bmp);
+		fillSpriteImage(bottomHeldPokemonID, bmp);
+		fillSpriteImage(topHeldPokemonID, bmp);
 	}
 }
 
@@ -495,7 +403,7 @@ void manageBoxes(void) {
 				(topScreen ? currentBankBox : currentSaveBox)--;
 			else if(topScreen) currentBankBox = Banks::bank->boxes()-1;
 			else currentSaveBox = save->maxBoxes()-1;
-			drawBox(topScreen, true);
+			drawBox(topScreen);
 			if(!heldMode && currentBox() == heldPokemonBox && topScreen == heldPokemonScreen)
 				setSpriteVisibility(heldPokemon+(heldPokemonScreen ? 30 : 0), false);
 		} else if(held & KEY_R || (touch.px > 141 && touch.px < 161 && touch.py > 19 && touch.py < 37)) {
@@ -503,7 +411,7 @@ void manageBoxes(void) {
 			if((topScreen ? currentBankBox < Banks::bank->boxes()-1 : currentSaveBox < save->maxBoxes()-1))
 				(topScreen ? currentBankBox : currentSaveBox)++;
 			else (topScreen ? currentBankBox : currentSaveBox) = 0;
-			drawBox(topScreen, true);
+			drawBox(topScreen);
 			if(!heldMode && currentBox() == heldPokemonBox && topScreen == heldPokemonScreen)
 				setSpriteVisibility(heldPokemon+(heldPokemonScreen ? 30 : 0), false);
 		}
@@ -548,8 +456,8 @@ void manageBoxes(void) {
 							setSpriteVisibility(topScreen ? topHeldPokemonID : bottomHeldPokemonID, false);
 							
 							// Update the box(es) for the moved Pokémon
-							drawBox(topScreen, true);
-							if(heldPokemonScreen != topScreen)	drawBox(heldPokemonScreen, true);
+							drawBox(topScreen);
+							if(heldPokemonScreen != topScreen)	drawBox(heldPokemonScreen);
 							drawPokemonInfo(currentPokemon((arrowY*6)+arrowX));
 
 							// Not holding a Pokémon anymore

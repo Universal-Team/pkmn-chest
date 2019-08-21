@@ -102,17 +102,14 @@ int aMenu(int pkmPos, std::vector<std::pair<int, int>>& buttons, int buttonMode)
 				else drawRectangle(170, 0, 86, 192, DARK_GRAY, false);
 				return 1;
 			} else if(menuSelection == 1) { // Edit
-				int species = currentPokemon(pkmPos)->species();
-				int form = currentPokemon(pkmPos)->alternativeForm();
 				if(topScreen)	Banks::bank->pkm(showPokemonSummary(currentPokemon(pkmPos)), currentBankBox, pkmPos);
 				else	save->pkm(showPokemonSummary(currentPokemon(pkmPos)), currentSaveBox, pkmPos, false);
 
 				// Redraw screen
 				if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
 				else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
-				bool updateBox = (species == currentPokemon(pkmPos)->species() && form == currentPokemon(pkmPos)->alternativeForm());
-				drawBox(false, !updateBox);
-				if(topScreen)	drawBox(topScreen, !updateBox);
+				drawBox(false);
+				if(topScreen)	drawBox(topScreen);
 				drawPokemonInfo(currentPokemon(pkmPos));
 				drawAMenuButtons(buttons, buttonMode);
 			} else if(menuSelection == 2) { // Copy
@@ -182,7 +179,7 @@ int aMenu(int pkmPos, std::vector<std::pair<int, int>>& buttons, int buttonMode)
 					drawAMenuButtons(buttons, buttonMode);
 				} else { // If a new box was selected
 					(topScreen ? currentBankBox : currentSaveBox) = num;
-					drawBox(topScreen, true);
+					drawBox(topScreen);
 					break;
 				}
 			} else if(menuSelection == 1) { // Rename
@@ -228,8 +225,8 @@ int aMenu(int pkmPos, std::vector<std::pair<int, int>>& buttons, int buttonMode)
 					Banks::bank->pkm(tempBox[i], currentBankBox, i);
 
 				// Update the boxes
-				drawBox(true, true);
-				drawBox(false, true);
+				drawBox(true);
+				drawBox(false);
 			} else if(menuSelection == 3) { // Dump box
 				char path[PATH_MAX];
 				snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%s", sdFound() ? "sd" : "fat", topScreen ? Banks::bank->boxName(currentBankBox).c_str() : save->boxName(currentSaveBox).c_str());
@@ -281,8 +278,8 @@ int aMenu(int pkmPos, std::vector<std::pair<int, int>>& buttons, int buttonMode)
 				chdir(path);
 				if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
 				else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
-				drawBox(false, !topScreen);
-				if(topScreen)	drawBox(topScreen, topScreen);
+				drawBox(false);
+				if(topScreen)	drawBox(topScreen);
 				drawPokemonInfo(currentPokemon(pkmPos));
 
 				if(!topScreen)	setSpriteVisibility(bottomArrowID, true);
@@ -329,8 +326,8 @@ int aMenu(int pkmPos, std::vector<std::pair<int, int>>& buttons, int buttonMode)
 				// Redraw screen
 				if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
 				else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
-				drawBox(false, !topScreen);
-				if(topScreen)	drawBox(topScreen, topScreen);
+				drawBox(false);
+				if(topScreen)	drawBox(topScreen);
 				drawPokemonInfo(currentPokemon(pkmPos));
 				goto back;
 			} else if(menuSelection == 2) {

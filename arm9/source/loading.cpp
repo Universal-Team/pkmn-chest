@@ -2,10 +2,11 @@
 #include <nds.h>
 #include <vector>
 
+#include "flashcard.h"
 #include "graphics.h"
 
 int angle = 0;
-int angleChange = 163;
+int angleChange = 190;
 u16 *logoGfx;
 
 void loadingAnimation(void) {

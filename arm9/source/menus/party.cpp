@@ -38,14 +38,9 @@ void fillPartySprites(void) {
 		} else {
 			if(save->pkm(i)->species() != partyPokemon[i]) {
 				partyPokemon[i] = save->pkm(i)->species();
-				if(sdFound()) {
-					std::pair<int, int> xy = getPokemonPosition(save->pkm(i));
-					fillSpriteFromSheet(partyIconID[i], pokemonSheet, 32, 32, pokemonSheetData.width, xy.first, xy.second);
-				} else {
-					std::vector<u16> bmp;
-					loadBmp16("nitro:/graphics/pokemon/"+std::to_string(getPokemonIndex(save->pkm(i)))+".bmp", bmp);
-					fillSpriteImage(partyIconID[i], bmp);
-				}
+				std::vector<u16> bmp;
+				loadPokemonSprite(getPokemonIndex(save->pkm(i)), bmp);
+				fillSpriteImage(partyIconID[i], bmp);
 			}
 			setSpritePosition(partyIconID[i], partyButtons[i].x+8, partyButtons[i].y);
 			setSpriteVisibility(partyIconID[i], true);

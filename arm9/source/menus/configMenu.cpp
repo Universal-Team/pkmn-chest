@@ -170,7 +170,7 @@ void configMenu(void) {
 						Banks::init();
 					}
 					chdir(path);
-					drawBox(true, true);
+					drawBox(true);
 					break;
 				} case 4: { // Resize
 					int num = Input::getInt(500);
