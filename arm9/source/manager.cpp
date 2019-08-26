@@ -547,8 +547,8 @@ void manageBoxes(void) {
 			}
 		} else if(pressed & KEY_TOUCH) {
 			for(int x=0;x<6;x++) {
-				for(int y=0;y<6;y++) {
-					if(touch.px > 8+(x*24) && touch.px < 8+((x+1)*24) && touch.py > 32+(y*24) && touch.py < 32+((y+1)*24)) {
+				for(int y=0;y<5;y++) {
+					if(touch.px > 16+(x*24) && touch.px < 16+((x+1)*24) && touch.py > 40+(y*24) && touch.py < 40+((y+1)*24)) {
 						if(arrowX == x && arrowY == y && topScreen == false)	goto selection;
 						else {
 							if(topScreen) {
