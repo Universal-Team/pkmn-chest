@@ -488,9 +488,7 @@ void manageBoxes(void) {
 							heldPokemonBox = -1;
 						}
 					}
-				} else if(currentPokemon((arrowY*6)+arrowX)->species() != 0) {
-					int temp = 1;
-					if(arrowMode == 2) {
+				} else if(arrowMode == 2) {
 						int startX = arrowX, startY = arrowY;
 						drawOutline(8+(startX*24), 40+(startY*24), (((arrowX+1)-startX)*24)+8, (((arrowY+1)-startY)*24), WHITE, topScreen);
 						while(1) {
@@ -530,7 +528,9 @@ void manageBoxes(void) {
 							setSpritePosition((topScreen ? topArrowID : bottomArrowID), (arrowX*24)+24, (arrowY*24)+36);
 							updateOam();
 						}
-					} else if(arrowMode == 1 || (temp = aMenu((arrowY*6)+arrowX, aMenuButtons, 0))) {
+				} else if(currentPokemon((arrowY*6)+arrowX)->species() != 0) {
+					int temp = 1;
+					if(arrowMode == 1 || (temp = aMenu((arrowY*6)+arrowX, aMenuButtons, 0))) {
 						// If no pokemon is currently held and there is one at the cursor, pick it up
 						heldPokemon.push_back({currentPokemon((arrowY*6)+arrowX)->clone(), (arrowY*6)+arrowX, 0, 0});
 						heldPokemonBox = currentBox();
