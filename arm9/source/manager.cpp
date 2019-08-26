@@ -442,11 +442,11 @@ void manageBoxes(void) {
 					} else if(!heldMode || currentPokemon((arrowY*6)+arrowX)->species() == 0) {
 						int canPlace = true;
 						for(unsigned i=0;i<heldPokemon.size();i++) {
-							if(heldPokemon[i].x-heldPokemon[0].x > 6-arrowX) {
+							if(heldPokemon[i].x-heldPokemon[0].x > 5-arrowX) {
 								canPlace = false;
 								break;
 							}
-							if(heldPokemon[i].y-heldPokemon[0].y > 6-arrowY) {
+							if(heldPokemon[i].y-heldPokemon[0].y > 4-arrowY) {
 								canPlace = false;
 								break;
 							}
@@ -473,20 +473,19 @@ void manageBoxes(void) {
 											save->dex(tempPkm);
 										}
 									}
-									// Hide the moving Pokémon
-									setSpriteVisibility(topScreen ? topHeldPokemonID : bottomHeldPokemonID, false);
-									
-									// Update the box(es) for the moved Pokémon
-									drawBox(topScreen);
-									if(heldPokemonScreen != topScreen)	drawBox(heldPokemonScreen);
-									drawPokemonInfo(currentPokemon((arrowY*6)+arrowX));
-
-									// Not holding a Pokémon anymore
-									heldPokemon.clear();
-									heldPokemonBox = -1;
 								}
-								
 							}
+							// Hide the moving Pokémon
+							setSpriteVisibility(topScreen ? topHeldPokemonID : bottomHeldPokemonID, false);
+							
+							// Update the box(es) for the moved Pokémon
+							drawBox(topScreen);
+							if(heldPokemonScreen != topScreen)	drawBox(heldPokemonScreen);
+							drawPokemonInfo(currentPokemon((arrowY*6)+arrowX));
+
+							// Not holding a Pokémon anymore
+							heldPokemon.clear();
+							heldPokemonBox = -1;
 						}
 					}
 				} else if(currentPokemon((arrowY*6)+arrowX)->species() != 0) {
