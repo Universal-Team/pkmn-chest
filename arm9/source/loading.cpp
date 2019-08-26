@@ -25,13 +25,13 @@ void loadLoadingLogo(void) {
 
 void showLoadingLogo(void) {
 	angle = 0;
-	oamSet(&oamSub, 100, 112, 80, 0, 15, SpriteSize_32x32, SpriteColorFormat_Bmp, logoGfx, 0, false, false, false, false, false);
+	oamSet(&oamSub, 127, 112, 80, 0, 15, SpriteSize_32x32, SpriteColorFormat_Bmp, logoGfx, 0, false, false, false, false, false);
 	oamUpdate(&oamSub);
 	irqSet(IRQ_VBLANK, loadingAnimation);
 }
 
 void hideLoadingLogo(void) {
-	oamClearSprite(&oamSub, 100);
+	oamClearSprite(&oamSub, 127);
 	oamUpdate(&oamSub);
 	irqSet(IRQ_VBLANK, NULL);
 }
