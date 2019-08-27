@@ -372,7 +372,7 @@ void manageBoxes(void) {
 	int arrowX = 0, arrowY = 0, heldPokemonBox = -1;
 	std::vector<HeldPkm> heldPokemon;
 	bool heldPokemonScreen = false, heldMode = false;
-	topScreen = false;
+	topScreen = false, arrowMode = 0;
 	u16 pressed = 0, held = 0;
 	touchPosition touch;
 	while(1) {
@@ -495,7 +495,6 @@ void manageBoxes(void) {
 							do {
 								swiWaitForVBlank();
 								scanKeys();
-								touchRead(&touch);
 								pressed = keysDown();
 								held = keysDownRepeat();
 							} while(!held);
@@ -505,6 +504,7 @@ void manageBoxes(void) {
 							if(held & KEY_LEFT && arrowX > 0)		arrowX--;
 							else if(held & KEY_RIGHT && arrowX < 5)	arrowX++;
 							if(pressed & KEY_A) {
+								yellowSelection:
 								drawBox(topScreen);
 								for(int y=std::min(startY, arrowY);y<std::max(startY,arrowY)+1;y++) {
 									for(int x=std::min(startX, arrowX);x<std::max(startX,arrowX)+1;x++) {
@@ -521,6 +521,26 @@ void manageBoxes(void) {
 							} else if(pressed & KEY_B) {
 								drawBox(topScreen);
 								break;
+							} else if(pressed & KEY_TOUCH) {
+								touchRead(&touch);
+								for(int x=0;x<6;x++) {
+									for(int y=0;y<5;y++) {
+										if(touch.px > 16+(x*24) && touch.px < 16+((x+1)*24) && touch.py > 40+(y*24) && touch.py < 40+((y+1)*24)) {
+											if(arrowX == x && arrowY == y && topScreen == false)	goto yellowSelection;
+											else {
+												if(topScreen) {
+													topScreen = false;
+													setSpriteVisibility(topArrowID, false);
+													setSpriteVisibility(topHeldPokemonID, false);
+													setSpriteVisibility(bottomArrowID, true);
+													setSpriteVisibility(bottomHeldPokemonID, true);
+												}
+												arrowX = x;
+												arrowY = y;
+											}
+										}
+									}
+								}
 							}
 
 							drawBox(topScreen);
