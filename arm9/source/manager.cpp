@@ -489,65 +489,69 @@ void manageBoxes(void) {
 						}
 					}
 				} else if(arrowMode == 2) {
-						int startX = arrowX, startY = arrowY;
-						drawOutline(8+(startX*24), 40+(startY*24), (((arrowX+1)-startX)*24)+8, (((arrowY+1)-startY)*24), WHITE, topScreen);
-						while(1) {
-							do {
-								swiWaitForVBlank();
-								scanKeys();
-								pressed = keysDown();
-								held = keysDownRepeat();
-							} while(!held);
+					int startX = arrowX, startY = arrowY;
+					drawOutline(8+(startX*24), 40+(startY*24), (((arrowX+1)-startX)*24)+8, (((arrowY+1)-startY)*24), WHITE, topScreen);
+					while(1) {
+						do {
+							swiWaitForVBlank();
+							scanKeys();
+							pressed = keysDown();
+							held = keysDownRepeat();
+						} while(!held);
 
-							if(held & KEY_UP && arrowY > 0)			arrowY--;
-							else if(held & KEY_DOWN && arrowY < 4)	arrowY++;
-							if(held & KEY_LEFT && arrowX > 0)		arrowX--;
-							else if(held & KEY_RIGHT && arrowX < 5)	arrowX++;
-							if(pressed & KEY_A) {
-								yellowSelection:
-								drawBox(topScreen);
-								for(int y=std::min(startY, arrowY);y<std::max(startY,arrowY)+1;y++) {
-									for(int x=std::min(startX, arrowX);x<std::max(startX,arrowX)+1;x++) {
-										heldPokemon.push_back({currentPokemon((y*6)+x), (y*6)+x, x-std::min(startX, arrowX), y-std::min(startY, arrowY)});
-										setSpriteVisibility((topScreen ? ((y*6)+x)+30 : (y*6)+x), false);
-									}
+						if(held & KEY_UP && arrowY > 0)			arrowY--;
+						else if(held & KEY_DOWN && arrowY < 4)	arrowY++;
+						if(held & KEY_LEFT && arrowX > 0)		arrowX--;
+						else if(held & KEY_RIGHT && arrowX < 5)	arrowX++;
+						if(pressed & KEY_A) {
+							yellowSelection:
+							drawBox(topScreen);
+							for(int y=std::min(startY, arrowY);y<std::max(startY,arrowY)+1;y++) {
+								for(int x=std::min(startX, arrowX);x<std::max(startX,arrowX)+1;x++) {
+									heldPokemon.push_back({currentPokemon((y*6)+x), (y*6)+x, x-std::min(startX, arrowX), y-std::min(startY, arrowY)});
+									setSpriteVisibility((topScreen ? ((y*6)+x)+30 : (y*6)+x), false);
 								}
-								heldPokemonBox = currentBox();
-								heldPokemonScreen = topScreen;
-								arrowX = std::min(startX, arrowX);
-								arrowY = std::min(startY, arrowY);
-								updateOam();
-								break;
-							} else if(pressed & KEY_B) {
-								drawBox(topScreen);
-								break;
-							} else if(pressed & KEY_TOUCH) {
-								touchRead(&touch);
-								for(int x=0;x<6;x++) {
-									for(int y=0;y<5;y++) {
-										if(touch.px > 16+(x*24) && touch.px < 16+((x+1)*24) && touch.py > 40+(y*24) && touch.py < 40+((y+1)*24)) {
-											if(arrowX == x && arrowY == y && topScreen == false)	goto yellowSelection;
-											else {
-												if(topScreen) {
-													topScreen = false;
-													setSpriteVisibility(topArrowID, false);
-													setSpriteVisibility(topHeldPokemonID, false);
-													setSpriteVisibility(bottomArrowID, true);
-													setSpriteVisibility(bottomHeldPokemonID, true);
-												}
-												arrowX = x;
-												arrowY = y;
+							}
+							fillSpriteColor(topScreen ? topHeldPokemonID : bottomHeldPokemonID, 0); // Fill the sprite with transparency
+							fillSpriteText(topScreen ? topHeldPokemonID : bottomHeldPokemonID, StringUtils::UTF8toUTF16(std::to_string(heldPokemon.size())), GRAY, 32-getTextWidth(std::to_string(heldPokemon.size())), 16, true);
+							setSpriteVisibility(topScreen ? topHeldPokemonID : bottomHeldPokemonID, true);
+							updateOam();
+							heldPokemonBox = currentBox();
+							heldPokemonScreen = topScreen;
+							arrowX = std::min(startX, arrowX);
+							arrowY = std::min(startY, arrowY);
+							updateOam();
+							break;
+						} else if(pressed & KEY_B) {
+							drawBox(topScreen);
+							break;
+						} else if(pressed & KEY_TOUCH) {
+							touchRead(&touch);
+							for(int x=0;x<6;x++) {
+								for(int y=0;y<5;y++) {
+									if(touch.px > 16+(x*24) && touch.px < 16+((x+1)*24) && touch.py > 40+(y*24) && touch.py < 40+((y+1)*24)) {
+										if(arrowX == x && arrowY == y && topScreen == false)	goto yellowSelection;
+										else {
+											if(topScreen) {
+												topScreen = false;
+												setSpriteVisibility(topArrowID, false);
+												setSpriteVisibility(topHeldPokemonID, false);
+												setSpriteVisibility(bottomArrowID, true);
+												setSpriteVisibility(bottomHeldPokemonID, true);
 											}
+											arrowX = x;
+											arrowY = y;
 										}
 									}
 								}
 							}
-
-							drawBox(topScreen);
-							drawOutline(8+(std::min(startX, arrowX)*24), 40+(std::min(startY, arrowY)*24), ((std::max(arrowX-startX, startX-arrowX)+1)*24)+8, ((std::max(arrowY-startY, startY-arrowY)+1)*24), WHITE, topScreen);
-							setSpritePosition((topScreen ? topArrowID : bottomArrowID), (arrowX*24)+24, (arrowY*24)+36);
-							updateOam();
 						}
+
+						drawBox(topScreen);
+						drawOutline(8+(std::min(startX, arrowX)*24), 40+(std::min(startY, arrowY)*24), ((std::max(arrowX-startX, startX-arrowX)+1)*24)+8, ((std::max(arrowY-startY, startY-arrowY)+1)*24), WHITE, topScreen);
+						setSpritePosition((topScreen ? topArrowID : bottomArrowID), (arrowX*24)+24, (arrowY*24)+36);
+						updateOam();
+					}
 				} else if(currentPokemon((arrowY*6)+arrowX)->species() != 0) {
 					int temp = 1;
 					if(arrowMode == 1 || (temp = aMenu((arrowY*6)+arrowX, aMenuButtons, 0))) {

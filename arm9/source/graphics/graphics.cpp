@@ -278,6 +278,42 @@ void fillSpriteFromSheetTinted(int id, std::vector<u16> &imageBuffer, u16 color,
 	}
 }
 
+void fillSpriteText(int id, std::string text, u16 color, int xPos, int yPos, bool invert) { fillSpriteText(id, StringUtils::UTF8toUTF16(text), color, xPos, yPos, invert); };
+
+void fillSpriteText(int id, std::u16string text, u16 color, int xPos, int yPos, bool invert) {
+	int x = 0;
+
+	for(unsigned c = 0; c < text.length(); c++) {
+		unsigned int charIndex = getFontSpriteIndex(text[c]);
+
+		if(xPos+x+fontTexcoords[2 + (4 * charIndex)] > 256) {
+			x = 0;
+			yPos += 16;
+		} else if(text[c] == newline[0]) {
+			x = 0;
+			yPos += 16;
+			continue;
+		}
+
+		for(int y = 0; y < 16; y++) {
+			int currentCharIndex = ((504*(fontTexcoords[1+(4*charIndex)]+y))+fontTexcoords[0+(4*charIndex)]);
+
+			for(u16 i = 0; i < fontTexcoords[2 + (4 * charIndex)]; i++) {
+				if(font[currentCharIndex+i]>>15 != 0) { // Do not render transparent pixel
+					if(!invert)	sprites[id].gfx[(y+yPos)*32+(i+x+xPos)] = color & font[currentCharIndex+i];
+					else {
+						if(font[currentCharIndex+i] == 0xFBDE) // Light -> dark
+							sprites[id].gfx[(y+yPos)*32+(i+x+xPos)] = color & 0xBDEF;
+						else // Dark -> light
+							sprites[id].gfx[(y+yPos)*32+(i+x+xPos)] = color & 0xFBDE;
+					}
+				}
+			}
+		}
+		x += fontTexcoords[2 + (4 * charIndex)];
+	}
+}
+
 void prepareSprite(int id, int x, int y, int priority) {
 	oamSet(
 	(sprites[id].top ? &oamMain : &oamSub),	// Main/Sub display
@@ -314,10 +350,7 @@ void setSpriteVisibility(int id, int show) { oamSetHidden((sprites[id].top ? &oa
 Sprite getSpriteInfo(int id) { return sprites[id]; }
 unsigned getSpriteAmount(void) { return sprites.size(); }
 
-/**
- * Get the index in the UV coordinate array where the letter appears
- */
-unsigned int getTopFontSpriteIndex(const u16 letter) {
+unsigned int getFontSpriteIndex(const u16 letter) {
 	unsigned int spriteIndex = 0;
 	long int left = 0;
 	long int right = FONT_NUM_IMAGES;
@@ -350,7 +383,7 @@ void printTextTinted(std::u16string text, u16 color, int xPos, int yPos, bool to
 	int x = 0;
 
 	for(unsigned c = 0; c < text.length(); c++) {
-		unsigned int charIndex = getTopFontSpriteIndex(text[c]);
+		unsigned int charIndex = getFontSpriteIndex(text[c]);
 
 		if(xPos+x+fontTexcoords[2 + (4 * charIndex)] > 256) {
 			x = 0;
@@ -412,7 +445,7 @@ void printTextTintedScaled(std::u16string text, double scaleX,  double scaleY, u
 		int x = 0;
 
 		for(unsigned c = 0; c < text.length(); c++) {
-			unsigned int charIndex = getTopFontSpriteIndex(text[c]);
+			unsigned int charIndex = getFontSpriteIndex(text[c]);
 
 			if(xPos+x+fontTexcoords[2 + (4 * charIndex)] > 256) {
 				x = 0;
@@ -452,7 +485,7 @@ int getTextWidth(std::u16string text) {
 	int textWidth = 0;
 
 	for(unsigned c = 0; c < text.length(); c++) {
-		unsigned int charIndex = getTopFontSpriteIndex(text[c]);
+		unsigned int charIndex = getFontSpriteIndex(text[c]);
 		textWidth += fontTexcoords[2+(4*charIndex)];
 	}
 

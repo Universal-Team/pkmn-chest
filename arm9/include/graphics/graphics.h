@@ -27,6 +27,8 @@ struct Sprite {
 	bool top;
 };
 
+extern std::vector<u16> font;
+
 // Initializes the screens for drawing
 void initGraphics(void);
 
@@ -204,6 +206,28 @@ void fillSpriteFromSheetScaled(int id, double scale, std::vector<u16> &imageBuff
  */
 void fillSpriteFromSheetTinted(int id, std::vector<u16> &imageBuffer, u16 color, int w, int h, int imageWidth, int xOffset, int yOffset);
 
+/**
+ * Fills a sprite with text
+ * int id is the sprite to print to
+ * std::string test is the text that will be printed
+ * u16 color is the color to tint the text
+ * int xPos is the X position to print at
+ * int yPos is the Y position to print at
+ * bool invert is whether to swap the colors
+ */
+void fillSpriteText(int id, std::string text, u16 color, int xPos, int yPos, bool invert = false);
+
+/**
+ * Fills a sprite with text
+ * int id is the sprite to print to
+ * std::u16string test is the text that will be printed
+ * u16 color is the color to tint the text
+ * int xPos is the X position to print at
+ * int yPos is the Y position to print at
+ * bool invert is whether to swap the colors
+ */
+void fillSpriteText(int id, std::u16string text, u16 color, int xPos, int yPos, bool invert = false);
+
 /*
  * Sets the sprite to be drawn
  * int id is the id of the sprite
@@ -250,6 +274,9 @@ Sprite getSpriteInfo(int id);
  * returns the total amount of sprites
  */
 unsigned getSpriteAmount(void);
+
+// Get the index in the UV coordinate array where the letter appears
+unsigned int getFontSpriteIndex(const u16 letter);
 
 /**
  * Prints text to the a screen
