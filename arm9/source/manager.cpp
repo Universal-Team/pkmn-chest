@@ -55,69 +55,72 @@ int getPokemonIndex(int species, int alternativeForm, int gender, bool egg) {
 	else if(species == 201) { // Unown
 		if(alternativeForm > 0)
 			return 651+alternativeForm;
+	} else if(species == 351) { // Castform
+		if(alternativeForm > 0)
+			return 678+alternativeForm;
 	} else if(species == 386) { // Deoxys
 		if(alternativeForm > 0)
-			return 578+alternativeForm;
+			return 681+alternativeForm;
 	} else if(species == 412) { // Burmy
 		if(alternativeForm > 0)
-			return 681+alternativeForm;
+			return 684+alternativeForm;
 	} else if(species == 413) { // Wormadam
 		if(alternativeForm > 0)
-			return 683+alternativeForm;
+			return 686+alternativeForm;
 	} else if(species == 422) { // Shellos
 		if(alternativeForm == 1)
-			return 686;
+			return 689;
 	} else if(species == 423) { // Gastrodon
 		if(alternativeForm == 1)
-			return 687;
+			return 690;
 	} else if(species == 479) { // Rotom
 		if(alternativeForm > 0)
-			return 687+alternativeForm;
+			return 690+alternativeForm;
 	} else if(species == 487) { // Giratina
 		if(alternativeForm == 1)
-			return 693;
+			return 696;
 	} else if(species == 492) { // Shaymin
 		if(alternativeForm == 1)
-			return 694;
+			return 697;
 	} else if(species == 521) { // Unfezant
 		if(gender == 1)
-			return 695;
+			return 698;
 	} else if(species == 550) { // Basculin
 		if(alternativeForm == 1)
-			return 696;
+			return 699;
 	} else if(species == 555) { // Darmanitan
 		if(alternativeForm == 1)
-			return 697;
+			return 700;
 	} else if(species == 585) { // Deerling
 		if(alternativeForm > 0)
-			return 697+alternativeForm;
+			return 700+alternativeForm;
 	} else if(species == 586) { // Sawsbuck
 		if(alternativeForm > 0)
-			return 700+alternativeForm;
+			return 703+alternativeForm;
 	} else if(species == 592) { // Frillish
 		if(gender == 1)
-			return 704;
+			return 707;
 	} else if(species == 593) { // Jellicent
 		if(gender == 1)
-			return 705;
+			return 708;
 	} else if(species == 648) { // Meloetta
 		if(alternativeForm == 1)
-			return 706;
+			return 709;
 	} else if(species == 641) { // Tornadus
 		if(alternativeForm == 1)
-			return 707;
+			return 710;
 	} else if(species == 642) { // Thunderus
 		if(alternativeForm == 1)
-			return 708;
+			return 711;
 	} else if(species == 645) { // Landorus
 		if(alternativeForm == 1)
-			return 709;
+			return 712;
 	} else if(species == 646) { // Kyurem
 		if(alternativeForm > 0)
-			return 709+alternativeForm;
+			return 712+alternativeForm;
 	} else if(species == 647) { // Keldeo
 		if(alternativeForm == 1)
-			return 712;
+			return 715;
 	}
 
 	// Non-alternate form, return dex number

@@ -16,6 +16,7 @@ struct FormCount {
 	int noForms;
 } formCounts[] = {
 	{201, 27}, // Unown
+	{351,  4}, // Deoxys
 	{386,  4}, // Deoxys
 	{412,  3}, // Burmy
 	{413,  3}, // Wormadam
