@@ -18,19 +18,6 @@ std::vector<u16> arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, boxBgBott
 ImageData ballSheetData, bankBoxData, boxBgBottomData, boxBgTopData, boxButtonData, fileBrowseBgData, infoBoxData, menuBgData, menuButtonData, menuButtonBlueData, menuIconSheetData, optionsBgData, searchData, shinyData, summaryBgData, typesData;
 FILE* pokemonSheet;
 
-int bankBoxPokemon[30] = {
-	0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0,
-},	saveBoxPokemon[30] = {
-	0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0,
-};
 struct HeldPkm {
 	std::shared_ptr<PKX> pkm;
 	int position, x, y;
@@ -296,12 +283,9 @@ void drawBox(bool top) {
 		for(int i=0;i<30;i++) {
 			// Fill Pokémon Sprites
 			if(Banks::bank->pkm(currentBankBox, i)->species() != 0) {
-				if(bankBoxPokemon[i] != Banks::bank->pkm(currentBankBox, i)->species()) {
-					bankBoxPokemon[i] = Banks::bank->pkm(currentBankBox, i)->species();
-					std::vector<u16> bmp;
-					loadPokemonSprite(getPokemonIndex(Banks::bank->pkm(currentBankBox, i)), bmp);
-					fillSpriteImage(i+30, bmp);
-				}
+				std::vector<u16> bmp;
+				loadPokemonSprite(getPokemonIndex(Banks::bank->pkm(currentBankBox, i)), bmp);
+				fillSpriteImage(i+30, bmp);
 				setSpriteVisibility(i+30, true);
 			}
 		}
@@ -318,12 +302,9 @@ void drawBox(bool top) {
 		for(int i=0;i<30;i++) {
 			// Fill Pokémon Sprites
 			if(save->pkm(currentSaveBox, i)->species() != 0) {
-				if(saveBoxPokemon[i] != save->pkm(currentSaveBox, i)->species()) {
-					saveBoxPokemon[i] = save->pkm(currentSaveBox, i)->species();
-					std::vector<u16> bmp;
-					loadPokemonSprite(getPokemonIndex(save->pkm(currentSaveBox, i)), bmp);
-					fillSpriteImage(i, bmp);
-				}
+				std::vector<u16> bmp;
+				loadPokemonSprite(getPokemonIndex(save->pkm(currentSaveBox, i)), bmp);
+				fillSpriteImage(i, bmp);
 				setSpriteVisibility(i, true);
 			}
 		}

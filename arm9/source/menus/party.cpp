@@ -18,8 +18,6 @@ struct button {
 	{2, 120}, {130, 120},
 };
 
-int partyPokemon[] = {0, 0, 0, 0, 0, 0};
-
 void showParty(int selection) {
 	for(int i=0;i<6;i++) {
 		drawImage(partyButtons[i].x, partyButtons[i].y, menuButtonData.width, menuButtonData.height, selection == i ? menuButtonBlue : menuButton, false);
@@ -36,12 +34,9 @@ void fillPartySprites(void) {
 		if(save->pkm(i)->species() == 0) {
 			setSpriteVisibility(partyIconID[i], false);
 		} else {
-			if(save->pkm(i)->species() != partyPokemon[i]) {
-				partyPokemon[i] = save->pkm(i)->species();
-				std::vector<u16> bmp;
-				loadPokemonSprite(getPokemonIndex(save->pkm(i)), bmp);
-				fillSpriteImage(partyIconID[i], bmp);
-			}
+			std::vector<u16> bmp;
+			loadPokemonSprite(getPokemonIndex(save->pkm(i)), bmp);
+			fillSpriteImage(partyIconID[i], bmp);
 			setSpritePosition(partyIconID[i], partyButtons[i].x+8, partyButtons[i].y);
 			setSpriteVisibility(partyIconID[i], true);
 			updateOam();
