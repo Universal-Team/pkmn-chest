@@ -233,17 +233,17 @@ void drawItemList(int screenPos, std::vector<std::string> itemList) {
 	}
 }
 
-int selectItem(int current, int max, std::vector<std::string> &items) {
+int selectItem(int current, int start, int max, std::vector<std::string> &items) {
 	// Set arrow position
 	setSpritePosition(bottomArrowID, 4+getTextWidth(items[current]), -2);
 	setSpriteVisibility(bottomArrowID, true);
 	updateOam();
 
 	// Print moves
-	std::vector<std::string> itemList(&items[0], &items[max]);
-	drawItemList(current, itemList);
+	std::vector<std::string> itemList(&items[start], &items[max]);
+	drawItemList(current-start, itemList);
 
-	int held, pressed, screenPos = current, newMove = current, entriesPerScreen = 9;
+	int held, pressed, screenPos = current-start, newMove = current-start, entriesPerScreen = 9;
 	touchPosition touch;
 	while(1) {
 		do {
@@ -368,7 +368,7 @@ std::shared_ptr<PKX> selectMoves(std::shared_ptr<PKX> pkm) {
 
 		if(optionSelected) {
 			optionSelected = false;
-			pkm->move(selection, selectItem(pkm->move(selection), save->maxMove()+1, Lang::moves));
+			pkm->move(selection, selectItem(pkm->move(selection), 0, save->maxMove()+1, Lang::moves));
 
 			// Clear the screen
 			if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
@@ -642,10 +642,10 @@ std::shared_ptr<PKX> selectOrigin(std::shared_ptr<PKX> pkm) {
 					if(num != -1)	pkm->metDay(num);
 					break;
 				} case 4: { // Location
-					pkm->metLocation(selectItem(pkm->metLocation(), pkm->gen4() ? Lang::locations4.size() : Lang::locations5.size(), pkm->gen4() ? Lang::locations4 : Lang::locations5));
+					pkm->metLocation(selectItem(pkm->metLocation(), 0, pkm->gen4() ? Lang::locations4.size() : Lang::locations5.size(), pkm->gen4() ? Lang::locations4 : Lang::locations5));
 					break;
 				} case 5: { // Game
-					pkm->version(selectItem(pkm->version(), Lang::games.size(), Lang::games));
+					pkm->version(selectItem(pkm->version(), 0, Lang::games.size(), Lang::games));
 					break;
 				}
 			}
