@@ -1,0 +1,3 @@
+files:
+  - source: /nitrofiles/lang/en/app.ini
+    translation: /nitrofiles/lang/%two_letters_code%/app.ini
