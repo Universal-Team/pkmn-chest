@@ -16,7 +16,7 @@ struct FormCount {
 	int noForms;
 } formCounts[] = {
 	{201, 27}, // Unown
-	{351,  4}, // Deoxys
+	{351,  4}, // Castform
 	{386,  4}, // Deoxys
 	{412,  3}, // Burmy
 	{413,  3}, // Wormadam
@@ -26,7 +26,7 @@ struct FormCount {
 	{487,  2}, // Giratina
 	{492,  2}, // Shaymin
 	{550,  2}, // Basculin
-	{555,  2}, // Darmanitan // Not sure if I should have this or not
+	{555,  2}, // Darmanitan
 	{585,  4}, // Deerling
 	{586,  4}, // Sawsbuck
 	{648,  2}, // Meloetta
@@ -279,7 +279,11 @@ int selectItem(int current, int start, int max, std::vector<std::string> &items)
 			touchRead(&touch);
 			for(int i=0;i<entriesPerScreen;i++) {
 				if(touch.px >= 4 && touch.px <= 4+getTextWidth(itemList[screenPos+i]) && touch.py >= 4+(i*20) && touch.py <= 4+((i+1)*20)) {
-					return screenPos+i;
+					for(int j=0;j<max;j++) {
+						if(itemList[screenPos+i] == items[j]) {
+							return j;
+						}
+					}
 					break;
 				} else if(touch.px >= 256-searchData.width && touch.py <= searchData.height) {
 					goto search;
