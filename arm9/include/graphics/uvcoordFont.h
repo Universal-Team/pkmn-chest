@@ -17,7 +17,7 @@ static constexpr unsigned int fontTexcoords[] = {
 	0, 0, 4, TEXT_Y, // SPACE
 	12, 0, 5, TEXT_Y, // EXCLAMATION MARK
 	24, 0, 6, TEXT_Y, // QUOTATION MARK
-	36, 0, 9, TEXT_Y, // NUMBER SIGN
+	36, 0, 6, TEXT_Y, // NUMBER SIGN
 	48, 0, 9, TEXT_Y, // DOLLAR SIGN
 	60, 0, 12, TEXT_Y, // PERCENT SIGN
 	72, 0, 9, TEXT_Y, // AMPERSAND
@@ -28,7 +28,7 @@ static constexpr unsigned int fontTexcoords[] = {
 	132, 0, 9, TEXT_Y, // PLUS SIGN
 	144, 0, 5, TEXT_Y, // COMMA
 	156, 0, 6, TEXT_Y, // HYPHEN-MINUS
-	168, 0, 3, TEXT_Y, // FULL STOP
+	168, 0, 4, TEXT_Y, // FULL STOP
 	180, 0, 6, TEXT_Y, // SOLIDUS
 	192, 0, 9, TEXT_Y, // DIGIT ZERO
 	204, 0, 7, TEXT_Y, // DIGIT ONE
@@ -46,7 +46,7 @@ static constexpr unsigned int fontTexcoords[] = {
 	348, 0, 9, TEXT_Y, // EQUALS SIGN
 	360, 0, 9, TEXT_Y, // GREATER-THAN SIGN
 	372, 0, 9, TEXT_Y, // QUESTION MARK
-	384, 0, 11, TEXT_Y, // COMMERCIAL AT
+	384, 0, 8, TEXT_Y, // COMMERCIAL AT
 	396, 0, 8, TEXT_Y, // LATIN CAPITAL LETTER A
 	408, 0, 8, TEXT_Y, // LATIN CAPITAL LETTER B
 	420, 0, 8, TEXT_Y, // LATIN CAPITAL LETTER C
@@ -88,7 +88,7 @@ static constexpr unsigned int fontTexcoords[] = {
 	348, 16, 7, TEXT_Y, // LATIN SMALL LETTER G
 	360, 16, 8, TEXT_Y, // LATIN SMALL LETTER H
 	372, 16, 3, TEXT_Y, // LATIN SMALL LETTER I
-	384, 16, 5, TEXT_Y, // LATIN SMALL LETTER J
+	384, 16, 7, TEXT_Y, // LATIN SMALL LETTER J
 	396, 16, 7, TEXT_Y, // LATIN SMALL LETTER K
 	408, 16, 4, TEXT_Y, // LATIN SMALL LETTER L
 	420, 16, 8, TEXT_Y, // LATIN SMALL LETTER M
@@ -111,7 +111,7 @@ static constexpr unsigned int fontTexcoords[] = {
 	120, 32, 6, TEXT_Y, // TILDE
 	132, 32, 5, TEXT_Y, // INVERTED EXCLAMATION MARK
 	144, 32, 7, TEXT_Y, // CENT SIGN
-	156, 32, 7, TEXT_Y, // POUND SIGN
+	156, 32, 6, TEXT_Y, // POUND SIGN
 	168, 32, 10, TEXT_Y, // COPYRIGHT SIGN
 	180, 32, 10, TEXT_Y, // REGISTERED SIGN
 	192, 32, 4, TEXT_Y, // DEGREE SIGN
