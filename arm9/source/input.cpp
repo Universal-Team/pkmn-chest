@@ -141,6 +141,7 @@ void drawKeyboard(int layout) {
 		for(unsigned i=0;i<(sizeof(keysABC)/sizeof(keysABC[0]));i++) {
 			printTextTinted(keysABC[i].character, GRAY, xPos+keysABC[i].x+16-(getTextWidth(keysABC[i].character)/2), 192-keyboardData.height+keysABC[i].y+8, false, true);
 		}
+		printTextTinted("a/A", GRAY, xPos+keysSpecialKana[0].x+16-(getTextWidth("a/A")/2), 192-keyboardData.height+keysSpecialKana[0].y+8, false, true);
 	} else if(layout == 2) {
 		for(unsigned i=0;i<(sizeof(keysAIU)/sizeof(keysAIU[0]));i++) {
 			std::u16string str;
