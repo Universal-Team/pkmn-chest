@@ -24,10 +24,12 @@ char16_t nextcharver(char16_t c) {
 	if(katakana)	c -= 96;
 	if((c >= 0x3041 && c <= 0x3061 && c % 2)
 	|| (c == 0x3063 || c == 0x3064 || c == 0x3066 || c == 0x3068)
-	|| (c >= 0x306F && c <= 0x307C && (c % 3 != 2))) {
+	|| (c >= 0x306F && c <= 0x307C && (c % 3 != 2))
+	|| (c >= 0x3083 && c <= 0x3087 && c % 2)) {
 		c++;
 	} else if((c >= 0x3042 && c <= 0x3062 && !(c % 2))
-		   || (c == 0x3067 || c == 0x3069)) {
+		   || (c == 0x3067 || c == 0x3069)
+		   || (c >= 0x3084 && c <= 0x3088 && !(c % 2))) {
 		c--;
 	} else if((c == 0x3065)
 		   || (c >= 0x3071 && c <= 0x307D && (c % 3 == 2))) {
@@ -48,7 +50,7 @@ struct Key16 {
 	int y;
 };
 
-bool caps = false, enter = false;
+bool caps = false, enter = false, katakana = false;
 int changeLayout = -1, loadedLayout = -1, xPos = 0, shift = 0;
 ImageData keyboardData;
 std::u16string string;
@@ -103,7 +105,7 @@ Key keysSpecialQWE[] = {
 };
 
 void clearVars(void) {
-	string = u8u16(""), caps = false, shift = false, enter = false, changeLayout = -1;
+	string = u8u16(""), caps = false, shift = false, enter = false, katakana = false, changeLayout = -1;
 }
 
 void whileHeld(void) {
@@ -141,10 +143,12 @@ void drawKeyboard(int layout) {
 		}
 	} else if(layout == 2) {
 		for(unsigned i=0;i<(sizeof(keysAIU)/sizeof(keysAIU[0]));i++) {
-			printTextTinted(keysAIU[i].character.substr(0, 1), GRAY, xPos+keysAIU[i].x+16-(getTextWidth(keysAIU[i].character.substr(0, 1))/2), 192-keyboardData.height+keysAIU[i].y+8, false, true);
+			std::u16string str;
+			str += (katakana ? tokatakana(keysAIU[i].character[0]) : keysAIU[i].character[0]);
+			printTextTinted(str, GRAY, xPos+keysAIU[i].x+16-(getTextWidth(str)/2), 192-keyboardData.height+keysAIU[i].y+8, false, true);
 		}
 		printTextTinted("っばぱ", GRAY, xPos+keysSpecialKana[0].x+16-(getTextWidth("っばぱ")/2), 192-keyboardData.height+keysSpecialKana[0].y+8, false, true);
-		printTextTinted("あア", GRAY, xPos+keysSpecialKana[1].x+16-(getTextWidth("あア")/2), 192-keyboardData.height+keysSpecialKana[1].y+8, false, true);
+		printTextTinted(katakana ? "あ" : "ア", GRAY, xPos+keysSpecialKana[1].x+16-(getTextWidth(katakana ? "あ" : "ア")/2), 192-keyboardData.height+keysSpecialKana[1].y+8, false, true);
 	} else if(layout == 3) {
 		for(unsigned i=0;i<(sizeof(keysQWE)/sizeof(keysQWE[0]));i++) {
 			std::string str;
@@ -321,7 +325,7 @@ void processTouchAIU(touchPosition touch, unsigned maxLength) {
 					touchRead(&touch);
 				}
 				if(c == '\0')	c = keysAIU[i].character[0];
-				string += c;
+				string += katakana ? tokatakana(c) : c;
 				return;
 			}
 		}
@@ -354,10 +358,9 @@ void processTouchAIU(touchPosition touch, unsigned maxLength) {
 				whileHeld();
 			} else if(keysSpecialKana[i].character == "hika") {
 				drawRectangle(keysSpecialKana[i].x+xPos, keysSpecialKana[i].y+(192-keyboardData.height), 32, 32, DARK_GRAY, false);
-				
-				char16_t c = string[string.length()-1];
-				string = string.substr(0, string.length()-1);
-				string += iskatakana(c) ? tohiragana(c) : tokatakana(c);
+
+				katakana = !katakana;
+				drawKeyboard(loadedLayout);
 
 				whileHeld();
 			} else if(keysSpecialKana[i].character == "123") {
