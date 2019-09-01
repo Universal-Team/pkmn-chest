@@ -531,7 +531,8 @@ void manageBoxes(void) {
 							}
 						}
 
-						drawBox(topScreen);
+						drawImage(5, 15, bankBoxData.width, bankBoxData.height, bankBox, topScreen);
+						printTextCenteredTinted((topScreen ? Banks::bank->boxName(currentBankBox) : save->boxName(currentSaveBox)), GRAY, -44, 20, topScreen, true);
 						drawOutline(8+(std::min(startX, arrowX)*24), 40+(std::min(startY, arrowY)*24), ((std::max(arrowX-startX, startX-arrowX)+1)*24)+8, ((std::max(arrowY-startY, startY-arrowY)+1)*24), WHITE, topScreen);
 						setSpritePosition((topScreen ? topArrowID : bottomArrowID), (arrowX*24)+24, (arrowY*24)+36);
 						updateOam();

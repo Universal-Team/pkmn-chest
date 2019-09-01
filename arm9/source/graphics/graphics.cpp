@@ -238,7 +238,7 @@ int initSprite(SpriteSize spriteSize, bool top) {
 }
 
 void fillSpriteColor(int id, u16 color) {
-	dmaFillHalfWords(color, sprites[id].gfx, sprites[id].size*2);
+	dmaFillHalfWords(color, sprites[id].gfx, sprites[id].size);
 }
 
 void fillSpriteImage(int id, std::vector<u16> &imageBuffer) {
