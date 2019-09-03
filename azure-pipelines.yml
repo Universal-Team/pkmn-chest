@@ -1,3 +1,10 @@
+trigger:
+  branches:
+    include: ['*']
+    exclude: [translation]
+  tags:
+    include: ['*']
+
 name:  $[format('{0:yyyyMMdd\-HHmmss}', pipeline.startTime)]
 
 pool:
