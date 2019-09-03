@@ -6,7 +6,6 @@
 #include <vector>
 
 #include "utils.hpp"
-#include "uvcoordFont.h"
 
 // Converts 3 0-255 (0x0-0xff) values to a BGR15 value
 #define BGR15(b, g, r)   ((b)|((g)<<5)|((r)<<10))

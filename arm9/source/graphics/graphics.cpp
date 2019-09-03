@@ -5,7 +5,10 @@
 #define WHITE 0xFFFF
 
 std::vector<Sprite> sprites;
-std::vector<u16> font;
+std::vector<char> fontTiles;
+std::vector<char> fontWidths;
+std::vector<u16> fontMap;
+u16 tileSize, tileWidth, tileHeight;
 std::u16string newline = StringUtils::UTF8toUTF16("»");
 
 void initGraphics(void) {
@@ -45,7 +48,89 @@ void initGraphics(void) {
 }
 
 void loadFont(void) {
-	loadPng("nitro:/graphics/font.png", font);
+	FILE* font = fopen("nitro:/graphics/font.nftr", "rb");
+
+	// Get file size
+	fseek(font, 0, SEEK_END);
+	u32 fileSize = ftell(font);
+
+	// Load font info
+	fseek(font, 0x30, SEEK_SET);
+	u32 chunkSize;
+	fread(&chunkSize, 4, 1, font);
+	fseek(font, 0x34, SEEK_SET);
+	tileWidth = fgetc(font);
+	fseek(font, 0x35, SEEK_SET);
+	tileHeight = fgetc(font);
+	fseek(font, 0x36, SEEK_SET);
+	fread(&tileSize, 2, 1, font);
+
+	// Load character glyphs
+	int tileAmount = ((chunkSize-0x10)/tileSize);
+	fontTiles.resize(tileSize*tileAmount);
+	fseek(font, 0x3C, SEEK_SET);
+	fread(fontTiles.data(), tileSize, tileAmount, font);
+
+	// Fix top row
+	for(int i=0;i<tileAmount;i++) {
+		fontTiles[i*tileSize] = 0;
+		fontTiles[i*tileSize+1] = 0;
+		fontTiles[i*tileSize+2] = 0;
+	}
+
+	// Load character widths
+	fseek(font, 0x24, SEEK_SET);
+	u32 locHDWC;
+	fread(&locHDWC, 4, 1, font);
+	fseek(font, locHDWC-4, SEEK_SET);
+	fread(&chunkSize, 4, 1, font);
+	fseek(font, 8, SEEK_CUR);
+	fontWidths.resize(3*tileAmount);
+	fread(fontWidths.data(), 3, tileAmount, font);
+
+	// Load character maps
+	fontMap.resize(tileAmount);
+	fseek(font, 0x28, SEEK_SET);
+	u32 locPAMC, mapType;
+	fread(&locPAMC, 4, 1, font);
+
+	while(locPAMC < fileSize) {
+		u16 firstChar, lastChar;
+		fseek(font, locPAMC, SEEK_SET);
+		fread(&firstChar, 2, 1, font);
+		fread(&lastChar, 2, 1, font);
+		fread(&mapType, 4, 1, font);
+		fread(&locPAMC, 4, 1, font);
+
+		switch(mapType) {
+			case 0: {
+				u16 firstTile;
+				fread(&firstTile, 2, 1, font);
+				for(unsigned i=firstChar;i<lastChar;i++) {
+					fontMap[i] = firstTile+(i-firstChar);
+				}
+				break;
+			} case 1: {
+				for(int i=firstChar;i<lastChar;i++) {
+					u16 tile;
+					fread(&tile, 2, 1, font);
+					fontMap[i] = tile;
+				}
+				break;
+			} case 2: {
+				u16 groupAmount;
+				fread(&groupAmount, 2, 1, font);
+				for(int i=0;i<groupAmount;i++) {
+					u16 charNo, tileNo;
+					fread(&charNo, 2, 1, font);
+					fread(&tileNo, 2, 1, font);
+					fontMap[charNo] = tileNo;
+				}
+				break;
+			}
+		}
+	}
+	fclose(font);
 }
 
 ImageData loadBmp16(std::string path, std::vector<u16> &imageBuffer) {
@@ -281,37 +366,37 @@ void fillSpriteFromSheetTinted(int id, std::vector<u16> &imageBuffer, u16 color,
 void fillSpriteText(int id, std::string text, u16 color, int xPos, int yPos, bool invert) { fillSpriteText(id, StringUtils::UTF8toUTF16(text), color, xPos, yPos, invert); };
 
 void fillSpriteText(int id, std::u16string text, u16 color, int xPos, int yPos, bool invert) {
-	int x = 0;
+// 	int x = 0;
 
-	for(unsigned c = 0; c < text.length(); c++) {
-		unsigned int charIndex = getFontSpriteIndex(text[c]);
+// 	for(unsigned c = 0; c < text.length(); c++) {
+// 		unsigned int charIndex = getFontSpriteIndex(text[c]);
 
-		if(xPos+x+fontTexcoords[2 + (4 * charIndex)] > 256) {
-			x = 0;
-			yPos += 16;
-		} else if(text[c] == newline[0]) {
-			x = 0;
-			yPos += 16;
-			continue;
-		}
+// 		if(xPos+x+(fontTexcoords[2 + (4 * charIndex)]) > 256) {
+// 			x = 0;
+// 			yPos += 16;
+// 		} else if(text[c] == newline[0]) {
+// 			x = 0;
+// 			yPos += 16;
+// 			continue;
+// 		}
 
-		for(int y = 0; y < 16; y++) {
-			int currentCharIndex = ((504*(fontTexcoords[1+(4*charIndex)]+y))+fontTexcoords[0+(4*charIndex)]);
+// 		for(int y = 0; y < 16; y++) {
+// 			int currentCharIndex = ((504*(fontTexcoords[1+(4*charIndex)]+y))+fontTexcoords[0+(4*charIndex)]);
 
-			for(u16 i = 0; i < fontTexcoords[2 + (4 * charIndex)]; i++) {
-				if(font[currentCharIndex+i]>>15 != 0) { // Do not render transparent pixel
-					if(!invert)	sprites[id].gfx[(y+yPos)*32+(i+x+xPos)] = color & font[currentCharIndex+i];
-					else {
-						if(font[currentCharIndex+i] == 0xFBDE) // Light -> dark
-							sprites[id].gfx[(y+yPos)*32+(i+x+xPos)] = color & 0xBDEF;
-						else // Dark -> light
-							sprites[id].gfx[(y+yPos)*32+(i+x+xPos)] = color & 0xFBDE;
-					}
-				}
-			}
-		}
-		x += fontTexcoords[2 + (4 * charIndex)];
-	}
+// 			for(u16 i = 0; i < fontTexcoords[2 + (4 * charIndex)]; i++) {
+// 				if(font[currentCharIndex+i]>>15 != 0) { // Do not render transparent pixel
+// 					if(!invert)	sprites[id].gfx[(y+yPos)*32+(i+x+xPos)] = color & font[currentCharIndex+i];
+// 					else {
+// 						if(font[currentCharIndex+i] == 0xFBDE) // Light -> dark
+// 							sprites[id].gfx[(y+yPos)*32+(i+x+xPos)] = color & 0xBDEF;
+// 						else // Dark -> light
+// 							sprites[id].gfx[(y+yPos)*32+(i+x+xPos)] = color & 0xFBDE;
+// 					}
+// 				}
+// 			}
+// 		}
+// 		x += fontTexcoords[2 + (4 * charIndex)];
+// 	}
 }
 
 void prepareSprite(int id, int x, int y, int priority) {
@@ -350,27 +435,6 @@ void setSpriteVisibility(int id, int show) { oamSetHidden((sprites[id].top ? &oa
 Sprite getSpriteInfo(int id) { return sprites[id]; }
 unsigned getSpriteAmount(void) { return sprites.size(); }
 
-unsigned int getFontSpriteIndex(const u16 letter) {
-	unsigned int spriteIndex = 0;
-	long int left = 0;
-	long int right = FONT_NUM_IMAGES;
-	long int mid = 0;
-
-	while(left <= right) {
-		mid = left + ((right - left) / 2);
-		if(fontUtf16LookupTable[mid] == letter) {
-			spriteIndex = mid;
-			break;
-		}
-
-		if(fontUtf16LookupTable[mid] < letter) {
-			left = mid + 1;
-		} else {
-			right = mid - 1;
-		}
-	}
-	return spriteIndex;
-}
 void printText(std::string text, int xPos, int yPos, bool top, bool invert) { printTextTinted(StringUtils::UTF8toUTF16(text), WHITE, xPos, yPos, top, invert); }
 void printText(std::u16string text, int xPos, int yPos, bool top, bool invert) { printTextTinted(text, WHITE, xPos, yPos, top, invert); }
 void printTextCentered(std::string text, int xOffset, int yPos, bool top, bool invert) { printTextTinted(StringUtils::UTF8toUTF16(text), WHITE, ((256-getTextWidth(StringUtils::UTF8toUTF16(text)))/2)+xOffset, yPos, top, invert); }
@@ -380,36 +444,27 @@ void printTextCenteredTinted(std::u16string text, u16 color, int xOffset, int yP
 void printTextTinted(std::string text, u16 color, int xPos, int yPos, bool top, bool invert) { printTextTinted(StringUtils::UTF8toUTF16(text), color, xPos, yPos, top, invert); }
 
 void printTextTinted(std::u16string text, u16 color, int xPos, int yPos, bool top, bool invert) {
-	int x = 0;
-
-	for(unsigned c = 0; c < text.length(); c++) {
-		unsigned int charIndex = getFontSpriteIndex(text[c]);
-
-		if(xPos+x+fontTexcoords[2 + (4 * charIndex)] > 256) {
-			x = 0;
-			yPos += 16;
-		} else if(text[c] == newline[0]) {
-			x = 0;
-			yPos += 16;
-			continue;
+	int x=xPos;
+	u16 color1 = color & (invert ? 0xBDEF : 0xFBDE);
+	u16 color2 = color & (invert ? 0xFBDE : 0xBDEF);
+	u16 pallet[4] = {0, color1, color2, 0};
+	for(unsigned c=0;c<text.size();c++) {
+		int t = fontMap[text[c]];
+		std::vector<u16> image;
+		for(int i=0;i<tileSize;i++) {
+			image.push_back(pallet[fontTiles[i+(t*tileSize)]>>6 & 3]);
+			image.push_back(pallet[fontTiles[i+(t*tileSize)]>>4 & 3]);
+			image.push_back(pallet[fontTiles[i+(t*tileSize)]>>2 & 3]);
+			image.push_back(pallet[fontTiles[i+(t*tileSize)] & 3]);
 		}
 
-		for(int y = 0; y < 16; y++) {
-			int currentCharIndex = ((504*(fontTexcoords[1+(4*charIndex)]+y))+fontTexcoords[0+(4*charIndex)]);
-
-			for(u16 i = 0; i < fontTexcoords[2 + (4 * charIndex)]; i++) {
-				if(font[currentCharIndex+i]>>15 != 0) { // Do not render transparent pixel
-					if(!invert)	(top ? BG_GFX : BG_GFX_SUB)[(y+yPos)*256+(i+x+xPos)] = color & font[currentCharIndex+i];
-					else {
-						if(font[currentCharIndex+i] == 0xFBDE) // Light -> dark
-							(top ? BG_GFX : BG_GFX_SUB)[(y+yPos)*256+(i+x+xPos)] = color & 0xBDEF;
-						else // Dark -> light
-							(top ? BG_GFX : BG_GFX_SUB)[(y+yPos)*256+(i+x+xPos)] = color & 0xFBDE;
-					}
-				}
-			}
+		x += fontWidths[t*3];
+		if(x > 256) {
+			x = xPos+fontWidths[t*3];
+			yPos += tileHeight;
 		}
-		x += fontTexcoords[2 + (4 * charIndex)];
+		drawImage(x, yPos, tileWidth, tileHeight, image, top);
+		x += fontWidths[(t*3)+1];
 	}
 }
 
@@ -438,42 +493,42 @@ void printTextTintedMaxW(std::u16string text, double w,  double scaleY, u16 colo
 void printTextTintedScaled(std::string text, double scaleX, double scaleY, u16 color, int xPos, int yPos, bool top, bool invert) { printTextTintedScaled(StringUtils::UTF8toUTF16(text), scaleX, scaleY, color, xPos, yPos, top, invert); }
 
 void printTextTintedScaled(std::u16string text, double scaleX,  double scaleY, u16 color, int xPos, int yPos, bool top, bool invert) {
-	if(scaleX == 1 && scaleY == 1)	printTextTinted(text, color, xPos, yPos, top, invert);
-	else {
-		scaleX = 1/scaleX;
-		scaleY = 1/scaleY;
-		int x = 0;
+	/* if(scaleX == 1 && scaleY == 1)	*/printTextTinted(text, color, xPos, yPos, top, invert);
+	// else {
+	// 	scaleX = 1/scaleX;
+	// 	scaleY = 1/scaleY;
+	// 	int x = 0;
 
-		for(unsigned c = 0; c < text.length(); c++) {
-			unsigned int charIndex = getFontSpriteIndex(text[c]);
+	// 	for(unsigned c = 0; c < text.length(); c++) {
+	// 		unsigned int charIndex = getFontSpriteIndex(text[c]);
 
-			if(xPos+x+fontTexcoords[2 + (4 * charIndex)] > 256) {
-				x = 0;
-				yPos += 16/scaleY;
-			} else if(text[c] == newline[0]) {
-			x = 0;
-			yPos += 16;
-			continue;
-		}
+	// 		if(xPos+x+fontTexcoords[2 + (4 * charIndex)] > 256) {
+	// 			x = 0;
+	// 			yPos += 16/scaleY;
+	// 		} else if(text[c] == newline[0]) {
+	// 		x = 0;
+	// 		yPos += 16;
+	// 		continue;
+	// 	}
 
-			for(double y = 0; y < 16; y+=scaleY) {
-				int currentCharIndex = ((504*(fontTexcoords[1+(4*charIndex)]+(u16)y))+fontTexcoords[0+(4*charIndex)]);
+	// 		for(double y = 0; y < 16; y+=scaleY) {
+	// 			int currentCharIndex = ((504*(fontTexcoords[1+(4*charIndex)]+(u16)y))+fontTexcoords[0+(4*charIndex)]);
 
-				for(double i = 0; i < fontTexcoords[2 + (4 * charIndex)]; i+=scaleX) {
-					if(font[currentCharIndex+i]>>15 != 0) { // Do not render transparent pixel
-						if(!invert)	(top ? BG_GFX : BG_GFX_SUB)[((u16)(y/scaleY)+yPos)*256+((u16)(i/scaleX)+x+xPos)] = color & font[currentCharIndex+i];
-						else {
-							if(font[currentCharIndex+i] == 0xFBDE) // Light -> dark
-								(top ? BG_GFX : BG_GFX_SUB)[((u16)(y/scaleY)+yPos)*256+((u16)(i/scaleX)+x+xPos)] = color & 0xBDEF;
-							else // Dark -> light
-								(top ? BG_GFX : BG_GFX_SUB)[((u16)(y/scaleY)+yPos)*256+((u16)(i/scaleX)+x+xPos)] = color & 0xFBDE;
-						}
-					}
-				}
-			}
-			x += fontTexcoords[2 + (4 * charIndex)]/scaleX;
-		}
-	}
+	// 			for(double i = 0; i < fontTexcoords[2 + (4 * charIndex)]; i+=scaleX) {
+	// 				if(font[currentCharIndex+i]>>15 != 0) { // Do not render transparent pixel
+	// 					if(!invert)	(top ? BG_GFX : BG_GFX_SUB)[((u16)(y/scaleY)+yPos)*256+((u16)(i/scaleX)+x+xPos)] = color & font[currentCharIndex+i];
+	// 					else {
+	// 						if(font[currentCharIndex+i] == 0xFBDE) // Light -> dark
+	// 							(top ? BG_GFX : BG_GFX_SUB)[((u16)(y/scaleY)+yPos)*256+((u16)(i/scaleX)+x+xPos)] = color & 0xBDEF;
+	// 						else // Dark -> light
+	// 							(top ? BG_GFX : BG_GFX_SUB)[((u16)(y/scaleY)+yPos)*256+((u16)(i/scaleX)+x+xPos)] = color & 0xFBDE;
+	// 					}
+	// 				}
+	// 			}
+	// 		}
+	// 		x += fontTexcoords[2 + (4 * charIndex)]/scaleX;
+	// 	}
+	// }
 }
 
 int getTextWidthMaxW(std::string text, int w) { return std::min(w, getTextWidth(StringUtils::UTF8toUTF16(text))); }
@@ -483,11 +538,8 @@ int getTextWidthScaled(std::u16string text, double scale) { return getTextWidth(
 int getTextWidth(std::string text) { return getTextWidth(StringUtils::UTF8toUTF16(text)); }
 int getTextWidth(std::u16string text) {
 	int textWidth = 0;
-
-	for(unsigned c = 0; c < text.length(); c++) {
-		unsigned int charIndex = getFontSpriteIndex(text[c]);
-		textWidth += fontTexcoords[2+(4*charIndex)];
+	for(unsigned c=0;c<text.size();c++) {
+		textWidth += fontWidths[(fontMap[text[c]]*3)+2];
 	}
-
 	return textWidth;
 }

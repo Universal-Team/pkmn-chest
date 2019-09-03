@@ -7,80 +7,73 @@
 std::string langs[] = { "de", "en", "es", "fr", "it", "jp", "ru"};
 
 void Lang::loadLangStrings(int lang) {
-	// Clear vectors
-	Lang::abilities.clear();
-	Lang::games.clear();
-	Lang::items.clear();
-	Lang::locations4.clear();
-	Lang::locations5.clear();
-	Lang::moves.clear();
-	Lang::natures.clear();
-	Lang::species.clear();
-	
-	// Declare variables
-	char path[32];
-	std::string line;
+	// TODO: Fix this causing crashes
+	if(!abilities.size()) {
+		// Clear vectors
+		Lang::abilities.clear();
+		Lang::games.clear();
+		Lang::items.clear();
+		Lang::locations4.clear();
+		Lang::locations5.clear();
+		Lang::moves.clear();
+		Lang::natures.clear();
+		Lang::species.clear();
+		
+		// Declare variables
+		std::string line;
 
-	// Fill vectors from files
-	snprintf(path, sizeof(path), "nitro:/lang/%s/abilities", langs[lang].c_str());
-	std::ifstream in(path);
-	while(std::getline(in, line)) {
-		Lang::abilities.push_back(line);
-	}
-	in.close();
+		// Fill vectors from files
+		std::ifstream in("nitro:/lang/"+langs[lang]+"/abilities");
+		while(std::getline(in, line)) {
+			Lang::abilities.push_back(line);
+		}
+		in.close();
 
-	snprintf(path, sizeof(path), "nitro:/lang/%s/games", langs[lang].c_str());
-	in.open(path);
-	while(std::getline(in, line)) {
-		Lang::games.push_back(line);
-	}
-	in.close();
+		in.open("nitro:/lang/"+langs[lang]+"/games");
+		while(std::getline(in, line)) {
+			Lang::games.push_back(line);
+		}
+		in.close();
 
-	snprintf(path, sizeof(path), "nitro:/lang/%s/items", langs[lang].c_str());
-	in.open(path);
-	while(std::getline(in, line)) {
-		Lang::items.push_back(line);
-	}
-	in.close();
+		in.open("nitro:/lang/"+langs[lang]+"/items");
+		while(std::getline(in, line)) {
+			Lang::items.push_back(line);
+		}
+		in.close();
 
-	snprintf(path, sizeof(path), "nitro:/lang/%s/locations4", langs[lang].c_str());
-	in.open(path);
-	while(std::getline(in, line)) {
-		Lang::locations4.push_back(line);
-	}
-	in.close();
+		in.open("nitro:/lang/"+langs[lang]+"/locations4");
+		while(std::getline(in, line)) {
+			Lang::locations4.push_back(line);
+		}
+		in.close();
 
-	snprintf(path, sizeof(path), "nitro:/lang/%s/locations5", langs[lang].c_str());
-	in.open(path);
-	while(std::getline(in, line)) {
-		Lang::locations5.push_back(line);
-	}
-	in.close();
+		in.open("nitro:/lang/"+langs[lang]+"/locations5");
+		while(std::getline(in, line)) {
+			Lang::locations5.push_back(line);
+		}
+		in.close();
 
-	snprintf(path, sizeof(path), "nitro:/lang/%s/moves", langs[lang].c_str());
-	in.open(path);
-	while(std::getline(in, line)) {
-		Lang::moves.push_back(line);
-	}
-	in.close();
+		in.open("nitro:/lang/"+langs[lang]+"/moves");
+		while(std::getline(in, line)) {
+			Lang::moves.push_back(line);
+		}
+		in.close();
 
-	snprintf(path, sizeof(path), "nitro:/lang/%s/natures", langs[lang].c_str());
-	in.open(path);
-	while(std::getline(in, line)) {
-		Lang::natures.push_back(line);
-	}
-	in.close();
+		in.open("nitro:/lang/"+langs[lang]+"/natures");
+		while(std::getline(in, line)) {
+			Lang::natures.push_back(line);
+		}
+		in.close();
 
-	snprintf(path, sizeof(path), "nitro:/lang/%s/species", langs[lang].c_str());
-	in.open(path);
-	while(std::getline(in, line)) {
-		Lang::species.push_back(line);
+		in.open("nitro:/lang/"+langs[lang]+"/species");
+		while(std::getline(in, line)) {
+			Lang::species.push_back(line);
+		}
+		in.close();
 	}
-	in.close();
 
 	// Load app strings
-	snprintf(path, sizeof(path), "nitro:/lang/%s/app.ini", langs[lang].c_str());
-	CIniFile ini(path);
+	CIniFile ini("nitro:/lang/"+langs[lang]+"/app.ini");
 
 	// [aMenu]
 	Lang::aMenuText[0] = ini.GetString("aMenu", "move", Lang::aMenuText[0]);
