@@ -179,9 +179,9 @@ void configMenu(void) {
 				} case 5: { // Language
 					if(pressed & KEY_LEFT) {
 						if(Config::lang > 0)	Config::lang--;
-						else	Config::lang = (sizeof(langNames)/sizeof(langNames[0]));
+						else	Config::lang = (sizeof(langNames)/sizeof(langNames[0]))-1;
 					} else {
-						if(Config::lang < (int)(sizeof(langNames)/sizeof(langNames[0])))	Config::lang++;
+						if(Config::lang < (int)(sizeof(langNames)/sizeof(langNames[0]))-1)	Config::lang++;
 						else	Config::lang = 0;
 					}
 					Lang::loadLangStrings(Config::lang);
