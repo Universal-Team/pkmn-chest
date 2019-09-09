@@ -252,8 +252,8 @@ void drawImageFromSheet(int x, int y, int w, int h, std::vector<u16> &imageBuffe
 	}
 }
 
-void drawImageFromSheetScaled(int x, int y, int w, int h, double scale, std::vector<u16> &imageBuffer, int imageWidth, int xOffset, int yOffset, bool top) {
-	if(scale == 1)	drawImageFromSheet(x, y, w, h, imageBuffer, imageWidth, xOffset, yOffset, top);
+void drawImageFromSheetScaled(int x, int y, int w, int h, double scaleX, double scaleY, std::vector<u16> &imageBuffer, int imageWidth, int xOffset, int yOffset, bool top) {
+	if(scaleX == 1 && scaleY == 1)	drawImageFromSheet(x, y, w, h, imageBuffer, imageWidth, xOffset, yOffset, top);
 	else {
 		std::vector<u16> buffer;
 		for(int i=0;i<h;i++) {
@@ -261,22 +261,17 @@ void drawImageFromSheetScaled(int x, int y, int w, int h, double scale, std::vec
 				buffer.push_back(imageBuffer[((i+yOffset)*imageWidth)+j+xOffset]);
 			}
 		}
-		drawImageScaled(x, y, w, h, scale, buffer, top);
+		drawImageScaled(x, y, w, h, scaleX, scaleY, buffer, top);
 	}
 }
 
-void drawImageScaled(int x, int y, int w, int h, double scale, std::vector<u16> &imageBuffer, bool top) {
-	if(scale == 1)	drawImage(x, y, w, h, imageBuffer, top);
+void drawImageScaled(int x, int y, int w, int h, double scaleX, double scaleY, std::vector<u16> &imageBuffer, bool top) {
+	if(scaleX == 1 && scaleY == 1)	drawImage(x, y, w, h, imageBuffer, top);
 	else {
-		scale = 1/scale;
-		for(double i=0;i<h;i+=scale) {
-			u16 ii=i;
-			u16 is=i/scale;
-			for(double j=0;j<w;j+=scale) {
-				u16 jj=j;
-				if(imageBuffer[(ii*w)+jj]>>15 != 0) { // Do not render transparent pixel
-					u16 js=j/scale;
-					(top ? BG_GFX : BG_GFX_SUB)[(y+is)*256+js+x] = imageBuffer[(ii*w)+jj];
+		for(int i=0;i<(h*scaleY);i++) {
+			for(int j=0;j<(w*scaleX);j++) {
+				if(imageBuffer[(((int)(i/scaleY))*w)+(j/scaleX)]>>15 != 0) { // Do not render transparent pixel
+					(top ? BG_GFX : BG_GFX_SUB)[(y+i)*256+x+j] = imageBuffer[(((int)(i/scaleY))*w)+(j/scaleX)];
 				}
 			}
 		}
@@ -492,43 +487,34 @@ void printTextTintedMaxW(std::string text, double w, double scaleY, u16 color, i
 void printTextTintedMaxW(std::u16string text, double w,  double scaleY, u16 color, int xPos, int yPos, bool top, bool invert) { printTextTintedScaled(text, std::min(1.0, w/getTextWidth(text)), scaleY, color, xPos, yPos, top, invert); }
 void printTextTintedScaled(std::string text, double scaleX, double scaleY, u16 color, int xPos, int yPos, bool top, bool invert) { printTextTintedScaled(StringUtils::UTF8toUTF16(text), scaleX, scaleY, color, xPos, yPos, top, invert); }
 
-void printTextTintedScaled(std::u16string text, double scaleX,  double scaleY, u16 color, int xPos, int yPos, bool top, bool invert) {
-	/* if(scaleX == 1 && scaleY == 1)	*/printTextTinted(text, color, xPos, yPos, top, invert);
-	// else {
-	// 	scaleX = 1/scaleX;
-	// 	scaleY = 1/scaleY;
-	// 	int x = 0;
+void printTextTintedScaled(std::u16string text, double scaleX, double scaleY, u16 color, int xPos, int yPos, bool top, bool invert) {
+	if(scaleX == 1 && scaleY == 1) {
+		printTextTinted(text, color, xPos, yPos, top, invert);
+		return;
+	}
 
-	// 	for(unsigned c = 0; c < text.length(); c++) {
-	// 		unsigned int charIndex = getFontSpriteIndex(text[c]);
+	int x=xPos;
+	u16 color1 = color & (invert ? 0xBDEF : 0xFBDE);
+	u16 color2 = color & (invert ? 0xFBDE : 0xBDEF);
+	u16 pallet[4] = {0, color1, color2, 0};
+	for(unsigned c=0;c<text.size();c++) {
+		int t = fontMap[text[c]];
+		std::vector<u16> image;
+		for(int i=0;i<tileSize;i++) {
+			image.push_back(pallet[fontTiles[i+(t*tileSize)]>>6 & 3]);
+			image.push_back(pallet[fontTiles[i+(t*tileSize)]>>4 & 3]);
+			image.push_back(pallet[fontTiles[i+(t*tileSize)]>>2 & 3]);
+			image.push_back(pallet[fontTiles[i+(t*tileSize)] & 3]);
+		}
 
-	// 		if(xPos+x+fontTexcoords[2 + (4 * charIndex)] > 256) {
-	// 			x = 0;
-	// 			yPos += 16/scaleY;
-	// 		} else if(text[c] == newline[0]) {
-	// 		x = 0;
-	// 		yPos += 16;
-	// 		continue;
-	// 	}
-
-	// 		for(double y = 0; y < 16; y+=scaleY) {
-	// 			int currentCharIndex = ((504*(fontTexcoords[1+(4*charIndex)]+(u16)y))+fontTexcoords[0+(4*charIndex)]);
-
-	// 			for(double i = 0; i < fontTexcoords[2 + (4 * charIndex)]; i+=scaleX) {
-	// 				if(font[currentCharIndex+i]>>15 != 0) { // Do not render transparent pixel
-	// 					if(!invert)	(top ? BG_GFX : BG_GFX_SUB)[((u16)(y/scaleY)+yPos)*256+((u16)(i/scaleX)+x+xPos)] = color & font[currentCharIndex+i];
-	// 					else {
-	// 						if(font[currentCharIndex+i] == 0xFBDE) // Light -> dark
-	// 							(top ? BG_GFX : BG_GFX_SUB)[((u16)(y/scaleY)+yPos)*256+((u16)(i/scaleX)+x+xPos)] = color & 0xBDEF;
-	// 						else // Dark -> light
-	// 							(top ? BG_GFX : BG_GFX_SUB)[((u16)(y/scaleY)+yPos)*256+((u16)(i/scaleX)+x+xPos)] = color & 0xFBDE;
-	// 					}
-	// 				}
-	// 			}
-	// 		}
-	// 		x += fontTexcoords[2 + (4 * charIndex)]/scaleX;
-	// 	}
-	// }
+		x += fontWidths[t*3];
+		if(x > 256) {
+			x = xPos+fontWidths[t*3];
+			yPos += tileHeight;
+		}
+		drawImageScaled(x, yPos, tileWidth, tileHeight, scaleX, scaleY, image, top);
+		x += fontWidths[(t*3)+1]*scaleX;
+	}
 }
 
 int getTextWidthMaxW(std::string text, int w) { return std::min(w, getTextWidth(StringUtils::UTF8toUTF16(text))); }

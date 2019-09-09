@@ -122,7 +122,7 @@ void drawSummaryPage(std::shared_ptr<PKX> pkm) {
 
 	std::vector<u16> bmp;
 	ImageData bmpData = loadPokemonSprite(getPokemonIndex(pkm), bmp);
-	drawImageScaled(169, 22, bmpData.width, bmpData.height, 2, bmp, false);
+	drawImageScaled(169, 22, bmpData.width, bmpData.height, 2, 2, bmp, false);
 
 	drawImageFromSheet(150, 26, 32, 12, types, 32, 0, (((pkm->generation() == Generation::FOUR && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1())*12), false);
 	if(pkm->type1() != pkm->type2())
