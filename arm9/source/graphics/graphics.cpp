@@ -67,7 +67,7 @@ void loadFont(void) {
 
 	// Load character glyphs
 	int tileAmount = ((chunkSize-0x10)/tileSize);
-	fontTiles.resize(tileSize*tileAmount);
+	fontTiles = std::vector<char>(tileSize*tileAmount);
 	fseek(font, 0x3C, SEEK_SET);
 	fread(fontTiles.data(), tileSize, tileAmount, font);
 
@@ -85,11 +85,11 @@ void loadFont(void) {
 	fseek(font, locHDWC-4, SEEK_SET);
 	fread(&chunkSize, 4, 1, font);
 	fseek(font, 8, SEEK_CUR);
-	fontWidths.resize(3*tileAmount);
+	fontWidths = std::vector<char>(3*tileAmount);
 	fread(fontWidths.data(), 3, tileAmount, font);
 
 	// Load character maps
-	fontMap.resize(0xffe5);
+	fontMap = std::vector<u16>(0xffe5);
 	fseek(font, 0x28, SEEK_SET);
 	u32 locPAMC, mapType;
 	fread(&locPAMC, 4, 1, font);
@@ -325,6 +325,14 @@ void fillSpriteImage(int id, std::vector<u16> &imageBuffer) {
 	dmaCopyWords(0, imageBuffer.data(), sprites[id].gfx, 32*32*2);
 }
 
+void fillSpriteImage(int id, int x, int y, int w, int h, std::vector<u16> &imageBuffer) {
+	for(int i=0;i<h;i++) {
+		for(int j=0;j<w;j++) {
+			sprites[id].gfx[((y+i)*32)+(x+j)] = imageBuffer[((i)*w)+j];
+		}
+	}
+}
+
 void fillSpriteFromSheet(int id, std::vector<u16> &imageBuffer, int w, int h, int imageWidth, int xOffset, int yOffset) {
 	for(int i=0;i<h;i++) {
 		for(int j=0;j<w;j++) {
@@ -361,37 +369,23 @@ void fillSpriteFromSheetTinted(int id, std::vector<u16> &imageBuffer, u16 color,
 void fillSpriteText(int id, std::string text, u16 color, int xPos, int yPos, bool invert) { fillSpriteText(id, StringUtils::UTF8toUTF16(text), color, xPos, yPos, invert); };
 
 void fillSpriteText(int id, std::u16string text, u16 color, int xPos, int yPos, bool invert) {
-// 	int x = 0;
+	u16 color1 = color & (invert ? 0xBDEF : 0xFBDE);
+	u16 color2 = color & (invert ? 0xFBDE : 0xBDEF);
+	u16 pallet[4] = {0, color1, color2, 0};
+	for(unsigned c=0;c<text.size();c++) {
+		int t = fontMap[text[c]];
+		std::vector<u16> image;
+		for(int i=0;i<tileSize;i++) {
+			image.push_back(pallet[fontTiles[i+(t*tileSize)]>>6 & 3]);
+			image.push_back(pallet[fontTiles[i+(t*tileSize)]>>4 & 3]);
+			image.push_back(pallet[fontTiles[i+(t*tileSize)]>>2 & 3]);
+			image.push_back(pallet[fontTiles[i+(t*tileSize)] & 3]);
+		}
 
-// 	for(unsigned c = 0; c < text.length(); c++) {
-// 		unsigned int charIndex = getFontSpriteIndex(text[c]);
-
-// 		if(xPos+x+(fontTexcoords[2 + (4 * charIndex)]) > 256) {
-// 			x = 0;
-// 			yPos += 16;
-// 		} else if(text[c] == newline[0]) {
-// 			x = 0;
-// 			yPos += 16;
-// 			continue;
-// 		}
-
-// 		for(int y = 0; y < 16; y++) {
-// 			int currentCharIndex = ((504*(fontTexcoords[1+(4*charIndex)]+y))+fontTexcoords[0+(4*charIndex)]);
-
-// 			for(u16 i = 0; i < fontTexcoords[2 + (4 * charIndex)]; i++) {
-// 				if(font[currentCharIndex+i]>>15 != 0) { // Do not render transparent pixel
-// 					if(!invert)	sprites[id].gfx[(y+yPos)*32+(i+x+xPos)] = color & font[currentCharIndex+i];
-// 					else {
-// 						if(font[currentCharIndex+i] == 0xFBDE) // Light -> dark
-// 							sprites[id].gfx[(y+yPos)*32+(i+x+xPos)] = color & 0xBDEF;
-// 						else // Dark -> light
-// 							sprites[id].gfx[(y+yPos)*32+(i+x+xPos)] = color & 0xFBDE;
-// 					}
-// 				}
-// 			}
-// 		}
-// 		x += fontTexcoords[2 + (4 * charIndex)];
-// 	}
+		xPos += fontWidths[t*3];
+		fillSpriteImage(id, xPos, yPos, tileWidth, tileHeight, image);
+		xPos += fontWidths[(t*3)+1];
+	}
 }
 
 void prepareSprite(int id, int x, int y, int priority) {
