@@ -426,14 +426,15 @@ void manageBoxes(void) {
 					} else if(!heldMode || currentPokemon((arrowY*6)+arrowX)->species() == 0) {
 						int canPlace = true;
 						for(unsigned i=0;i<heldPokemon.size();i++) {
-							if(heldPokemon[i].x-heldPokemon[0].x > 5-arrowX) {
-								canPlace = false;
-								break;
+							if(heldPokemon[i].x-heldPokemon[0].x > 5-arrowX)	canPlace = false;
+							if(heldPokemon[i].y-heldPokemon[0].y > 4-arrowY)	canPlace = false;
+							for(unsigned j=0;j<heldPokemon.size();j++) {
+								if(((arrowY+heldPokemon[j].y)*6)+arrowX+heldPokemon[j].x == heldPokemon[i].position) {
+									canPlace = false;
+									break;
+								}
 							}
-							if(heldPokemon[i].y-heldPokemon[0].y > 4-arrowY) {
-								canPlace = false;
-								break;
-							}
+							if(!canPlace)	break;
 						}
 						if(canPlace) {
 							for(unsigned i=0;i<heldPokemon.size();i++) {
