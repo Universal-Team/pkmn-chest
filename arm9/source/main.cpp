@@ -62,12 +62,12 @@ int main(int argc, char **argv) {
 	loadLoadingLogo();
 	showLoadingLogo();
 
+	loadFont();
 	Config::loadConfig();
 	Lang::loadLangStrings(Config::lang);
+	printTextCentered(Lang::loading, 0, 32, false);
 
 	Banks::init();
-	// TODO: Fix text corruption if loaded before Banks::init()
-	loadFont();
 	Sound::init();
 	loadGraphics();
 

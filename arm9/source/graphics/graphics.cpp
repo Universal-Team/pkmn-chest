@@ -89,7 +89,7 @@ void loadFont(void) {
 	fread(fontWidths.data(), 3, tileAmount, font);
 
 	// Load character maps
-	fontMap.resize(tileAmount);
+	fontMap.resize(0xffe5);
 	fseek(font, 0x28, SEEK_SET);
 	u32 locPAMC, mapType;
 	fread(&locPAMC, 4, 1, font);
@@ -106,12 +106,12 @@ void loadFont(void) {
 			case 0: {
 				u16 firstTile;
 				fread(&firstTile, 2, 1, font);
-				for(unsigned i=firstChar;i<lastChar;i++) {
+				for(unsigned i=firstChar;i<=lastChar;i++) {
 					fontMap[i] = firstTile+(i-firstChar);
 				}
 				break;
 			} case 1: {
-				for(int i=firstChar;i<lastChar;i++) {
+				for(int i=firstChar;i<=lastChar;i++) {
 					u16 tile;
 					fread(&tile, 2, 1, font);
 					fontMap[i] = tile;
