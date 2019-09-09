@@ -140,8 +140,8 @@ ImageData loadPokemonSprite(int dexNo, std::vector<u16> &imageBuffer) {
 		// Load pixels
 		fseek(pokemonSheet, dexNo+0xA, SEEK_SET); // Get pixel start location
 		fseek(pokemonSheet, dexNo+(u8)fgetc(pokemonSheet), SEEK_SET); // Seek to pixel start location
-		u8 bmpImageBuffer[imageData.width*imageData.height];
-		fread(bmpImageBuffer, 1, (imageData.width*imageData.height)/2, pokemonSheet);
+		u8 bmpImageBuffer[(imageData.width*imageData.height)/2];
+		fread(bmpImageBuffer, 1, sizeof(bmpImageBuffer), pokemonSheet);
 		for(int y=imageData.height-1; y>=0; y--) {
 			u8* src = bmpImageBuffer+y*(imageData.width/2);
 			for(unsigned x=0;x<imageData.width;x+=2) {
