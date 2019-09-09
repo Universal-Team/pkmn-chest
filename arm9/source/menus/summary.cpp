@@ -102,7 +102,7 @@ void drawSummaryPage(std::shared_ptr<PKX> pkm) {
 	if(sdFound())	drawImage(0, 0, summaryBgData.width, summaryBgData.height, summaryBg, false);
 	else {
 		drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
-		drawOutline(145, -1, 111, 88, LIGHT_GRAY, false);
+		drawRectangle(145, 0, 111, 88, LIGHT_GRAY, false);
 	}
 	// Draw lines
 	drawOutline(0, 124, 160, 69, LIGHT_GRAY, false);
