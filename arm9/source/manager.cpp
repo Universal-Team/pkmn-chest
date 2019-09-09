@@ -419,7 +419,7 @@ void manageBoxes(void) {
 					if(heldPokemon[0].position == (arrowY*6)+arrowX && heldPokemonBox == currentBox() && heldPokemonScreen == topScreen) {
 						// If in the held Pokémon's previous spot, just put held Pokémon back down
 						for(unsigned i=0;i<heldPokemon.size();i++)
-							setSpriteVisibility((heldPokemonScreen ? heldPokemon[i].position+30 : heldPokemon[i].position), true);
+							setSpriteVisibility((heldPokemonScreen ? heldPokemon[i].position+30 : heldPokemon[i].position), heldPokemon[i].pkm->species());
 						setSpriteVisibility(topScreen ? topHeldPokemonID : bottomHeldPokemonID, false);
 						heldPokemon.clear();
 						heldPokemonBox = -1;
