@@ -493,7 +493,7 @@ void manageBoxes(void) {
 						if(pressed & KEY_A) {
 							yellowSelection:
 							drawImage(5, 15, bankBoxData.width, bankBoxData.height, bankBox, topScreen);
-						printTextCenteredTinted((topScreen ? Banks::bank->boxName(currentBankBox) : save->boxName(currentSaveBox)), GRAY, -44, 20, topScreen, true);
+							printTextCenteredTinted((topScreen ? Banks::bank->boxName(currentBankBox) : save->boxName(currentSaveBox)), GRAY, -44, 20, topScreen, true);
 							for(int y=std::min(startY, arrowY);y<std::max(startY,arrowY)+1;y++) {
 								for(int x=std::min(startX, arrowX);x<std::max(startX,arrowX)+1;x++) {
 									heldPokemon.push_back({currentPokemon((y*6)+x), (y*6)+x, x-std::min(startX, arrowX), y-std::min(startY, arrowY)});
@@ -513,7 +513,9 @@ void manageBoxes(void) {
 							updateOam();
 							break;
 						} else if(pressed & KEY_B) {
-							drawBox(topScreen);
+							drawImage(5, 15, bankBoxData.width, bankBoxData.height, bankBox, topScreen);
+							printTextCenteredTinted((topScreen ? Banks::bank->boxName(currentBankBox) : save->boxName(currentSaveBox)), GRAY, -44, 20, topScreen, true);
+							drawPokemonInfo(currentPokemon((arrowY*6)+arrowX));
 							break;
 						} else if(pressed & KEY_TOUCH) {
 							touchRead(&touch);
