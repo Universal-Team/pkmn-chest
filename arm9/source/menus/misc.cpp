@@ -234,6 +234,7 @@ void drawItemList(int screenPos, std::vector<std::string> itemList) {
 }
 
 int selectItem(int current, int start, int max, std::vector<std::string> &items) {
+	if(current < start)	current = start;
 	// Set arrow position
 	setSpritePosition(bottomArrowID, 4+getTextWidth(items[current]), -2);
 	setSpriteVisibility(bottomArrowID, true);
