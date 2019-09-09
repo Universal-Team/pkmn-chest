@@ -265,7 +265,7 @@ std::string topMenuSelect(void) {
 	}
 
 	// Print version number
-	printText(VER_NUMBER, 256-getTextWidth(VER_NUMBER), 176, true);
+	printText(VER_NUMBER, 256-getTextWidth(VER_NUMBER)-1, 176, true);
 
 	updateCardInfo();
 
@@ -522,7 +522,7 @@ std::string browseForSave(void) {
 	}
 
 	// Print version number
-	printText(VER_NUMBER, 256-getTextWidth(VER_NUMBER), 176, true);
+	printText(VER_NUMBER, 256-getTextWidth(VER_NUMBER)-1, 176, true);
 
 	std::vector<std::string> extensionList;
 	extensionList.push_back("sav");
