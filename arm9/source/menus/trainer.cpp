@@ -42,7 +42,7 @@ void drawTrainerCard(void) {
 	snprintf(textTP1[0].text,  sizeof(textTP1[0].text), "%s", save->otName().c_str());
 	snprintf(textTP1[1].text,  sizeof(textTP1[1].text), "%.5i", save->TID());
 	snprintf(textTP1[2].text,  sizeof(textTP1[2].text), "%.5i", save->SID());
-	snprintf(textTP1[3].text,  sizeof(textTP1[3].text), "%li", save->money());
+	snprintf(textTP1[3].text,  sizeof(textTP1[3].text), "$%li", save->money());
 	snprintf(textTP1[4].text,  sizeof(textTP1[4].text), "%li", save->BP());
 	snprintf(textTP1[5].text,  sizeof(textTP1[5].text), "%i", save->badges());
 	snprintf(textTP1[6].text,  sizeof(textTP1[6].text), "%i:%i:%i", save->playedHours(), save->playedMinutes(), save->playedSeconds());
