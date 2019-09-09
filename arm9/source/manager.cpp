@@ -428,10 +428,12 @@ void manageBoxes(void) {
 						for(unsigned i=0;i<heldPokemon.size();i++) {
 							if(heldPokemon[i].x-heldPokemon[0].x > 5-arrowX)	canPlace = false;
 							if(heldPokemon[i].y-heldPokemon[0].y > 4-arrowY)	canPlace = false;
-							for(unsigned j=0;j<heldPokemon.size();j++) {
-								if(((arrowY+heldPokemon[j].y)*6)+arrowX+heldPokemon[j].x == heldPokemon[i].position) {
-									canPlace = false;
-									break;
+							if(currentBox() == heldPokemonBox && topScreen == heldPokemonScreen) {
+								for(unsigned j=0;j<heldPokemon.size();j++) {
+									if(((arrowY+heldPokemon[j].y)*6)+arrowX+heldPokemon[j].x == heldPokemon[i].position) {
+										canPlace = false;
+										break;
+									}
 								}
 							}
 							if(!canPlace)	break;
@@ -498,8 +500,10 @@ void manageBoxes(void) {
 									setSpriteVisibility((topScreen ? ((y*6)+x)+30 : (y*6)+x), false);
 								}
 							}
-							fillSpriteColor(topScreen ? topHeldPokemonID : bottomHeldPokemonID, 0); // Fill the sprite with transparency
-							fillSpriteText(topScreen ? topHeldPokemonID : bottomHeldPokemonID, StringUtils::UTF8toUTF16(std::to_string(heldPokemon.size())), GRAY, 32-getTextWidth(std::to_string(heldPokemon.size())), 16, true);
+							fillSpriteColor(topHeldPokemonID, 0); // Fill the sprite with transparency
+							fillSpriteText(topHeldPokemonID, StringUtils::UTF8toUTF16(std::to_string(heldPokemon.size())), GRAY, 32-getTextWidth(std::to_string(heldPokemon.size())), 16, true);
+							fillSpriteColor(bottomHeldPokemonID, 0); // Fill the sprite with transparency
+							fillSpriteText(bottomHeldPokemonID, StringUtils::UTF8toUTF16(std::to_string(heldPokemon.size())), GRAY, 32-getTextWidth(std::to_string(heldPokemon.size())), 16, true);
 							setSpriteVisibility(topScreen ? topHeldPokemonID : bottomHeldPokemonID, true);
 							updateOam();
 							heldPokemonBox = currentBox();
