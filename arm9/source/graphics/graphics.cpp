@@ -438,6 +438,12 @@ void printTextTinted(std::u16string text, u16 color, int xPos, int yPos, bool to
 	u16 color2 = color & (invert ? 0xFBDE : 0xBDEF);
 	u16 pallet[4] = {0, color1, color2, 0};
 	for(unsigned c=0;c<text.size();c++) {
+		if(text[c] == newline[0]) {
+			x = xPos;
+			yPos += tileHeight;
+			continue;
+		}
+
 		int t = fontMap[text[c]];
 		std::vector<u16> image;
 		for(int i=0;i<tileSize;i++) {
@@ -492,6 +498,12 @@ void printTextTintedScaled(std::u16string text, double scaleX, double scaleY, u1
 	u16 color2 = color & (invert ? 0xFBDE : 0xBDEF);
 	u16 pallet[4] = {0, color1, color2, 0};
 	for(unsigned c=0;c<text.size();c++) {
+		if(text[c] == newline[0]) {
+			x = xPos;
+			yPos += tileHeight;
+			continue;
+		}
+
 		int t = fontMap[text[c]];
 		std::vector<u16> image;
 		for(int i=0;i<tileSize;i++) {
