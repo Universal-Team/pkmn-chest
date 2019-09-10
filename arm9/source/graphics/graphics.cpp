@@ -321,8 +321,8 @@ void fillSpriteColor(int id, u16 color) {
 	dmaFillHalfWords(color, sprites[id].gfx, sprites[id].size);
 }
 
-void fillSpriteImage(int id, std::vector<u16> &imageBuffer) {
-	dmaCopyWords(0, imageBuffer.data(), sprites[id].gfx, 32*32*2);
+void fillSpriteImage(int id, std::vector<u16> &imageBuffer, int size) {
+	dmaCopyWords(0, imageBuffer.data(), sprites[id].gfx, size*2);
 }
 
 void fillSpriteImage(int id, int x, int y, int w, int h, std::vector<u16> &imageBuffer) {

@@ -217,13 +217,13 @@ void loadGraphics(void) {
 
 	// Prepare bottom arrow sprite
 	bottomArrowID = initSprite(SpriteSize_16x16, false);
-	fillSpriteImage(bottomArrowID, arrowRed);
+	fillSpriteImage(bottomArrowID, arrowRed, 16*16);
 	prepareSprite(bottomArrowID, 24, 36, 0);
 	setSpriteVisibility(bottomArrowID, false);
 
 	// Prepare top arrow sprite
 	topArrowID = initSprite(SpriteSize_16x16, true);
-	fillSpriteImage(topArrowID, arrowRed);
+	fillSpriteImage(topArrowID, arrowRed, 16*16);
 	prepareSprite(topArrowID, 24, 36, 0);
 	setSpriteVisibility(topArrowID, false);
 
@@ -616,14 +616,14 @@ void manageBoxes(void) {
 			else	arrowMode = 0;
 
 			if(arrowMode == 0) {
-				fillSpriteImage(bottomArrowID, arrowRed);
-				fillSpriteImage(topArrowID, arrowRed);
+				fillSpriteImage(bottomArrowID, arrowRed, 16*16);
+				fillSpriteImage(topArrowID, arrowRed, 16*16);
 			} else if(arrowMode == 1) {
-				fillSpriteImage(bottomArrowID, arrowBlue);
-				fillSpriteImage(topArrowID, arrowBlue);
+				fillSpriteImage(bottomArrowID, arrowBlue, 16*16);
+				fillSpriteImage(topArrowID, arrowBlue, 16*16);
 			} else {
-				fillSpriteImage(bottomArrowID, arrowYellow);
-				fillSpriteImage(topArrowID, arrowYellow);
+				fillSpriteImage(bottomArrowID, arrowYellow, 16*16);
+				fillSpriteImage(topArrowID, arrowYellow, 16*16);
 			}
 		}
 

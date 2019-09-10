@@ -165,9 +165,10 @@ void fillSpriteColor(int id, u16 color);
 /*
  * Fills a sprite with raw pixel data from a vector
  * int id is the id of the sprite
+ * size is the width * height of the image
  * std::vector<u16> &imageBuffer is the raw pixel data
  */
-void fillSpriteImage(int id, std::vector<u16> &imageBuffer);
+void fillSpriteImage(int id, std::vector<u16> &imageBuffer, int size = 32*32);
 
 /*
  * Fills a sprite with raw pixel data from a vector
