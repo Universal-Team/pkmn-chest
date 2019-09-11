@@ -51,7 +51,7 @@ enum Pouch {
 };
 
 class Sav {
-	protected:
+protected:
 	int Box, Party, PokeDex, WondercardData, WondercardFlags;
 	int PouchHeldItem, PouchKeyItem, PouchTMHM, PouchMedicine, PouchBerry;
 
@@ -76,7 +76,7 @@ class Sav {
 	u32 length = 0;
 	Game game;
 	static u16 ccitt16(const u8* buf, u32 len);
-	static bool validSequence(u8* dt, u8* pattern, int shift = 0);
+	static bool validSequence(u8* dt, size_t offset);
 
 public:
 	u8 boxes = 0;

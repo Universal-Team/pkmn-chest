@@ -50,79 +50,81 @@ u16 Sav::ccitt16(const u8* buf, u32 len) {
 }
 
 bool Sav::isValidDSSave(u8* dt) {
-	u16 chk1    = *(u16*)(dt + 0x24000 - 0x100 + 0x8C + 0xE);
+	u16 chk1 = *(u16*)(dt + 0x24000 - 0x100 + 0x8C + 0xE);
 	u16 actual1 = ccitt16(dt + 0x24000 - 0x100, 0x8C);
 	if(chk1 == actual1) {
 		return true;
 	}
-	u16 chk2    = *(u16*)(dt + 0x26000 - 0x100 + 0x94 + 0xE);
+	u16 chk2 = *(u16*)(dt + 0x26000 - 0x100 + 0x94 + 0xE);
 	u16 actual2 = ccitt16(dt + 0x26000 - 0x100, 0x94);
 	if(chk2 == actual2) {
 		return true;
 	}
 
 	// Check for block identifiers
-	u8 dpPattern[]   = {0x00, 0xC1, 0x00, 0x00, 0x23, 0x06, 0x06, 0x20, 0x00, 0x00};
-	u8 ptPattern[]   = {0x2C, 0xCF, 0x00, 0x00, 0x23, 0x06, 0x06, 0x20, 0x00, 0x00};
-	u8 hgssPattern[] = {0x28, 0xF6, 0x00, 0x00, 0x23, 0x06, 0x06, 0x20, 0x00, 0x00};
-	if(validSequence(dt, dpPattern))
+	static constexpr size_t DP_OFFSET = 0xC100;
+	static constexpr size_t PT_OFFSET = 0xCF2C;
+	static constexpr size_t HGSS_OFFSET = 0xF628;
+	if(validSequence(dt, DP_OFFSET))
 		return true;
-	if(validSequence(dt, ptPattern))
+	if(validSequence(dt, PT_OFFSET))
 		return true;
-	if(validSequence(dt, hgssPattern))
+	if(validSequence(dt, HGSS_OFFSET))
 		return true;
 
 	// Check the other save
-	if(validSequence(dt, dpPattern, 0x40000))
+	if(validSequence(dt, DP_OFFSET + 0x40000))
 		return true;
-	if(validSequence(dt, ptPattern, 0x40000))
+	if(validSequence(dt, PT_OFFSET + 0x40000))
 		return true;
-	if(validSequence(dt, hgssPattern, 0x40000))
+	if(validSequence(dt, HGSS_OFFSET + 0x40000))
 		return true;
 	return false;
 }
 
 std::unique_ptr<Sav> Sav::getSave(u8* dt, size_t length) {
 	if(length < 0x80000)	return nullptr;
-
-	u16 chk1    = *(u16*)(dt + 0x24000 - 0x100 + 0x8C + 0xE);
+	u16 chk1 = *(u16*)(dt + 0x24000 - 0x100 + 0x8C + 0xE);
 	u16 actual1 = ccitt16(dt + 0x24000 - 0x100, 0x8C);
 	if(chk1 == actual1) {
 		return std::make_unique<SavBW>(dt);
 	}
-	u16 chk2    = *(u16*)(dt + 0x26000 - 0x100 + 0x94 + 0xE);
+	u16 chk2 = *(u16*)(dt + 0x26000 - 0x100 + 0x94 + 0xE);
 	u16 actual2 = ccitt16(dt + 0x26000 - 0x100, 0x94);
 	if(chk2 == actual2) {
 		return std::make_unique<SavB2W2>(dt);
 	}
 
 	// Check for block identifiers
-	u8 dpPattern[]   = {0x00, 0xC1, 0x00, 0x00, 0x23, 0x06, 0x06, 0x20, 0x00, 0x00};
-	u8 ptPattern[]   = {0x2C, 0xCF, 0x00, 0x00, 0x23, 0x06, 0x06, 0x20, 0x00, 0x00};
-	u8 hgssPattern[] = {0x28, 0xF6, 0x00, 0x00, 0x23, 0x06, 0x06, 0x20, 0x00, 0x00};
-	if(validSequence(dt, dpPattern))
+	static constexpr size_t DP_OFFSET = 0xC100;
+	static constexpr size_t PT_OFFSET = 0xCF2C;
+	static constexpr size_t HGSS_OFFSET = 0xF628;
+	if(validSequence(dt, DP_OFFSET))
 		return std::make_unique<SavDP>(dt);
-	if(validSequence(dt, ptPattern))
+	if(validSequence(dt, PT_OFFSET))
 		return std::make_unique<SavPT>(dt);
-	if(validSequence(dt, hgssPattern))
+	if(validSequence(dt, HGSS_OFFSET))
 		return std::make_unique<SavHGSS>(dt);
 
 	// Check the other save
-	if(validSequence(dt, dpPattern, 0x40000))
+	if(validSequence(dt, DP_OFFSET + 0x40000))
 		return std::make_unique<SavDP>(dt);
-	if(validSequence(dt, ptPattern, 0x40000))
+	if(validSequence(dt, PT_OFFSET + 0x40000))
 		return std::make_unique<SavPT>(dt);
-	if(validSequence(dt, hgssPattern, 0x40000))
+	if(validSequence(dt, HGSS_OFFSET + 0x40000))
 		return std::make_unique<SavHGSS>(dt);
 	return nullptr;
 }
 
-bool Sav::validSequence(u8* dt, u8* pattern, int shift) {
-	int ofs = *(u16*)(pattern)-0xC + shift;
-	for(int i = 0; i < 10; i++)
-		if(dt[i + ofs] != pattern[i])
-			return false;
-	return true;
+bool Sav::validSequence(u8* dt, size_t offset) {
+	static constexpr u32 DATE_INTERNATIONAL = 0x20060623;
+	static constexpr u32 DATE_KOREAN = 0x20070903;
+
+	if(*(u32*)(dt + offset - 0xC) != (offset & 0xFFFF)) {
+		return false;
+	}
+
+	return *(u32*)(dt + offset - 0x8) == DATE_INTERNATIONAL || *(u32*)(dt + offset - 0x8) == DATE_KOREAN;
 }
 
 void Sav::transfer(std::shared_ptr<PKX>& pk) {
@@ -140,16 +142,16 @@ void Sav::fixParty() {
 	int numPkm = 6;
 	for(int i = 5; i > 0; i--) {
 		auto checkPKM = pkm(i);
-		if((checkPKM->encryptionConstant() == 0 && checkPKM->species() == 0)) {
+		if(checkPKM->species() == 0) {
 			numPkm--;
 			continue;
 		}
 		auto prevPKM = pkm(i - 1);
-		if(!(checkPKM->encryptionConstant() == 0 && checkPKM->species() == 0) && (prevPKM->encryptionConstant() == 0 && prevPKM->species() == 0)) {
+		if(checkPKM->species() != 0 && prevPKM->species() == 0) {
 			pkm(checkPKM, i - 1);
 			pkm(prevPKM, i);
 			numPkm = 6;
-			i      = 6; // reset loop
+			i = 6; // reset loop
 		}
 	}
 	partyCount(numPkm);
