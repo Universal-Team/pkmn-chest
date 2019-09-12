@@ -32,7 +32,7 @@ std::pair<int, int> textCP1[] {
 
 std::vector<std::string> optionsText = {"", "", "", "", ""}; // Placeholders to be filled
 
-std::string langNames[] = { "Deutsche", "English", "Español", "Français", "Italiano", "日本語", "한국", "русский"};
+std::string langNames[] = { "Deutsche", "English", "Español", "Français", "Italiano", "Português", "русский", "日本語", "한국"};
 
 void drawConfigMenu(void) {
 	// Draw background

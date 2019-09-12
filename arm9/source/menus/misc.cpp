@@ -66,8 +66,6 @@ int pkmLang(void) {
 			return 4; // Italian
 		case 5:
 			return 1; // Japanese
-		case 6:
-			return 2; // Russian (returns English)
 	}
 }
 
