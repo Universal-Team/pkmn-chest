@@ -48,11 +48,6 @@ char fatLabel[12];
 char sdLabel[12];
 u32 copyBuf[copyBufSize];
 
-struct DirEntry {
-	std::string name;
-	bool isDirectory;
-};
-
 struct topMenuItem {
 	std::string name;
 	bool valid;

@@ -34,6 +34,7 @@ namespace Lang {
 	release = "Release",
 	remove = "Remove",
 	save = "Save",
+	unlimited = "Unlimited",
 	yes = "True",
 	// [saveMsg]
 	saveMsgCard = "Would you like to save changes\nto the gamecard?",

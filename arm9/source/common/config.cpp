@@ -27,7 +27,7 @@ int sysLang() {
 
 void Config::loadConfig() {
 	CIniFile ini(sdFound() ? "sd:/_nds/pkmn-chest/config.ini" : "fat:/_nds/pkmn-chest/config.ini");
-	Config::backupAmount = ini.GetInt("backup", "amount", 1);
+	Config::backupAmount = ini.GetInt("backup", "amount", 0);
 	Config::chestFile = ini.GetString("chest", "file", "pkmn-chest_1");
 	Config::keyboardLayout = ini.GetInt("keyboard", "layout", 0);
 	Config::keyboardXPos = ini.GetInt("keyboard", "xPos", 0);

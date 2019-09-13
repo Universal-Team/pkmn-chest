@@ -38,6 +38,7 @@ namespace Lang {
 	release,
 	remove,
 	save,
+	unlimited,
 	yes,
 	// [saveMsg]
 	saveMsgCard,

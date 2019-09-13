@@ -49,7 +49,10 @@ void drawConfigMenu(void) {
 	snprintf(str, sizeof(str), "%i", Banks::bank->boxes());
 	optionsText[0] = str;
 	optionsText[1] = langNames[Config::lang];
-	snprintf(str, sizeof(str), "%i", Config::backupAmount);
+	if(Config::backupAmount == 0)
+		snprintf(str, sizeof(str), "%s", Lang::unlimited.c_str());
+	else
+		snprintf(str, sizeof(str), "%i", Config::backupAmount);
 	optionsText[2] = str;
 	snprintf(str, sizeof(str), "%i", Config::music);
 	optionsText[3] = Lang::songs[Config::music];
@@ -91,7 +94,7 @@ void configMenu(void) {
 			if(selection > 0)	selection--;
 		} else if(held & KEY_DOWN) {
 			if(selection < (int)(Lang::optionsText.size()+optionsText.size())-1)	selection++;
-		} else if((selection == 5 || selection == 7) && (pressed & KEY_LEFT || pressed & KEY_RIGHT)) {
+		} else if((selection > 4) && (pressed & KEY_LEFT || pressed & KEY_RIGHT)) {
 			optionSelected = true;
 		} else if(pressed & KEY_A) {
 			optionSelected = true;
@@ -188,10 +191,15 @@ void configMenu(void) {
 					Lang::loadLangStrings(Config::lang);
 					break;
 				} case 6: { // Backup Amount
-					int num = Input::getInt(9);
-					if(num != -1) {
-						Config::backupAmount = num;
-						Config::saveConfig();
+					if(pressed & KEY_LEFT) {
+						if(Config::backupAmount > 0)	Config::backupAmount--;
+					} else if(pressed & KEY_RIGHT) {
+						Config::backupAmount++;
+					} else {
+						int num = Input::getInt(9);
+						if(num != -1) {
+							Config::backupAmount = num;
+						}
 					}
 					break;
 				} case 7: { // Music
@@ -206,7 +214,6 @@ void configMenu(void) {
 					break;
 				} case 8: { // Sound FX
 					Config::playSfx = !Config::playSfx;
-					Config::saveConfig();
 					break;
 				}
 			}

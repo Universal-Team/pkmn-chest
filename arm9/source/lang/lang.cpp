@@ -115,6 +115,7 @@ void Lang::loadLangStrings(int lang) {
 	Lang::optionsText[1] = ini.GetString("options", "rename", Lang::optionsText[1]);
 	Lang::optionsText[2] = ini.GetString("options", "delete", Lang::optionsText[2]);
 	Lang::optionsText[3] = ini.GetString("options", "change", Lang::optionsText[3]);
+	Lang::unlimited = ini.GetString("options", "unlimited", Lang::unlimited);
 
 	// [origin]
 	Lang::originLabels[0] = ini.GetString("origin", "metLevel", Lang::originLabels[0]);
@@ -132,7 +133,7 @@ void Lang::loadLangStrings(int lang) {
 	Lang::songs[4] = ini.GetString("songs", "oakLab", Lang::songs[4]);
 	Lang::songs[5] = ini.GetString("songs", "gameCorner", Lang::songs[5]);
 
-	// Stats
+	// [stats]
 	Lang::statsLabels[0] = ini.GetString("stats", "hp", Lang::statsLabels[0]);
 	Lang::statsLabels[1] = ini.GetString("stats", "attack", Lang::statsLabels[1]);
 	Lang::statsLabels[2] = ini.GetString("stats", "defense", Lang::statsLabels[2]);

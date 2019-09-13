@@ -38,21 +38,28 @@ bool loadSave(std::string savePath) {
 }
 
 void saveChanges(std::string savePath) {
-	// Make backups
-	if(Config::backupAmount != 0) {
-		std::string saveFile = savePath.substr(savePath.find_last_of("/")+1);
-		for(unsigned i=Config::backupAmount;i>1;i--) {
-			char path1[PATH_MAX];
-			char path2[PATH_MAX];
-			snprintf(path1, sizeof(path1), "%s:/_nds/pkmn-chest/backups/%s.bak%i", sdFound() ? "sd" : "fat", saveFile.c_str(), i);
-			snprintf(path2, sizeof(path2), "%s:/_nds/pkmn-chest/backups/%s.bak%i", sdFound() ? "sd" : "fat", saveFile.c_str(), i-1);
-			if(access(path1, F_OK) == 0)	remove(path1);
-			if(access(path2, F_OK) == 0)	rename(path2, path1);
-		}
+	// Make backup
+	std::string saveFile = savePath.substr(savePath.find_last_of("/")+1);
+	char backupDir[PATH_MAX];
+	snprintf(backupDir, sizeof(backupDir), "%s:/_nds/pkmn-chest/backups/%s", sdFound() ? "sd" : "fat", saveFile.substr(0, saveFile.find_last_of(".")).c_str());
+	mkdir(backupDir, 0777);
 
-		char path[PATH_MAX];
-		snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/backups/%s.bak1", sdFound() ? "sd" : "fat", saveFile.c_str());
-		fcopy(savePath.c_str(), path);
+	char backupPath[PATH_MAX];
+	const time_t current = time(NULL);
+	snprintf(backupPath, sizeof(backupPath), "%s:/_nds/pkmn-chest/backups/%s/%.4d%.2d%.2d-%.2d%.2d%.2d.sav.bak", sdFound() ? "sd" : "fat", saveFile.substr(0, saveFile.find_last_of(".")).c_str(), gmtime(&current)->tm_year+1900, gmtime(&current)->tm_mon+1, gmtime(&current)->tm_mday, gmtime(&current)->tm_hour, gmtime(&current)->tm_min, gmtime(&current)->tm_sec);
+
+	fcopy(savePath.c_str(), backupPath);
+
+	if(Config::backupAmount > 0) { // 0 = unlimited
+		char savDir[PATH_MAX];
+		getcwd(savDir, PATH_MAX);
+		chdir(backupDir);
+		std::vector<DirEntry> dirContents;
+		getDirectoryContents(dirContents, {"bak"});
+
+		if((int)dirContents.size() > Config::backupAmount)	remove(dirContents[1].name.c_str()); // index 0 is '..'
+
+		chdir(savDir);
 	}
 
 	save->resign();
