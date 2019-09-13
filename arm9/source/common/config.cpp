@@ -1,10 +1,29 @@
 #include "config.h"
+#include <nds/system.h>
+
 #include "inifile.h"
 #include "flashcard.h"
+#include "lang.h"
 
 std::string Config::chestFile;
 bool Config::playSfx;
 int Config::backupAmount, Config::keyboardLayout, Config::keyboardXPos, Config::lang, Config::music;
+
+int sysLang() {
+	switch(PersonalData->language) {
+		case 0:
+			return Lang::jp;
+		case 1:
+		default:
+			return Lang::en;
+		case 2:
+			return Lang::fr;
+		case 3:
+			return Lang::de;
+		case 4:
+			return Lang::es;
+	}
+}
 
 void Config::loadConfig() {
 	CIniFile ini(sdFound() ? "sd:/_nds/pkmn-chest/config.ini" : "fat:/_nds/pkmn-chest/config.ini");
@@ -12,7 +31,7 @@ void Config::loadConfig() {
 	Config::chestFile = ini.GetString("chest", "file", "pkmn-chest_1");
 	Config::keyboardLayout = ini.GetInt("keyboard", "layout", 0);
 	Config::keyboardXPos = ini.GetInt("keyboard", "xPos", 0);
-	Config::lang = ini.GetInt("language", "lang", 1);
+	Config::lang = ini.GetInt("language", "lang", sysLang());
 	Config::music = ini.GetInt("sound", "music", 0);
 	Config::playSfx = ini.GetInt("sound", "sfx", 0);
 }
