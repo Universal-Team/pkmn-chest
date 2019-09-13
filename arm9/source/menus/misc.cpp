@@ -232,7 +232,7 @@ void drawItemList(int screenPos, std::vector<std::string> itemList) {
 }
 
 int selectItem(int current, int start, int max, std::vector<std::string> &items) {
-	if(current < start)	current = start;
+	if(current < start || current > max)	current = start;
 	// Set arrow position
 	setSpritePosition(bottomArrowID, 4+getTextWidth(items[current]), -2);
 	setSpriteVisibility(bottomArrowID, true);
@@ -550,7 +550,8 @@ void drawOriginPage(std::shared_ptr<PKX> pkm, std::vector<std::string> &varText)
 		std::to_string(pkm->metYear()+2000),
 		std::to_string(pkm->metMonth()),
 		std::to_string(pkm->metDay()),
-		pkm->gen4() ? Lang::locations4[pkm->metLocation()] : Lang::locations5[pkm->metLocation()],
+		pkm->gen4() ? (pkm->metLocation() > Lang::locations4.size() ? "" : Lang::locations4[pkm->metLocation()])
+		: (pkm->metLocation() > Lang::locations5.size() ? "" : Lang::locations5[pkm->metLocation()]),
 		Lang::games[pkm->version()],
 	};
 	for(unsigned i=0;i<Lang::originLabels.size();i++) {
