@@ -11,6 +11,28 @@ std::vector<u16> fontMap;
 u16 tileSize, tileWidth, tileHeight;
 std::u16string newline = StringUtils::UTF8toUTF16("»");
 
+int getCharIndex(char16_t c) {
+	int spriteIndex = 0;
+	int left = 0;
+	int mid = 0;
+	int right = fontMap.size();
+
+	while(left <= right) {
+		mid = left + ((right - left) / 2);
+		if(fontMap[mid] == c) {
+			spriteIndex = mid;
+			break;
+		}
+
+		if(fontMap[mid] < c) {
+			left = mid + 1;
+		} else {
+			right = mid - 1;
+		}
+	}
+	return spriteIndex;
+}
+
 void initGraphics(void) {
 	// Initialize video mode
 	videoSetMode(MODE_5_2D | DISPLAY_BG3_ACTIVE);
@@ -89,7 +111,7 @@ void loadFont(void) {
 	fread(fontWidths.data(), 3, tileAmount, font);
 
 	// Load character maps
-	fontMap = std::vector<u16>(0xffe5);
+	fontMap = std::vector<u16>(tileAmount);
 	fseek(font, 0x28, SEEK_SET);
 	u32 locPAMC, mapType;
 	fread(&locPAMC, 4, 1, font);
@@ -107,14 +129,14 @@ void loadFont(void) {
 				u16 firstTile;
 				fread(&firstTile, 2, 1, font);
 				for(unsigned i=firstChar;i<=lastChar;i++) {
-					fontMap[i] = firstTile+(i-firstChar);
+					fontMap[firstTile+(i-firstChar)] = i;
 				}
 				break;
 			} case 1: {
 				for(int i=firstChar;i<=lastChar;i++) {
 					u16 tile;
 					fread(&tile, 2, 1, font);
-					fontMap[i] = tile;
+					fontMap[tile] = i;
 				}
 				break;
 			} case 2: {
@@ -124,7 +146,7 @@ void loadFont(void) {
 					u16 charNo, tileNo;
 					fread(&charNo, 2, 1, font);
 					fread(&tileNo, 2, 1, font);
-					fontMap[charNo] = tileNo;
+					fontMap[tileNo] = charNo;
 				}
 				break;
 			}
@@ -373,7 +395,7 @@ void fillSpriteText(int id, std::u16string text, u16 color, int xPos, int yPos, 
 	u16 color2 = color & (invert ? 0xFBDE : 0xBDEF);
 	u16 pallet[4] = {0, color1, color2, 0};
 	for(unsigned c=0;c<text.size();c++) {
-		int t = fontMap[text[c]];
+		int t = getCharIndex(text[c]);
 		std::vector<u16> image;
 		for(int i=0;i<tileSize;i++) {
 			image.push_back(pallet[fontTiles[i+(t*tileSize)]>>6 & 3]);
@@ -444,7 +466,7 @@ void printTextTinted(std::u16string text, u16 color, int xPos, int yPos, bool to
 			continue;
 		}
 
-		int t = fontMap[text[c]];
+		int t = getCharIndex(text[c]);
 		std::vector<u16> image;
 		for(int i=0;i<tileSize;i++) {
 			image.push_back(pallet[fontTiles[i+(t*tileSize)]>>6 & 3]);
@@ -504,7 +526,7 @@ void printTextTintedScaled(std::u16string text, double scaleX, double scaleY, u1
 			continue;
 		}
 
-		int t = fontMap[text[c]];
+		int t = getCharIndex(text[c]);
 		std::vector<u16> image;
 		for(int i=0;i<tileSize;i++) {
 			image.push_back(pallet[fontTiles[i+(t*tileSize)]>>6 & 3]);
@@ -531,7 +553,7 @@ int getTextWidth(std::string text) { return getTextWidth(StringUtils::UTF8toUTF1
 int getTextWidth(std::u16string text) {
 	int textWidth = 0;
 	for(unsigned c=0;c<text.size();c++) {
-		textWidth += fontWidths[(fontMap[text[c]]*3)+2];
+		textWidth += fontWidths[(getCharIndex(text[c])*3)+2];
 	}
 	return textWidth;
 }
