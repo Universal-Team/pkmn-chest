@@ -608,11 +608,13 @@ std::shared_ptr<PKX> selectOrigin(std::shared_ptr<PKX> pkm) {
 					break;
 				} case 1: { // Year
 					int num = Input::getInt(2099);
-					if(num != -1 && num < 2000)	pkm->metYear(std::min(num, 99));
-					else	pkm->metYear(num-2000);
+					if(num != -1) {
+						if(num < 2000)	pkm->metYear(std::min(num, 99));
+						else	pkm->metYear(num-2000);
 
-					if(pkm->metYear()%4 && pkm->metMonth() == 2 && pkm->metDay() > 28) {
-						pkm->metDay(28);
+						if(pkm->metYear()%4 && pkm->metMonth() == 2 && pkm->metDay() > 28) {
+							pkm->metDay(28);
+						}
 					}
 					break;
 				} case 2: { // Month
