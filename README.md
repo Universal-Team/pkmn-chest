@@ -29,7 +29,7 @@ If you want to report a bug you can do so [here](https://github.com/Universal-Te
 - [edo9300](https://github.com/edo9300): Italian
 - [Epicpkmn11](https://github.com/Epicpkmn11): English and Japanese
 - [Extocine](https://twitter.com/@ExtocineN): Russian
-- [lemonnade0](https://github.com/lemonnade0): Lithuanian
+- [lemonnade0](https://steamcommunity.com/profiles/76561198276444028): Lithuanian
 - [NightYoshi370](https://github.com/NightYoshi370/): French
 - [VoltZ](https://github.com/SuperSaiyajinVoltZ): German
 ### Others
