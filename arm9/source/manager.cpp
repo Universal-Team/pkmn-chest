@@ -1,4 +1,5 @@
 #include "manager.h"
+#include <dirent.h>
 
 #include "banks.hpp"
 #include "colors.h"
@@ -165,7 +166,6 @@ ImageData loadPokemonSprite(int dexNo, std::vector<u16> &imageBuffer) {
 void loadGraphics(void) {
 	// Load images into RAM
 	ballSheetData = loadPng("nitro:/graphics/ballSheet.png", ballSheet);
-	bankBoxData = loadPng("nitro:/graphics/bankBox.png", bankBox);
 	boxButtonData = loadPng("nitro:/graphics/boxButton.png", boxButton);
 	infoBoxData = loadPng("nitro:/graphics/infoBox.png", infoBox);
 	menuButtonData = loadPng("nitro:/graphics/menuButton.png", menuButton);
@@ -267,8 +267,34 @@ void drawBoxScreen(void) {
 	drawPokemonInfo(save->pkm(currentBox(), 0));
 }
 
+std::string boxBgPath(bool top) {
+	int box = top ? 0 : save->boxWallpaper(currentSaveBox);
+	std::string game;
+	switch(save->game) {
+		default:
+		case Game::DP:
+			game = "dp";
+			break;
+		case Game::Pt:
+			game = box < 16 ? "dp" : "pt";
+			break;
+		case Game::HGSS:
+			game = box < 16 ? "dp" : "hgss";
+			break;
+		case Game::BW:
+			game = "bw";
+			break;
+		case Game::B2W2:
+			game = box < 16 ? "bw" : "b2w2";
+			break;
+	}
+	return "nitro:/graphics/box/"+game+"/"+std::to_string(box)+".png";
+}
+
 void drawBox(bool top) {
-	// Draw box images
+	// Draw box image
+	bankBox.clear();
+	bankBoxData = loadPng(boxBgPath(top), bankBox);
 	drawImage(5, 15, bankBoxData.width, bankBoxData.height, bankBox, top);
 
 	if(top) {

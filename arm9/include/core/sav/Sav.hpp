@@ -74,11 +74,11 @@ protected:
 
 	u8* data;
 	u32 length = 0;
-	Game game;
 	static u16 ccitt16(const u8* buf, u32 len);
 	static bool validSequence(u8* dt, size_t offset);
 
 public:
+	Game game;
 	u8 boxes = 0;
 
 	virtual ~Sav();
@@ -139,6 +139,8 @@ public:
 	virtual void cryptBoxData(bool crypted)                             = 0;
 	virtual std::string boxName(u8 box) const                           = 0;
 	virtual void boxName(u8 box, const std::string& name)               = 0;
+	virtual u8 boxWallpaper(u8 box) const                               = 0;
+	virtual void boxWallpaper(u8 box, const u8 v)                       = 0;
 	virtual u8 partyCount(void) const                                   = 0;
 	virtual void partyCount(u8 count)                                   = 0;
 	virtual void fixParty(void);

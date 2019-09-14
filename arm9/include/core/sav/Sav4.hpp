@@ -50,7 +50,6 @@ protected:
 	std::vector<u8> getDexFormValues(u32 v, u8 bitsPerForm, u8 readCt);
 	void setForms(std::vector<u8> forms, u16 species);
 	u32 setDexFormValues(std::vector<u8> forms, u8 bitsPerForm, u8 readCt);
-
 public:
 	void resign(void) override;
 
@@ -107,6 +106,8 @@ public:
 	void cryptBoxData(bool crypted) override;
 	std::string boxName(u8 box) const override;
 	void boxName(u8 box, const std::string& name) override;
+	u8 boxWallpaper(u8 box) const override;
+	void boxWallpaper(u8 box, const u8 v) override;
 	u8 partyCount(void) const override;
 	void partyCount(u8 count) override;
 
