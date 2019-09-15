@@ -26,6 +26,7 @@ If you want to report a bug you can do so [here](https://github.com/Universal-Te
 ### Translators
 - [antoine62](https://github.com/antoine62): French
 - [Chips](https://github.com/Ch1p5): Portuguese, some Spanish and French
+- [David Pires](https://github.com/DavidPires): Portuguese
 - [edo9300](https://github.com/edo9300): Italian
 - [Epicpkmn11](https://github.com/Epicpkmn11): English and Japanese
 - [Extocine](https://twitter.com/@ExtocineN): Russian
