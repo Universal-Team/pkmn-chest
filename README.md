@@ -41,4 +41,4 @@ If you want to report a bug you can do so [here](https://github.com/Universal-Te
 - [TotallyNotGuy](https://github.com/TotallyNotGuy): Finding & making graphics and the Pokémon Center generation 4 song
 - [VoltZ](https://github.com/SuperSaiyajinVoltZ): Idea to make a Pokémon Bank for the DS(i)
 ### Music
-- [Pokémon Center (Gen 1)](https://modarchive.org/index.php?request=view_by_moduleid&query=181718), [Elm's Lab](https://modarchive.org/index.php?request=view_by_moduleid&query=181711), [Oak's Lab](https://modarchive.org/index.php?request=view_by_moduleid&query=181717), and [Game Corner](https://modarchive.org/index.php?request=view_by_moduleid&query=181756).
+- [Pokémon Center (Gen 1)](https://modarchive.org/module.php?181718), [Elm's Lab](https://modarchive.org/module.php?181711), [Oak's Lab](https://modarchive.org/module.php?181717), [Game Corner](https://modarchive.org/module.php?181756), and [Twinleaf Town](https://modarchive.org/module.php?178770).
