@@ -180,7 +180,7 @@ int aMenu(int pkmPos, std::vector<std::pair<int, int>>& buttons, int buttonMode)
 				} else { // If a new box was selected
 					(topScreen ? currentBankBox : currentSaveBox) = num;
 					drawBox(topScreen);
-					break;
+					goto back;
 				}
 			} else if(menuSelection == 1) { // Rename
 				// Hide bottom screen sprites
