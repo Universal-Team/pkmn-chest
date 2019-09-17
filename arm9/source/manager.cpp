@@ -292,15 +292,11 @@ std::string boxBgPath(bool top) {
 }
 
 void drawBox(bool top) {
-	// Draw box image
+	// Load box image
 	bankBox.clear();
 	bankBoxData = loadPng(boxBgPath(top), bankBox);
-	drawImage(5, 15, bankBoxData.width, bankBoxData.height, bankBox, top);
 
 	if(top) {
-		// Print box names
-		printTextCenteredTinted(Banks::bank->boxName(currentBankBox), GRAY, -44, 20, true, true);
-
 		// Hide all Pokémon sprites for bank box
 		for(int i=0;i<30;i++) {
 			setSpriteVisibility(i+30, false);
@@ -316,10 +312,13 @@ void drawBox(bool top) {
 			}
 		}
 		updateOam();
-	} else {
-		// Print box names
-		printTextCenteredTinted(save->boxName(currentSaveBox), GRAY, -44, 20, false, true);
 
+		// Draw box image
+		drawImage(5, 15, bankBoxData.width, bankBoxData.height, bankBox, top);
+
+		// Print box name
+		printTextCenteredTinted(Banks::bank->boxName(currentBankBox), GRAY, -44, 20, true, true);
+	} else {
 		// Hide all Pokémon sprites for save box
 		for(int i=0;i<30;i++) {
 			setSpriteVisibility(i, false);
@@ -335,6 +334,12 @@ void drawBox(bool top) {
 			}
 		}
 		updateOam();
+
+		// Draw box image
+		drawImage(5, 15, bankBoxData.width, bankBoxData.height, bankBox, top);
+
+		// Print box name
+		printTextCenteredTinted(save->boxName(currentSaveBox), GRAY, -44, 20, false, true);
 	}
 }
 
