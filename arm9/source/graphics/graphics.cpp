@@ -1,6 +1,8 @@
 #include "graphics.h"
-#include "lodepng.h"
 #include <fstream>
+
+#include "lodepng.h"
+#include "tonccpy.h"
 
 #define WHITE 0xFFFF
 
@@ -340,11 +342,24 @@ int initSprite(SpriteSize spriteSize, bool top) {
 }
 
 void fillSpriteColor(int id, u16 color) {
-	dmaFillHalfWords(color, sprites[id].gfx, sprites[id].size);
+	int size = 0;
+	switch(sprites[id].size) {
+		default:
+			size = 0; // I'm lazy
+			break;
+		case SpriteSize_16x16:
+			size = 16*16*2;
+			break;
+		case SpriteSize_32x32:
+			size = 32*32*2;
+			break;
+	}
+
+	toncset16(sprites[id].gfx, color, size);
 }
 
 void fillSpriteImage(int id, std::vector<u16> &imageBuffer, int size) {
-	dmaCopyWords(0, imageBuffer.data(), sprites[id].gfx, size*2);
+	tonccpy(sprites[id].gfx, imageBuffer.data(), size*2);
 }
 
 void fillSpriteImage(int id, int x, int y, int w, int h, std::vector<u16> &imageBuffer) {
