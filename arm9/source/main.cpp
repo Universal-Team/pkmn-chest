@@ -51,10 +51,11 @@ int main(int argc, char **argv) {
 				// Prints error if nitroFSInit() fails
 				consoleDemoInit();
 				printf("nitroFSInit() failed...\n\n");
-				printf("If you're using a cia install,\n");
-				printf("you'll need:\n\n");
-				printf("sdmc:/_nds/pkmn-chest/\n");
-				printf("                  pkmn-chest.nds");
+				printf("Please copy pkmn-chest.nds to:\n\n");
+				printf("%s:/_nds/pkmn-chest/\n", sdFound() ? (access("/Nintendo 3DS", F_OK) == 0 ? "sdmc" : "sd") : "fat");
+				printf("                  pkmn-chest.nds\n\n");
+				printf("or launch pkmn-chest using\n\n");
+				printf("       TWiLight Menu++ or HBMenu");
 				while(1) swiWaitForVBlank();
 			}
 		}
