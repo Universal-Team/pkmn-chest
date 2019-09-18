@@ -55,7 +55,9 @@ int main(int argc, char **argv) {
 				printf("%s:/_nds/pkmn-chest/\n", sdFound() ? (access("/Nintendo 3DS", F_OK) == 0 ? "sdmc" : "sd") : "fat");
 				printf("                  pkmn-chest.nds\n\n");
 				printf("or launch pkmn-chest using\n\n");
-				printf("       TWiLight Menu++ or HBMenu");
+				printf("      TWiLight Menu++ or HBMenu\n\n\n\n\n");
+				printf("(Note: TWiLight's Acekard\n");
+				printf("        theme needs a copy in ^)\n\n");
 				while(1) swiWaitForVBlank();
 			}
 		}
