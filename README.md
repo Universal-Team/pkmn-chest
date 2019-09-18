@@ -16,6 +16,9 @@ These can be installed by getting [devkitPro pacman](https://devkitpro.org/wiki/
 `sudo dkp-pacman -S nds-dev`<br/>
 <sup>(command may be slightly different depending on your OS)</sup>
 
+After installing the devkitPro libraries, simply run `make` in the pkmn-chest source directory
+
+
 ## Contact
 The best way to talk to us is to join [our Discord](https://discord.gg/KDJCfGF).
 If you want to report a bug you can do so [here](https://github.com/Universal-Team/pkmn-chest/issues/new/choose).
