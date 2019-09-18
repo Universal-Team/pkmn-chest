@@ -1,5 +1,6 @@
 #include "sound.h"
 #include <nds.h>
+#include <maxmod9.h>
 
 #include "config.h"
 #include "soundbank.h"
@@ -20,19 +21,21 @@ void Sound::init(void) {
 	mmLoad(MOD_BGMGAMECORNER);
 	mmLoad(MOD_BGMOAK);
 
+	mmSetModuleVolume(0x200);
+
 	Sound::click = {
 		{SFX_CLICK},			// id
 		(int)(1.0f * (1<<10)),	// rate
 		0,		// handle
-		255,	// volume
-		128,	// panning
+		0xC0,	// volume
+		0x80,	// panning
 	};
 	Sound::back = {
 		{SFX_BACK},				// id
 		(int)(1.0f * (1<<10)),	// rate
 		0,		// handle
-		255,	// volume
-		128,	// panning
+		0xC0,	// volume
+		0x80,	// panning
 	};
 
 	if(Config::music == 1)		mmStart(bgmCenter1, MM_PLAY_LOOP);
