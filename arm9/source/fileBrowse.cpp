@@ -273,18 +273,12 @@ std::string topMenuSelect(void) {
 	FILE* favs = fopen((sdFound() ? "sd:/_nds/pkmn-chest/favorites.lst" : "fat:/_nds/pkmn-chest/favorites.lst"), "rb");
 
 	if(favs) {
-		fseek(favs, 0, SEEK_END);
-		int length = ftell(favs);
-		fseek(favs, 0, SEEK_SET);
+		char* line = NULL;
+		size_t len = 0;
 
-		std::string in;
-		in.resize(length);
-		fread(in.data(), 1, length, favs);
-		fclose(favs);
-
-		while(in.find("\n") != std::string::npos) {
-			topMenuContents.push_back({in.substr(0, in.find("\n")), (access(in.substr(0, in.find("\n")).c_str(), F_OK) == 0)});
-			in = in.substr(in.find("\n")+1);
+		while(__getline(&line, &len, favs) != -1) {
+			line[strlen(line)-1] = '\0'; // Remove newline
+			topMenuContents.push_back({line, (access(line, F_OK) == 0)});
 		}
 	}
 

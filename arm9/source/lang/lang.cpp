@@ -4,60 +4,59 @@
 
 std::string langs[] = { "de", "en", "es", "fr", "it", "lt", "pt", "ru", "jp", "ko"};
 
-std::vector<std::string> readToVector(FILE* file) {
-	std::vector<std::string> vec;
-	if(file) {
-		vec.clear();
-		fseek(file, 0, SEEK_END);
-		int length = ftell(file);
-		fseek(file, 0, SEEK_SET);
-
-		std::string in;
-		in.resize(length);
-		fread(in.data(), 1, length, file);
-		fclose(file);
-
-		while(in.find("\n") != std::string::npos) {
-			vec.push_back(in.substr(0, in.find("\n")));
-			in = in.substr(in.find("\n")+1);
-		}
-	}
-
-	return vec;
-}
-
 void Lang::loadLangStrings(int lang) {
+
+	// Declare variables
+	char* line = NULL;
+	size_t len = 0;
+
 	// Fill vectors from files
-	FILE* in = fopen(("nitro:/lang/"+langs[lang]+"/abilities").c_str(), "rb");
-	abilities = readToVector(in);
+	FILE* in = fopen(("nitro:/lang/"+langs[lang]+"/abilities").c_str(), "r");
+	while(__getline(&line, &len, in) != -1) {
+		abilities.push_back(line);
+	}
 	fclose(in);
 
-	in = fopen(("nitro:/lang/"+langs[lang]+"/games").c_str(), "rb");
-	games = readToVector(in);
+	in = fopen(("nitro:/lang/"+langs[lang]+"/games").c_str(), "r");
+	while(__getline(&line, &len, in) != -1) {
+		games.push_back(line);
+	}
 	fclose(in);
 
-	in = fopen(("nitro:/lang/"+langs[lang]+"/items").c_str(), "rb");
-	items = readToVector(in);
+	in = fopen(("nitro:/lang/"+langs[lang]+"/items").c_str(), "r");
+	while(__getline(&line, &len, in) != -1) {
+		items.push_back(line);
+	}
 	fclose(in);
 
-	in = fopen(("nitro:/lang/"+langs[lang]+"/locations4").c_str(), "rb");
-	locations4 = readToVector(in);
+	in = fopen(("nitro:/lang/"+langs[lang]+"/locations4").c_str(), "r");
+	while(__getline(&line, &len, in) != -1) {
+		locations4.push_back(line);
+	}
 	fclose(in);
 
-	in = fopen(("nitro:/lang/"+langs[lang]+"/locations5").c_str(), "rb");
-	locations5 = readToVector(in);
+	in = fopen(("nitro:/lang/"+langs[lang]+"/locations5").c_str(), "r");
+	while(__getline(&line, &len, in) != -1) {
+		locations5.push_back(line);
+	}
 	fclose(in);
 
-	in = fopen(("nitro:/lang/"+langs[lang]+"/moves").c_str(), "rb");
-	moves = readToVector(in);
+	in = fopen(("nitro:/lang/"+langs[lang]+"/moves").c_str(), "r");
+	while(__getline(&line, &len, in) != -1) {
+		moves.push_back(line);
+	}
 	fclose(in);
 
-	in = fopen(("nitro:/lang/"+langs[lang]+"/natures").c_str(), "rb");
-	natures = readToVector(in);
+	in = fopen(("nitro:/lang/"+langs[lang]+"/natures").c_str(), "r");
+	while(__getline(&line, &len, in) != -1) {
+		natures.push_back(line);
+	}
 	fclose(in);
 
-	in = fopen(("nitro:/lang/"+langs[lang]+"/species").c_str(), "rb");
-	species = readToVector(in);
+	in = fopen(("nitro:/lang/"+langs[lang]+"/species").c_str(), "r");
+	while(__getline(&line, &len, in) != -1) {
+		species.push_back(line);
+	}
 	fclose(in);
 
 	// Load app strings
