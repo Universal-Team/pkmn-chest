@@ -24,7 +24,6 @@
 #include <algorithm>
 #include <dirent.h>
 #include <fat.h>
-#include <fstream>
 #include <strings.h>
 #include <unistd.h>
 
@@ -271,10 +270,22 @@ std::string topMenuSelect(void) {
 	topMenuContents.push_back({"card:", false});
 	tmSlot1Offset = topMenuContents.size()-1;
 
-	std::ifstream favs(sdFound() ? "sd:/_nds/pkmn-chest/favorites.lst" : "fat:/_nds/pkmn-chest/favorites.lst");
-	std::string line;
-	while(std::getline(favs, line)) {
-		topMenuContents.push_back({line, (access(line.c_str(), F_OK) == 0)});
+	FILE* favs = fopen((sdFound() ? "sd:/_nds/pkmn-chest/favorites.lst" : "fat:/_nds/pkmn-chest/favorites.lst"), "rb");
+
+	if(favs) {
+		fseek(favs, 0, SEEK_END);
+		int length = ftell(favs);
+		fseek(favs, 0, SEEK_SET);
+
+		std::string in;
+		in.resize(length);
+		fread(in.data(), 1, length, favs);
+		fclose(favs);
+
+		while(in.find("\n") != std::string::npos) {
+			topMenuContents.push_back({in.substr(0, in.find("\n")), (access(in.substr(0, in.find("\n")).c_str(), F_OK) == 0)});
+			in = in.substr(in.find("\n")+1);
+		}
 	}
 
 	int cardWait = 0;
@@ -335,18 +346,19 @@ std::string topMenuSelect(void) {
 			Sound::play(Sound::click);
 			if((topMenuContents[tmCurPos].name != "fat:") && (topMenuContents[tmCurPos].name != "sd:") && (topMenuContents[tmCurPos].name != "card:")) {
 				if(Input::getBool(Lang::remove, Lang::cancel)) {
-					std::ofstream out(sdFound() ? "sd:/_nds/pkmn-chest/favorites.lst" : "fat:/_nds/pkmn-chest/favorites.lst");
+					topMenuContents.erase(topMenuContents.begin()+tmCurPos);
 
-					std::string line;
-					for(int i=0;i<(int)topMenuContents.size();i++) {
-						if(i != tmCurPos && topMenuContents[i].name != "fat:" && topMenuContents[i].name != "sd:" && topMenuContents[i].name != "card:") {
-							out << topMenuContents[i].name << std::endl;
+					FILE* out = fopen((sdFound() ? "sd:/_nds/pkmn-chest/favorites.lst" : "fat:/_nds/pkmn-chest/favorites.lst"), "wb");
+
+					if(out) {
+						for(int i=0;i<(int)topMenuContents.size();i++) {
+							if(topMenuContents[i].name != "fat:" && topMenuContents[i].name != "sd:" && topMenuContents[i].name != "card:") {
+								fwrite((topMenuContents[i].name+"\n").c_str(), 1, (topMenuContents[i].name+"\n").size(), out);
+							}
 						}
 					}
 
-					out.close();
-
-					topMenuContents.erase(topMenuContents.begin()+tmCurPos);
+					fclose(out);
 				}
 				showTopMenu(topMenuContents);
 				bigJump = true; // Stay at the bottom of the list
@@ -381,7 +393,7 @@ std::string topMenuSelect(void) {
 		}
 		bigJump = 0;
 
-		if(held & KEY_UP || held & KEY_DOWN || held & KEY_LEFT || held & KEY_RIGHT) {
+		if(held & KEY_UP || held & KEY_DOWN || held & KEY_LEFT || held & KEY_RIGHT || pressed & KEY_X) {
 			// Clear the path area of the screen
 			if(sdFound())	drawImage(0, 0, fileBrowseBgData.width, 17, fileBrowseBg, false);
 			else	drawRectangle(0, 0, 256, 17, DARK_GRAY, false);
@@ -473,9 +485,14 @@ std::string browseForFile(const std::vector<std::string>& extensionList, bool di
 				Sound::play(Sound::click);
 				char path[PATH_MAX];
 				getcwd(path, PATH_MAX);
-				std::ofstream favs(sdFound() ? "sd:/_nds/pkmn-chest/favorites.lst" : "fat:/_nds/pkmn-chest/favorites.lst", std::fstream::app);
-				favs << path << dirContents[fileOffset].name << std::endl;
-				favs.close();
+
+				FILE* favs = fopen((sdFound() ? "sd:/_nds/pkmn-chest/favorites.lst" : "fat:/_nds/pkmn-chest/favorites.lst"), "ab");
+
+				if(favs) {
+					fwrite((path+dirContents[fileOffset].name+"\n").c_str(), 1, (path+dirContents[fileOffset].name+"\n").size(), favs);
+				}
+
+				fclose(favs);
 			}
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);

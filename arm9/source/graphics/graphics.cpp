@@ -1,6 +1,4 @@
 #include "graphics.h"
-#include <fstream>
-
 #include "lodepng.h"
 #include "tonccpy.h"
 

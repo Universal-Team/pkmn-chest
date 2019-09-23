@@ -1,6 +1,5 @@
 #include "aMenu.h"
 #include <dirent.h>
-#include <fstream>
 
 #include "banks.hpp"
 #include "colors.h"
@@ -147,9 +146,9 @@ int aMenu(int pkmPos, std::vector<std::pair<int, int>>& buttons, int buttonMode)
 					snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%i-%i - %s - %x%lx.pk%i", sdFound() ? "sd" : "fat", currentPokemon(pkmPos)->species(), currentPokemon(pkmPos)->alternativeForm(), currentPokemon(pkmPos)->nickname().c_str(), currentPokemon(pkmPos)->checksum(), currentPokemon(pkmPos)->encryptionConstant(), currentPokemon(pkmPos)->genNumber());
 				else
 					snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%i - %s - %x%lx.pk%i", sdFound() ? "sd" : "fat", currentPokemon(pkmPos)->species(), currentPokemon(pkmPos)->nickname().c_str(), currentPokemon(pkmPos)->checksum(), currentPokemon(pkmPos)->encryptionConstant(), currentPokemon(pkmPos)->genNumber());
-				std::ofstream out(path);
-				if(out.good())	out.write((char*)currentPokemon(pkmPos)->rawData(), 136);
-				out.close();
+				FILE* out = fopen(path, "wb");
+				if(out)	fwrite(currentPokemon(pkmPos)->rawData(), 1, 136, out);
+				fclose(out);
 			} else if(menuSelection == 5) { // Back
 				back:
 				if(topScreen) {
@@ -238,9 +237,9 @@ int aMenu(int pkmPos, std::vector<std::pair<int, int>>& buttons, int buttonMode)
 							snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%s/%i-%i - %s - %x%lx.pk%i", sdFound() ? "sd" : "fat", topScreen ? Banks::bank->boxName(currentBankBox).c_str() : save->boxName(currentSaveBox).c_str(), currentPokemon(i)->species(), currentPokemon(i)->alternativeForm(), currentPokemon(i)->nickname().c_str(), currentPokemon(i)->checksum(), currentPokemon(i)->encryptionConstant(), currentPokemon(i)->genNumber());
 						else
 							snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%s/%i - %s - %x%lx.pk%i", sdFound() ? "sd" : "fat", topScreen ? Banks::bank->boxName(currentBankBox).c_str() : save->boxName(currentSaveBox).c_str(), currentPokemon(i)->species(), currentPokemon(i)->nickname().c_str(), currentPokemon(i)->checksum(), currentPokemon(i)->encryptionConstant(), currentPokemon(i)->genNumber());
-						std::ofstream out(path);
-						if(out.good())	out.write((char*)currentPokemon(i)->rawData(), 136);
-						out.close();
+						FILE* out = fopen(path, "wb");
+						if(out)	fwrite(currentPokemon(i)->rawData(), 1, 136, out);
+						fclose(out);
 					}
 				}
 			} else if(menuSelection == 4) { // Back
@@ -267,9 +266,9 @@ int aMenu(int pkmPos, std::vector<std::pair<int, int>>& buttons, int buttonMode)
 
 				// If the fileName isn't blank, inject the Pokémon
 				if(fileName != "") {
-					std::ifstream in(fileName);
+					FILE* in = fopen(fileName.c_str(), "rb");
 					u8* buffer = 0;
-					in.read((char*)buffer, 136);
+					fread(buffer, 1, 136, in);
 					if(topScreen)	Banks::bank->pkm(save->emptyPkm()->getPKM(fileName.substr(fileName.size()-1) == "4" ? Generation::FOUR : Generation::FIVE, buffer), currentBankBox, pkmPos);
 					else	save->pkm(save->emptyPkm()->getPKM(fileName.substr(fileName.size()-1) == "4" ? Generation::FOUR : Generation::FIVE, buffer), currentSaveBox, pkmPos, false);
 				}

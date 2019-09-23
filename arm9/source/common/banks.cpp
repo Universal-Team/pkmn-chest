@@ -24,8 +24,6 @@
  *         reasonable ways as different from the original version.
  */
 
-#include <fstream>
-
 #include "banks.hpp"
 #include "config.h"
 #include "flashcard.h"
@@ -41,42 +39,42 @@ static bool saveJson() {
 
 	std::string jsonData = g_banks.dump(2);
 	remove(jsonPath);
-	std::ofstream out(jsonPath);
-	if(out.good()) {
-		if(out.write(jsonData.data(), jsonData.size() + 1)) {
-			out.close();
+	FILE* out = fopen(jsonPath, "rb");
+	if(out) {
+		if(fwrite(jsonData.data(), 1, jsonData.size() + 1, out)) {
+			fclose(out);
 			return 1;
 		} else {
-			out.close();
+			fclose(out);
 			return 0;
 		}
 	} else {
-		out.close();
+		fclose(out);
 		return 0;
 	}
 }
 
 static bool createJson() {
-	g_banks		   = nlohmann::json::object();
+	g_banks = nlohmann::json::object();
 	g_banks["pkmn-chest_1"] = BANK_DEFAULT_SIZE;
 	return saveJson();
 }
 
 static bool read() {
-	std::string path = (sdFound() ? "sd:/_nds/pkmn-chest/banks.json" : "fat:/_nds/pkmn-chest/banks.json");
-	std::ifstream in(path);
-	if(in.good()) {
-		in.seekg(0, in.end);
-		size_t size = in.tellg();
-		in.seekg(0, in.beg);
+	const char* path = (sdFound() ? "sd:/_nds/pkmn-chest/banks.json" : "fat:/_nds/pkmn-chest/banks.json");
+	FILE* in = fopen(path, "rb");
+	if(in) {
+		fseek(in, 0, SEEK_END);
+		size_t size = ftell(in);
+		fseek(in, 0, SEEK_SET);
 		char data[size + 1];
-		in.read(data, size);
+		fread(data, 1, size, in);
 		data[size] = '\0';
-		in.close();
+		fclose(in);
 		g_banks = nlohmann::json::parse(data, nullptr, false);
 		return 1;
 	} else {
-		in.close();
+		fclose(in);
 		return createJson();
 	}
 }

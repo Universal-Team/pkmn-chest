@@ -1,6 +1,4 @@
 #include "cardSaves.h"
-#include <fstream>
-
 #include "colors.h"
 #include "graphics.h"
 
@@ -50,8 +48,8 @@ bool updateCardInfo(sNDSHeader* nds, char* gameid, char* gamename, auxspi_extra*
 }
 
 void dumpSave(void) {
-	std::ofstream output(cardSave, std::ofstream::binary);
-	if(output.is_open()) {
+	FILE* out = fopen(cardSave, "wb");
+	if(out) {
 		unsigned char* buffer;
 		if(card_type == AUXSPI_INFRARED) {
 			int size = auxspi_save_size_log_2(card_type);
@@ -64,23 +62,23 @@ void dumpSave(void) {
 			u32 LEN = std::min(1 << size, 1 << 16);
 			buffer = new unsigned char[LEN*size_blocks];
 			auxspi_read_data(0, buffer, LEN*size_blocks, type, card_type);
-			output.write((char*)buffer, LEN*size_blocks);
+			fwrite(buffer, 1, LEN*size_blocks, out);
 		} else {
 			int type = cardEepromGetType();
 			int size = cardEepromGetSize();
 			buffer = new unsigned char[size];
 			cardReadEeprom(0, buffer, size, type);
-			output.write((char*)buffer, size);
+			fwrite(buffer, 1, size, out);
 		}
 		delete[] buffer;
 	}
-	output.close();
+	fclose(out);
 }
 
 bool restoreSave(void) {
 	bool auxspi = card_type == AUXSPI_INFRARED;
-	std::ifstream input(cardSave, std::ifstream::binary);
-	if(input.is_open()) {
+	FILE* in = fopen(cardSave, "rb");
+	if(in) {
 		unsigned char* buffer;
 		int size;
 		int type;
@@ -108,16 +106,16 @@ bool restoreSave(void) {
 			type = cardEepromGetType();
 			size = cardEepromGetSize();
 		}
-		input.seekg(0, input.end);
-		length = input.tellg();
-		input.seekg(0, input.beg);
+		fseek(in, 0, SEEK_END);
+		length = ftell(in);
+		fseek(in, 0, SEEK_SET);
 		if(length != (auxspi ? (int)(LEN*num_blocks) : size)) {
 			drawRectangle(20, 20, 216, 152, RGB::DARK_RED, true);
 			printTextCentered("Warning: The size of the save", 0, 24, true);
 			printTextCentered("doesn't match the size of the", 0, 40, true);
 			printTextCentered("current gamecard! Write stopped.", 0, 56, true);
 			for(int i=0;i<120;i++)	swiWaitForVBlank();
-			input.close();
+			fclose(in);
 			return false;
 		}
 		if(type == 3) {
@@ -131,7 +129,7 @@ bool restoreSave(void) {
 			for(unsigned int i = 0; i < num_blocks; i++) {
 				drawRectangle((((double)i/num_blocks)*246)+5, 33, 1, 16, LIGHT_GRAY, false);
 
-				input.read((char*)buffer, LEN);
+				fread(buffer, 1, LEN, in);
 				auxspi_write_data(i << shift, buffer, LEN, type, card_type);
 			}
 		} else {
@@ -140,13 +138,13 @@ bool restoreSave(void) {
 			buffer = new unsigned char[blocks];
 			for(unsigned int i = 0; i < 32; i++) {
 				drawRectangle(((i/32)*246)+5, 33, 8, 16, LIGHT_GRAY, false);
-				input.read((char*)buffer, blocks);
+				fread(buffer, 1, blocks, in);
 				cardWriteEeprom(written, buffer, blocks, type);
 				written += blocks;
 			}
 		}
 		delete[] buffer;
 	}
-	input.close();
+	fclose(in);
 	return true;
 }

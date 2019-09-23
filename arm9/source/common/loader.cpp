@@ -1,6 +1,5 @@
 #include "loader.h"
 #include <dirent.h>
-#include <fstream>
 #include <unistd.h>
 
 #include "config.h"
@@ -13,21 +12,21 @@ std::shared_ptr<Sav> save;
 
 bool loadSave(std::string savePath) {
 	saveFileName = savePath;
-	std::ifstream in(savePath);
+	FILE* in = fopen(savePath.c_str(), "rb");
 	char* saveData = nullptr;
 	u32 size;
-	if(in.good()) {
-		in.seekg(0, in.end);
-		size = in.tellg();
-		in.seekg(0, in.beg);
+	if(in) {
+		fseek(in, 0, SEEK_END);
+		size = ftell(in);
+		fseek(in, 0, SEEK_SET);
 		saveData = new char[size];
-		in.read(saveData, size);
+		fread(saveData, 1, size, in);
 	} else {
 		saveFileName = "";
-		in.close();
+		fclose(in);
 		return false;
 	}
-	in.close();
+	fclose(in);
 	save = Sav::getSave((u8*)saveData, size);
 	delete[] saveData;
 	if(!save) {
@@ -64,7 +63,7 @@ void saveChanges(std::string savePath) {
 
 	save->resign();
 	// No need to check size; if it was read successfully, that means that it has the correct size
-	std::fstream out(savePath, std::fstream::in | std::fstream::out);
-	out.write((char*)save->rawData(), save->getLength());
-	out.close();
+	FILE* out = fopen(savePath.c_str(), "rb+");
+	fwrite(save->rawData(), 1, save->getLength(), out);
+	fclose(out);
 }

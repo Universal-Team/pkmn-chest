@@ -24,10 +24,9 @@
  *         reasonable ways as different from the original version.
  */
 
-#include <fstream>
+#include "Bank.hpp"
 #include <unistd.h>
 
-#include "Bank.hpp"
 #include "flashcard.h"
 #include "langStrings.h"
 #include "PK4.hpp"
@@ -57,17 +56,17 @@ void Bank::load(int maxBoxes) {
 	needsCheck = false;
 	auto paths    = this->paths();
 	bool needSave = false;
-	std::ifstream in(BANK(paths));
-	if(in.good()) {
+	FILE* in = fopen(BANK(paths).c_str(), "rb");
+	if(in) {
 		// Gui::waitFrame(i18n::localize("BANK_LOAD"));
 		BankHeader h{"BAD_MGC", 0, 0};
-		in.seekg(0, in.end);
-		size = in.tellg();
-		in.seekg(0, in.beg);
-		in.read((char*)&h, sizeof(BankHeader) - sizeof(int));
+		fseek(in, 0, SEEK_END);
+		size = ftell(in);
+		fseek(in, 0, SEEK_SET);
+		fread(&h, 1, sizeof(BankHeader) - sizeof(int), in);
 		if(memcmp(&h, BANK_MAGIC.data(), 8)) {
 			// Gui::warn(i18n::localize("BANK_CORRUPT"));
-			in.close();
+			fclose(in);
 			createBank(maxBoxes);
 			needSave = true;
 		} else {
@@ -83,29 +82,29 @@ void Bank::load(int maxBoxes) {
 			}
 			else {
 				data = new u8[size];
-				in.read((char*)&h.boxes, sizeof(int));
+				fread(&h.boxes, 1, sizeof(int), in);
 			}
 			std::copy((char*)&h, (char*)(&h + 1), data);
-			in.read((char*)data + sizeof(BankHeader), size - sizeof(BankHeader));
-			in.close();
+			fread(data + sizeof(BankHeader), 1, size - sizeof(BankHeader), in);
+			fclose(in);
 		}
 	} else {
 		// Gui::waitFrame(i18n::localize("BANK_CREATE"));
-		in.close();
+		fclose(in);
 		createBank(maxBoxes);
 		needSave = true;
 	}
 
-	in.open(JSON(paths));
-	if(in.good()) {
-		in.seekg(0, in.end);
-		size_t jsonSize = in.tellg();
-		in.seekg(0, in.beg);
+	in = fopen(JSON(paths).c_str(), "rb");
+	if(in) {
+		fseek(in, 0, SEEK_END);
+		size_t jsonSize = ftell(in);
+		fseek(in, 0, SEEK_SET);
 		char jsonData[jsonSize + 1];
-		in.read(jsonData, jsonSize);
-		in.close();
+		fread(jsonData, 1, jsonSize, in);
+		fclose(in);
 		jsonData[jsonSize] = '\0';
-		boxNames           = nlohmann::json::parse(jsonData, nullptr, false);
+		boxNames = nlohmann::json::parse(jsonData, nullptr, false);
 		if(boxNames.is_discarded()) {
 			createJSON();
 			needSave = true;
@@ -119,7 +118,7 @@ void Bank::load(int maxBoxes) {
 			}
 		}
 	} else {
-		in.close();
+		fclose(in);
 		boxNames = nlohmann::json::array();
 		for(int i = 0; i < boxes(); i++) {
 			// boxNames[i] = i18n::localize("STORAGE") + " " + std::to_string(i + 1);
@@ -151,25 +150,25 @@ bool Bank::save() const {
 	auto paths = this->paths();
 	// Gui::waitFrame(i18n::localize("BANK_SAVE"));
 	// FSUSER_DeleteFile(ARCHIVE, fsMakePath(PATH_UTF16, StringUtils::UTF8toUTF16(BANK(paths)).c_str()));
-	std::ofstream out(BANK(paths));
-	if(out.good()) {
-		out.write((char*)data, sizeof(BankHeader) + sizeof(BankEntry) * boxes() * 30);
-		out.close();
+	FILE* out = fopen(BANK(paths).c_str(), "wb");
+	if(out) {
+		fwrite(data, 1, sizeof(BankHeader) + sizeof(BankEntry) * boxes() * 30, out);
+		fclose(out);
 
 		std::string jsonData = boxNames.dump(2);
 		// FSUSER_DeleteFile(ARCHIVE, fsMakePath(PATH_UTF16, StringUtils::UTF8toUTF16(JSON(paths)).c_str()));
-		out.open(JSON(paths));
-		if(out.good()) {
-			out.write(jsonData.data(), jsonData.size() + 1);
+		out = fopen(JSON(paths).c_str(), "wb");
+		if(out) {
+			fwrite(jsonData.data(), 1, jsonData.size() + 1, out);
 			sha256(prevHash.data(), data, sizeof(BankHeader) + sizeof(BankEntry) * boxes() * 30);
 		} else {
 			// Gui::error(i18n::localize("BANK_NAME_ERROR"), out.result());
 		}
-		out.close();
+		fclose(out);
 		return true;
 	} else {
 		// Gui::error(i18n::localize("BANK_SAVE_ERROR"), out.result());
-		out.close();
+		fclose(out);
 		return false;
 	}
 
