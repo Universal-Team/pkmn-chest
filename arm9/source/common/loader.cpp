@@ -11,15 +11,16 @@ static std::string saveFileName;
 std::shared_ptr<Sav> save;
 
 bool loadSave(std::string savePath) {
+	save = nullptr;
 	saveFileName = savePath;
 	FILE* in = fopen(savePath.c_str(), "rb");
-	char* saveData = nullptr;
+	u8* saveData = nullptr;
 	u32 size;
 	if(in) {
 		fseek(in, 0, SEEK_END);
 		size = ftell(in);
 		fseek(in, 0, SEEK_SET);
-		saveData = new char[size];
+		saveData = new u8[size];
 		fread(saveData, 1, size, in);
 	} else {
 		saveFileName = "";
@@ -27,7 +28,7 @@ bool loadSave(std::string savePath) {
 		return false;
 	}
 	fclose(in);
-	save = Sav::getSave((u8*)saveData, size);
+	save = Sav::getSave(saveData, size);
 	delete[] saveData;
 	if(!save) {
 		saveFileName = "";

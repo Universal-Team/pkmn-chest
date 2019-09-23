@@ -41,7 +41,7 @@ void drawConfigMenu(void) {
 	else {
 		drawRectangle(0, 0, 256, 14, DARKER_GRAY, false);
 		drawRectangle(0, 14, 256, 164, LIGHT_GRAY, false);
-		drawRectangle(0, 176, 256, 14, DARKER_GRAY, false);
+		drawRectangle(0, 176, 256, 16, DARKER_GRAY, false);
 	}
 
 	// Set variable text

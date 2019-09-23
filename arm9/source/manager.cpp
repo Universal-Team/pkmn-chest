@@ -166,7 +166,9 @@ ImageData loadPokemonSprite(int dexNo, std::vector<u16> &imageBuffer) {
 void loadGraphics(void) {
 	// Load images into RAM
 	ballSheetData = loadPng("nitro:/graphics/ballSheet.png", ballSheet);
+	boxBgTopData = loadPng("nitro:/graphics/boxBgTop.png", boxBgTop);
 	boxButtonData = loadPng("nitro:/graphics/boxButton.png", boxButton);
+	fileBrowseBgData = loadPng("nitro:/graphics/fileBrowseBg.png", fileBrowseBg);
 	infoBoxData = loadPng("nitro:/graphics/infoBox.png", infoBox);
 	menuButtonData = loadPng("nitro:/graphics/menuButton.png", menuButton);
 	menuButtonBlueData = loadPng("nitro:/graphics/menuButtonBlue.png", menuButtonBlue);
@@ -179,8 +181,6 @@ void loadGraphics(void) {
 	loadPng("nitro:/graphics/arrowYellow.png", arrowYellow);
 	if(sdFound()) {
 		boxBgBottomData = loadPng("nitro:/graphics/boxBgBottom.png", boxBgBottom);
-		boxBgTopData = loadPng("nitro:/graphics/boxBgTop.png", boxBgTop);
-		fileBrowseBgData = loadPng("nitro:/graphics/fileBrowseBg.png", fileBrowseBg);
 		menuBgData = loadPng("nitro:/graphics/menuBg.png", menuBg);
 		optionsBgData = loadPng("nitro:/graphics/optionsBg.png", optionsBg);
 		summaryBgData = loadPng("nitro:/graphics/summaryBg.png", summaryBg);
@@ -246,8 +246,7 @@ void loadGraphics(void) {
 
 void drawBoxScreen(void) {
 	// Draws backgrounds
-	if(sdFound())	drawImage(0, 0, boxBgTopData.width, boxBgTopData.height, boxBgTop, true);
-	else	drawRectangle(0, 0, 256, 192, DARK_GRAY, true);
+	drawImage(0, 0, boxBgTopData.width, boxBgTopData.height, boxBgTop, true);
 	drawImage(164, 2, infoBoxData.width, infoBoxData.height, infoBox, true);
 	if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
 	else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
