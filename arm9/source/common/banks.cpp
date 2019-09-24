@@ -39,7 +39,7 @@ static bool saveJson() {
 
 	std::string jsonData = g_banks.dump(2);
 	remove(jsonPath);
-	FILE* out = fopen(jsonPath, "rb");
+	FILE* out = fopen(jsonPath, "wb");
 	if(out) {
 		if(fwrite(jsonData.data(), 1, jsonData.size() + 1, out)) {
 			fclose(out);
