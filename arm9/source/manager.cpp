@@ -315,7 +315,7 @@ void drawBox(bool top) {
 		drawImage(5, 15, bankBoxData.width, bankBoxData.height, bankBox, top);
 
 		// Print box name
-		printTextCenteredTinted(Banks::bank->boxName(currentBankBox), GRAY, -44, 20, true, true);
+		printTextCenteredTintedMaxW(Banks::bank->boxName(currentBankBox), 110, 1, GRAY, -44, 20, true, true);
 	} else {
 		// Hide all Pokémon sprites for save box
 		for(int i=0;i<30;i++) {
@@ -337,7 +337,7 @@ void drawBox(bool top) {
 		drawImage(5, 15, bankBoxData.width, bankBoxData.height, bankBox, top);
 
 		// Print box name
-		printTextCenteredTinted(save->boxName(currentSaveBox), GRAY, -44, 20, false, true);
+		printTextCenteredTintedMaxW(save->boxName(currentSaveBox), 110, 1, GRAY, -44, 20, false, true);
 	}
 }
 
