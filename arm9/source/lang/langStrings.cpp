@@ -7,7 +7,7 @@ namespace Lang {
 	// App strings
 	aMenuText = {"Move", "Edit", "Copy", "Release", "Dump", "Back"},
 	aMenuEmptySlotText = {"Inject", "Create", "Back"},
-	aMenuTopBarText = {"Jump to box", "Rename", "Swap", "Dump box", "Back"},
+	aMenuTopBarText = {"Jump to box", "Rename", "Swap", "Wallpaper", "Dump box", "Back"},
 	optionsTextLabels = {"Chest File", "Chest Size", "Language", "Backups", "Music", "Sound Effects"},
 	optionsText = {"New", "Rename", "Delete", "Change"},
 	originLabels = {"Met level", "Met year", "Met month", "Met day", "Met location", "Origin game"},

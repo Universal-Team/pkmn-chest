@@ -83,8 +83,9 @@ void Lang::loadLangStrings(int lang) {
 	Lang::aMenuTopBarText[0] = ini.GetString("aMenu", "jump", Lang::aMenuTopBarText[0]);
 	Lang::aMenuTopBarText[1] = ini.GetString("options", "rename", Lang::aMenuTopBarText[1]);
 	Lang::aMenuTopBarText[2] = ini.GetString("aMenu", "swap", Lang::aMenuTopBarText[2]);
-	Lang::aMenuTopBarText[3] = ini.GetString("aMenu", "dumpBox", Lang::aMenuTopBarText[3]);
-	Lang::aMenuTopBarText[4] = ini.GetString("aMenu", "back", Lang::aMenuTopBarText[4]);
+	Lang::aMenuTopBarText[3] = ini.GetString("aMenu", "wallpaper", Lang::aMenuTopBarText[3]);
+	Lang::aMenuTopBarText[4] = ini.GetString("aMenu", "dumpBox", Lang::aMenuTopBarText[4]);
+	Lang::aMenuTopBarText[5] = ini.GetString("aMenu", "back", Lang::aMenuTopBarText[5]);
 
 	// [main]
 	Lang::cancel = ini.GetString("main", "cancel", Lang::cancel);

@@ -265,7 +265,8 @@ void drawBoxScreen(void) {
 }
 
 std::string boxBgPath(bool top) {
-	int box = top ? 0 : save->boxWallpaper(currentSaveBox);
+	if(top)	return "nitro:/graphics/box/chest.png";
+	int box = save->boxWallpaper(currentSaveBox);
 	std::string game;
 	switch(save->game) {
 		default:

@@ -32,8 +32,9 @@ std::vector<std::pair<int, int>> aMenuTopBarButtons = {
 	{170, 16}, // Jump
 	{170, 42}, // Rename
 	{170, 68}, // Swap
-	{170, 94}, // Dump box
-	{170, 120}, // Back
+	{170, 94}, // Wallpaper
+	{170, 120}, // Dump box
+	{170, 146}, // Back
 };
 
 std::string aMenuText(int buttonMode, int i) {
@@ -217,7 +218,24 @@ int aMenu(int pkmPos, std::vector<std::pair<int, int>>& buttons, int buttonMode)
 				// Update the boxes
 				drawBox(true);
 				drawBox(false);
-			} else if(menuSelection == 3) { // Dump box
+			} else if(menuSelection == 3) { // Wallpaper
+				if(!topScreen) {
+					// Hide sprites
+					for(int i=0;i<30;i++)	setSpriteVisibility(i, false);
+					setSpriteVisibility(bottomArrowID, false);
+					updateOam();
+
+					// Get new wallpaper
+					int num = Input::getInt(23);
+					if(num != -1)	save->boxWallpaper(currentSaveBox, num);
+
+					// Redraw screen
+					setSpriteVisibility(bottomArrowID, true);
+					drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
+					drawAMenuButtons(buttons, buttonMode);
+					drawBox(false);
+				}
+			} else if(menuSelection == 4) { // Dump box
 				char path[PATH_MAX];
 				snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%s", sdFound() ? "sd" : "fat", topScreen ? Banks::bank->boxName(currentBankBox).c_str() : save->boxName(currentSaveBox).c_str());
 				mkdir(path, 0777);
@@ -233,7 +251,7 @@ int aMenu(int pkmPos, std::vector<std::pair<int, int>>& buttons, int buttonMode)
 						fclose(out);
 					}
 				}
-			} else if(menuSelection == 4) { // Back
+			} else if(menuSelection == 5) { // Back
 				goto back;
 			}
 		} else if(optionSelected && buttonMode == 2) { // Empty slot
