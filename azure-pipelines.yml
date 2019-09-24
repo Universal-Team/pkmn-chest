@@ -1,9 +1,13 @@
 trigger:
   branches:
     include: ['*']
-    exclude: [translation, merge]
+    exclude: [translation]
   tags:
     include: ['*']
+
+pr:
+  branches:
+    exclude: ['*']
 
 name:  $[format('{0:yyyyMMdd\-HHmmss}', pipeline.startTime)]
 
