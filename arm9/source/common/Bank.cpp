@@ -193,6 +193,7 @@ void Bank::resize(size_t boxes) {
 
 		((BankHeader*)data)->boxes = boxes;
 
+		boxNames.clear();
 		for(size_t i = boxNames.size(); i < boxes; i++) {
 			// boxNames[i] = i18n::localize("STORAGE") + " " + std::to_string(i + 1);
 			boxNames[i] = Lang::chest + " " + std::to_string(i + 1);

@@ -70,8 +70,8 @@ int main(int argc, char **argv) {
 	Lang::loadLangStrings(Config::lang);
 	printTextCentered(Lang::loading, 0, 32, false);
 
-	Banks::init();
 	Sound::init();
+	Banks::init();
 	loadGraphics();
 
 	hideLoadingLogo();

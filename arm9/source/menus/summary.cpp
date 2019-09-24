@@ -149,7 +149,7 @@ void drawSummaryPage(std::shared_ptr<PKX> pkm) {
 	snprintf(textC1[7].text,  sizeof(textC1[7].text), "%s", pkm->pkrs() ? Lang::yes.c_str() : Lang::no.c_str());
 	snprintf(textC1[8].text,  sizeof(textC1[8].text), "%s", pkm->otName().c_str());
 	snprintf(textC1[9].text,  sizeof(textC1[9].text), "%.5i", pkm->TID());
-	snprintf(textC1[10].text,  sizeof(textC1[10].text), "%.5i", pkm->SID());
+	snprintf(textC1[10].text, sizeof(textC1[10].text),"%.5i", pkm->SID());
 	snprintf(textC1[11].text, sizeof(textC1[11].text),"%i", pkm->otFriendship());
 	for(unsigned i=0;i<(sizeof(textC1)/sizeof(textC1[0]));i++) {
 		// OT Name is colored

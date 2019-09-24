@@ -177,7 +177,7 @@ void configMenu(void) {
 					drawBox(true);
 					break;
 				} case 4: { // Resize
-					int num = Input::getInt(500);
+					int num = Input::getInt(sdFound() ? 500 : 50);
 					if(num > 0)	Banks::setBankSize(Config::chestFile, num);
 					break;
 				} case 5: { // Language
