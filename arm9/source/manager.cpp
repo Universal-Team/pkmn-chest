@@ -15,8 +15,8 @@ bool topScreen;
 int bottomArrowID, topArrowID, shinyID, currentSaveBox, currentBankBox, bottomHeldPokemonID, topHeldPokemonID, arrowMode = 0;
 std::vector<int> menuIconID, partyIconID;
 std::string savePath;
-std::vector<u16> arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, boxBgBottom, boxBgTop, boxButton, fileBrowseBg, infoBox, menuBg, menuButton, menuButtonBlue, menuIconSheet, optionsBg, search, shiny, summaryBg, types;
-ImageData ballSheetData, bankBoxData, boxBgBottomData, boxBgTopData, boxButtonData, fileBrowseBgData, infoBoxData, menuBgData, menuButtonData, menuButtonBlueData, menuIconSheetData, optionsBgData, searchData, shinyData, summaryBgData, typesData;
+std::vector<u16> arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, boxBgTop, boxButton, fileBrowseBg, infoBox, menuBg, menuButton, menuButtonBlue, menuIconSheet, optionsBg, search, shiny, summaryBg, types;
+ImageData ballSheetData, bankBoxData, boxBgTopData, boxButtonData, fileBrowseBgData, infoBoxData, menuBgData, menuButtonData, menuButtonBlueData, menuIconSheetData, optionsBgData, searchData, shinyData, summaryBgData, typesData;
 FILE* pokemonSheet;
 
 struct HeldPkm {
@@ -180,7 +180,6 @@ void loadGraphics(void) {
 	loadPng("nitro:/graphics/arrowRed.png", arrowRed);
 	loadPng("nitro:/graphics/arrowYellow.png", arrowYellow);
 	if(sdFound()) {
-		boxBgBottomData = loadPng("nitro:/graphics/boxBgBottom.png", boxBgBottom);
 		menuBgData = loadPng("nitro:/graphics/menuBg.png", menuBg);
 		optionsBgData = loadPng("nitro:/graphics/optionsBg.png", optionsBg);
 		summaryBgData = loadPng("nitro:/graphics/summaryBg.png", summaryBg);
@@ -248,8 +247,7 @@ void drawBoxScreen(void) {
 	// Draws backgrounds
 	drawImage(0, 0, boxBgTopData.width, boxBgTopData.height, boxBgTop, true);
 	drawImage(164, 2, infoBoxData.width, infoBoxData.height, infoBox, true);
-	if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
-	else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
 	
 
 	// Show bottom arrow

@@ -97,16 +97,14 @@ int aMenu(int pkmPos, std::vector<std::pair<int, int>>& buttons, int buttonMode)
 					setSpriteVisibility(topArrowID, true);
 				}
 				updateOam();
-				if(sdFound())	drawImageFromSheet(170, 0, 86, 192, boxBgBottom, boxBgBottomData.width, 170, 0, false);
-				else drawRectangle(170, 0, 86, 192, DARK_GRAY, false);
+				drawRectangle(170, 0, 86, 192, DARKERER_GRAY, DARKER_GRAY, false);
 				return 1;
 			} else if(menuSelection == 1) { // Edit
 				if(topScreen)	Banks::bank->pkm(showPokemonSummary(currentPokemon(pkmPos)), currentBankBox, pkmPos);
 				else	save->pkm(showPokemonSummary(currentPokemon(pkmPos)), currentSaveBox, pkmPos, false);
 
 				// Redraw screen
-				if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
-				else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+				drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
 				drawBox(false);
 				if(topScreen)	drawBox(topScreen);
 				drawPokemonInfo(currentPokemon(pkmPos));
@@ -117,8 +115,7 @@ int aMenu(int pkmPos, std::vector<std::pair<int, int>>& buttons, int buttonMode)
 					setSpriteVisibility(topArrowID, true);
 				}
 				updateOam();
-				if(sdFound())	drawImageFromSheet(170, 0, 86, 192, boxBgBottom, boxBgBottomData.width, 170, 0, false);
-				else drawRectangle(170, 0, 86, 192, DARK_GRAY, false);
+				drawRectangle(170, 0, 86, 192, DARKERER_GRAY, DARKER_GRAY, false);
 				return 2;
 			} else if(menuSelection == 3) { // Release
 				// Hide sprites below getBool message
@@ -130,15 +127,13 @@ int aMenu(int pkmPos, std::vector<std::pair<int, int>>& buttons, int buttonMode)
 					else	save->pkm(save->emptyPkm(), currentSaveBox, pkmPos, false);
 					drawBox(false);
 					if(topScreen)	drawBox(topScreen);
-					if(sdFound())	drawImageFromSheet(5+bankBoxData.width, 0, 256-(5+bankBoxData.width), 192, boxBgBottom, boxBgBottomData.width, 5+bankBoxData.width, 0, false);
-					else drawRectangle(5+bankBoxData.width, 0, 256-(5+bankBoxData.width), 192, DARK_GRAY, false);
+					drawRectangle(5+bankBoxData.width, 0, 256-(5+bankBoxData.width), 192, DARKERER_GRAY, DARKER_GRAY, false);
 					drawPokemonInfo(save->emptyPkm());
 					goto back;
 				}
 				drawBox(false);
 				if(topScreen)	drawBox(topScreen);
-				if(sdFound())	drawImageFromSheet(5+bankBoxData.width, 0, 256-(5+bankBoxData.width), 192, boxBgBottom, boxBgBottomData.width, 5+bankBoxData.width, 0, false);
-				else	drawRectangle(5+bankBoxData.width, 0, 256-(5+bankBoxData.width), 192, DARK_GRAY, false);
+				drawRectangle(5+bankBoxData.width, 0, 256-(5+bankBoxData.width), 192, DARKERER_GRAY, DARKER_GRAY, false);
 				drawAMenuButtons(buttons, buttonMode);
 			} else if(menuSelection == 4) { // Dump
 				char path[256];
@@ -156,23 +151,20 @@ int aMenu(int pkmPos, std::vector<std::pair<int, int>>& buttons, int buttonMode)
 					setSpriteVisibility(topArrowID, true);
 				}
 				updateOam();
-				if(sdFound())	drawImageFromSheet(170, 0, 86, 192, boxBgBottom, boxBgBottomData.width, 170, 0, false);
-				else	drawRectangle(170, 0, 86, 192, DARK_GRAY, false);
+				drawRectangle(170, 0, 86, 192, DARKERER_GRAY, DARKER_GRAY, false);
 				break;
 			}
 		} else if(optionSelected && buttonMode == 1) { // Top bar
 			optionSelected = false;
 			if(menuSelection == 0) { // Jump
 				// Clear buttons
-				if(sdFound())	drawImageFromSheet(170, 0, 86, 192, boxBgBottom, boxBgBottomData.width, 170, 0, false);
-				else	drawRectangle(170, 0, 86, 192, DARK_GRAY, false);
+				drawRectangle(170, 0, 86, 192, DARKERER_GRAY, DARKER_GRAY, false);
 
 				// Select a box
 				int num = selectBox(topScreen ? currentBankBox : currentSaveBox);
 
 				// Clear mini boxes
-				if(sdFound())	drawImageFromSheet(170, 0, 86, 192, boxBgBottom, boxBgBottomData.width, 170, 0, false);
-				else	drawRectangle(170, 0, 86, 192, DARK_GRAY, false);
+				drawRectangle(170, 0, 86, 192, DARKERER_GRAY, DARKER_GRAY, false);
 
 				if(num == -1 || num == (topScreen ? currentBankBox : currentSaveBox)) { // If B was pressed or the box wasn't changed
 					drawAMenuButtons(buttons, buttonMode);
@@ -194,8 +186,7 @@ int aMenu(int pkmPos, std::vector<std::pair<int, int>>& buttons, int buttonMode)
 				}
 
 				// Redraw screen
-				if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
-				else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+				drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
 				drawBox(false);
 				if(topScreen)	drawBox(topScreen);
 				drawAMenuButtons(buttons, buttonMode);
@@ -275,8 +266,7 @@ int aMenu(int pkmPos, std::vector<std::pair<int, int>>& buttons, int buttonMode)
 
 				// Reset & redraw screen
 				chdir(path);
-				if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
-				else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+				drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
 				drawBox(false);
 				if(topScreen)	drawBox(topScreen);
 				drawPokemonInfo(currentPokemon(pkmPos));
@@ -323,8 +313,7 @@ int aMenu(int pkmPos, std::vector<std::pair<int, int>>& buttons, int buttonMode)
 				else	save->pkm(showPokemonSummary(pkm), currentSaveBox, pkmPos, false);
 
 				// Redraw screen
-				if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
-				else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+				drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
 				drawBox(false);
 				if(topScreen)	drawBox(topScreen);
 				drawPokemonInfo(currentPokemon(pkmPos));

@@ -147,6 +147,18 @@ void drawOutline(int x, int y, int w, int h, int color, bool top);
 void drawRectangle(int x, int y, int w, int h, int color, bool top);
 
 /*
+ * Draws a rectangle of a given size at a given position
+ * int x is the X position
+ * int y is the Y position
+ * int w is the Width
+ * int h is the Height
+ * int color1 is the first color in RGB15
+ * int color2 is the second color in RGB15
+ * bool top is whether to draw on the top or bottom screen
+ */
+void drawRectangle(int x, int y, int w, int h, int color1, int color2, bool top);
+
+/*
  * Creates a vector item and allocated VRAM for a sprite
  * SpriteSize spriteSize is the dimensions of the sprite
  * https://libnds.devkitpro.org/sprite_8h.html#a1b3e231e628b18808e49a2f94c96b1ea

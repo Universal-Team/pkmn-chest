@@ -320,10 +320,10 @@ void drawOutline(int x, int y, int w, int h, int color, bool top) {
 	if(y>=0 && y<192)	dmaFillHalfWords(((color>>10)&0x1f) | ((color)&(0x1f<<5)) | (color&0x1f)<<10 | BIT(15), (top ? BG_GFX : BG_GFX_SUB)+((y*256)+(x < 0 ? 0 : x)), (x+w > 256 ? w+(256-x-w) : w*2));
 }
 
-void drawRectangle(int x, int y, int w, int h, int color, bool top) {
-	h+=y;
-	for(;y<h;y++) {
-		dmaFillHalfWords(color | BIT(15), (top ? BG_GFX : BG_GFX_SUB)+((y)*256+x), w*2);
+void drawRectangle(int x, int y, int w, int h, int color, bool top) { drawRectangle(x, y, w, h, color, color, top); }
+void drawRectangle(int x, int y, int w, int h, int color1, int color2, bool top) {
+	for(int i=0;i<h;i++) {
+		dmaFillHalfWords((i%2 ? color1 : color2) | BIT(15), (top ? BG_GFX : BG_GFX_SUB)+((y+i)*256+x), w*2);
 	}
 }
 

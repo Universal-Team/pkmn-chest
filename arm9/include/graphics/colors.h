@@ -7,6 +7,7 @@ inline int LIGHT_GRAY = 0xE739;
 inline int GRAY = 0xCE73;
 inline int DARK_GRAY = 0x98C6;
 inline int DARKER_GRAY = 0x94A5;
+inline int DARKERER_GRAY = 0x8842;
 inline int BLACK = 0x8000;
 
 // BGR

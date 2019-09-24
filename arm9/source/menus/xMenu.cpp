@@ -181,12 +181,7 @@ bool xMenu(void) {
 				setSpriteVisibility(menuIconID[i], false);
 			}
 			updateOam();
-			if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
-			else {
-		drawRectangle(0, 0, 256, 16, BLACK, false);
-		drawRectangle(0, 16, 256, 160, DARK_GRAY, false);
-		drawRectangle(0, 176, 256, 16, BLACK, false);
-	}
+			drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
 			drawBox(false);
 			break;
 		}

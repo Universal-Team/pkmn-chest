@@ -24,8 +24,8 @@ int main(int argc, char **argv) {
 	if(!(rand() % 100))	angleChange *= 2;
 	if(!(rand() % 128))	angleChange *= -1;
 
-	drawRectangle(0, 0, 256, 192, DARK_GRAY, true);
-	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, true);
+	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
 
 	// Init filesystem
 	if(!fatInitDefault()) {

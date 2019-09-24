@@ -72,8 +72,7 @@ int pkmLang(void) {
 void drawMiniBoxes(int currentBox) {
 	if(currentBox < 0)	currentBox = (topScreen ? Banks::bank->boxes()-1 : save->maxBoxes()-1)+currentBox;
 	// Clear text
-	if(sdFound())	drawImageFromSheet(210, 0, 46, 192, boxBgBottom, boxBgBottomData.width, 210, 0, false);
-	else	drawRectangle(210, 0, 46, 192, DARK_GRAY, false);
+	drawRectangle(210, 0, 46, 192, DARKERER_GRAY, DARKER_GRAY, false);
 
 	for(int i=0;i<5;i++) {
 		drawRectangle(170, 10+(i*33), 35, 30, WHITE, false);
@@ -219,8 +218,7 @@ int selectForm(int dexNo, int currentForm) {
 
 void drawItemList(int screenPos, std::vector<std::string> itemList) {
 	// Clear the screen
-	if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
-	else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
 
 	// Draw search icon
 	drawImage(256-searchData.width, 0, searchData.width, searchData.height, search, false);
@@ -320,8 +318,7 @@ int selectItem(int current, int start, int max, std::vector<std::string> &items)
 
 std::shared_ptr<PKX> selectMoves(std::shared_ptr<PKX> pkm) {
 	// Clear the screen
-	if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
-	else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
 
 	// Print moves
 	for(int i=0;i<4;i++) {
@@ -374,8 +371,7 @@ std::shared_ptr<PKX> selectMoves(std::shared_ptr<PKX> pkm) {
 			pkm->move(selection, selectItem(pkm->move(selection), 0, save->maxMove()+1, Lang::moves));
 
 			// Clear the screen
-			if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
-			else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+			drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
 
 			// Print moves
 			for(int i=0;i<4;i++) {
@@ -390,8 +386,7 @@ std::shared_ptr<PKX> selectMoves(std::shared_ptr<PKX> pkm) {
 
 int selectNature(int currentNature) {
 	// Clear screen
-	if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
-	else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
 
 	// Draw labels (not a for loop as speed is 3rd)
 	{
@@ -470,8 +465,7 @@ int selectNature(int currentNature) {
 
 int selectPokeball(int currentBall) {
 	// Clear screen
-	if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
-	else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
 
 	// Draw Pokéballs
 	for(int y=0;y<5;y++) {
@@ -541,8 +535,7 @@ int selectPokeball(int currentBall) {
 
 void drawOriginPage(std::shared_ptr<PKX> pkm, std::vector<std::string> &varText) {
 	// Clear screen
-	if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
-	else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
 
 	// Print text
 	varText = { 
@@ -668,8 +661,7 @@ std::shared_ptr<PKX> selectOrigin(std::shared_ptr<PKX> pkm) {
 
 void drawStatsPage(std::shared_ptr<PKX> pkm) {
 	// Clear the screen
-	if(sdFound())	drawImage(0, 0, boxBgBottomData.width, boxBgBottomData.height, boxBgBottom, false);
-	else	drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
+	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
 
 	// Draw lines
 	for(unsigned i=1;i<(sizeof(textStatsC1)/sizeof(textStatsC1[0]));i++) {
