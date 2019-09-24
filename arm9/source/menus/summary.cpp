@@ -106,7 +106,7 @@ void drawSummaryPage(std::shared_ptr<PKX> pkm) {
 		drawRectangle(145, 0, 111, 88, LIGHT_GRAY, false);
 	}
 	// Draw lines
-	drawOutline(0, 128, 160, 64, LIGHT_GRAY, false);
+	drawOutline(0, 128, 160, 65, LIGHT_GRAY, false);
 
 	// Hide sprites
 	for(int i=0;i<30;i++) {
