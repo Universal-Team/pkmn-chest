@@ -16,17 +16,18 @@ struct Text {
 };
 
 Text textC1[] {
-	{64, 4},
-	{64, 20},
-	{64, 36},
-	{64, 52},
-	{64, 68},
-	{64, 84},
-	{64, 100},
-	{96, 124},
-	{96, 140},
-	{96, 156},
-	{96, 172},
+	{64, 1},
+	{64, 17},
+	{64, 33},
+	{64, 49},
+	{64, 65},
+	{64, 81},
+	{64, 97},
+	{64, 113},
+	{96, 129},
+	{96, 145},
+	{96, 161},
+	{96, 177},
 };
 
 Text textC2[] = {
@@ -105,7 +106,7 @@ void drawSummaryPage(std::shared_ptr<PKX> pkm) {
 		drawRectangle(145, 0, 111, 88, LIGHT_GRAY, false);
 	}
 	// Draw lines
-	drawOutline(0, 124, 160, 69, LIGHT_GRAY, false);
+	drawOutline(0, 128, 160, 64, LIGHT_GRAY, false);
 
 	// Hide sprites
 	for(int i=0;i<30;i++) {
@@ -143,17 +144,18 @@ void drawSummaryPage(std::shared_ptr<PKX> pkm) {
 	snprintf(textC1[2].text,  sizeof(textC1[2].text), "%i", pkm->level());
 	snprintf(textC1[3].text,  sizeof(textC1[3].text), "%s", Lang::abilities[pkm->ability()].c_str());
 	snprintf(textC1[4].text,  sizeof(textC1[4].text), "%s", Lang::natures[pkm->nature()].c_str());
-	snprintf(textC1[5].text,  sizeof(textC1[5].text), "%s", pkm->shiny() ? Lang::yes.c_str() : Lang::no.c_str());
-	snprintf(textC1[6].text,  sizeof(textC1[6].text), "%s", pkm->pkrs() ? Lang::yes.c_str() : Lang::no.c_str());
-	snprintf(textC1[7].text,  sizeof(textC1[7].text), "%s", pkm->otName().c_str());
-	snprintf(textC1[8].text,  sizeof(textC1[8].text), "%.5i", pkm->TID());
-	snprintf(textC1[9].text,  sizeof(textC1[9].text), "%.5i", pkm->SID());
-	snprintf(textC1[10].text, sizeof(textC1[10].text),"%i", pkm->otFriendship());
+	snprintf(textC1[5].text,  sizeof(textC1[5].text), "%s", Lang::items[pkm->heldItem()].c_str());
+	snprintf(textC1[6].text,  sizeof(textC1[6].text), "%s", pkm->shiny() ? Lang::yes.c_str() : Lang::no.c_str());
+	snprintf(textC1[7].text,  sizeof(textC1[7].text), "%s", pkm->pkrs() ? Lang::yes.c_str() : Lang::no.c_str());
+	snprintf(textC1[8].text,  sizeof(textC1[8].text), "%s", pkm->otName().c_str());
+	snprintf(textC1[9].text,  sizeof(textC1[9].text), "%.5i", pkm->TID());
+	snprintf(textC1[10].text,  sizeof(textC1[10].text), "%.5i", pkm->SID());
+	snprintf(textC1[11].text, sizeof(textC1[11].text),"%i", pkm->otFriendship());
 	for(unsigned i=0;i<(sizeof(textC1)/sizeof(textC1[0]));i++) {
-		if(i!=7)	// OT Name is colored
-			printTextMaxW(textC1[i].text, 80, 1, textC1[i].x, textC1[i].y, false);
+		// OT Name is colored
+		if(i != 8)	printTextMaxW(textC1[i].text, 80, 1, textC1[i].x, textC1[i].y, false);
 	}
-	printTextTinted(textC1[7].text, (pkm->otGender() ? RGB::RED : RGB::BLUE), textC1[7].x, textC1[7].y, false);
+	printTextTinted(textC1[8].text, (pkm->otGender() ? RGB::RED : RGB::BLUE), textC1[8].x, textC1[8].y, false);
 
 	// Draw buttons // The first 2 don't have buttons
 	for(unsigned i=2;i<sizeof(textC2)/sizeof(textC2[0]);i++) {
@@ -278,25 +280,29 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 						if(num != -1)	pkm->nature(num);
 						break;
 					} case 5: {
-						pkm->shiny(!pkm->shiny());
+						int num = selectItem(pkm->heldItem(), 0, save->maxItem(), Lang::items);
+						if(num != -1)	pkm->heldItem(num);
 						break;
 					} case 6: {
-						pkm->pkrs(pkm->pkrs() ? 0 : 0xF4);
+						pkm->shiny(!pkm->shiny());
 						break;
 					} case 7: {
+						pkm->pkrs(pkm->pkrs() ? 0 : 0xF4);
+						break;
+					} case 8: {
 						std::string name = Input::getLine(7);
 						if(name != "")	pkm->otName(name);
 						pkm->otGender(Input::getBool(Lang::female, Lang::male));
 						break;
-					} case 8: {
+					} case 9: {
 						int num = Input::getInt(65535);
 						if(num != -1)	pkm->TID(num);
 						break;
-					} case 9: {
+					} case 10: {
 						int num = Input::getInt(65535);
 						if(num != -1)	pkm->SID(num);
 						break;
-					} case 10: {
+					} case 11: {
 						int num = Input::getInt(255);
 						if(num != -1)	pkm->otFriendship(num);
 						break;

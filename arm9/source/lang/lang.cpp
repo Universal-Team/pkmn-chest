@@ -5,6 +5,14 @@
 std::string langs[] = { "de", "en", "es", "fr", "it", "lt", "pt", "ru", "jp", "ko"};
 
 void Lang::loadLangStrings(int lang) {
+	abilities.clear();
+	games.clear();
+	items.clear();
+	locations4.clear();
+	locations5.clear();
+	moves.clear();
+	natures.clear();
+	species.clear();
 
 	// Declare variables
 	char* line = NULL;
@@ -142,12 +150,13 @@ void Lang::loadLangStrings(int lang) {
 	Lang::summaryLabels[2]  = ini.GetString("summary", "level", Lang::summaryLabels[2]);
 	Lang::summaryLabels[3]  = ini.GetString("summary", "ability", Lang::summaryLabels[3]);
 	Lang::summaryLabels[4]  = ini.GetString("summary", "nature", Lang::summaryLabels[4]);
-	Lang::summaryLabels[5]  = ini.GetString("summary", "shiny", Lang::summaryLabels[5]);
-	Lang::summaryLabels[6]  = ini.GetString("summary", "pokerus", Lang::summaryLabels[6]);
-	Lang::summaryLabels[7]  = ini.GetString("summary", "origTrainer", Lang::summaryLabels[7]);
-	Lang::summaryLabels[8]  = ini.GetString("summary", "trainerID", Lang::summaryLabels[8]);
-	Lang::summaryLabels[9]  = ini.GetString("summary", "secretID", Lang::summaryLabels[9]);
-	Lang::summaryLabels[10] = ini.GetString("summary", "friendship", Lang::summaryLabels[10]);
+	Lang::summaryLabels[5]  = ini.GetString("summary", "item", Lang::summaryLabels[5]);
+	Lang::summaryLabels[6]  = ini.GetString("summary", "shiny", Lang::summaryLabels[6]);
+	Lang::summaryLabels[7]  = ini.GetString("summary", "pokerus", Lang::summaryLabels[7]);
+	Lang::summaryLabels[8]  = ini.GetString("summary", "origTrainer", Lang::summaryLabels[8]);
+	Lang::summaryLabels[9]  = ini.GetString("summary", "trainerID", Lang::summaryLabels[9]);
+	Lang::summaryLabels[10] = ini.GetString("summary", "secretID", Lang::summaryLabels[10]);
+	Lang::summaryLabels[11] = ini.GetString("summary", "friendship", Lang::summaryLabels[11]);
 
 	Lang::movesString = ini.GetString("summary", "moves", Lang::movesString);
 	Lang::stats = ini.GetString("summary", "stats", Lang::stats);
