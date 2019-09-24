@@ -288,6 +288,8 @@ int selectItem(int current, int start, int max, std::vector<std::string> &items)
 			}
 		} else if(pressed & KEY_Y) {
 			search:
+			setSpriteVisibility(bottomArrowID, false);
+			updateOam();
 			std::string str = Input::getLine();
 				itemList.clear();
 				if(str != "")	itemList.push_back("-----");
@@ -299,6 +301,8 @@ int selectItem(int current, int start, int max, std::vector<std::string> &items)
 				newMove = 0;
 				screenPos = 0;
 			drawItemList(screenPos, itemList);
+			setSpriteVisibility(bottomArrowID, true);
+			updateOam();
 		}
 
 		// Scroll screen if needed
