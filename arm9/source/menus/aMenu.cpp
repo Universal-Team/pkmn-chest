@@ -226,7 +226,7 @@ int aMenu(int pkmPos, std::vector<std::pair<int, int>>& buttons, int buttonMode)
 					updateOam();
 
 					// Get new wallpaper
-					int num = Input::getInt(23);
+					int num = selectWallpaper(save->boxWallpaper(currentSaveBox));
 					if(num != -1)	save->boxWallpaper(currentSaveBox, num);
 
 					// Redraw screen

@@ -537,6 +537,73 @@ int selectPokeball(int currentBall) {
 	}
 }
 
+int selectWallpaper(int currentWallpaper) {
+	// Clear screen
+	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
+
+	// Draw wallpapers
+	for(int y=0;y<4;y++) {
+		for(int x=0;x<6;x++) {
+			std::string path = boxBgPath(false, (y*6)+x);
+			std::vector<u16> img;
+			ImageData imgData = loadPng(path, img);
+			drawImageScaled((x*36)+28, (y*36)+28, imgData.width, imgData.height, 0.125, 0.125, img, false);
+		}
+	}
+
+	int arrowX = currentWallpaper-((currentWallpaper/6)*6), selection = currentWallpaper/6, pressed, held;
+	// Move arrow to current wallpaper
+	setSpriteVisibility(bottomArrowID, true);
+	setSpritePosition(bottomArrowID, (arrowX*36)+44, (selection*36)+20);
+	updateOam();
+
+	while(1) {
+		do {
+			swiWaitForVBlank();
+			scanKeys();
+			pressed = keysDown();
+			held = keysDownRepeat();
+		} while(!held);
+
+		if(held & KEY_UP) {
+			if(selection > 0)	selection--;
+			else	selection=3;
+		} else if(held & KEY_DOWN) {
+			if(selection < 3)	selection++;
+			else	selection=0;
+		} else if(held & KEY_LEFT) {
+			if(arrowX > 0)	arrowX--;
+			else	arrowX=5;
+		} else if(held & KEY_RIGHT) {
+			if(arrowX < 5)	arrowX++;
+			else arrowX=0;
+		} else if(pressed & KEY_A) {
+			Sound::play(Sound::click);
+			return (selection*6)+arrowX;
+		} else if(pressed & KEY_B) {
+			Sound::play(Sound::back);
+			return -1;
+		} else if(pressed & KEY_TOUCH) {
+			touchPosition touch;
+			touchRead(&touch);
+			for(int y=0;y<4;y++) {
+				for(int x=0;x<6;x++) {
+					if(touch.px > (x*36)+20 && touch.px < (x*36)+56 && touch.py > (y*36)+20 && touch.py < (y*36)+56) {
+						if(!(save->generation() != Generation::FIVE && (y*5)+x == 24)) {
+							Sound::play(Sound::click);
+							return (y*6)+x;
+						}
+					}
+				}
+			}
+		}
+
+		// Move arrow
+		setSpritePosition(bottomArrowID, (arrowX*36)+44, (selection*36)+20);
+		updateOam();
+	}
+}
+
 void drawOriginPage(std::shared_ptr<PKX> pkm, std::vector<std::string> &varText) {
 	// Clear screen
 	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);

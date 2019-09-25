@@ -4,6 +4,7 @@
 #include <nds.h>
 
 #include "graphics.h"
+#include "loader.h"
 #include "Sav.hpp"
 
 extern bool topScreen;
@@ -52,6 +53,9 @@ void loadGraphics(void);
 
 // Draws both boxes and the backgrounds
 void drawBoxScreen(void);
+
+// Returns the path to the current box's wallpaper
+std::string boxBgPath(bool top, int box = save->boxWallpaper(currentSaveBox));
 
 // Draws a box
 void drawBox(bool top);

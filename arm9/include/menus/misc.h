@@ -21,6 +21,9 @@ int selectNature(int currentNature);
 // Shows the Pokéball selection menu
 int selectPokeball(int currentBall);
 
+// Shows the Wallpaper selection menu
+int selectWallpaper(int currentWallpaper);
+
 // Shows the box selection menu
 int selectBox(int currentBox);
 

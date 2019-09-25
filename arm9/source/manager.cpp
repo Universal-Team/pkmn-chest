@@ -264,9 +264,8 @@ void drawBoxScreen(void) {
 	drawPokemonInfo(save->pkm(currentBox(), 0));
 }
 
-std::string boxBgPath(bool top) {
+std::string boxBgPath(bool top, int box) {
 	if(top)	return "nitro:/graphics/box/chest.png";
-	int box = save->boxWallpaper(currentSaveBox);
 	std::string game;
 	switch(save->game) {
 		default:
