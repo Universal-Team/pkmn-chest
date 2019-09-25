@@ -179,6 +179,7 @@ int aMenu(int pkmPos, std::vector<std::pair<int, int>>& buttons, int buttonMode)
 				for(int i=0;i<30;i++) {
 					setSpriteVisibility(i, false);
 				}
+				setSpriteVisibility(bottomArrowID, false);
 				updateOam();
 				std::string newName = Input::getLine(topScreen ? 16 : 8);
 				if(newName != "") {
@@ -188,9 +189,10 @@ int aMenu(int pkmPos, std::vector<std::pair<int, int>>& buttons, int buttonMode)
 
 				// Redraw screen
 				drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
-				drawBox(false);
 				if(topScreen)	drawBox(topScreen);
 				drawAMenuButtons(buttons, buttonMode);
+				setSpriteVisibility(bottomArrowID, true);
+				drawBox(false);
 			} else if(menuSelection == 2) { // Swap
 				std::vector<std::shared_ptr<PKX>> tempBox;
 				// Copy save Pokémon to a buffer
