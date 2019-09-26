@@ -1,55 +1,57 @@
 {
-	"configurations": [
-		{
-			"name": "NDS | macOS/Linux",
-			"includePath": [
-				"${workspaceFolder}/**",
-				"/opt/devkitpro/libnds/include/**",
-				"/opt/devkitpro/devkitARM/include/**",
-				"/opt/devkitpro/devkitARM/arm-none-eabi/include/**"
-			],
-			"defines": [
-				"ARM9",
-				"VERNUMBER=vX.X"
-			],
-			"macFrameworkPath": [],
-			"compilerPath": "/opt/devkitpro/devkitARM/bin/arm-none-eabi-g++",
-			"cStandard": "c11",
-			"cppStandard": "c++17",
-			"intelliSenseMode": "gcc-x64",
-			"forcedInclude": [
-				"/opt/devkitpro/libnds/include/nds/arm9/input.h",
-				"/opt/devkitpro/devkitARM/arm-none-eabi/include/sys/unistd.h"
-			],
-			"browse": {
-				"path": []
-			}
-		},
-		{
-			"name": "NDS | Windows",
-			"includePath": [
-				"${workspaceFolder}/**",
-				"/devkitpro/libnds/include/**",
-				"/devkitpro/devkitARM/include/**",
-				"/devkitpro/devkitARM/arm-none-eabi/include/**"
-			],
-			"defines": [
-				"ARM9",
-				"VERNUMBER=vX.X"
-			],
-			"macFrameworkPath": [],
-			"compilerPath": "/devkitpro/devkitARM/bin/arm-none-eabi-g++.exe",
-			"cStandard": "c11",
-			"cppStandard": "c++17",
-			"intelliSenseMode": "gcc-x64",
-			"forcedInclude": [
-				"/devkitpro/libnds/include/nds/arm9/input.h",
-				"/devkitpro/devkitARM/arm-none-eabi/include/sys/unistd.h"
-			],
-			"browse": {
-				"path": []
-			}
-		}
-	],
-	"version": 4
+    "configurations": [
+        {
+            "name": "NDS | macOS/Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/opt/devkitpro/libnds/include/**",
+                "/opt/devkitpro/devkitARM/include/**",
+                "/opt/devkitpro/devkitARM/arm-none-eabi/include/**"
+            ],
+            "defines": [
+                "ARM9",
+                "VER_NUMBER=\"vX.X\""
+            ],
+            "macFrameworkPath": [],
+            "compilerPath": "/opt/devkitpro/devkitARM/bin/arm-none-eabi-g++",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "gcc-x64",
+            "forcedInclude": [
+                "/opt/devkitpro/libnds/include/nds/arm9/input.h",
+                "/opt/devkitpro/devkitARM/arm-none-eabi/include/sys/unistd.h"
+            ],
+            "browse": {
+                "path": []
+            }
+        },
+        {
+            "name": "NDS | Windows",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/devkitpro/libnds/include/**",
+                "/devkitpro/devkitARM/include/**",
+                "/devkitpro/devkitARM/arm-none-eabi/include/**"
+            ],
+            "defines": [
+                "ARM9",
+                "VER_NUMBER=\"vX.X\""
+            ],
+            "macFrameworkPath": [],
+            "compilerPath": "/devkitpro/devkitARM/bin/arm-none-eabi-g++.exe",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "gcc-x64",
+            "forcedInclude": [
+                "/devkitpro/libnds/include/nds/arm9/input.h",
+                "/devkitpro/devkitARM/arm-none-eabi/include/sys/unistd.h"
+            ],
+            "browse": {
+                "path": [],
+                "limitSymbolsToIncludedHeaders": true
+            },
+            "compilerArgs": []
+        }
+    ],
+    "version": 4
 }
