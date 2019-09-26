@@ -90,13 +90,13 @@ void getDirectoryContents(std::vector<DirEntry>& dirContents, const std::vector<
 			DirEntry dirEntry;
 
 			struct dirent* pent = readdir(pdir);
-			if(pent == NULL) break;
+			if(pent == NULL)	break;
 
 			stat(pent->d_name, &st);
 			dirEntry.name = pent->d_name;
-			dirEntry.isDirectory =(st.st_mode & S_IFDIR) ? true : false;
+			dirEntry.isDirectory = (st.st_mode & S_IFDIR) ? true : false;
 
-			if(dirEntry.name.compare(".") != 0 &&(dirEntry.isDirectory || nameEndsWith(dirEntry.name, extensionList))) {
+			if(dirEntry.name.compare(".") != 0 && (dirEntry.isDirectory || nameEndsWith(dirEntry.name, extensionList))) {
 				dirContents.push_back(dirEntry);
 			}
 		}
@@ -106,8 +106,7 @@ void getDirectoryContents(std::vector<DirEntry>& dirContents, const std::vector<
 }
 
 void getDirectoryContents(std::vector<DirEntry>& dirContents) {
-	std::vector<std::string> extensionList;
-	getDirectoryContents(dirContents, extensionList);
+	getDirectoryContents(dirContents, {});
 }
 
 void showDirectoryContents(const std::vector<DirEntry>& dirContents, int startRow) {
