@@ -609,6 +609,10 @@ void manageBoxes(void) {
 					}
 				}
 			}
+			if((touch.px > 26 && touch.px < 141 && touch.py > 19 && touch.py < 37)) {
+				arrowY = -1;
+				goto selection;
+			}
 		}
 
 		if(pressed & KEY_X && heldPokemon.size() == 0) {
