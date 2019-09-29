@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "flashcard.h"
+#include "colors.h"
 #include "graphics.h"
 
 int angle = 0;
@@ -20,6 +21,11 @@ void loadLoadingLogo(void) {
 	
 	std::vector<u16> logo;
 	loadBmp("nitro:/graphics/icon.bmp", logo);
+	if(!(rand() % 8192)) { // Full odds shiny chest ;P
+		for(unsigned i=0;i<logo.size();i++) {
+			if(logo[i] == 0x801F || logo[i] == 0x8C9F || logo[i] == 0x8018)	logo[i] |= RGB::BLUE & GRAY;
+		}
+	}
 	dmaCopyWords(0, logo.data(), logoGfx, 2048);
 }
 
