@@ -11,7 +11,7 @@ namespace Lang {
 	optionsTextLabels = {"Chest File", "Chest Size", "Language", "Backups", "Music", "Sound Effects"},
 	optionsText = {"New", "Rename", "Delete", "Change"},
 	originLabels = {"Met level", "Met year", "Met month", "Met day", "Met location", "Origin game"},
-	songs = {"Off", "Pokémon Center (Gen. 1)", "Pokémon Center (Gen. 4)", "Pokémon Center (Gen. 4)", "Twinleaf Town", "Prof. Elm's Lab", "Prof. Oak's Lab", "Game Corner"},
+	songs = {"Off", "Pokémon Center (Gen. 1)", "Pokémon Center (Gen. 4)", "Pokémon Center (Gen. 5)", "Twinleaf Town", "Prof. Elm's Lab", "Prof. Oak's Lab", "Game Corner"},
 	summaryLabels = {"Dex No.", "Name", "Level", "Ability", "Nature", "Item", "Shiny", "Pokérus", "Orig. Trainer", "Trainer ID", "Secret ID", "Friendship"},
 	statsLabels = {"HP.", "Attack", "Defense", "Sp. Atk", "Sp. Def", "Speed", "Base", "IV", "EV", "Total"},
 	trainerText = {"Name", "Trainer ID", "Secret ID", "Money", "BP", "Badges", "Play time"},
