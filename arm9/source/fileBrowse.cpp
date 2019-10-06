@@ -113,6 +113,7 @@ void showDirectoryContents(const std::vector<DirEntry>& dirContents, int startRo
 	getcwd(path, PATH_MAX);
 
 	// Print path
+	drawImageFromSheet(5, 0, 250, 16, fileBrowseBg, fileBrowseBgData.width, 5, 0, false);
 	printTextMaxW(path, 250, 1, 5, 0, false);
 
 	// Print directory listing
