@@ -5,16 +5,16 @@ ifeq ($(strip $(DEVKITARM)),)
 $(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>devkitARM")
 endif
 
-export TARGET	:=	pkmn-chest
-export TOPDIR	:=	$(CURDIR)
+export TARGET	:= pkmn-chest
+export TOPDIR	:= $(CURDIR)
 
 # specify a directory which contains the nitro filesystem
 # this is relative to the Makefile
-NITRO_FILES	:= nitrofiles
+NITRO_FILES		:= nitrofiles
 
 # These set the information text in the nds file
-GAME_TITLE     := Pokemon Chest
-GAME_SUBTITLE1 := Universal-Team
+GAME_TITLE		:= Pokemon Chest
+GAME_SUBTITLE1	:= Universal-Team
 
 include $(DEVKITARM)/ds_rules
 

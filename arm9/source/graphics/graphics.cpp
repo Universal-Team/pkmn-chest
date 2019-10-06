@@ -404,9 +404,12 @@ void fillSpriteFromSheetTinted(int id, std::vector<u16> &imageBuffer, u16 color,
 void fillSpriteText(int id, std::string text, u16 color, int xPos, int yPos, bool invert) { fillSpriteText(id, StringUtils::UTF8toUTF16(text), color, xPos, yPos, invert); };
 
 void fillSpriteText(int id, std::u16string text, u16 color, int xPos, int yPos, bool invert) {
-	u16 color1 = color & (invert ? 0xBDEF : 0xFBDE);
-	u16 color2 = color & (invert ? 0xFBDE : 0xBDEF);
-	u16 pallet[4] = {0, color1, color2, 0};
+	u16 pallet[4] = {
+		0,
+		(u16)(color & (invert ? 0xBDEF : 0xFBDE)),
+		(u16)(color & (invert ? 0xFBDE : 0xBDEF)),
+		0
+	};
 	for(unsigned c=0;c<text.size();c++) {
 		int t = getCharIndex(text[c]);
 		std::vector<u16> image;
@@ -469,9 +472,12 @@ void printTextTinted(std::string text, u16 color, int xPos, int yPos, bool top, 
 
 void printTextTinted(std::u16string text, u16 color, int xPos, int yPos, bool top, bool invert) {
 	int x=xPos;
-	u16 color1 = color & (invert ? 0xBDEF : 0xFBDE);
-	u16 color2 = color & (invert ? 0xFBDE : 0xBDEF);
-	u16 pallet[4] = {0, color1, color2, 0};
+	u16 pallet[4] = {
+		0,
+		(u16)(color & (invert ? 0xBDEF : 0xFBDE)),
+		(u16)(color & (invert ? 0xFBDE : 0xBDEF)),
+		0
+	};
 	for(unsigned c=0;c<text.size();c++) {
 		if(text[c] == newline[0]) {
 			x = xPos;
@@ -529,9 +535,12 @@ void printTextTintedScaled(std::u16string text, double scaleX, double scaleY, u1
 	}
 
 	int x=xPos;
-	u16 color1 = color & (invert ? 0xBDEF : 0xFBDE);
-	u16 color2 = color & (invert ? 0xFBDE : 0xBDEF);
-	u16 pallet[4] = {0, color1, color2, 0};
+	u16 pallet[4] = {
+		0,
+		(u16)(color & (invert ? 0xBDEF : 0xFBDE)),
+		(u16)(color & (invert ? 0xFBDE : 0xBDEF)),
+		0
+	};
 	for(unsigned c=0;c<text.size();c++) {
 		if(text[c] == newline[0]) {
 			x = xPos;

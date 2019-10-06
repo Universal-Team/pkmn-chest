@@ -112,25 +112,27 @@ void getDirectoryContents(std::vector<DirEntry>& dirContents) {
 void showDirectoryContents(const std::vector<DirEntry>& dirContents, int startRow) {
 	getcwd(path, PATH_MAX);
 
-	// Draw background
-	drawImage(0, 0, fileBrowseBgData.width, fileBrowseBgData.height, fileBrowseBg, false);
-
 	// Print path
 	printTextMaxW(path, 250, 1, 5, 0, false);
 
 	// Print directory listing
-	for(int i=0;i < ((int)dirContents.size() - startRow) && i < ENTRIES_PER_SCREEN; i++) {
-		std::u16string name = StringUtils::UTF8toUTF16(dirContents[i + startRow].name);
+	for(int i=0;i < ENTRIES_PER_SCREEN; i++) {
+		// Clear row
+		drawImageFromSheet(10, i*16+16, 246, 16, fileBrowseBg, fileBrowseBgData.width, 10, i*16+16, false);
 
-		// Trim to fit on screen
-		bool addEllipsis = false;
-		while(getTextWidth(name) > 227) {
-			name = name.substr(0, name.length()-1);
-			addEllipsis = true;
+		if(i < ((int)dirContents.size() - startRow)) {
+			std::u16string name = StringUtils::UTF8toUTF16(dirContents[i + startRow].name);
+
+			// Trim to fit on screen
+			bool addEllipsis = false;
+			while(getTextWidth(name) > 227) {
+				name = name.substr(0, name.length()-1);
+				addEllipsis = true;
+			}
+			if(addEllipsis)	name += StringUtils::UTF8toUTF16("...");
+
+			printTextTinted(name, GRAY, 10, i*16+16, false, true);
 		}
-		if(addEllipsis)	name += StringUtils::UTF8toUTF16("...");
-
-		printTextTinted(name, GRAY, 10, i*16+16, false, true);
 	}
 }
 
@@ -209,26 +211,28 @@ bool updateSlot1Text(int &cardWait, bool valid) {
 }
 
 void showTopMenu(std::vector<topMenuItem> topMenuContents) {
-	// Draw background
-	drawImage(0, 0, fileBrowseBgData.width, fileBrowseBgData.height, fileBrowseBg, false);
+	for(unsigned i=0;i<ENTRIES_PER_SCREEN;i++) {
+		// Clear row
+		drawImageFromSheet(10, i*16+16, 246, 16, fileBrowseBg, fileBrowseBgData.width, 10, i*16+16, false);
 
-	for(unsigned i=0;i<topMenuContents.size() && i<ENTRIES_PER_SCREEN;i++) {
-		if(topMenuContents[i+tmScreenOffset].name == "fat:")	drawFatText(i, topMenuContents[i+tmScreenOffset].valid);
-		else if(topMenuContents[i+tmScreenOffset].name == "sd:")	drawSdText(i, topMenuContents[i+tmScreenOffset].valid);
-		else if(topMenuContents[i+tmScreenOffset].name == "card:")	drawSlot1Text(i, topMenuContents[i+tmScreenOffset].valid);
-		else {
-			std::u16string name = StringUtils::UTF8toUTF16(topMenuContents[i+tmScreenOffset].name);
-			name = name.substr(name.find_last_of(StringUtils::UTF8toUTF16("/"))+1); // Remove path to the file
+		if(i<topMenuContents.size()) {
+			if(topMenuContents[i+tmScreenOffset].name == "fat:")	drawFatText(i, topMenuContents[i+tmScreenOffset].valid);
+			else if(topMenuContents[i+tmScreenOffset].name == "sd:")	drawSdText(i, topMenuContents[i+tmScreenOffset].valid);
+			else if(topMenuContents[i+tmScreenOffset].name == "card:")	drawSlot1Text(i, topMenuContents[i+tmScreenOffset].valid);
+			else {
+				std::u16string name = StringUtils::UTF8toUTF16(topMenuContents[i+tmScreenOffset].name);
+				name = name.substr(name.find_last_of(StringUtils::UTF8toUTF16("/"))+1); // Remove path to the file
 
-			// Trim to fit on screen
-			bool addEllipsis = false;
-			while(getTextWidth(name) > 227) {
-				name = name.substr(0, name.length()-1);
-				addEllipsis = true;
+				// Trim to fit on screen
+				bool addEllipsis = false;
+				while(getTextWidth(name) > 227) {
+					name = name.substr(0, name.length()-1);
+					addEllipsis = true;
+				}
+				if(addEllipsis)	name += StringUtils::UTF8toUTF16("...");
+
+				printTextTinted(name, topMenuContents[i+tmScreenOffset].valid ? GRAY : RGB::RED, 10, i*16+16, false, true);
 			}
-			if(addEllipsis)	name += StringUtils::UTF8toUTF16("...");
-
-			printTextTinted(name, topMenuContents[i+tmScreenOffset].valid ? GRAY : RGB::RED, 10, i*16+16, false, true);
 		}
 	}
 }
