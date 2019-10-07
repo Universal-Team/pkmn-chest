@@ -1,6 +1,8 @@
 #include "lang.h"
+#include "graphics.h"
 #include "inifile.h"
 #include "langStrings.h"
+#include "manager.h"
 
 std::string langs[] = { "de", "en", "es", "fr", "it", "lt", "pt", "ru", "jp", "ko"};
 
@@ -18,54 +20,62 @@ void Lang::loadLangStrings(int lang) {
 	char* line = NULL;
 	size_t len = 0;
 
+	// Check if the language has game info
+	int tempLang = (access(("nitro:/lang/"+langs[lang]+"/abilities.txt").c_str(), F_OK) == 0) ? lang : 1;
+
 	// Fill vectors from files
-	FILE* in = fopen(("nitro:/lang/"+langs[lang]+"/abilities").c_str(), "r");
+	FILE* in = fopen(("nitro:/lang/"+langs[tempLang]+"/abilities.txt").c_str(), "r");
 	while(__getline(&line, &len, in) != -1) {
 		abilities.push_back(line);
 	}
 	fclose(in);
 
-	in = fopen(("nitro:/lang/"+langs[lang]+"/games").c_str(), "r");
+	in = fopen(("nitro:/lang/"+langs[tempLang]+"/games.txt").c_str(), "r");
 	while(__getline(&line, &len, in) != -1) {
 		games.push_back(line);
 	}
 	fclose(in);
 
-	in = fopen(("nitro:/lang/"+langs[lang]+"/items").c_str(), "r");
+	in = fopen(("nitro:/lang/"+langs[tempLang]+"/items.txt").c_str(), "r");
 	while(__getline(&line, &len, in) != -1) {
 		items.push_back(line);
 	}
 	fclose(in);
 
-	in = fopen(("nitro:/lang/"+langs[lang]+"/locations4").c_str(), "r");
+	in = fopen(("nitro:/lang/"+langs[tempLang]+"/locations4.txt").c_str(), "r");
 	while(__getline(&line, &len, in) != -1) {
 		locations4.push_back(line);
 	}
 	fclose(in);
 
-	in = fopen(("nitro:/lang/"+langs[lang]+"/locations5").c_str(), "r");
+	in = fopen(("nitro:/lang/"+langs[tempLang]+"/locations5.txt").c_str(), "r");
 	while(__getline(&line, &len, in) != -1) {
 		locations5.push_back(line);
 	}
 	fclose(in);
 
-	in = fopen(("nitro:/lang/"+langs[lang]+"/moves").c_str(), "r");
+	in = fopen(("nitro:/lang/"+langs[tempLang]+"/moves.txt").c_str(), "r");
 	while(__getline(&line, &len, in) != -1) {
 		moves.push_back(line);
 	}
 	fclose(in);
 
-	in = fopen(("nitro:/lang/"+langs[lang]+"/natures").c_str(), "r");
+	in = fopen(("nitro:/lang/"+langs[tempLang]+"/natures.txt").c_str(), "r");
 	while(__getline(&line, &len, in) != -1) {
 		natures.push_back(line);
 	}
 	fclose(in);
 
-	in = fopen(("nitro:/lang/"+langs[lang]+"/species").c_str(), "r");
+	in = fopen(("nitro:/lang/"+langs[tempLang]+"/species.txt").c_str(), "r");
 	while(__getline(&line, &len, in) != -1) {
 		species.push_back(line);
 	}
 	fclose(in);
+
+	// Load types picture
+	types.clear();
+	tempLang = (access(("nitro:/lang/"+langs[lang]+"/types.png").c_str(), F_OK) == 0) ? lang : 1;
+	typesData = loadPng("nitro:/lang/"+langs[tempLang]+"/types.png", types);
 
 	// Load app strings
 	CIniFile ini("nitro:/lang/"+langs[lang]+"/app.ini");

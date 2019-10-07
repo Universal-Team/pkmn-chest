@@ -125,9 +125,9 @@ void drawSummaryPage(std::shared_ptr<PKX> pkm) {
 	ImageData bmpData = loadPokemonSprite(getPokemonIndex(pkm), bmp);
 	drawImageScaled(169, 22, bmpData.width, bmpData.height, 2, 2, bmp, false);
 
-	drawImageFromSheet(150, 26, 32, 12, types, 32, 0, (((pkm->generation() == Generation::FOUR && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1())*12), false);
+	drawImageFromSheet(150, 26-(((typesData.height/17)-12)/2), typesData.width, typesData.height/17, types, typesData.width, 0, (((pkm->generation() == Generation::FOUR && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1())*(typesData.height/17)), false);
 	if(pkm->type1() != pkm->type2())
-		drawImageFromSheet(185, 26, 32, 12, types, 32, 0, (((pkm->generation() == Generation::FOUR && pkm->type2() > 8) ? pkm->type2()-1 : pkm->type2())*12), false);
+		drawImageFromSheet(185, 26-(((typesData.height/17)-12)/2), typesData.width, typesData.height/17, types, typesData.width, 0, (((pkm->generation() == Generation::FOUR && pkm->type2() > 8) ? pkm->type2()-1 : pkm->type2())*(typesData.height/17)), false);
 	if(pkm->shiny())	drawImage(150, 45, shinyData.width, shinyData.height, shiny, false);
 
 	// Print Pokémon and trainer info labels

@@ -175,7 +175,6 @@ void loadGraphics(void) {
 	menuIconSheetData = loadPng("nitro:/graphics/menuIconSheet.png", menuIconSheet);
 	searchData = loadPng("nitro:/graphics/search.png", search);
 	shinyData = loadPng("nitro:/graphics/shiny.png", shiny);
-	typesData = loadPng("nitro:/graphics/types.png", types);
 	loadPng("nitro:/graphics/arrowBlue.png", arrowBlue);
 	loadPng("nitro:/graphics/arrowRed.png", arrowRed);
 	loadPng("nitro:/graphics/arrowYellow.png", arrowYellow);
@@ -358,9 +357,9 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 		else	printTextTintedMaxW(Lang::species[pkm->species()], 80, 1, (pkm->gender() ? (pkm->gender() == 1 ? RGB::RED : GRAY) : RGB::BLUE), 170, 25, true, true);
 
 		// Draw types
-		drawImageFromSheet(170, 43, 32, 12, types, 32, 0, (((pkm->generation() == Generation::FOUR && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1())*12), true);
+		drawImageFromSheet(170, 43-(((typesData.height/17)-12)/2), typesData.width, typesData.height/17, types, typesData.width, 0, (((pkm->generation() == Generation::FOUR && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1())*(typesData.height/17)), true);
 		if(pkm->type1() != pkm->type2())
-			drawImageFromSheet(205, 43, 32, 12, types, 32, 0, (((pkm->generation() == Generation::FOUR && pkm->type2() > 8) ? pkm->type2()-1 : pkm->type2())*12), true);
+			drawImageFromSheet(205, 43-(((typesData.height/17)-12)/2), typesData.width, typesData.height/17, types, typesData.width, 0, (((pkm->generation() == Generation::FOUR && pkm->type2() > 8) ? pkm->type2()-1 : pkm->type2())*(typesData.height/17)), true);
 
 		// Print Level
 		snprintf(str, sizeof(str), "Lv.%i", pkm->level());
