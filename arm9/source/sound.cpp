@@ -1,8 +1,8 @@
-#include "sound.h"
+#include "sound.hpp"
 #include <nds.h>
 #include <maxmod9.h>
 
-#include "config.h"
+#include "config.hpp"
 #include "soundbank.h"
 #include "soundbank_bin.h"
 

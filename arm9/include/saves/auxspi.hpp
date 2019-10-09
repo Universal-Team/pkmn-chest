@@ -3,7 +3,7 @@
  *  DS cartridges. Nintendo DS and all derivative names are trademarks
  *  by Nintendo. EZFlash 3-in-1 is a trademark by EZFlash.
  *
- * auxspi.h: Header for auxspi.cpp
+ * auxspi.hpp: Header for auxspi.cpp
  *
  * Copyright (C) Pokedoc (2010)
  */
@@ -26,9 +26,8 @@
   This is a thin reimplementation of the AUXSPI protocol at low levels.
   It is used to implement various experimental procedures to test accessing the HG/SS save chip. */
 
-#ifndef SPI_BUS_H
-#define SPI_BUS_H
-
+#ifndef SPI_BUS_HPP
+#define SPI_BUS_HPP
 #include <nds.h>
 
 // This is a handy typedef for nonstandard SPI buses, i.e. games with some

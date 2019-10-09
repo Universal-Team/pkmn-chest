@@ -25,10 +25,10 @@
  */
 
 #include "banks.hpp"
-#include "config.h"
-#include "flashcard.h"
+#include "config.hpp"
+#include "flashcard.hpp"
 #include "json.hpp"
-#include "../graphics/graphics.h"
+#include "../graphics/graphics.hpp"
 
 std::shared_ptr<Bank> Banks::bank = nullptr;
 

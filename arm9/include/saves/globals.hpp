@@ -3,7 +3,7 @@
  *  DS cartridges. Nintendo DS and all derivative names are trademarks
  *  by Nintendo. EZFlash 3-in-1 is a trademark by EZFlash.
  *
- * globals.h: global varibles, defines etc.
+ * globals.hpp: global varibles, defines etc.
  *
  * Copyright (C) Pokedoc (2011)
  */
@@ -23,12 +23,11 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#ifndef GLOBALS_H
-#define GLOBALS_H
-
+#ifndef GLOBALS_HPP
+#define GLOBALS_HPP
 #include <nds.h>
 
-#include "auxspi.h"
+#include "auxspi.hpp"
 
 extern uint8 data[0x8000];
 
@@ -46,4 +45,4 @@ extern char txt[256];
 extern u32 extra_id[EXTRA_ARRAY_SIZE];
 extern u8 extra_size[EXTRA_ARRAY_SIZE];
 
-#endif // GLOBALS_H
+#endif // GLOBALS_HPP

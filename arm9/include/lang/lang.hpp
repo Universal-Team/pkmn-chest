@@ -1,6 +1,5 @@
-#ifndef LANG_H
-#define LANG_H
-
+#ifndef LANG_HPP
+#define LANG_HPP
 #include <string>
 
 namespace Lang {

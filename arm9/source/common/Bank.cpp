@@ -27,11 +27,11 @@
 #include "Bank.hpp"
 #include <unistd.h>
 
-#include "flashcard.h"
-#include "langStrings.h"
+#include "flashcard.hpp"
+#include "langStrings.hpp"
 #include "PK4.hpp"
-#include "../fileBrowse.h"
-#include "../graphics/graphics.h"
+#include "../fileBrowse.hpp"
+#include "../graphics/graphics.hpp"
 
 #define BANK(paths) paths.first
 #define JSON(paths) paths.second

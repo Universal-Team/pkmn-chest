@@ -26,7 +26,7 @@
 
 #include <nds.h>
 
-#include "globals.h"
+#include "globals.hpp"
 
 
 inline void auxspi_wait_busy() {

@@ -1,6 +1,5 @@
-#ifndef COLORS_H
-#define COLORS_H
-
+#ifndef COLORS_HPP
+#define COLORS_HPP
 // Grayscale
 inline int WHITE = 0xFFFF;
 inline int LIGHT_GRAY = 0xE739;

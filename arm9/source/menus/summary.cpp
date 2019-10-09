@@ -1,13 +1,13 @@
-#include "summary.h"
-#include "colors.h"
-#include "flashcard.h"
-#include "langStrings.h"
-#include "loader.h"
-#include "input.h"
-#include "manager.h"
-#include "misc.h"
+#include "summary.hpp"
+#include "colors.hpp"
+#include "flashcard.hpp"
+#include "langStrings.hpp"
+#include "loader.hpp"
+#include "input.hpp"
+#include "manager.hpp"
+#include "misc.hpp"
 #include "PK5.hpp"
-#include "sound.h"
+#include "sound.hpp"
 
 struct Text {
 	int x;

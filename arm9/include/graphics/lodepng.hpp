@@ -23,9 +23,8 @@ freely, subject to the following restrictions:
     distribution.
 */
 
-#ifndef LODEPNG_H
-#define LODEPNG_H
-
+#ifndef LODEPNG_HPP
+#define LODEPNG_HPP
 #include <string.h> /*for size_t*/
 
 extern const char* LODEPNG_VERSION_STRING;
@@ -1126,7 +1125,7 @@ LodePNG works both in C (ISO C90) and C++, with a C++ wrapper that adds
 extra functionality.
 
 LodePNG exists out of two files:
--lodepng.h: the header file for both C and C++
+-lodepng.hpp: the header file for both C and C++
 -lodepng.c(pp): give it the name lodepng.c or lodepng.cpp (or .cc) depending on your usage
 
 If you want to start using LodePNG right away without reading this doc, get the
@@ -1628,8 +1627,8 @@ parameters there instead.
 
 No libraries other than the current standard C library are needed to compile
 LodePNG. For the C++ version, only the standard C++ library is needed on top.
-Add the files lodepng.c(pp) and lodepng.h to your project, include
-lodepng.h where needed, and your program can read/write PNG files.
+Add the files lodepng.c(pp) and lodepng.hpp to your project, include
+lodepng.hpp where needed, and your program can read/write PNG files.
 
 It is compatible with C90 and up, and C++03 and up.
 
@@ -1664,7 +1663,7 @@ with pragmas though: warning 4244 about implicit conversions, and warning 4996
 where it wants to use a non-standard function fopen_s instead of the standard C
 fopen.
 
-Visual Studio may want "stdafx.h" files to be included in each source file and
+Visual Studio may want "stdafx.hpp" files to be included in each source file and
 give an error "unexpected end of file while looking for precompiled header".
 This is not standard C++ and will not be added to the stock LodePNG. You can
 disable it for lodepng.cpp only by right clicking it, Properties, C/C++,
@@ -1693,7 +1692,7 @@ examples can be found on the LodePNG website.
 10.1. decoder C++ example
 -------------------------
 
-#include "lodepng.h"
+#include "lodepng.hpp"
 #include <iostream>
 
 int main(int argc, char *argv[]) {
@@ -1713,7 +1712,7 @@ int main(int argc, char *argv[]) {
 10.2. decoder C example
 -----------------------
 
-#include "lodepng.h"
+#include "lodepng.hpp"
 
 int main(int argc, char *argv[]) {
   unsigned error;
@@ -1931,7 +1930,7 @@ https://github.com/lvandeve/lodepng
     needed, and performed some optimizations.
 *) 07 jun 2006: (!) Renamed functions to decodePNG and placed them
     in LodePNG namespace. Changed the order of the parameters. Rewrote the
-    documentation in the header. Renamed files to lodepng.cpp and lodepng.h
+    documentation in the header. Renamed files to lodepng.cpp and lodepng.hpp
 *) 22 apr 2006: Optimized and improved some code
 *) 07 sep 2005: (!) Changed to std::vector interface
 *) 12 aug 2005: Initial release (C++, decoder only)

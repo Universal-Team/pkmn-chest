@@ -25,7 +25,7 @@
  */
 
 #include "PK5.hpp"
-#include "loader.h"
+#include "loader.hpp"
 #include "random.hpp"
 
 void PK5::shuffleArray(u8 sv) {

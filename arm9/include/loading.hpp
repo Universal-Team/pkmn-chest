@@ -1,6 +1,5 @@
-#ifndef LOADING_H
-#define LOADING_H
-
+#ifndef LOADING_HPP
+#define LOADING_HPP
 extern int angle;
 extern int angleChange;
 

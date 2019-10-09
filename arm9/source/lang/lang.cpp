@@ -1,8 +1,8 @@
-#include "lang.h"
-#include "graphics.h"
-#include "inifile.h"
-#include "langStrings.h"
-#include "manager.h"
+#include "lang.hpp"
+#include "graphics.hpp"
+#include "inifile.hpp"
+#include "langStrings.hpp"
+#include "manager.hpp"
 
 std::string langs[] = { "de", "en", "es", "fr", "it", "lt", "pt", "ru", "jp", "ko"};
 

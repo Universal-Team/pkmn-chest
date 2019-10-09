@@ -20,22 +20,22 @@
 
 ------------------------------------------------------------------*/
 
-#include "fileBrowse.h"
+#include "fileBrowse.hpp"
 #include <algorithm>
 #include <dirent.h>
 #include <fat.h>
 #include <strings.h>
 #include <unistd.h>
 
-#include "flashcard.h"
-#include "colors.h"
-#include "graphics.h"
-#include "input.h"
-#include "langStrings.h"
-#include "loader.h"
-#include "manager.h"
-#include "cardSaves.h"
-#include "sound.h"
+#include "flashcard.hpp"
+#include "colors.hpp"
+#include "graphics.hpp"
+#include "input.hpp"
+#include "langStrings.hpp"
+#include "loader.hpp"
+#include "manager.hpp"
+#include "cardSaves.hpp"
+#include "sound.hpp"
 #include "utils.hpp"
 
 #define ENTRIES_PER_SCREEN 11

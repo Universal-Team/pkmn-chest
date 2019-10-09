@@ -23,7 +23,7 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#include "globals.h"
+#include "globals.hpp"
 
 uint8 data[0x8000]  = {0};
 

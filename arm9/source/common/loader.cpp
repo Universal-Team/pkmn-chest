@@ -1,10 +1,10 @@
-#include "loader.h"
+#include "loader.hpp"
 #include <dirent.h>
 #include <unistd.h>
 
-#include "config.h"
-#include "fileBrowse.h"
-#include "flashcard.h"
+#include "config.hpp"
+#include "fileBrowse.hpp"
+#include "flashcard.hpp"
 
 static std::string saveFileName;
 

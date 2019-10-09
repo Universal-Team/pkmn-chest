@@ -19,9 +19,8 @@
 
 ------------------------------------------------------------------*/
 
-#ifndef FILE_BROWSE_H
-#define FILE_BROWSE_H
-
+#ifndef FILE_BROWSE_HPP
+#define FILE_BROWSE_HPP
 #include <string>
 #include <vector>
 
@@ -60,4 +59,4 @@ std::string browseForSave(void);
  */
 int fcopy(const char *sourcePath, const char *destinationPath);
 
-#endif //FILE_BROWSE_H
+#endif //FILE_BROWSE_HPP

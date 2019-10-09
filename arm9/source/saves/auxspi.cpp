@@ -24,12 +24,12 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#include "auxspi.h"
+#include "auxspi.hpp"
 #include <algorithm>
 #include <stdio.h>
 
 #include "auxspi_core.inc"
-#include "globals.h"
+#include "globals.hpp"
 
 // ========================================================
 //  local functions

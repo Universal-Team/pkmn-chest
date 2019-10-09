@@ -1,15 +1,15 @@
-#include "manager.h"
+#include "manager.hpp"
 #include <dirent.h>
 
 #include "banks.hpp"
-#include "colors.h"
-#include "flashcard.h"
-#include "langStrings.h"
-#include "loader.h"
-#include "loading.h"
-#include "aMenu.h"
-#include "xMenu.h"
-#include "sound.h"
+#include "colors.hpp"
+#include "flashcard.hpp"
+#include "langStrings.hpp"
+#include "loader.hpp"
+#include "loading.hpp"
+#include "aMenu.hpp"
+#include "xMenu.hpp"
+#include "sound.hpp"
 
 bool topScreen;
 int bottomArrowID, topArrowID, shinyID, currentSaveBox, currentBankBox, bottomHeldPokemonID, topHeldPokemonID, arrowMode = 0;

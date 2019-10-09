@@ -1,6 +1,5 @@
-#ifndef LANG_STRINGS_H
-#define LANG_STRINGS_H
-
+#ifndef LANG_STRINGS_HPP
+#define LANG_STRINGS_HPP
 #include <string>
 #include <vector>
 

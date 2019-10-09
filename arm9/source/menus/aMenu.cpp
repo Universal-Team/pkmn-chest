@@ -1,18 +1,18 @@
-#include "aMenu.h"
+#include "aMenu.hpp"
 #include <dirent.h>
 
 #include "banks.hpp"
-#include "colors.h"
-#include "fileBrowse.h"
-#include "flashcard.h"
-#include "graphics.h"
-#include "input.h"
-#include "langStrings.h"
-#include "loader.h"
-#include "manager.h"
-#include "misc.h"
-#include "summary.h"
-#include "sound.h"
+#include "colors.hpp"
+#include "fileBrowse.hpp"
+#include "flashcard.hpp"
+#include "graphics.hpp"
+#include "input.hpp"
+#include "langStrings.hpp"
+#include "loader.hpp"
+#include "manager.hpp"
+#include "misc.hpp"
+#include "summary.hpp"
+#include "sound.hpp"
 
 
 std::vector<std::pair<int, int>> aMenuButtons = {

@@ -1,4 +1,4 @@
-#include "langStrings.h"
+#include "langStrings.hpp"
 
 namespace Lang {
 	std::vector<std::string>

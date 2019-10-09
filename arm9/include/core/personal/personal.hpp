@@ -29,11 +29,11 @@
 
 #include <nds/ndstypes.h>
 
-#include "personal_bwb2w2.h"
-#include "personal_dppthgss.h"
-#include "personal_lgpe.h"
-#include "personal_smusum.h"
-#include "personal_xyoras.h"
+#include "personal_bwb2w2.hpp"
+#include "personal_dppthgss.hpp"
+#include "personal_lgpe.hpp"
+#include "personal_smusum.hpp"
+#include "personal_xyoras.hpp"
 
 namespace PersonalLGPE {
 	u8 baseHP(u16 species);

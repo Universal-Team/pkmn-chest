@@ -1,18 +1,18 @@
-#include "configMenu.h"
+#include "configMenu.hpp"
 #include <dirent.h>
 
 #include "banks.hpp"
-#include "colors.h"
-#include "config.h"
-#include "fileBrowse.h"
-#include "flashcard.h"
-#include "graphics.h"
-#include "input.h"
-#include "lang.h"
-#include "langStrings.h"
-#include "manager.h"
-#include "xMenu.h"
-#include "sound.h"
+#include "colors.hpp"
+#include "config.hpp"
+#include "fileBrowse.hpp"
+#include "flashcard.hpp"
+#include "graphics.hpp"
+#include "input.hpp"
+#include "lang.hpp"
+#include "langStrings.hpp"
+#include "manager.hpp"
+#include "xMenu.hpp"
+#include "sound.hpp"
 
 std::pair<int, int> textCP1Labels[] {
 	{4, 14}, // Chest file

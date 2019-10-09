@@ -1,12 +1,12 @@
-#include "party.h"
-#include "colors.h"
-#include "flashcard.h"
-#include "graphics.h"
-#include "langStrings.h"
-#include "loader.h"
-#include "manager.h"
-#include "summary.h"
-#include "sound.h"
+#include "party.hpp"
+#include "colors.hpp"
+#include "flashcard.hpp"
+#include "graphics.hpp"
+#include "langStrings.hpp"
+#include "loader.hpp"
+#include "manager.hpp"
+#include "summary.hpp"
+#include "sound.hpp"
 
 struct button {
 	int x;

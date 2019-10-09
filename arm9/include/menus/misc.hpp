@@ -1,7 +1,7 @@
 #ifndef MENU_MISC
 #define MENU_MISC
 
-#include <Sav.hpp>
+#include "Sav.hpp"
 
 // Returns the language in the correct order for a Pokémon
 int pkmLang(void);

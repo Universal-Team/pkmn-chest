@@ -1,14 +1,14 @@
-#include "input.h"
+#include "input.hpp"
 #include <string>
 #include <stdio.h>
 #include <ctype.h>
 
-#include "config.h"
-#include "colors.h"
-#include "graphics.h"
-#include "langStrings.h"
-#include "manager.h"
-#include "sound.h"
+#include "config.hpp"
+#include "colors.hpp"
+#include "graphics.hpp"
+#include "langStrings.hpp"
+#include "manager.hpp"
+#include "sound.hpp"
 
 char16_t iskatakana(char16_t c) { return c >= 0x30A1; }
 char16_t tokatakana(char16_t c) {

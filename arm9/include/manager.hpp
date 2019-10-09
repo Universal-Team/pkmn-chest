@@ -1,10 +1,9 @@
-#ifndef MANAGER_H
-#define MANAGER_H
-
+#ifndef MANAGER_HPP
+#define MANAGER_HPP
 #include <nds.h>
 
-#include "graphics.h"
-#include "loader.h"
+#include "graphics.hpp"
+#include "loader.hpp"
 #include "Sav.hpp"
 
 extern bool topScreen;

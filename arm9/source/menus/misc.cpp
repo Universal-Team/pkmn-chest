@@ -1,15 +1,15 @@
-#include "misc.h"
+#include "misc.hpp"
 
 #include "banks.hpp"
-#include "colors.h"
-#include "config.h"
-#include "flashcard.h"
-#include "input.h"
-#include "langStrings.h"
-#include "loader.h"
-#include "manager.h"
-#include "summary.h"
-#include "sound.h"
+#include "colors.hpp"
+#include "config.hpp"
+#include "flashcard.hpp"
+#include "input.hpp"
+#include "langStrings.hpp"
+#include "loader.hpp"
+#include "manager.hpp"
+#include "summary.hpp"
+#include "sound.hpp"
 
 struct FormCount {
 	int dexNo;

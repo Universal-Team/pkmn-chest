@@ -1,18 +1,18 @@
 #include <fat.h>
 
 #include "banks.hpp"
-#include "colors.h"
-#include "config.h"
-#include "fileBrowse.h"
-#include "flashcard.h"
-#include "graphics.h"
-#include "lang.h"
-#include "langStrings.h"
-#include "loader.h"
-#include "loading.h"
-#include "manager.h"
+#include "colors.hpp"
+#include "config.hpp"
+#include "fileBrowse.hpp"
+#include "flashcard.hpp"
+#include "graphics.hpp"
+#include "lang.hpp"
+#include "langStrings.hpp"
+#include "loader.hpp"
+#include "loading.hpp"
+#include "manager.hpp"
 #include "nitrofs.h"
-#include "sound.h"
+#include "sound.hpp"
 
 int main(int argc, char **argv) {
 	initGraphics();

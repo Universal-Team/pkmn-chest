@@ -1,5 +1,5 @@
 /*
-	nitrofs.h - eris's wai ossum nitro filesystem device driver header
+	nitrofs.hpp - eris's wai ossum nitro filesystem device driver header
 		Based on information found at http://frangoassado.org/ds/rom_spec.txt and from the #dsdev ppls
 		Kallisti (K) 2008-01-26 All rights reversed.
 

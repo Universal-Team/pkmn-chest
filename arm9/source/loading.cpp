@@ -1,10 +1,10 @@
-#include "loading.h"
+#include "loading.hpp"
 #include <nds.h>
 #include <vector>
 
-#include "flashcard.h"
-#include "colors.h"
-#include "graphics.h"
+#include "flashcard.hpp"
+#include "colors.hpp"
+#include "graphics.hpp"
 
 int angle = 0;
 int angleChange = 190;

@@ -1,7 +1,6 @@
-#ifndef SUMMARY_H
-#define SUMMARY_H
-
-#include <Sav.hpp>
+#ifndef SUMMARY_HPP
+#define SUMMARY_HPP
+#include "Sav.hpp"
 
 std::pair<int, int> getPokeballPosition(u8 ball);
 

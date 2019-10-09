@@ -1,5 +1,5 @@
 /*
-	inifile.h
+	inifile.hpp
 	Copyright (C) 2007 Acekard, www.acekard.com
 	Copyright (C) 2007-2009 somebody
 	Copyright (C) 2009-2010 yellow wood goblin

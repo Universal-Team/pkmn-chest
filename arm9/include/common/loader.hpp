@@ -1,5 +1,5 @@
-#ifndef LOADER_H
-#define LOADER_H
+#ifndef LOADER_HPP
+#define LOADER_HPP
 
 #include <memory>
 

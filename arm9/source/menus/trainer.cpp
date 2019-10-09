@@ -1,12 +1,12 @@
-#include "trainer.h"
-#include "colors.h"
-#include "flashcard.h"
-#include "graphics.h"
-#include "input.h"
-#include "langStrings.h"
-#include "loader.h"
-#include "manager.h"
-#include "sound.h"
+#include "trainer.hpp"
+#include "colors.hpp"
+#include "flashcard.hpp"
+#include "graphics.hpp"
+#include "input.hpp"
+#include "langStrings.hpp"
+#include "loader.hpp"
+#include "manager.hpp"
+#include "sound.hpp"
 
 struct Text {
 	int x;

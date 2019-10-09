@@ -1,9 +1,9 @@
-#include "config.h"
+#include "config.hpp"
 #include <nds/system.h>
 
-#include "inifile.h"
-#include "flashcard.h"
-#include "lang.h"
+#include "inifile.hpp"
+#include "flashcard.hpp"
+#include "lang.hpp"
 
 std::string Config::chestFile;
 bool Config::playSfx;

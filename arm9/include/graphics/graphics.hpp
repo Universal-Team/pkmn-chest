@@ -1,6 +1,5 @@
-#ifndef GRAPHICS_H
-#define GRAPHICS_H
-
+#ifndef GRAPHICS_HPP
+#define GRAPHICS_HPP
 #include <nds.h>
 #include <string>
 #include <vector>
@@ -728,4 +727,4 @@ int getTextWidth(std::string text);
  */
 int getTextWidth(std::u16string text);
 
-#endif //GRAPHICS_H
+#endif //GRAPHICS_HPP

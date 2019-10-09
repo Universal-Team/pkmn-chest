@@ -1,5 +1,5 @@
-#include "graphics.h"
-#include "lodepng.h"
+#include "graphics.hpp"
+#include "lodepng.hpp"
 #include "tonccpy.h"
 
 #define WHITE 0xFFFF
