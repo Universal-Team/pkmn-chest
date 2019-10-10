@@ -4,12 +4,16 @@
 
 #define WHITE 0xFFFF
 
-std::vector<Sprite> sprites;
+std::vector<Sprite> spritesMain(127), spritesSub(127);
+int maxSpriteMain = 0, maxSpriteSub = 0;
 std::vector<char> fontTiles;
 std::vector<char> fontWidths;
 std::vector<u16> fontMap;
 u16 tileSize, tileWidth, tileHeight;
 std::u16string newline = StringUtils::UTF8toUTF16("»");
+
+#define sprites(top) (top ? spritesMain : spritesSub)
+#define maxSprite(top) (top ? maxSpriteMain : maxSpriteSub)
 
 int getCharIndex(char16_t c) {
 	int spriteIndex = 0;
@@ -327,21 +331,21 @@ void drawRectangle(int x, int y, int w, int h, int color1, int color2, bool top)
 	}
 }
 
-int initSprite(SpriteSize spriteSize, bool top) {
-	Sprite sprite = {0, spriteSize, SpriteColorFormat_Bmp, -1, 15, 0, 0, top};
-	sprites.push_back(sprite);
+int initSprite(bool top, SpriteSize spriteSize, int id, int rotationIndex) {
+	if(id == -1)	id = maxSprite(top)++;
 
-	int id = sprites.size()-1;
+	Sprite sprite = {0, spriteSize, SpriteColorFormat_Bmp, rotationIndex, 15, 0, 0};
+	sprites(top)[id] = sprite;
 
 	// Allocate memory for graphics
-	sprites[id].gfx = oamAllocateGfx((top ? &oamMain : &oamSub), sprites[id].size, sprites[id].format);
+	sprites(top)[id].gfx = oamAllocateGfx((top ? &oamMain : &oamSub), sprites(top)[id].size, sprites(top)[id].format);
 
 	return id;
 }
 
-void fillSpriteColor(int id, u16 color) {
+void fillSpriteColor(int id, bool top, u16 color) {
 	int size = 0;
-	switch(sprites[id].size) {
+	switch(sprites(top)[id].size) {
 		default:
 			size = 0; // I'm lazy
 			break;
@@ -353,31 +357,31 @@ void fillSpriteColor(int id, u16 color) {
 			break;
 	}
 
-	toncset16(sprites[id].gfx, color, size);
+	toncset16(sprites(top)[id].gfx, color, size);
 }
 
-void fillSpriteImage(int id, std::vector<u16> &imageBuffer, int size) {
-	tonccpy(sprites[id].gfx, imageBuffer.data(), size*2);
+void fillSpriteImage(int id, bool top, std::vector<u16> &imageBuffer, int size) {
+	tonccpy(sprites(top)[id].gfx, imageBuffer.data(), size*2);
 }
 
-void fillSpriteImage(int id, int x, int y, int w, int h, std::vector<u16> &imageBuffer) {
+void fillSpriteImage(int id, bool top, int x, int y, int w, int h, std::vector<u16> &imageBuffer) {
 	for(int i=0;i<h;i++) {
 		for(int j=0;j<w;j++) {
-			sprites[id].gfx[((y+i)*32)+(x+j)] = imageBuffer[((i)*w)+j];
+			sprites(top)[id].gfx[((y+i)*32)+(x+j)] = imageBuffer[((i)*w)+j];
 		}
 	}
 }
 
-void fillSpriteFromSheet(int id, std::vector<u16> &imageBuffer, int w, int h, int imageWidth, int xOffset, int yOffset) {
+void fillSpriteFromSheet(int id, bool top, std::vector<u16> &imageBuffer, int w, int h, int imageWidth, int xOffset, int yOffset) {
 	for(int i=0;i<h;i++) {
 		for(int j=0;j<w;j++) {
-			sprites[id].gfx[(i*w)+j] = imageBuffer[((i+yOffset)*imageWidth)+j+xOffset];
+			sprites(top)[id].gfx[(i*w)+j] = imageBuffer[((i+yOffset)*imageWidth)+j+xOffset];
 		}
 	}
 }
 
-void fillSpriteFromSheetScaled(int id, double scale, std::vector<u16> &imageBuffer, int w, int h, int imageWidth, int xOffset, int yOffset) {
-	if(scale == 1)	fillSpriteFromSheet(id, imageBuffer, w, h, imageWidth, xOffset, yOffset);
+void fillSpriteFromSheetScaled(int id, bool top, double scale, std::vector<u16> &imageBuffer, int w, int h, int imageWidth, int xOffset, int yOffset) {
+	if(scale == 1)	fillSpriteFromSheet(id, top, imageBuffer, w, h, imageWidth, xOffset, yOffset);
 	else {
 		u16 ws = w*(u16)scale;
 		scale = 1/scale;
@@ -387,23 +391,23 @@ void fillSpriteFromSheetScaled(int id, double scale, std::vector<u16> &imageBuff
 			for(double j=0;j<w;j+=scale) {
 				u16 jj=j;
 				u16 js=j/scale;
-				sprites[id].gfx[(is*ws)+js] = imageBuffer[((ii+yOffset)*imageWidth)+jj+xOffset];
+				sprites(top)[id].gfx[(is*ws)+js] = imageBuffer[((ii+yOffset)*imageWidth)+jj+xOffset];
 			}
 		}
 	}
 }
 
-void fillSpriteFromSheetTinted(int id, std::vector<u16> &imageBuffer, u16 color, int w, int h, int imageWidth, int xOffset, int yOffset) {
+void fillSpriteFromSheetTinted(int id, bool top, std::vector<u16> &imageBuffer, u16 color, int w, int h, int imageWidth, int xOffset, int yOffset) {
 	for(int i=0;i<h;i++) {
 		for(int j=0;j<w;j++) {
-			sprites[id].gfx[(i*w)+j] = color & imageBuffer[((i+yOffset)*imageWidth)+j+xOffset];
+			sprites(top)[id].gfx[(i*w)+j] = color & imageBuffer[((i+yOffset)*imageWidth)+j+xOffset];
 		}
 	}
 }
 
-void fillSpriteText(int id, std::string text, u16 color, int xPos, int yPos, bool invert) { fillSpriteText(id, StringUtils::UTF8toUTF16(text), color, xPos, yPos, invert); };
+void fillSpriteText(int id, bool top, std::string text, u16 color, int xPos, int yPos, bool invert) { fillSpriteText(id, top, StringUtils::UTF8toUTF16(text), color, xPos, yPos, invert); };
 
-void fillSpriteText(int id, std::u16string text, u16 color, int xPos, int yPos, bool invert) {
+void fillSpriteText(int id, bool top, std::u16string text, u16 color, int xPos, int yPos, bool invert) {
 	u16 pallet[4] = {
 		0,
 		(u16)(color & (invert ? 0xBDEF : 0xFBDE)),
@@ -421,29 +425,29 @@ void fillSpriteText(int id, std::u16string text, u16 color, int xPos, int yPos, 
 		}
 
 		xPos += fontWidths[t*3];
-		fillSpriteImage(id, xPos, yPos, tileWidth, tileHeight, image);
+		fillSpriteImage(id, top, xPos, yPos, tileWidth, tileHeight, image);
 		xPos += fontWidths[(t*3)+1];
 	}
 }
 
-void prepareSprite(int id, int x, int y, int priority) {
+void prepareSprite(int id, bool top, int x, int y, int priority) {
 	oamSet(
-	(sprites[id].top ? &oamMain : &oamSub),	// Main/Sub display
-	id,	// Oam entry to set
-	x, y,	// Position
-	priority, // Priority
-	sprites[id].paletteAlpha, // Alpha for bmp sprite
-	sprites[id].size,
-	sprites[id].format,
-	sprites[id].gfx,
-	sprites[id].rotationIndex,
-	false, // Don't double the sprite size for rotation
-	false, // Don't hide the sprite
-	false, false, // vflip, hflip
-	false // Apply mosaic
+		(top ? &oamMain : &oamSub),	// Main/Sub display
+		id,	// Oam entry to set
+		x, y,	// Position
+		priority, // Priority
+		sprites(top)[id].paletteAlpha, // Alpha for bmp sprite
+		sprites(top)[id].size,
+		sprites(top)[id].format,
+		sprites(top)[id].gfx,
+		sprites(top)[id].rotationIndex,
+		false, // Don't double the sprite size for rotation
+		false, // Don't hide the sprite
+		false, false, // vflip, hflip
+		false // Apply mosaic
 	);
-	sprites[id].x = x;
-	sprites[id].y = y;
+	sprites(top)[id].x = x;
+	sprites(top)[id].y = y;
 }
 
 void updateOam(void) {
@@ -451,16 +455,16 @@ void updateOam(void) {
 	oamUpdate(&oamMain);
 }
 
-void setSpritePosition(int id, int x, int y) {
-	oamSetXY((sprites[id].top ? &oamMain : &oamSub), id, x, y);
-	sprites[id].x = x;
-	sprites[id].y = y;
+void setSpritePosition(int id, bool top, int x, int y) {
+	oamSetXY((top ? &oamMain : &oamSub), id, x, y);
+	sprites(top)[id].x = x;
+	sprites(top)[id].y = y;
 }
 
-void setSpritePriority(int id, int priority) { oamSetPriority((sprites[id].top ? &oamMain : &oamSub), id, priority); }
-void setSpriteVisibility(int id, int show) { oamSetHidden((sprites[id].top ? &oamMain : &oamSub), id, !show); }
-Sprite getSpriteInfo(int id) { return sprites[id]; }
-unsigned getSpriteAmount(void) { return sprites.size(); }
+void setSpritePriority(int id, bool top, int priority) { oamSetPriority((top ? &oamMain : &oamSub), id, priority); }
+void setSpriteVisibility(int id, bool top, int show) { oamSetHidden((top ? &oamMain : &oamSub), id, !show); }
+Sprite getSpriteInfo(int id, bool top) { return sprites(top)[id]; }
+unsigned getSpriteAmount(bool top) { return maxSprite(top); }
 
 void printText(std::string text, int xPos, int yPos, bool top, bool invert) { printTextTinted(StringUtils::UTF8toUTF16(text), WHITE, xPos, yPos, top, invert); }
 void printText(std::u16string text, int xPos, int yPos, bool top, bool invert) { printTextTinted(text, WHITE, xPos, yPos, top, invert); }

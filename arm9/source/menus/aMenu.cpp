@@ -51,10 +51,11 @@ void drawAMenuButtons(std::vector<std::pair<int, int>>& buttons, int buttonMode)
 }
 
 int aMenu(int pkmPos, std::vector<std::pair<int, int>>& buttons, int buttonMode) {
-	setSpritePosition(bottomArrowID, buttons[0].first+getTextWidthMaxW(aMenuText(buttonMode, 0), 80)+4, buttons[0].second);
-	setSpriteVisibility(topArrowID, false);
-	setSpriteVisibility(bottomArrowID, true);
+	setSpritePosition(arrowID, false, buttons[0].first+getTextWidthMaxW(aMenuText(buttonMode, 0), 80)+4, buttons[0].second);
+	setSpriteVisibility(arrowID, true, false);
+	setSpriteVisibility(arrowID, false, true);
 	updateOam();
+
 
 	drawAMenuButtons(buttons, buttonMode);
 
@@ -94,8 +95,8 @@ int aMenu(int pkmPos, std::vector<std::pair<int, int>>& buttons, int buttonMode)
 			optionSelected = false;
 			if(menuSelection == 0) { // Move
 				if(topScreen) {
-					setSpriteVisibility(bottomArrowID, false);
-					setSpriteVisibility(topArrowID, true);
+					setSpriteVisibility(arrowID, false, false);
+					setSpriteVisibility(arrowID, true, true);
 				}
 				updateOam();
 				drawRectangle(170, 0, 86, 192, DARKERER_GRAY, DARKER_GRAY, false);
@@ -112,8 +113,8 @@ int aMenu(int pkmPos, std::vector<std::pair<int, int>>& buttons, int buttonMode)
 				drawAMenuButtons(buttons, buttonMode);
 			} else if(menuSelection == 2) { // Copy
 				if(topScreen) {
-					setSpriteVisibility(bottomArrowID, false);
-					setSpriteVisibility(topArrowID, true);
+					setSpriteVisibility(arrowID, false, false);
+					setSpriteVisibility(arrowID, true, true);
 				}
 				updateOam();
 				drawRectangle(170, 0, 86, 192, DARKERER_GRAY, DARKER_GRAY, false);
@@ -121,7 +122,7 @@ int aMenu(int pkmPos, std::vector<std::pair<int, int>>& buttons, int buttonMode)
 			} else if(menuSelection == 3) { // Release
 				// Hide sprites below getBool message
 				for(int i=7;i<22;i++)
-					if(i%6)	setSpriteVisibility(i, false);
+					if(i%6)	setSpriteVisibility(i, false, false);
 				updateOam();
 				if(Input::getBool(Lang::release, Lang::cancel)) {
 					if(topScreen)	Banks::bank->pkm(save->emptyPkm(), currentBankBox, pkmPos);
@@ -148,8 +149,8 @@ int aMenu(int pkmPos, std::vector<std::pair<int, int>>& buttons, int buttonMode)
 			} else if(menuSelection == 5) { // Back
 				back:
 				if(topScreen) {
-					setSpriteVisibility(bottomArrowID, false);
-					setSpriteVisibility(topArrowID, true);
+					setSpriteVisibility(arrowID, false, false);
+					setSpriteVisibility(arrowID, true, true);
 				}
 				updateOam();
 				drawRectangle(170, 0, 86, 192, DARKERER_GRAY, DARKER_GRAY, false);
@@ -177,9 +178,9 @@ int aMenu(int pkmPos, std::vector<std::pair<int, int>>& buttons, int buttonMode)
 			} else if(menuSelection == 1) { // Rename
 				// Hide bottom screen sprites
 				for(int i=0;i<30;i++) {
-					setSpriteVisibility(i, false);
+					setSpriteVisibility(i, false, false);
 				}
-				setSpriteVisibility(bottomArrowID, false);
+				setSpriteVisibility(arrowID, false, false);
 				updateOam();
 				std::string newName = Input::getLine(topScreen ? 16 : 8);
 				if(newName != "") {
@@ -191,7 +192,7 @@ int aMenu(int pkmPos, std::vector<std::pair<int, int>>& buttons, int buttonMode)
 				drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
 				if(topScreen)	drawBox(topScreen);
 				drawAMenuButtons(buttons, buttonMode);
-				setSpriteVisibility(bottomArrowID, true);
+				setSpriteVisibility(arrowID, false, true);
 				drawBox(false);
 			} else if(menuSelection == 2) { // Swap
 				std::vector<std::shared_ptr<PKX>> tempBox;
@@ -223,8 +224,8 @@ int aMenu(int pkmPos, std::vector<std::pair<int, int>>& buttons, int buttonMode)
 			} else if(menuSelection == 3) { // Wallpaper
 				if(!topScreen) {
 					// Hide sprites
-					for(int i=0;i<30;i++)	setSpriteVisibility(i, false);
-					setSpriteVisibility(bottomArrowID, false);
+					for(int i=0;i<30;i++)	setSpriteVisibility(i, false, false);
+					setSpriteVisibility(arrowID, false, false);
 					updateOam();
 
 					// Get new wallpaper
@@ -232,7 +233,7 @@ int aMenu(int pkmPos, std::vector<std::pair<int, int>>& buttons, int buttonMode)
 					if(num != -1)	save->boxWallpaper(currentSaveBox, num);
 
 					// Redraw screen
-					setSpriteVisibility(bottomArrowID, true);
+					setSpriteVisibility(arrowID, false, true);
 					drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
 					drawAMenuButtons(buttons, buttonMode);
 					drawBox(false);
@@ -261,9 +262,9 @@ int aMenu(int pkmPos, std::vector<std::pair<int, int>>& buttons, int buttonMode)
 			if(menuSelection == 0) { // Inject
 				// Hide sprites
 				for(int i=0;i<30;i++) {
-					setSpriteVisibility(i, false);
+					setSpriteVisibility(i, false, false);
 				}
-				setSpriteVisibility(bottomArrowID, false);
+				setSpriteVisibility(arrowID, false, false);
 				updateOam();
 
 				// Save path and chane to /_nds/pkmn-chest/in
@@ -291,7 +292,7 @@ int aMenu(int pkmPos, std::vector<std::pair<int, int>>& buttons, int buttonMode)
 				if(topScreen)	drawBox(topScreen);
 				drawPokemonInfo(currentPokemon(pkmPos));
 
-				if(!topScreen)	setSpriteVisibility(bottomArrowID, true);
+				if(!topScreen)	setSpriteVisibility(arrowID, false, true);
 				updateOam();
 				goto back;
 			} else if(menuSelection == 1) { // Create
@@ -343,7 +344,7 @@ int aMenu(int pkmPos, std::vector<std::pair<int, int>>& buttons, int buttonMode)
 			}
 		}
 
-		setSpritePosition(bottomArrowID, buttons[menuSelection].first+getTextWidthMaxW(aMenuText(buttonMode, menuSelection), 80)+4, buttons[menuSelection].second);
+		setSpritePosition(arrowID, false, buttons[menuSelection].first+getTextWidthMaxW(aMenuText(buttonMode, menuSelection), 80)+4, buttons[menuSelection].second);
 		updateOam();
 	}
 	return false;

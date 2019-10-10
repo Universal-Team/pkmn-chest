@@ -1,4 +1,5 @@
 #include "misc.hpp"
+#include <strings.h>
 
 #include "banks.hpp"
 #include "colors.hpp"
@@ -98,7 +99,7 @@ void drawMiniBoxes(int currentBox) {
 }
 
 int selectBox(int currentBox) {
-	setSpritePosition(bottomArrowID, 205, 14);
+	setSpritePosition(arrowID, false, 205, 14);
 	updateOam();
 	drawMiniBoxes(currentBox);
 
@@ -139,7 +140,7 @@ int selectBox(int currentBox) {
 		}
 
 		// Move cursor
-		setSpritePosition(bottomArrowID, 205, 14+(33*(currentBox-screenPos)));
+		setSpritePosition(arrowID, false, 205, 14+(33*(currentBox-screenPos)));
 		updateOam();
 	}
 }
@@ -174,8 +175,8 @@ int selectForm(int dexNo, int currentForm) {
 	}
 
 	// Move arrow to current form
-	setSpriteVisibility(bottomArrowID, true);
-	setSpritePosition(bottomArrowID, (currentForm*32)+(128-((32*formCounts[altIndex].noForms)/2))+28, 84);
+	setSpriteVisibility(arrowID, false, true);
+	setSpritePosition(arrowID, false, (currentForm*32)+(128-((32*formCounts[altIndex].noForms)/2))+28, 84);
 	updateOam();
 
 	int pressed, held;
@@ -211,7 +212,7 @@ int selectForm(int dexNo, int currentForm) {
 		}
 
 		// Move arrow
-		setSpritePosition(bottomArrowID, (currentForm*32)+(128-((32*formCounts[altIndex].noForms)/2))+28, 84);
+		setSpritePosition(arrowID, false, (currentForm*32)+(128-((32*formCounts[altIndex].noForms)/2))+28, 84);
 		updateOam();
 	}
 }
@@ -232,8 +233,8 @@ void drawItemList(int screenPos, std::vector<std::string> itemList) {
 int selectItem(int current, int start, int max, std::vector<std::string> &items) {
 	if(current < start || current > max)	current = start;
 	// Set arrow position
-	setSpritePosition(bottomArrowID, 4+getTextWidth(items[current]), -2);
-	setSpriteVisibility(bottomArrowID, true);
+	setSpritePosition(arrowID, false, 4+getTextWidth(items[current]), -2);
+	setSpriteVisibility(arrowID, false, true);
 	updateOam();
 
 	// Print moves
@@ -288,7 +289,7 @@ int selectItem(int current, int start, int max, std::vector<std::string> &items)
 			}
 		} else if(pressed & KEY_Y) {
 			search:
-			setSpriteVisibility(bottomArrowID, false);
+			setSpriteVisibility(arrowID, false, false);
 			updateOam();
 			std::string str = Input::getLine();
 				itemList.clear();
@@ -301,7 +302,7 @@ int selectItem(int current, int start, int max, std::vector<std::string> &items)
 				newMove = 0;
 				screenPos = 0;
 			drawItemList(screenPos, itemList);
-			setSpriteVisibility(bottomArrowID, true);
+			setSpriteVisibility(arrowID, false, true);
 			updateOam();
 		}
 
@@ -315,7 +316,7 @@ int selectItem(int current, int start, int max, std::vector<std::string> &items)
 		}
 
 		// Move cursor
-		setSpritePosition(bottomArrowID, 4+getTextWidth(itemList[newMove]), (20*(newMove-screenPos)-2));
+		setSpritePosition(arrowID, false, 4+getTextWidth(itemList[newMove]), (20*(newMove-screenPos)-2));
 		updateOam();
 	}
 }
@@ -330,8 +331,8 @@ std::shared_ptr<PKX> selectMoves(std::shared_ptr<PKX> pkm) {
 	}
 
 	// Set arrow position
-	setSpritePosition(bottomArrowID, 4+getTextWidth(Lang::moves[pkm->move(0)]), -2);
-	setSpriteVisibility(bottomArrowID, true);
+	setSpritePosition(arrowID, false, 4+getTextWidth(Lang::moves[pkm->move(0)]), -2);
+	setSpriteVisibility(arrowID, false, true);
 	updateOam();
 
 	bool optionSelected = false;
@@ -383,7 +384,7 @@ std::shared_ptr<PKX> selectMoves(std::shared_ptr<PKX> pkm) {
 			}
 		}
 
-		setSpritePosition(bottomArrowID, 4+getTextWidth(Lang::moves[pkm->move(selection)]), (selection*20)-2);
+		setSpritePosition(arrowID, false, 4+getTextWidth(Lang::moves[pkm->move(selection)]), (selection*20)-2);
 		updateOam();
 	}
 }
@@ -418,8 +419,8 @@ int selectNature(int currentNature) {
 
 	int arrowX = currentNature-((currentNature/5)*5), selection = currentNature/5, pressed, held;
 	// Move arrow to current nature
-	setSpriteVisibility(bottomArrowID, true);
-	setSpritePosition(bottomArrowID, (arrowX*48)+(getTextWidthMaxW(Lang::natures[currentNature], 48)/2)+28, (selection*32)+24);
+	setSpriteVisibility(arrowID, false, true);
+	setSpritePosition(arrowID, false, (arrowX*48)+(getTextWidthMaxW(Lang::natures[currentNature], 48)/2)+28, (selection*32)+24);
 	updateOam();
 
 	while(1) {
@@ -462,7 +463,7 @@ int selectNature(int currentNature) {
 		}
 
 		// Move arrow
-		setSpritePosition(bottomArrowID, (arrowX*48)+(getTextWidthMaxW(Lang::natures[(selection*5)+arrowX], 48)/2)+28, (selection*32)+24);
+		setSpritePosition(arrowID, false, (arrowX*48)+(getTextWidthMaxW(Lang::natures[(selection*5)+arrowX], 48)/2)+28, (selection*32)+24);
 		updateOam();
 	}
 }
@@ -484,8 +485,8 @@ int selectPokeball(int currentBall) {
 	currentBall--;
 	int arrowX = currentBall-((currentBall/5)*5), selection = currentBall/5, pressed, held;
 	// Move arrow to current ball
-	setSpriteVisibility(bottomArrowID, true);
-	setSpritePosition(bottomArrowID, (arrowX*48)+40, (selection*32)+16);
+	setSpriteVisibility(arrowID, false, true);
+	setSpritePosition(arrowID, false, (arrowX*48)+40, (selection*32)+16);
 	updateOam();
 
 	while(1) {
@@ -532,7 +533,7 @@ int selectPokeball(int currentBall) {
 		}
 
 		// Move arrow
-		setSpritePosition(bottomArrowID, (arrowX*48)+40, (selection*32)+16);
+		setSpritePosition(arrowID, false, (arrowX*48)+40, (selection*32)+16);
 		updateOam();
 	}
 }
@@ -553,8 +554,8 @@ int selectWallpaper(int currentWallpaper) {
 
 	int arrowX = currentWallpaper-((currentWallpaper/6)*6), selection = currentWallpaper/6, pressed, held;
 	// Move arrow to current wallpaper
-	setSpriteVisibility(bottomArrowID, true);
-	setSpritePosition(bottomArrowID, (arrowX*36)+44, (selection*36)+20);
+	setSpriteVisibility(arrowID, false, true);
+	setSpritePosition(arrowID, false, (arrowX*36)+44, (selection*36)+20);
 	updateOam();
 
 	while(1) {
@@ -599,7 +600,7 @@ int selectWallpaper(int currentWallpaper) {
 		}
 
 		// Move arrow
-		setSpritePosition(bottomArrowID, (arrowX*36)+44, (selection*36)+20);
+		setSpritePosition(arrowID, false, (arrowX*36)+44, (selection*36)+20);
 		updateOam();
 	}
 }
@@ -627,8 +628,8 @@ std::shared_ptr<PKX> selectOrigin(std::shared_ptr<PKX> pkm) {
 	std::vector<std::string> varText;
 	drawOriginPage(pkm, varText);
 
-	setSpriteVisibility(bottomArrowID, true);
-	setSpritePosition(bottomArrowID, 4+getTextWidth(Lang::originLabels[0]+": "+varText[0]), -2);
+	setSpriteVisibility(arrowID, false, true);
+	setSpritePosition(arrowID, false, 4+getTextWidth(Lang::originLabels[0]+": "+varText[0]), -2);
 	updateOam();
 
 	bool optionSelected = false;
@@ -664,7 +665,7 @@ std::shared_ptr<PKX> selectOrigin(std::shared_ptr<PKX> pkm) {
 		if(optionSelected) {
 			Sound::play(Sound::click);
 			optionSelected = false;
-			setSpriteVisibility(bottomArrowID, false);
+			setSpriteVisibility(arrowID, false, false);
 			updateOam();
 			switch(selection) {
 				case 0: { // Level
@@ -720,12 +721,12 @@ std::shared_ptr<PKX> selectOrigin(std::shared_ptr<PKX> pkm) {
 				}
 			}
 			drawOriginPage(pkm, varText);
-			setSpriteVisibility(bottomArrowID, true);
+			setSpriteVisibility(arrowID, false, true);
 			updateOam();
 		}
 
 		// Move arrow
-		setSpritePosition(bottomArrowID, 4+getTextWidth(Lang::originLabels[selection]+": "+varText[selection]), (selection*20)-2);
+		setSpritePosition(arrowID, false, 4+getTextWidth(Lang::originLabels[selection]+": "+varText[selection]), (selection*20)-2);
 		updateOam();
 	}
 }
@@ -784,8 +785,8 @@ void drawStatsPage(std::shared_ptr<PKX> pkm) {
 }
 
 std::shared_ptr<PKX> selectStats(std::shared_ptr<PKX> pkm) {
-	setSpritePosition(bottomArrowID, 128+(textStatsC2[0].x+(getTextWidth(textStatsC2[0].text)/2)), textStatsC2[0].y-6);
-	setSpriteVisibility(bottomArrowID, true);
+	setSpritePosition(arrowID, false, 128+(textStatsC2[0].x+(getTextWidth(textStatsC2[0].text)/2)), textStatsC2[0].y-6);
+	setSpriteVisibility(arrowID, false, true);
 	updateOam();
 	drawStatsPage(pkm);
 
@@ -839,7 +840,7 @@ std::shared_ptr<PKX> selectStats(std::shared_ptr<PKX> pkm) {
 
 		if(optionSelected) {
 			optionSelected = 0;
-			setSpriteVisibility(bottomArrowID, false);
+			setSpriteVisibility(arrowID, false, false);
 			updateOam();
 			if(selection == 6) {
 				int num = Input::getInt(15); // TODO: Add proper selector
@@ -855,17 +856,17 @@ std::shared_ptr<PKX> selectStats(std::shared_ptr<PKX> pkm) {
 				int num = Input::getInt(std::min(510-total, 255));
 				if(num != -1)	pkm->ev(selection, num);
 			}
-			setSpriteVisibility(bottomArrowID, true);
+			setSpriteVisibility(arrowID, false, true);
 			updateOam();
 			drawStatsPage(pkm);
 		}
 
 		if(selection == 6) { // Hidden Power type
-			setSpritePosition(bottomArrowID, 25+getTextWidth(Lang::hpType)+typesData.width, 112);
+			setSpritePosition(arrowID, false, 25+getTextWidth(Lang::hpType)+typesData.width, 112);
 		} else if(column == 0) {
-			setSpritePosition(bottomArrowID, 128+(textStatsC2[selection].x+(getTextWidth(textStatsC2[selection].text)/2)), textStatsC2[selection].y-6);
+			setSpritePosition(arrowID, false, 128+(textStatsC2[selection].x+(getTextWidth(textStatsC2[selection].text)/2)), textStatsC2[selection].y-6);
 		} else {
-			setSpritePosition(bottomArrowID, 128+(textStatsC3[selection].x+(getTextWidth(textStatsC3[selection].text)/2)), textStatsC3[selection].y-6);
+			setSpritePosition(arrowID, false, 128+(textStatsC3[selection].x+(getTextWidth(textStatsC3[selection].text)/2)), textStatsC3[selection].y-6);
 		}
 		updateOam();
 	}

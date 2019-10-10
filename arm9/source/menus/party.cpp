@@ -32,13 +32,13 @@ void fillPartySprites(void) {
 	// Fill sprites and set positions
 	for(unsigned i=0;i<partyIconID.size();i++) {
 		if(save->pkm(i)->species() == 0) {
-			setSpriteVisibility(partyIconID[i], false);
+			setSpriteVisibility(partyIconID[i], false, false);
 		} else {
 			std::vector<u16> bmp;
 			loadPokemonSprite(getPokemonIndex(save->pkm(i)), bmp);
-			fillSpriteImage(partyIconID[i], bmp);
-			setSpritePosition(partyIconID[i], partyButtons[i].x+8, partyButtons[i].y);
-			setSpriteVisibility(partyIconID[i], true);
+			fillSpriteImage(partyIconID[i], false, bmp);
+			setSpritePosition(partyIconID[i], false, partyButtons[i].x+8, partyButtons[i].y);
+			setSpriteVisibility(partyIconID[i], false, true);
 			updateOam();
 		}
 	}
@@ -90,7 +90,7 @@ void manageParty(void) {
 
 		if(pressed & KEY_B) {
 			for(unsigned i=0;i<partyIconID.size();i++) {
-				setSpriteVisibility(partyIconID[i], false);
+				setSpriteVisibility(partyIconID[i], false, false);
 			}
 			updateOam();
 			Sound::play(Sound::back);
@@ -99,7 +99,7 @@ void manageParty(void) {
 
 		if(selectedOption != -1) {
 			for(unsigned i=0;i<partyIconID.size();i++) {
-				setSpriteVisibility(partyIconID[i], false);
+				setSpriteVisibility(partyIconID[i], false, false);
 			}
 			updateOam();
 			Sound::play(Sound::click);
@@ -119,7 +119,7 @@ void manageParty(void) {
 				fillPartySprites();
 				
 				// Hide arrow
-				setSpriteVisibility(bottomArrowID, false);
+				setSpriteVisibility(arrowID, false, false);
 				updateOam();
 			}
 

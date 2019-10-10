@@ -59,8 +59,8 @@ void showTrainerCard(void) {
 	drawTrainerCard();
 
 	// Move arrow to first option
-	setSpriteVisibility(bottomArrowID, true);
-	setSpritePosition(bottomArrowID, textTP1[0].x+getTextWidth(Lang::trainerText[0])+8+getTextWidth(textTP1[0].text), textTP1[0].y-6);
+	setSpriteVisibility(arrowID, false, true);
+	setSpritePosition(arrowID, false, textTP1[0].x+getTextWidth(Lang::trainerText[0])+8+getTextWidth(textTP1[0].text), textTP1[0].y-6);
 	updateOam();
 
 	bool optionSelected = false;
@@ -101,7 +101,7 @@ void showTrainerCard(void) {
 		if(optionSelected) {
 			Sound::play(Sound::click);
 			optionSelected = false;
-			setSpriteVisibility(bottomArrowID, false);
+			setSpriteVisibility(arrowID, false, false);
 			updateOam();
 			switch(selection) {
 				case 0: {
@@ -136,10 +136,10 @@ void showTrainerCard(void) {
 				}
 			}
 			drawTrainerCard();
-			setSpriteVisibility(bottomArrowID, true);
+			setSpriteVisibility(arrowID, false, true);
 		}
 
-		setSpritePosition(bottomArrowID, textTP1[selection].x+getTextWidth(Lang::trainerText[selection])+8+getTextWidth(textTP1[selection].text), textTP1[selection].y-6);
+		setSpritePosition(arrowID, false, textTP1[selection].x+getTextWidth(Lang::trainerText[selection])+8+getTextWidth(textTP1[selection].text), textTP1[selection].y-6);
 		updateOam();
 	}
 }

@@ -75,8 +75,8 @@ void drawConfigMenu(void) {
 void configMenu(void) {
 	drawConfigMenu();
 
-	setSpriteVisibility(bottomArrowID, true);
-	setSpritePosition(bottomArrowID, textCP1[0].first+getTextWidth(Lang::optionsText[0]), textCP1[0].second-6);
+	setSpriteVisibility(arrowID, false, true);
+	setSpritePosition(arrowID, false, textCP1[0].first+getTextWidth(Lang::optionsText[0]), textCP1[0].second-6);
 	updateOam();
 
 	bool optionSelected = false;
@@ -101,7 +101,7 @@ void configMenu(void) {
 		} else if(pressed & KEY_B) {
 			Sound::play(Sound::back);
 			Config::saveConfig();
-			setSpriteVisibility(bottomArrowID, false);
+			setSpriteVisibility(arrowID, false, false);
 			updateOam();
 			return;
 		} else if(pressed & KEY_TOUCH) {
@@ -125,7 +125,7 @@ void configMenu(void) {
 		if(optionSelected) {
 			Sound::play(Sound::click);
 			optionSelected = false;
-			setSpriteVisibility(bottomArrowID, false);
+			setSpriteVisibility(arrowID, false, false);
 			updateOam();
 			switch(selection) {
 				case 0: { // New
@@ -218,11 +218,11 @@ void configMenu(void) {
 				}
 			}
 			drawConfigMenu();
-			setSpriteVisibility(bottomArrowID, true);
+			setSpriteVisibility(arrowID, false, true);
 		}
 
-		if(selection < (int)Lang::optionsText.size())	setSpritePosition(bottomArrowID, textCP1[selection].first+getTextWidth(Lang::optionsText[selection]), textCP1[selection].second-6);
-		else	setSpritePosition(bottomArrowID, textCP1Labels[selection-3].first+getTextWidth(Lang::optionsTextLabels[selection-3])+8+getTextWidth(optionsText[selection-4]), textCP1Labels[selection-3].second-6);
+		if(selection < (int)Lang::optionsText.size())	setSpritePosition(arrowID, false, textCP1[selection].first+getTextWidth(Lang::optionsText[selection]), textCP1[selection].second-6);
+		else	setSpritePosition(arrowID, false, textCP1Labels[selection-3].first+getTextWidth(Lang::optionsTextLabels[selection-3])+8+getTextWidth(optionsText[selection-4]), textCP1Labels[selection-3].second-6);
 		updateOam();
 	}
 }

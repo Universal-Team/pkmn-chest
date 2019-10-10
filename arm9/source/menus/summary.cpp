@@ -110,7 +110,7 @@ void drawSummaryPage(std::shared_ptr<PKX> pkm) {
 
 	// Hide sprites
 	for(int i=0;i<30;i++) {
-		setSpriteVisibility(i, false);
+		setSpriteVisibility(i, false, false);
 	}
 	updateOam();
 
@@ -174,8 +174,8 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 	drawSummaryPage(pkm);
 
 	// Move arrow to first option
-	setSpriteVisibility(bottomArrowID, true);
-	setSpritePosition(bottomArrowID, textC1[0].x+getTextWidthMaxW(textC1[0].text, 80), textC1[0].y-6);
+	setSpriteVisibility(arrowID, false, true);
+	setSpritePosition(arrowID, false, textC1[0].x+getTextWidthMaxW(textC1[0].text, 80), textC1[0].y-6);
 	updateOam();
 
 	bool optionSelected = false;
@@ -237,7 +237,7 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 		if(optionSelected) {
 			Sound::play(Sound::click);
 			optionSelected = false;
-			setSpriteVisibility(bottomArrowID, false);
+			setSpriteVisibility(arrowID, false, false);
 			updateOam();
 			if(column == 0) {
 				switch(selection) {
@@ -330,13 +330,13 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 				}
 			}
 			drawSummaryPage(pkm);
-			setSpriteVisibility(bottomArrowID, true);
+			setSpriteVisibility(arrowID, false, true);
 		}
 
 		if(column == 0) {
-			setSpritePosition(bottomArrowID, textC1[selection].x+getTextWidthMaxW(textC1[selection].text, 80), textC1[selection].y-6);
+			setSpritePosition(arrowID, false, textC1[selection].x+getTextWidthMaxW(textC1[selection].text, 80), textC1[selection].y-6);
 		} else {
-			setSpritePosition(bottomArrowID, textC2[selection].x+getTextWidthMaxW(textC2[selection].text, 80), textC2[selection].y-6);
+			setSpritePosition(arrowID, false, textC2[selection].x+getTextWidthMaxW(textC2[selection].text, 80), textC2[selection].y-6);
 		}
 		updateOam();
 	}

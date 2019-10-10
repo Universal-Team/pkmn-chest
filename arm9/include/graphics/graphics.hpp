@@ -22,7 +22,6 @@ struct Sprite {
 	int paletteAlpha;
 	int x;
 	int y;
-	bool top;
 };
 
 extern std::vector<u16> font;
@@ -164,14 +163,14 @@ void drawRectangle(int x, int y, int w, int h, int color1, int color2, bool top)
  * bool top is whether the sprite should be on the top or bottom screen
  * returns the id of the sprite
  */
-int initSprite(SpriteSize spriteSize, bool top);
+int initSprite(bool top, SpriteSize spriteSize, int id = -1, int rotationIndex = -1);
 
 /*
  * Fills a sprite with a solid color
  * int id is the id of the sprite
  * u16 color is the BGR15 color to fill with
  */
-void fillSpriteColor(int id, u16 color);
+void fillSpriteColor(int id, bool top, u16 color);
 
 /*
  * Fills a sprite with raw pixel data from a vector
@@ -179,7 +178,7 @@ void fillSpriteColor(int id, u16 color);
  * size is the width * height of the image
  * std::vector<u16> &imageBuffer is the raw pixel data
  */
-void fillSpriteImage(int id, std::vector<u16> &imageBuffer, int size = 32*32);
+void fillSpriteImage(int id, bool top, std::vector<u16> &imageBuffer, int size = 32*32);
 
 /*
  * Fills a sprite with raw pixel data from a vector
@@ -202,7 +201,7 @@ void fillSpriteImage(int id, int x, int y, int w, int h, std::vector<u16> &image
  * int xOffset is the X position in the sheet to start at
  * int yOffset is the Y position in the sheet to start at
  */
-void fillSpriteFromSheet(int id, std::vector<u16> &imageBuffer, int w, int h, int imageWidth, int xOffset, int yOffset);
+void fillSpriteFromSheet(int id, bool top, std::vector<u16> &imageBuffer, int w, int h, int imageWidth, int xOffset, int yOffset);
 
 /*
  * Fills a sprite with scaled raw pixel data from a vector of a spritesheet
@@ -215,7 +214,7 @@ void fillSpriteFromSheet(int id, std::vector<u16> &imageBuffer, int w, int h, in
  * int xOffset is the X position in the sheet to start at
  * int yOffset is the Y position in the sheet to start at
  */
-void fillSpriteFromSheetScaled(int id, double scale, std::vector<u16> &imageBuffer, int w, int h, int imageWidth, int xOffset, int yOffset);
+void fillSpriteFromSheetScaled(int id, bool top, double scale, std::vector<u16> &imageBuffer, int w, int h, int imageWidth, int xOffset, int yOffset);
 
 /*
  * Fills a sprite with tinted raw pixel data from a vector of a spritesheet
@@ -228,7 +227,7 @@ void fillSpriteFromSheetScaled(int id, double scale, std::vector<u16> &imageBuff
  * int xOffset is the X position in the sheet to start at
  * int yOffset is the Y position in the sheet to start at
  */
-void fillSpriteFromSheetTinted(int id, std::vector<u16> &imageBuffer, u16 color, int w, int h, int imageWidth, int xOffset, int yOffset);
+void fillSpriteFromSheetTinted(int id, bool top, std::vector<u16> &imageBuffer, u16 color, int w, int h, int imageWidth, int xOffset, int yOffset);
 
 /**
  * Fills a sprite with text
@@ -239,7 +238,7 @@ void fillSpriteFromSheetTinted(int id, std::vector<u16> &imageBuffer, u16 color,
  * int yPos is the Y position to print at
  * bool invert is whether to swap the colors
  */
-void fillSpriteText(int id, std::string text, u16 color, int xPos, int yPos, bool invert = false);
+void fillSpriteText(int id, bool top, std::string text, u16 color, int xPos, int yPos, bool invert = false);
 
 /**
  * Fills a sprite with text
@@ -250,7 +249,7 @@ void fillSpriteText(int id, std::string text, u16 color, int xPos, int yPos, boo
  * int yPos is the Y position to print at
  * bool invert is whether to swap the colors
  */
-void fillSpriteText(int id, std::u16string text, u16 color, int xPos, int yPos, bool invert = false);
+void fillSpriteText(int id, bool top, std::u16string text, u16 color, int xPos, int yPos, bool invert = false);
 
 /*
  * Sets the sprite to be drawn
@@ -259,7 +258,7 @@ void fillSpriteText(int id, std::u16string text, u16 color, int xPos, int yPos, 
  * int y is the Y position of the sprite
  * int priority is when the sprite will be drawn (0-3, lower is on top)
  */
-void prepareSprite(int id, int x, int y, int priority);
+void prepareSprite(int id, bool top, int x, int y, int priority);
 
 // Updates the OAM to show updates sprite properties
 void updateOam(void);
@@ -270,34 +269,34 @@ void updateOam(void);
  * int x is the X position of the sprite
  * int y is the Y position of the sprite
  */
-void setSpritePosition(int id, int x, int y);
+void setSpritePosition(int id, bool top, int x, int y);
 
 /*
  * Changes a sprite's priority
  * int id is the id of the sprite
  * int priority is when the sprite will be drawn (0-3, lower is on top)
  */
-void setSpritePriority(int id, int priority);
+void setSpritePriority(int id, bool top, int priority);
 
 /*
  * Changes the visibilty of a sprite
  * int id is the id of the sprite
  * int show is whether the sprite will be visible
  */
-void setSpriteVisibility(int id, int show);
+void setSpriteVisibility(int id, bool top, int show);
 
 /*
  * Gets info on a sprite
  * int id is the id of the sprite
  * returns the sprite's vector item
  */
-Sprite getSpriteInfo(int id);
+Sprite getSpriteInfo(int id, bool top);
 
 /*
  * Gets the total amount of sprites
  * returns the total amount of sprites
  */
-unsigned getSpriteAmount(void);
+unsigned getSpriteAmount(bool top);
 
 // Get the index in the UV coordinate array where the letter appears
 unsigned int getFontSpriteIndex(const u16 letter);

@@ -7,7 +7,7 @@
 #include "Sav.hpp"
 
 extern bool topScreen;
-extern int bottomArrowID, topArrowID, shinyID, currentSaveBox, currentBankBox, bottomHeldPokemonID, topHeldPokemonID, arrowMode;
+extern int arrowID, shinyID, currentSaveBox, currentBankBox, heldPokemonID, arrowMode;
 extern std::vector<int> menuIconID, partyIconID;
 extern std::string savePath;
 extern std::vector<u16> arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, boxBgTop, boxButton, fileBrowseBg, infoBox, menuBg, menuButton, menuButtonBlue, menuIconSheet, optionsBg, search, shiny, summaryBg, types;
