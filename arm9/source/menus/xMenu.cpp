@@ -215,10 +215,10 @@ bool xMenu(void) {
 				case 5: // Exit
 					savePrompt();
 					// Hide remaining sprites
-					for(unsigned i=0;i<getSpriteAmount(false);i++) {
+					for(unsigned i=0;i<128;i++) {
 						setSpriteVisibility(i, false, false);
 					}
-					for(unsigned i=0;i<getSpriteAmount(true);i++) {
+					for(unsigned i=0;i<128;i++) {
 						setSpriteVisibility(i, true, false);
 					}
 					updateOam();
