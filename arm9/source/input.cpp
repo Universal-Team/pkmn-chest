@@ -224,13 +224,14 @@ void drawKeyboard(int layout) {
 }
 
 void processInputABC(u16 held, unsigned maxLength) {
+	u32 prevHeld = 0;
 	while(keysHeld() & (KEY_UP | KEY_DOWN | KEY_LEFT | KEY_RIGHT)) {
-		u32 prevHeld = 0;
 		do {
 			swiWaitForVBlank();
 			scanKeys();
 			held = keysDownRepeat();
 		} while(keysHeld() & (KEY_UP | KEY_DOWN | KEY_LEFT | KEY_RIGHT) && keysHeld() == prevHeld);
+		prevHeld = keysHeld();
 
 		int direction = -1;
 		switch(keysHeld() & (KEY_UP | KEY_DOWN | KEY_LEFT | KEY_RIGHT)) {
