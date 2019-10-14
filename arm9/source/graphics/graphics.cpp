@@ -4,7 +4,7 @@
 
 #define WHITE 0xFFFF
 
-std::vector<Sprite> spritesMain(127), spritesSub(127);
+std::vector<Sprite> spritesMain(128), spritesSub(128);
 int maxSpriteMain = 0, maxSpriteSub = 0;
 std::vector<char> fontTiles;
 std::vector<char> fontWidths;
@@ -372,6 +372,19 @@ void fillSpriteImage(int id, bool top, int x, int y, int w, int h, std::vector<u
 	}
 }
 
+void fillSpriteImageScaled(int id, bool top, int x, int y, int w, int h, double scale, std::vector<u16> &imageBuffer) {
+	if(scale == 1 && scale == 1)	fillSpriteImage(id, top, x, y, w, h, imageBuffer);
+	else {
+		for(int i=0;i<(h*scale);i++) {
+			for(int j=0;j<(w*scale);j++) {
+				if(imageBuffer[(((int)(i/scale))*w)+(j/scale)]>>15 != 0) { // Do not render transparent pixel
+					sprites(top)[id].gfx[(y+i)*32+x+j] = imageBuffer[(((int)(i/scale))*w)+(j/scale)];
+				}
+			}
+		}
+	}
+}
+
 void fillSpriteFromSheet(int id, bool top, std::vector<u16> &imageBuffer, int w, int h, int imageWidth, int xOffset, int yOffset) {
 	for(int i=0;i<h;i++) {
 		for(int j=0;j<w;j++) {
@@ -380,6 +393,7 @@ void fillSpriteFromSheet(int id, bool top, std::vector<u16> &imageBuffer, int w,
 	}
 }
 
+// update this
 void fillSpriteFromSheetScaled(int id, bool top, double scale, std::vector<u16> &imageBuffer, int w, int h, int imageWidth, int xOffset, int yOffset) {
 	if(scale == 1)	fillSpriteFromSheet(id, top, imageBuffer, w, h, imageWidth, xOffset, yOffset);
 	else {
@@ -425,7 +439,13 @@ void fillSpriteText(int id, bool top, std::u16string text, u16 color, int xPos, 
 		}
 
 		xPos += fontWidths[t*3];
-		fillSpriteImage(id, top, xPos, yPos, tileWidth, tileHeight, image);
+		for(int i=0;i<tileHeight;i++) {
+			for(int j=0;j<tileWidth;j++) {
+				if(image[((i)*tileWidth)+j]>>15 != 0) { // Do not render transparent pixel
+					sprites(top)[id].gfx[((yPos+i)*32)+(xPos+j)] = image[((i)*tileWidth)+j];
+				}
+			}
+		}
 		xPos += fontWidths[(t*3)+1];
 	}
 }

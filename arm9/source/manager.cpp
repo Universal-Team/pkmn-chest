@@ -12,11 +12,11 @@
 #include "sound.hpp"
 
 bool topScreen;
-int arrowID = 126, shinyID, currentSaveBox, currentBankBox, heldPokemonID = 125, arrowMode = 0;
+int arrowID = 126, shinyID, currentSaveBox, currentBankBox, heldPokemonID = 125, keyboardSpriteID = 124, arrowMode = 0;
 std::vector<int> menuIconID, partyIconID;
 std::string savePath;
-std::vector<u16> arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, boxBgTop, boxButton, fileBrowseBg, infoBox, menuBg, menuButton, menuButtonBlue, menuIconSheet, optionsBg, search, shiny, summaryBg, types;
-ImageData ballSheetData, bankBoxData, boxBgTopData, boxButtonData, fileBrowseBgData, infoBoxData, menuBgData, menuButtonData, menuButtonBlueData, menuIconSheetData, optionsBgData, searchData, shinyData, summaryBgData, typesData;
+std::vector<u16> arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, boxBgTop, boxButton, fileBrowseBg, infoBox, keyboardKey, menuBg, menuButton, menuButtonBlue, menuIconSheet, optionsBg, search, shiny, summaryBg, types;
+ImageData ballSheetData, bankBoxData, boxBgTopData, boxButtonData, fileBrowseBgData, infoBoxData, keyboardKeyData, menuBgData, menuButtonData, menuButtonBlueData, menuIconSheetData, optionsBgData, searchData, shinyData, summaryBgData, typesData;
 FILE* pokemonSheet;
 
 struct HeldPkm {
@@ -170,6 +170,7 @@ void loadGraphics(void) {
 	boxButtonData = loadPng("nitro:/graphics/boxButton.png", boxButton);
 	fileBrowseBgData = loadPng("nitro:/graphics/fileBrowseBg.png", fileBrowseBg);
 	infoBoxData = loadPng("nitro:/graphics/infoBox.png", infoBox);
+	keyboardKeyData = loadPng("nitro:/graphics/keyboardKey.png", keyboardKey);
 	menuButtonData = loadPng("nitro:/graphics/menuButton.png", menuButton);
 	menuButtonBlueData = loadPng("nitro:/graphics/menuButtonBlue.png", menuButtonBlue);
 	menuIconSheetData = loadPng("nitro:/graphics/menuIconSheet.png", menuIconSheet);
@@ -242,6 +243,12 @@ void loadGraphics(void) {
 	fillSpriteImage(shinyID, true, shiny);
 	prepareSprite(shinyID, true, 239, 45, 0);
 	setSpriteVisibility(shinyID, true, false);
+
+	// Prepare button keyboard sprite
+	initSprite(false, SpriteSize_32x32, keyboardSpriteID);
+	fillSpriteImage(keyboardSpriteID, false, shiny);
+	prepareSprite(keyboardSpriteID, false, 0, 0, 0);
+	setSpriteVisibility(keyboardSpriteID, false, false);
 }
 
 void drawBoxScreen(void) {

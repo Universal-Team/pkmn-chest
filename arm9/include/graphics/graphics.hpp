@@ -192,6 +192,19 @@ void fillSpriteImage(int id, bool top, std::vector<u16> &imageBuffer, int size =
 void fillSpriteImage(int id, int x, int y, int w, int h, std::vector<u16> &imageBuffer);
 
 /*
+ * Fills a sprite with scaled raw pixel data from a vector
+ * int id is the id of the sprite
+ * bool top is whether it's on the top or bottom screen
+ * int x is the x position to draw at
+ * int y is the y positoin to draw at
+ * int w is the width of the image
+ * int h is the height of the image
+ * size is the width * height of the image
+ * std::vector<u16> &imageBuffer is the raw pixel data
+ */
+void fillSpriteImageScaled(int id, bool top, int x, int y, int w, int h, double scale, std::vector<u16> &imageBuffer);
+
+/*
  * Fills a sprite with raw pixel data from a vector of a spritesheet
  * int id is the id of the sprite
  * std::vector<u16> &imageBuffer is the raw pixel data

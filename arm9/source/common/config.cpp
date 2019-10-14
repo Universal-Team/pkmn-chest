@@ -2,6 +2,7 @@
 #include <nds/system.h>
 
 #include "inifile.hpp"
+#include "json.hpp"
 #include "flashcard.hpp"
 #include "lang.hpp"
 

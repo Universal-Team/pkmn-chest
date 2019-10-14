@@ -1,4 +1,4 @@
-#include "common/tonccpy.h"
+#include "tonccpy.h"
 //# tonccpy.c
 
 //! VRAM-safe cpy.

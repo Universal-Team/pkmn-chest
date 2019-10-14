@@ -211,7 +211,7 @@ z	le=00	wi=06	to=06
 †	le=00	wi=06	to=06
 ‡	le=00	wi=06	to=06
 ‥	le=00	wi=06	to=06
-…	le=00	wi=06	to=06
+…	le=00	wi=0C	to=0C
 ‰	le=00	wi=06	to=06
 ′	le=00	wi=06	to=06
 ″	le=00	wi=06	to=06
@@ -323,8 +323,8 @@ z	le=00	wi=06	to=06
 ☃	le=00	wi=0C	to=0C
 ★	le=00	wi=0C	to=0C
 ☆	le=00	wi=0C	to=0C
-♀	le=00	wi=0C	to=0C
-♂	le=00	wi=0C	to=0C
+♀	le=00	wi=08	to=08
+♂	le=00	wi=08	to=08
 ♠	le=00	wi=0C	to=0C
 ♣	le=00	wi=0C	to=0C
 ♥	le=00	wi=0C	to=0C
@@ -528,7 +528,7 @@ z	le=00	wi=06	to=06
 ヴ	le=00	wi=0C	to=0C
 ヵ	le=00	wi=0C	to=0C
 ヶ	le=00	wi=0C	to=0C
-・	le=00	wi=0C	to=0C
+・	le=01	wi=04	to=05
 ー	le=00	wi=0C	to=0C
 ヽ	le=00	wi=0C	to=0C
 ヾ	le=00	wi=0C	to=0C
