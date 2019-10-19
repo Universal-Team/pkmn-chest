@@ -255,8 +255,8 @@ std::string topMenuSelect(void) {
 
 	if(flashcardFound())	topMenuContents.push_back({"fat:", true});
 	if(sdFound())	topMenuContents.push_back({"sd:", true});
-	topMenuContents.push_back({"card:", false});
-	tmSlot1Offset = topMenuContents.size()-1;
+	if(!flashcardFound())	topMenuContents.push_back({"card:", false});
+	if(!flashcardFound())	tmSlot1Offset = topMenuContents.size()-1;
 
 	FILE* favs = fopen((sdFound() ? "sd:/_nds/pkmn-chest/favorites.lst" : "fat:/_nds/pkmn-chest/favorites.lst"), "rb");
 
@@ -271,7 +271,7 @@ std::string topMenuSelect(void) {
 	}
 
 	int cardWait = 0;
-	topMenuContents[tmSlot1Offset].valid = updateSlot1Text(cardWait, topMenuContents[tmSlot1Offset].valid);
+	if(!flashcardFound())	topMenuContents[tmSlot1Offset].valid = updateSlot1Text(cardWait, topMenuContents[tmSlot1Offset].valid);
 
 	// Show topMenuContents
 	showTopMenu(topMenuContents);
@@ -291,9 +291,11 @@ std::string topMenuSelect(void) {
 			pressed = keysDown();
 			held = keysDownRepeat();
 
-			if(tmScreenOffset <= tmSlot1Offset) {
-				topMenuContents[tmSlot1Offset].valid = updateSlot1Text(cardWait, topMenuContents[tmSlot1Offset].valid);
-			};
+			if(!flashcardFound()) {
+				if(tmScreenOffset <= tmSlot1Offset) {
+					topMenuContents[tmSlot1Offset].valid = updateSlot1Text(cardWait, topMenuContents[tmSlot1Offset].valid);
+				}
+			}
 
 		} while(!held);
 
