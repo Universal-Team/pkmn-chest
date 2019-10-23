@@ -16,25 +16,10 @@ std::u16string newline = StringUtils::UTF8toUTF16("»");
 #define maxSprite(top) (top ? maxSpriteMain : maxSpriteSub)
 
 int getCharIndex(char16_t c) {
-	int spriteIndex = 0;
-	int left = 0;
-	int mid = 0;
-	int right = fontMap.size();
-
-	while(left <= right) {
-		mid = left + ((right - left) / 2);
-		if(fontMap[mid] == c) {
-			spriteIndex = mid;
-			break;
-		}
-
-		if(fontMap[mid] < c) {
-			left = mid + 1;
-		} else {
-			right = mid - 1;
-		}
+	for(unsigned int i=0;i<fontMap.size();i++) {
+		if(fontMap[i] == c)	return i;
 	}
-	return spriteIndex;
+	return 0;
 }
 
 void initGraphics(void) {
