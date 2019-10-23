@@ -110,8 +110,7 @@ void Bank::load(int maxBoxes) {
 			needSave = true;
 		} else {
 			for(int i = boxNames.size(); i < boxes(); i++) {
-				// boxNames[i] = i18n::localize("STORAGE") + " " + std::to_string(i + 1);
-				boxNames[i] = Lang::chest + " " + std::to_string(i + 1);
+				boxNames[i] = "%CHEST% " + std::to_string(i + 1);
 				if(!needSave) {
 					needSave = true;
 				}
@@ -121,8 +120,7 @@ void Bank::load(int maxBoxes) {
 		fclose(in);
 		boxNames = nlohmann::json::array();
 		for(int i = 0; i < boxes(); i++) {
-			// boxNames[i] = i18n::localize("STORAGE") + " " + std::to_string(i + 1);
-			boxNames[i] = Lang::chest + " " + std::to_string(i + 1);
+			boxNames[i] = "%CHEST% " + std::to_string(i + 1);
 		}
 
 		needSave = true;
@@ -188,15 +186,11 @@ void Bank::resize(size_t boxes) {
 		}
 		data = newData;
 
-		// FSUSER_DeleteFile(ARCHIVE, fsMakePath(PATH_UTF16, StringUtils::UTF8toUTF16(BANK(paths)).c_str()));
-		// FSUSER_DeleteFile(ARCHIVE, fsMakePath(PATH_UTF16, StringUtils::UTF8toUTF16(JSON(paths)).c_str()));
-
 		((BankHeader*)data)->boxes = boxes;
 
 		boxNames.clear();
 		for(size_t i = boxNames.size(); i < boxes; i++) {
-			// boxNames[i] = i18n::localize("STORAGE") + " " + std::to_string(i + 1);
-			boxNames[i] = Lang::chest + " " + std::to_string(i + 1);
+			boxNames[i] = "%CHEST% " + std::to_string(i + 1);
 		}
 
 		save();
@@ -257,7 +251,9 @@ bool Bank::backup() const {
 }
 
 std::string Bank::boxName(int box) const {
-	return boxNames[box].get<std::string>();
+	std::string name = boxNames[box].get<std::string>();
+	if(name.substr(0, 7) == "%CHEST%")	name = Lang::chest + name.substr(7);
+	return name;
 }
 
 void Bank::boxName(std::string name, int box) {
@@ -267,8 +263,7 @@ void Bank::boxName(std::string name, int box) {
 void Bank::createJSON() {
 	boxNames = nlohmann::json::array();
 	for(int i = 0; i < boxes(); i++) {
-		// boxNames[i] = i18n::localize("STORAGE") + " " + std::to_string(i + 1);
-		boxNames[i] = Lang::chest + " " + std::to_string(i + 1);
+		boxNames[i] = "%CHEST% " + std::to_string(i + 1);
 	}
 }
 
