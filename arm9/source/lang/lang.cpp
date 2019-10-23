@@ -100,10 +100,12 @@ void Lang::loadLangStrings(int lang) {
 	// [main]
 	Lang::cancel = ini.GetString("main", "cancel", Lang::cancel);
 	Lang::chest = ini.GetString("main", "chest", Lang::chest);
+	Lang::dexNo = ini.GetString("main", "dexNo", Lang::dexNo);
 	Lang::discard = ini.GetString("main", "discard", Lang::discard);
 	Lang::female = ini.GetString("main", "female", Lang::female);
 	Lang::hpType = ini.GetString("main", "hpType", Lang::hpType);
 	Lang::invalidSave = ini.GetString("main", "invalidSave", Lang::invalidSave);
+	Lang::level = ini.GetString("main", "level", Lang::level);
 	Lang::loading = ini.GetString("main", "loading", Lang::loading);
 	Lang::male = ini.GetString("main", "male", Lang::male);
 	Lang::no = ini.GetString("main", "no", Lang::no);

@@ -24,10 +24,12 @@ namespace Lang {
 	// [main]
 	cancel,
 	chest,
+	dexNo,
 	discard,
 	female,
 	hpType,
 	invalidSave,
+	level,
 	loading,
 	male,
 	movesString,

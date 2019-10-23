@@ -21,10 +21,12 @@ namespace Lang {
 	// [main]
 	cancel = "Cancel",
 	chest = "Chest",
+	dexNo = "No.",
 	discard = "Discard",
 	female = "Female",
 	hpType = "Hidden Power type:",
 	invalidSave = "Invalid save file",
+	level = "Lv.",
 	loading = "Loading...",
 	male = "Male",
 	movesString = "Moves",
