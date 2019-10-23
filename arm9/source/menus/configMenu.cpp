@@ -32,8 +32,7 @@ std::pair<int, int> textCP1[] {
 
 std::vector<std::string> optionsText = {"", "", "", "", ""}; // Placeholders to be filled
 
-// TODO: Rename `Lietuviu` to `Lietuvių` when `ų` is added to the font
-std::string langNames[] = { "Deutsche", "English", "Español", "Français", "Italiano", "Lietuviu", "Português", "русский", "日本語", "한국"};
+std::string langNames[] = { "Deutsche", "English", "Español", "Français", "Italiano", "Lietuvių", "Português", "русский", "日本語", "한국"};
 
 void drawConfigMenu(void) {
 	// Draw background
