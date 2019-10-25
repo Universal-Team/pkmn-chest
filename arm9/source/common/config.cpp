@@ -7,7 +7,7 @@
 #include "lang.hpp"
 
 std::string Config::chestFile;
-bool Config::playSfx;
+bool Config::keyboardDirections, Config::keyboardGroupAmount, Config::playSfx;
 int Config::backupAmount, Config::keyboardLayout, Config::keyboardXPos, Config::lang, Config::music;
 
 int sysLang() {
@@ -31,6 +31,8 @@ void Config::loadConfig() {
 	Config::backupAmount = ini.GetInt("backup", "amount", 0);
 	Config::chestFile = ini.GetString("chest", "file", "pkmn-chest_1");
 	Config::keyboardLayout = ini.GetInt("keyboard", "layout", 0);
+	Config::keyboardDirections = ini.GetInt("keyboard", "directions", 0);
+	Config::keyboardGroupAmount = ini.GetInt("keyboard", "groupAmount", 0);
 	Config::keyboardXPos = ini.GetInt("keyboard", "xPos", 0);
 	Config::lang = ini.GetInt("language", "lang", sysLang());
 	Config::music = ini.GetInt("sound", "music", 0);
@@ -43,6 +45,8 @@ void Config::saveConfig() {
 	ini.SetString("chest", "file", Config::chestFile);
 	ini.SetInt("keyboard", "layout", Config::keyboardLayout);
 	ini.SetInt("keyboard", "xPos", Config::keyboardXPos);
+	ini.SetInt("keyboard", "directions", Config::keyboardDirections);
+	ini.SetInt("keyboard", "groupAmount", Config::keyboardGroupAmount);
 	ini.SetInt("language", "lang", Config::lang);
 	ini.SetInt("sound", "music", Config::music);
 	ini.SetInt("sound", "sfx", Config::playSfx);

@@ -12,7 +12,7 @@ namespace Lang {
 	aMenuEmptySlotText,
 	aMenuTopBarText,
 	optionsTextLabels,
-	optionsText,
+	chestFileMenuText,
 	originLabels,
 	songs,
 	summaryLabels,

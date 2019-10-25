@@ -122,10 +122,12 @@ void Lang::loadLangStrings(int lang) {
 	Lang::optionsTextLabels[3] = ini.GetString("options", "backupAmount", Lang::optionsTextLabels[3]);
 	Lang::optionsTextLabels[4] = ini.GetString("options", "music", Lang::optionsTextLabels[4]);
 	Lang::optionsTextLabels[5] = ini.GetString("options", "soundFX", Lang::optionsTextLabels[5]);
-	Lang::optionsText[0] = ini.GetString("options", "new", Lang::optionsText[0]);
-	Lang::optionsText[1] = ini.GetString("options", "rename", Lang::optionsText[1]);
-	Lang::optionsText[2] = ini.GetString("options", "delete", Lang::optionsText[2]);
-	Lang::optionsText[3] = ini.GetString("options", "change", Lang::optionsText[3]);
+	Lang::optionsTextLabels[6] = ini.GetString("options", "dPadDirections", Lang::optionsTextLabels[6]);
+	Lang::optionsTextLabels[7] = ini.GetString("options", "dPadGroups", Lang::optionsTextLabels[7]);
+	Lang::chestFileMenuText[0] = ini.GetString("options", "new", Lang::chestFileMenuText[0]);
+	Lang::chestFileMenuText[1] = ini.GetString("options", "rename", Lang::chestFileMenuText[1]);
+	Lang::chestFileMenuText[2] = ini.GetString("options", "delete", Lang::chestFileMenuText[2]);
+	Lang::chestFileMenuText[3] = ini.GetString("options", "change", Lang::chestFileMenuText[3]);
 	Lang::unlimited = ini.GetString("options", "unlimited", Lang::unlimited);
 
 	// [origin]
