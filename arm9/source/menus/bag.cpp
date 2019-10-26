@@ -37,7 +37,7 @@ void drawBag(Pouch pouch, int maxItem, int screenPos) {
 
 	// Print items
 	for(int i=0;i<std::min(entriesPerScreen, maxItem+1);i++) {
-		printText(Lang::items[save->item(pouch, screenPos+i)->id()], 4, 17+(i*16), false);
+		printTextMaxW(Lang::items[save->item(pouch, screenPos+i)->id()], 110, 1, 4, 17+(i*16), false);
 		printText(std::to_string(save->item(pouch, screenPos+i)->count()), 120, 17+(i*16), false);
 	}
 }
