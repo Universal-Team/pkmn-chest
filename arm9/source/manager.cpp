@@ -348,8 +348,7 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 			drawImageFromSheet(205, 43-(((typesData.height/17)-12)/2), typesData.width, typesData.height/17, types, typesData.width, 0, (((pkm->generation() == Generation::FOUR && pkm->type2() > 8) ? pkm->type2()-1 : pkm->type2())*(typesData.height/17)), true);
 
 		// Print Level
-		snprintf(str, sizeof(str), "%s%i", Lang::level.c_str(), pkm->level());
-		printTextTinted(str, GRAY, 170, 57, true, true);
+		printTextTinted(Lang::level+std::to_string(pkm->level()), GRAY, 170, 57, true, true);
 	} else {
 		// Hide shiny star
 		setSpriteVisibility(shinyID, true, false);
