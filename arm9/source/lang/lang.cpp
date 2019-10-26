@@ -138,6 +138,15 @@ void Lang::loadLangStrings(int lang) {
 	Lang::originLabels[4] = ini.GetString("origin", "metLocation", Lang::originLabels[4]);
 	Lang::originLabels[5] = ini.GetString("origin", "originGame", Lang::originLabels[5]);
 
+	Lang::pouch[0] = ini.GetString("pouch", "items", Lang::pouch[0]);
+	Lang::pouch[1] = ini.GetString("pouch", "keyItems", Lang::pouch[1]);
+	Lang::pouch[2] = ini.GetString("pouch", "tmHm", Lang::pouch[2]);
+	Lang::pouch[3] = ini.GetString("pouch", "mail", Lang::pouch[3]);
+	Lang::pouch[4] = ini.GetString("pouch", "medicine", Lang::pouch[4]);
+	Lang::pouch[5] = ini.GetString("pouch", "berries", Lang::pouch[5]);
+	Lang::pouch[6] = ini.GetString("pouch", "balls", Lang::pouch[6]);
+	Lang::pouch[7] = ini.GetString("pouch", "battleItems", Lang::pouch[7]);
+
 	// [songs]
 	Lang::songs[0] = ini.GetString("songs", "off", Lang::songs[0]);
 	Lang::songs[1] = ini.GetString("songs", "center1", Lang::songs[1]);
@@ -194,6 +203,7 @@ void Lang::loadLangStrings(int lang) {
 	// [xMenu]
 	Lang::xMenuText[0] = ini.GetString("xMenu", "party", Lang::xMenuText[0]);
 	Lang::xMenuText[1] = ini.GetString("xMenu", "options", Lang::xMenuText[1]);
+	Lang::xMenuText[2] = ini.GetString("xMenu", "bag", Lang::xMenuText[2]);
 	Lang::xMenuText[4] = ini.GetString("main", "save", Lang::xMenuText[4]);
 	Lang::xMenuText[5] = ini.GetString("xMenu", "exit", Lang::xMenuText[5]);
 }

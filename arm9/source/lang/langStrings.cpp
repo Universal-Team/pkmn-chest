@@ -8,14 +8,15 @@ namespace Lang {
 	aMenuText = {"Move", "Edit", "Copy", "Release", "Dump", "Back"},
 	aMenuEmptySlotText = {"Inject", "Create", "Back"},
 	aMenuTopBarText = {"Jump to box", "Rename", "Swap", "Wallpaper", "Dump box", "Back"},
-	optionsTextLabels = {"Chest File", "Chest Size", "Language", "Backups", "Music", "Sound Effects", "D-Pad typing directions", "D-Pad typing groups"},
 	chestFileMenuText = {"New", "Rename", "Delete", "Change"},
+	optionsTextLabels = {"Chest File", "Chest Size", "Language", "Backups", "Music", "Sound Effects", "D-Pad typing directions", "D-Pad typing groups"},
 	originLabels = {"Met level", "Met year", "Met month", "Met day", "Met location", "Origin game"},
+	pouch = {"Items", "Key Items", "TMs & HMs", "Mail", "Medicine", "Berries", "Poké Balls", "Battle Items"},
 	songs = {"Off", "Pokémon Center (Gen. 1)", "Pokémon Center (Gen. 4)", "Pokémon Center (Gen. 5)", "Twinleaf Town", "Prof. Elm's Lab", "Prof. Oak's Lab", "Game Corner"},
 	summaryLabels = {"Dex No.", "Name", "Level", "Ability", "Nature", "Item", "Shiny", "Pokérus", "Orig. Trainer", "Trainer ID", "Secret ID", "Friendship"},
 	statsLabels = {"HP.", "Attack", "Defense", "Sp. Atk", "Sp. Def", "Speed", "Base", "IV", "EV", "Total"},
 	trainerText = {"Name", "Trainer ID", "Secret ID", "Money", "BP", "Badges", "Play time"},
-	xMenuText = {"Party", "Options", "", "", "Save", "Exit"};
+	xMenuText = {"Party", "Options", "Bag", "", "Save", "Exit"};
 
 	std::string
 	// [main]

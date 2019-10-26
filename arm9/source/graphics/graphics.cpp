@@ -253,6 +253,16 @@ void drawImage(int x, int y, int w, int h, std::vector<u16> &imageBuffer, bool t
 	}
 }
 
+void drawImageDMA(int x, int y, int w, int h, std::vector<u16> &imageBuffer, bool top) {
+	if(w == 256) {
+		dmaCopyHalfWords(0, imageBuffer.data(), (top ? BG_GFX : BG_GFX_SUB)+(y*256), h*w*2);
+	} else {
+		for(int i=0;i<h;i++) {
+			dmaCopyHalfWords(0, imageBuffer.data()+(i*w), (top ? BG_GFX : BG_GFX_SUB)+((y+i)*256)+x, w*2);
+		}
+	}
+}
+
 void drawImageFromSheet(int x, int y, int w, int h, std::vector<u16> &imageBuffer, int imageWidth, int xOffset, int yOffset, bool top) {
 	for(int i=0;i<h;i++) {
 		for(int j=0;j<w;j++) {

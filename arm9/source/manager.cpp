@@ -254,7 +254,7 @@ void loadGraphics(void) {
 void drawBoxScreen(void) {
 	// Draws backgrounds
 	drawImage(0, 0, boxBgTopData.width, boxBgTopData.height, boxBgTop, true);
-	drawImage(164, 2, infoBoxData.width, infoBoxData.height, infoBox, true);
+	drawImage(164, 2, infoBoxData.width, infoBoxData.height-16, infoBox, true);
 	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
 	
 
@@ -327,7 +327,7 @@ void drawBox(bool top) {
 
 void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 	// Clear previous draw
-	drawImage(164, 2, infoBoxData.width, infoBoxData.height, infoBox, true);
+	drawImage(164, 2, infoBoxData.width, infoBoxData.height-16, infoBox, true);
 
 	if(pkm->species() > 0 && pkm->species() < 650) {
 		// Show shiny star if applicable

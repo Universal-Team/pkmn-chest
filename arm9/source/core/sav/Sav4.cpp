@@ -25,6 +25,7 @@
  */
 
 #include "Sav4.hpp"
+#include "langStrings.hpp"
 
 void Sav4::GBO(void) {
 	int ofs = GBOOffset;
@@ -779,21 +780,22 @@ std::map<Pouch, std::vector<int>> Sav4::validItems() const {
 std::string Sav4::pouchName(Pouch pouch) const {
 	switch(pouch) {
 		case NormalItem:
+			return Lang::pouch[0];
 			// return i18n::localize("ITEMS");
 		case KeyItem:
-			// return i18n::localize("KEY_ITEMS");
+			return Lang::pouch[1];
 		case TM:
-			// return i18n::localize("TMHM");
+			return Lang::pouch[2];
 		case Mail:
-			// return i18n::localize("MAIL");
+			return Lang::pouch[3];
 		case Medicine:
-			// return i18n::localize("MEDICINE");
+			return Lang::pouch[4];
 		case Berry:
-			// return i18n::localize("BERRIES");
+			return Lang::pouch[5];
 		case Ball:
-			// return i18n::localize("BALLS");
+			return Lang::pouch[6];
 		case Battle:
-			// return i18n::localize("BATTLE_ITEMS");
+			return Lang::pouch[7];
 		default:
 			return "";
 	}

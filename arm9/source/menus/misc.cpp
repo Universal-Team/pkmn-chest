@@ -224,7 +224,7 @@ void drawItemList(int screenPos, std::vector<std::string> itemList) {
 	// Draw search icon
 	drawImage(256-searchData.width, 0, searchData.width, searchData.height, search, false);
 
-	// Print moves
+	// Print items
 	for(unsigned i=0;i<std::min(9u, itemList.size()-screenPos);i++) {
 		printText(itemList[screenPos+i], 4, 4+(i*20), false);
 	}
@@ -275,6 +275,9 @@ int selectItem(int current, int start, int max, std::vector<std::string> &items)
 			return current;
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
+			if(touch.px >= 256-searchData.width && touch.py <= searchData.height) {
+				goto search;
+			}
 			for(int i=0;i<entriesPerScreen;i++) {
 				if(touch.px >= 4 && touch.px <= 4+getTextWidth(itemList[screenPos+i]) && touch.py >= 4+(i*20) && touch.py <= 4+((i+1)*20)) {
 					for(int j=0;j<max;j++) {
@@ -283,8 +286,6 @@ int selectItem(int current, int start, int max, std::vector<std::string> &items)
 						}
 					}
 					break;
-				} else if(touch.px >= 256-searchData.width && touch.py <= searchData.height) {
-					goto search;
 				}
 			}
 		} else if(pressed & KEY_Y) {

@@ -68,6 +68,17 @@ ImageData loadPng(std::string path, std::vector<u16> &imageBuffer);
 void drawImage(int x, int y, int w, int h, std::vector<u16> &imageBuffer, bool top);
 
 /*
+ * Faster image draw that doesn't skip transparency
+ * int x is the X position
+ * int y is the Y position
+ * int w is the Width
+ * int h is the Height
+ * std::vector<u16> &imageBuffer is the raw pixel data
+ * bool top is whether to draw on the top or bottom screen
+ */
+void drawImageDMA(int x, int y, int w, int h, std::vector<u16> &imageBuffer, bool top);
+
+/*
  * Draws an image to the screen from a portion of a vector of raw pixel data
  * int x is the X position
  * int y is the Y position

@@ -1,5 +1,6 @@
 #include "xMenu.hpp"
 
+#include "bag.hpp"
 #include "banks.hpp"
 #include "cardSaves.hpp"
 #include "colors.hpp"
@@ -201,6 +202,9 @@ bool xMenu(void) {
 					break;
 				case 1: // Options
 					configMenu();
+					break;
+				case 2: // Bag
+					editBag();
 					break;
 				case 3: // Trainer
 					showTrainerCard();

@@ -105,6 +105,7 @@ void drawSummaryPage(std::shared_ptr<PKX> pkm) {
 		drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
 		drawRectangle(145, 0, 111, 88, LIGHT_GRAY, false);
 	}
+	drawImageScaled(145, 1, infoBoxData.width, infoBoxData.height, 1.2, 1, infoBox, false);
 	// Draw lines
 	drawOutline(0, 128, 160, 65, LIGHT_GRAY, false);
 
