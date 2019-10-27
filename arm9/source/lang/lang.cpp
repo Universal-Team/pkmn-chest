@@ -26,48 +26,56 @@ void Lang::loadLangStrings(int lang) {
 	// Fill vectors from files
 	FILE* in = fopen(("nitro:/lang/"+langs[tempLang]+"/abilities.txt").c_str(), "r");
 	while(__getline(&line, &len, in) != -1) {
+		line[strlen(line)-1] = '\0';
 		abilities.push_back(line);
 	}
 	fclose(in);
 
 	in = fopen(("nitro:/lang/"+langs[tempLang]+"/games.txt").c_str(), "r");
 	while(__getline(&line, &len, in) != -1) {
+		line[strlen(line)-1] = '\0';
 		games.push_back(line);
 	}
 	fclose(in);
 
 	in = fopen(("nitro:/lang/"+langs[tempLang]+"/items.txt").c_str(), "r");
 	while(__getline(&line, &len, in) != -1) {
+		line[strlen(line)-1] = '\0';
 		items.push_back(line);
 	}
 	fclose(in);
 
 	in = fopen(("nitro:/lang/"+langs[tempLang]+"/locations4.txt").c_str(), "r");
 	while(__getline(&line, &len, in) != -1) {
+		line[strlen(line)-1] = '\0';
 		locations4.push_back(line);
 	}
 	fclose(in);
 
 	in = fopen(("nitro:/lang/"+langs[tempLang]+"/locations5.txt").c_str(), "r");
 	while(__getline(&line, &len, in) != -1) {
+		line[strlen(line)-1] = '\0';
 		locations5.push_back(line);
 	}
 	fclose(in);
 
 	in = fopen(("nitro:/lang/"+langs[tempLang]+"/moves.txt").c_str(), "r");
 	while(__getline(&line, &len, in) != -1) {
+		line[strlen(line)-1] = '\0';
 		moves.push_back(line);
 	}
 	fclose(in);
 
 	in = fopen(("nitro:/lang/"+langs[tempLang]+"/natures.txt").c_str(), "r");
 	while(__getline(&line, &len, in) != -1) {
+		line[strlen(line)-1] = '\0';
 		natures.push_back(line);
 	}
 	fclose(in);
 
 	in = fopen(("nitro:/lang/"+langs[tempLang]+"/species.txt").c_str(), "r");
 	while(__getline(&line, &len, in) != -1) {
+		line[strlen(line)-1] = '\0';
 		species.push_back(line);
 	}
 	fclose(in);
