@@ -100,11 +100,8 @@ void changeAbility(std::shared_ptr<PKX> &pkm) {
 
 void drawSummaryPage(std::shared_ptr<PKX> pkm) {
 	// Draw background
-	if(sdFound())	drawImage(0, 0, summaryBgData.width, summaryBgData.height, summaryBg, false);
-	else {
-		drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
-		drawRectangle(145, 0, 111, 88, LIGHT_GRAY, false);
-	}
+	if(sdFound())	drawImageDMA(0, 0, summaryBgData.width, summaryBgData.height, summaryBg, false);
+	else	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
 	drawImageScaled(145, 1, infoBoxData.width, infoBoxData.height, 1.2, 1, infoBox, false);
 	// Draw lines
 	drawOutline(0, 128, 160, 65, LIGHT_GRAY, false);

@@ -253,7 +253,7 @@ void loadGraphics(void) {
 
 void drawBoxScreen(void) {
 	// Draws backgrounds
-	drawImage(0, 0, boxBgTopData.width, boxBgTopData.height, boxBgTop, true);
+	drawImageDMA(0, 0, boxBgTopData.width, boxBgTopData.height, boxBgTop, true);
 	drawImage(164, 2, infoBoxData.width, infoBoxData.height-16, infoBox, true);
 	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
 	

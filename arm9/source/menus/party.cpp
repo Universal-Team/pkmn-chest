@@ -46,7 +46,7 @@ void fillPartySprites(void) {
 
 void manageParty(void) {
 	// Draw background
-	if(sdFound())	drawImage(0, 0, menuBgData.width, menuBgData.height, menuBg, false);
+	if(sdFound())	drawImageDMA(0, 0, menuBgData.width, menuBgData.height, menuBg, false);
 	else {
 		drawRectangle(0, 0, 256, 16, BLACK, false);
 		drawRectangle(0, 16, 256, 160, DARK_GRAY, false);
@@ -107,7 +107,7 @@ void manageParty(void) {
 				save->pkm(showPokemonSummary(save->pkm(selectedOption)), selectedOption);
 
 				// Redraw background
-				if(sdFound())	drawImage(0, 0, menuBgData.width, menuBgData.height, menuBg, false);
+				if(sdFound())	drawImageDMA(0, 0, menuBgData.width, menuBgData.height, menuBg, false);
 				else	{
 					drawRectangle(0, 0, 256, 16, BLACK, false);
 					drawRectangle(0, 16, 256, 160, DARK_GRAY, false);
