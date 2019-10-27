@@ -52,6 +52,8 @@ struct Text {
 	{100, 20}, {100, 36}, {100, 52}, {100, 68}, {100, 84}, {100, 100},
 };
 
+int statOrder[] = {0, 1, 2, 4, 5, 3};
+
 int pkmLang(void) {
 	switch(Config::lang) {
 		case 0:
@@ -769,9 +771,9 @@ void drawStatsPage(std::shared_ptr<PKX> pkm) {
 
 	// Set & print other stat info and
 	for(unsigned i=0;i<(sizeof(textStatsC1)/sizeof(textStatsC1[0]));i++) {
-		snprintf(textStatsC2[i].text,  sizeof(textStatsC2[i].text), "%i", pkm->iv(i));
-		snprintf(textStatsC3[i].text,  sizeof(textStatsC3[i].text), "%i", pkm->ev(i));
-		snprintf(textStatsC4[i].text,  sizeof(textStatsC4[i].text), "%i", pkm->stat(i));
+		snprintf(textStatsC2[i].text,  sizeof(textStatsC2[i].text), "%i", pkm->iv(statOrder[i]));
+		snprintf(textStatsC3[i].text,  sizeof(textStatsC3[i].text), "%i", pkm->ev(statOrder[i]));
+		snprintf(textStatsC4[i].text,  sizeof(textStatsC4[i].text), "%i", pkm->stat(statOrder[i]));
 
 		printTextCentered(textStatsC1[i].text, textStatsC1[i].x, textStatsC1[i].y, false);
 		printTextCentered(textStatsC2[i].text, textStatsC2[i].x, textStatsC2[i].y, false);
@@ -786,10 +788,10 @@ void drawStatsPage(std::shared_ptr<PKX> pkm) {
 }
 
 std::shared_ptr<PKX> selectStats(std::shared_ptr<PKX> pkm) {
-	setSpritePosition(arrowID, false, 128+(textStatsC2[0].x+(getTextWidth(textStatsC2[0].text)/2)), textStatsC2[0].y-6);
+	drawStatsPage(pkm);
+	setSpritePosition(arrowID, false, 128+(textStatsC2[0].x+(getTextWidth(textStatsC2[0].text)/2))+2, textStatsC2[0].y-6);
 	setSpriteVisibility(arrowID, false, true);
 	updateOam();
-	drawStatsPage(pkm);
 
 	bool optionSelected = false;
 	int held, pressed, selection = 0, column = 0;
@@ -848,14 +850,14 @@ std::shared_ptr<PKX> selectStats(std::shared_ptr<PKX> pkm) {
 				if(num != -1)	pkm->hpType(num);
 			} else if(column == 0) {
 				int num = Input::getInt(31);
-				if(num != -1)	pkm->iv(selection, num);
+				if(num != -1)	pkm->iv(statOrder[selection], num);
 			} else {
 				int total = 0;
 				for(int i=0;i<6;i++) {
 					if(i != selection)	total += pkm->ev(i);
 				}
 				int num = Input::getInt(std::min(510-total, 255));
-				if(num != -1)	pkm->ev(selection, num);
+				if(num != -1)	pkm->ev(statOrder[selection], num);
 			}
 			setSpriteVisibility(arrowID, false, true);
 			updateOam();
@@ -863,11 +865,11 @@ std::shared_ptr<PKX> selectStats(std::shared_ptr<PKX> pkm) {
 		}
 
 		if(selection == 6) { // Hidden Power type
-			setSpritePosition(arrowID, false, 25+getTextWidth(Lang::hpType)+typesData.width, 112);
+			setSpritePosition(arrowID, false, 25+getTextWidth(Lang::hpType)+typesData.width+2, 112);
 		} else if(column == 0) {
-			setSpritePosition(arrowID, false, 128+(textStatsC2[selection].x+(getTextWidth(textStatsC2[selection].text)/2)), textStatsC2[selection].y-6);
+			setSpritePosition(arrowID, false, 128+(textStatsC2[selection].x+(getTextWidth(textStatsC2[selection].text)/2))+2, textStatsC2[selection].y-6);
 		} else {
-			setSpritePosition(arrowID, false, 128+(textStatsC3[selection].x+(getTextWidth(textStatsC3[selection].text)/2)), textStatsC3[selection].y-6);
+			setSpritePosition(arrowID, false, 128+(textStatsC3[selection].x+(getTextWidth(textStatsC3[selection].text)/2))+2, textStatsC3[selection].y-6);
 		}
 		updateOam();
 	}
