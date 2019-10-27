@@ -26,7 +26,7 @@ void drawBag(Pouch pouch, int maxItem, int screenPos, bool rightSide) {
 	// Clear screen
 	if(sdFound())	drawImageSegmentDMA(0, 0, rightSide ? summaryBgData.width : 169, summaryBgData.height, summaryBg, summaryBgData.width, false);
 	else {
-		drawRectangle(0, 0, rightSide ? 256 : 169, 192, DARK_GRAY, false);
+		drawRectangle(0, 0, rightSide ? 256 : 169, 192, DARKERER_GRAY, DARKER_GRAY, false);
 	}
 
 	printText(save->pouchName(pouch), 4, 1, false);
