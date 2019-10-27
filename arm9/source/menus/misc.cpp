@@ -478,7 +478,7 @@ int selectPokeball(int currentBall) {
 		for(int x=0;x<5;x++) {
 			if(!(save->generation() != Generation::FIVE && (y*5)+x == 24)) {
 				std::pair<int, int> xy = getPokeballPosition((y*5)+x+1);
-				drawImageFromSheet((x*48)+24, (y*32)+24, 15, 15, ballSheet, ballSheetData.width, xy.first, xy.second, false);
+				drawImageSegment((x*48)+24, (y*32)+24, 15, 15, ballSheet, ballSheetData.width, xy.first, xy.second, false);
 			}
 		}
 	}
@@ -781,7 +781,7 @@ void drawStatsPage(std::shared_ptr<PKX> pkm) {
 
 	// Draw Hidden Power type
 	printText(Lang::hpType, 20, 118, false);
-	drawImageFromSheet(24+getTextWidth(Lang::hpType), 120, typesData.width, typesData.height/17, types, typesData.width, 0, (pkm->hpType()+1)*(typesData.height/17), false);
+	drawImageSegment(24+getTextWidth(Lang::hpType), 120, typesData.width, typesData.height/17, types, typesData.width, 0, (pkm->hpType()+1)*(typesData.height/17), false);
 
 }
 

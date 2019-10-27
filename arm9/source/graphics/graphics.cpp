@@ -263,7 +263,13 @@ void drawImageDMA(int x, int y, int w, int h, std::vector<u16> &imageBuffer, boo
 	}
 }
 
-void drawImageFromSheet(int x, int y, int w, int h, std::vector<u16> &imageBuffer, int imageWidth, int xOffset, int yOffset, bool top) {
+void drawImageSegmentDMA(int x, int y, int w, int h, std::vector<u16> &imageBuffer, int imageWidth, bool top) {
+	for(int i=0;i<h;i++) {
+		dmaCopyHalfWords(0, imageBuffer.data()+(i*imageWidth), (top ? BG_GFX : BG_GFX_SUB)+((y+i)*256)+x, w*2);
+	}
+}
+
+void drawImageSegment(int x, int y, int w, int h, std::vector<u16> &imageBuffer, int imageWidth, int xOffset, int yOffset, bool top) {
 	for(int i=0;i<h;i++) {
 		for(int j=0;j<w;j++) {
 			if(imageBuffer[((i+yOffset)*imageWidth)+j+xOffset]>>15 != 0) { // Do not render transparent pixel
@@ -273,8 +279,8 @@ void drawImageFromSheet(int x, int y, int w, int h, std::vector<u16> &imageBuffe
 	}
 }
 
-void drawImageFromSheetScaled(int x, int y, int w, int h, double scaleX, double scaleY, std::vector<u16> &imageBuffer, int imageWidth, int xOffset, int yOffset, bool top) {
-	if(scaleX == 1 && scaleY == 1)	drawImageFromSheet(x, y, w, h, imageBuffer, imageWidth, xOffset, yOffset, top);
+void drawImageSegmentScaled(int x, int y, int w, int h, double scaleX, double scaleY, std::vector<u16> &imageBuffer, int imageWidth, int xOffset, int yOffset, bool top) {
+	if(scaleX == 1 && scaleY == 1)	drawImageSegment(x, y, w, h, imageBuffer, imageWidth, xOffset, yOffset, top);
 	else {
 		std::vector<u16> buffer;
 		for(int i=0;i<h;i++) {
@@ -380,7 +386,7 @@ void fillSpriteImageScaled(int id, bool top, int x, int y, int w, int h, double 
 	}
 }
 
-void fillSpriteFromSheet(int id, bool top, std::vector<u16> &imageBuffer, int w, int h, int imageWidth, int xOffset, int yOffset) {
+void fillSpriteSegment(int id, bool top, std::vector<u16> &imageBuffer, int w, int h, int imageWidth, int xOffset, int yOffset) {
 	for(int i=0;i<h;i++) {
 		for(int j=0;j<w;j++) {
 			sprites(top)[id].gfx[(i*w)+j] = imageBuffer[((i+yOffset)*imageWidth)+j+xOffset];
@@ -389,8 +395,8 @@ void fillSpriteFromSheet(int id, bool top, std::vector<u16> &imageBuffer, int w,
 }
 
 // update this
-void fillSpriteFromSheetScaled(int id, bool top, double scale, std::vector<u16> &imageBuffer, int w, int h, int imageWidth, int xOffset, int yOffset) {
-	if(scale == 1)	fillSpriteFromSheet(id, top, imageBuffer, w, h, imageWidth, xOffset, yOffset);
+void fillSpriteSegmentScaled(int id, bool top, double scale, std::vector<u16> &imageBuffer, int w, int h, int imageWidth, int xOffset, int yOffset) {
+	if(scale == 1)	fillSpriteSegment(id, top, imageBuffer, w, h, imageWidth, xOffset, yOffset);
 	else {
 		u16 ws = w*(u16)scale;
 		scale = 1/scale;
@@ -406,7 +412,7 @@ void fillSpriteFromSheetScaled(int id, bool top, double scale, std::vector<u16> 
 	}
 }
 
-void fillSpriteFromSheetTinted(int id, bool top, std::vector<u16> &imageBuffer, u16 color, int w, int h, int imageWidth, int xOffset, int yOffset) {
+void fillSpriteSegmentTinted(int id, bool top, std::vector<u16> &imageBuffer, u16 color, int w, int h, int imageWidth, int xOffset, int yOffset) {
 	for(int i=0;i<h;i++) {
 		for(int j=0;j<w;j++) {
 			sprites(top)[id].gfx[(i*w)+j] = color & imageBuffer[((i+yOffset)*imageWidth)+j+xOffset];

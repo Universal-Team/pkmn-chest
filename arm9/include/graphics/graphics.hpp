@@ -79,6 +79,17 @@ void drawImage(int x, int y, int w, int h, std::vector<u16> &imageBuffer, bool t
 void drawImageDMA(int x, int y, int w, int h, std::vector<u16> &imageBuffer, bool top);
 
 /*
+ * Faster image draw that doesn't skip transparency
+ * int x is the X position
+ * int y is the Y position
+ * int w is the Width
+ * int h is the Height
+ * std::vector<u16> &imageBuffer is the raw pixel data
+ * bool top is whether to draw on the top or bottom screen
+ */
+void drawImageSegmentDMA(int x, int y, int w, int h, std::vector<u16> &imageBuffer, int imageWidth, bool top);
+
+/*
  * Draws an image to the screen from a portion of a vector of raw pixel data
  * int x is the X position
  * int y is the Y position
@@ -90,7 +101,7 @@ void drawImageDMA(int x, int y, int w, int h, std::vector<u16> &imageBuffer, boo
  * int yOffset is the Y position in the sheet to start at
  * bool top is whether to draw on the top or bottom screen
  */
-void drawImageFromSheet(int x, int y, int w, int h, std::vector<u16> &imageBuffer, int imageWidth, int xOffset, int yOffset, bool top);
+void drawImageSegment(int x, int y, int w, int h, std::vector<u16> &imageBuffer, int imageWidth, int xOffset, int yOffset, bool top);
 
 /*
  * Draws a scaled image to the screen from a portion of a vector of raw pixel data
@@ -106,7 +117,7 @@ void drawImageFromSheet(int x, int y, int w, int h, std::vector<u16> &imageBuffe
  * int yOffset is the Y position in the sheet to start at
  * bool top is whether to draw on the top or bottom screen
  */
-void drawImageFromSheetScaled(int x, int y, int w, int h, double scaleX, double scaleY, std::vector<u16> &imageBuffer, int imageWidth, int xOffset, int yOffset, bool top);
+void drawImageSegmentScaled(int x, int y, int w, int h, double scaleX, double scaleY, std::vector<u16> &imageBuffer, int imageWidth, int xOffset, int yOffset, bool top);
 
 /*
  * Draws a scaled image to the screen from a vector of raw pixel data
@@ -225,7 +236,7 @@ void fillSpriteImageScaled(int id, bool top, int x, int y, int w, int h, double 
  * int xOffset is the X position in the sheet to start at
  * int yOffset is the Y position in the sheet to start at
  */
-void fillSpriteFromSheet(int id, bool top, std::vector<u16> &imageBuffer, int w, int h, int imageWidth, int xOffset, int yOffset);
+void fillSpriteSegment(int id, bool top, std::vector<u16> &imageBuffer, int w, int h, int imageWidth, int xOffset, int yOffset);
 
 /*
  * Fills a sprite with scaled raw pixel data from a vector of a spritesheet
@@ -238,7 +249,7 @@ void fillSpriteFromSheet(int id, bool top, std::vector<u16> &imageBuffer, int w,
  * int xOffset is the X position in the sheet to start at
  * int yOffset is the Y position in the sheet to start at
  */
-void fillSpriteFromSheetScaled(int id, bool top, double scale, std::vector<u16> &imageBuffer, int w, int h, int imageWidth, int xOffset, int yOffset);
+void fillSpriteSegmentScaled(int id, bool top, double scale, std::vector<u16> &imageBuffer, int w, int h, int imageWidth, int xOffset, int yOffset);
 
 /*
  * Fills a sprite with tinted raw pixel data from a vector of a spritesheet
@@ -251,7 +262,7 @@ void fillSpriteFromSheetScaled(int id, bool top, double scale, std::vector<u16> 
  * int xOffset is the X position in the sheet to start at
  * int yOffset is the Y position in the sheet to start at
  */
-void fillSpriteFromSheetTinted(int id, bool top, std::vector<u16> &imageBuffer, u16 color, int w, int h, int imageWidth, int xOffset, int yOffset);
+void fillSpriteSegmentTinted(int id, bool top, std::vector<u16> &imageBuffer, u16 color, int w, int h, int imageWidth, int xOffset, int yOffset);
 
 /**
  * Fills a sprite with text

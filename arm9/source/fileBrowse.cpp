@@ -113,13 +113,13 @@ void showDirectoryContents(const std::vector<DirEntry>& dirContents, int startRo
 	getcwd(path, PATH_MAX);
 
 	// Print path
-	drawImageFromSheet(0, 0, fileBrowseBgData.width, 17, fileBrowseBg, fileBrowseBgData.width, 0, 0, false);
+	drawImageSegment(0, 0, fileBrowseBgData.width, 17, fileBrowseBg, fileBrowseBgData.width, 0, 0, false);
 	printTextMaxW(path, 250, 1, 5, 0, false);
 
 	// Print directory listing
 	for(int i=0;i < ENTRIES_PER_SCREEN; i++) {
 		// Clear row
-		drawImageFromSheet(10, i*16+16, 246, 16, fileBrowseBg, fileBrowseBgData.width, 10, i*16+16, false);
+		drawImageSegment(10, i*16+16, 246, 16, fileBrowseBg, fileBrowseBgData.width, 10, i*16+16, false);
 
 		if(i < ((int)dirContents.size() - startRow)) {
 			std::u16string name = StringUtils::UTF8toUTF16(dirContents[i + startRow].name);
@@ -189,7 +189,7 @@ bool updateSlot1Text(int &cardWait, bool valid) {
 		disableSlot1();
 		cardWait = 30;
 		if(!noCardMessageSet) {
-			drawImageFromSheet(10, ((tmSlot1Offset-tmScreenOffset)+1)*16+1, 200, 16, fileBrowseBg, fileBrowseBgData.width, 10, ((tmSlot1Offset-tmScreenOffset)+1)*16+1, false);
+			drawImageSegment(10, ((tmSlot1Offset-tmScreenOffset)+1)*16+1, 200, 16, fileBrowseBg, fileBrowseBgData.width, 10, ((tmSlot1Offset-tmScreenOffset)+1)*16+1, false);
 			printTextTinted("Slot-1: (No card inserted)", GRAY, 10, ((tmSlot1Offset-tmScreenOffset)+1)*16, false, true);
 			noCardMessageSet = true;
 			return false;
@@ -202,7 +202,7 @@ bool updateSlot1Text(int &cardWait, bool valid) {
 		enableSlot1();
 		if(updateCardInfo()) {
 			valid = isValidTid(gameid);
-			drawImageFromSheet(10, ((tmSlot1Offset-tmScreenOffset)+1)*16+1, 200, 16, fileBrowseBg, fileBrowseBgData.width, 10, ((tmSlot1Offset-tmScreenOffset)+1)*16+1, false);
+			drawImageSegment(10, ((tmSlot1Offset-tmScreenOffset)+1)*16+1, 200, 16, fileBrowseBg, fileBrowseBgData.width, 10, ((tmSlot1Offset-tmScreenOffset)+1)*16+1, false);
 			drawSlot1Text(tmSlot1Offset-tmScreenOffset, valid);
 			noCardMessageSet = false;
 			return valid;
@@ -214,7 +214,7 @@ bool updateSlot1Text(int &cardWait, bool valid) {
 void showTopMenu(std::vector<topMenuItem> topMenuContents) {
 	for(unsigned i=0;i<ENTRIES_PER_SCREEN;i++) {
 		// Clear row
-		drawImageFromSheet(10, i*16+16, 246, 16, fileBrowseBg, fileBrowseBgData.width, 10, i*16+16, false);
+		drawImageSegment(10, i*16+16, 246, 16, fileBrowseBg, fileBrowseBgData.width, 10, i*16+16, false);
 
 		if(i<topMenuContents.size()) {
 			if(topMenuContents[i+tmScreenOffset].name == "fat:")	drawFatText(i, topMenuContents[i+tmScreenOffset].valid);
@@ -279,7 +279,7 @@ std::string topMenuSelect(void) {
 	bool bigJump = false;
 	while(1) {
 		// Clear old cursors
-		drawImageFromSheet(0, 17, 10, 175, fileBrowseBg, fileBrowseBgData.width, 0, 17, false);
+		drawImageSegment(0, 17, 10, 175, fileBrowseBg, fileBrowseBgData.width, 0, 17, false);
 
 		// Draw cursor
 		drawRectangle(3, (tmCurPos-tmScreenOffset)*16+24, 4, 3, DARK_GRAY, false);
@@ -402,7 +402,7 @@ std::string browseForFile(const std::vector<std::string>& extensionList, bool ac
 
 	while(1) {
 		// Clear old cursors
-		drawImageFromSheet(0, 17, 10, 175, fileBrowseBg, fileBrowseBgData.width, 0, 17, false);
+		drawImageSegment(0, 17, 10, 175, fileBrowseBg, fileBrowseBgData.width, 0, 17, false);
 
 		// Draw cursor
 		drawRectangle(3, (fileOffset-screenOffset)*16+24, 4, 3, DARK_GRAY, false);

@@ -202,7 +202,7 @@ void loadGraphics(void) {
 	// Prepare menu icon sprites
 	for(int i=0;i<6;i++) {
 		int id = initSprite(false, SpriteSize_32x32);
-		fillSpriteFromSheet(id, false, menuIconSheet, 32, 32, menuIconSheetData.width, 0, i*32);
+		fillSpriteSegment(id, false, menuIconSheet, 32, 32, menuIconSheetData.width, 0, i*32);
 		prepareSprite(id, false, 0, 0, 0);
 		setSpriteVisibility(id, false, false);
 		menuIconID.push_back(id);
@@ -343,9 +343,9 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 		else	printTextTintedMaxW(Lang::species[pkm->species()], 80, 1, (pkm->gender() ? (pkm->gender() == 1 ? RGB::RED : GRAY) : RGB::BLUE), 170, 25, true, true);
 
 		// Draw types
-		drawImageFromSheet(170, 43-(((typesData.height/17)-12)/2), typesData.width, typesData.height/17, types, typesData.width, 0, (((pkm->generation() == Generation::FOUR && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1())*(typesData.height/17)), true);
+		drawImageSegment(170, 43-(((typesData.height/17)-12)/2), typesData.width, typesData.height/17, types, typesData.width, 0, (((pkm->generation() == Generation::FOUR && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1())*(typesData.height/17)), true);
 		if(pkm->type1() != pkm->type2())
-			drawImageFromSheet(205, 43-(((typesData.height/17)-12)/2), typesData.width, typesData.height/17, types, typesData.width, 0, (((pkm->generation() == Generation::FOUR && pkm->type2() > 8) ? pkm->type2()-1 : pkm->type2())*(typesData.height/17)), true);
+			drawImageSegment(205, 43-(((typesData.height/17)-12)/2), typesData.width, typesData.height/17, types, typesData.width, 0, (((pkm->generation() == Generation::FOUR && pkm->type2() > 8) ? pkm->type2()-1 : pkm->type2())*(typesData.height/17)), true);
 
 		// Print Level
 		printTextTinted(Lang::level+std::to_string(pkm->level()), GRAY, 170, 57, true, true);

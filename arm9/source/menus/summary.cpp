@@ -120,15 +120,15 @@ void drawSummaryPage(std::shared_ptr<PKX> pkm) {
 
 	// Draw Pokémon, Pokéball, types, and shiny star (if shiny)
 	std::pair<int, int> xy = getPokeballPosition(pkm->ball());
-	drawImageFromSheet(148, 8, 15, 15, ballSheet, ballSheetData.width, xy.first, xy.second, false);
+	drawImageSegment(148, 8, 15, 15, ballSheet, ballSheetData.width, xy.first, xy.second, false);
 
 	std::vector<u16> bmp;
 	ImageData bmpData = loadPokemonSprite(getPokemonIndex(pkm), bmp);
 	drawImageScaled(169, 22, bmpData.width, bmpData.height, 2, 2, bmp, false);
 
-	drawImageFromSheet(150, 26-(((typesData.height/17)-12)/2), typesData.width, typesData.height/17, types, typesData.width, 0, (((pkm->generation() == Generation::FOUR && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1())*(typesData.height/17)), false);
+	drawImageSegment(150, 26-(((typesData.height/17)-12)/2), typesData.width, typesData.height/17, types, typesData.width, 0, (((pkm->generation() == Generation::FOUR && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1())*(typesData.height/17)), false);
 	if(pkm->type1() != pkm->type2())
-		drawImageFromSheet(185, 26-(((typesData.height/17)-12)/2), typesData.width, typesData.height/17, types, typesData.width, 0, (((pkm->generation() == Generation::FOUR && pkm->type2() > 8) ? pkm->type2()-1 : pkm->type2())*(typesData.height/17)), false);
+		drawImageSegment(185, 26-(((typesData.height/17)-12)/2), typesData.width, typesData.height/17, types, typesData.width, 0, (((pkm->generation() == Generation::FOUR && pkm->type2() > 8) ? pkm->type2()-1 : pkm->type2())*(typesData.height/17)), false);
 	if(pkm->shiny())	drawImage(150, 45, shinyData.width, shinyData.height, shiny, false);
 
 	// Print Pokémon and trainer info labels
