@@ -22,33 +22,40 @@ int getMaxItem(int pouchIndex) {
 	return 0;
 }
 
-void drawBag(Pouch pouch, int maxItem, int screenPos) {
+void drawBag(Pouch pouch, int maxItem, int screenPos, bool rightSide) {
 	// Clear screen
-	if(sdFound())	drawImageDMA(0, 0, summaryBgData.width, summaryBgData.height, summaryBg, false);
+	if(sdFound())	drawImageSegmentDMA(0, 0, rightSide ? summaryBgData.width : 169, summaryBgData.height, summaryBg, summaryBgData.width, false);
 	else {
-		drawRectangle(0, 0, 256, 192, DARK_GRAY, false);
-		drawRectangle(145, 0, 111, 88, LIGHT_GRAY, false);
+		drawRectangle(0, 0, rightSide ? 256 : 169, 192, DARK_GRAY, false);
 	}
 
 	printText(save->pouchName(pouch), 4, 1, false);
 
-	// Draw search icon
-	drawImage(256-searchData.width, 16, searchData.width, searchData.height, search, false);
+	if(rightSide) {
+		// Draw search icon
+		drawImage(256-searchData.width, 0, searchData.width, searchData.height, search, false);
+
+		// Draw pouch buttons
+		for(unsigned i=0;i<save->pouches().size();i++) {
+			drawImageScaled(170, (104-(10*save->pouches().size()))+i*(20), boxButtonData.width, boxButtonData.height, 1, (float)20/boxButtonData.height, boxButton, false);
+			printTextMaxW(save->pouchName(save->pouches()[i].first), boxButtonData.width-8, 1, 174, (104-(10*save->pouches().size()))+i*(20)+2, false);
+		}
+	}
 
 	// Print items
 	for(int i=0;i<std::min(entriesPerScreen, maxItem+1);i++) {
-		printTextMaxW(Lang::items[save->item(pouch, screenPos+i)->id()], 110, 1, 4, 17+(i*16), false);
-		printText(std::to_string(save->item(pouch, screenPos+i)->count()), 120, 17+(i*16), false);
+		printTextMaxW(Lang::items[save->item(pouch, screenPos+i)->id()], 127, 1, 30, 17+(i*16), false);
+		printText(std::to_string(save->item(pouch, screenPos+i)->count()), 4, 17+(i*16), false);
 	}
 }
 
 void editBag(void) {
 	setSpriteVisibility(arrowID, false, true);
-	setSpritePosition(arrowID, false, 4+getTextWidth(Lang::items[save->item(save->pouches()[0].first, 0)->id()]), 15);
+	setSpritePosition(arrowID, false, 4+getTextWidth(std::to_string(save->item(save->pouches()[0].first, 0)->count()))+2, 15);
 	updateOam();
 
 	int maxItem = getMaxItem(0);
-	drawBag(save->pouches()[0].first, maxItem, 0);
+	drawBag(save->pouches()[0].first, maxItem, 0, true);
 
 	bool optionSelected = false;
 	int held, pressed, column = 0, selection = 0, selectedPouch = 0, screenPos = 0;
@@ -78,16 +85,11 @@ void editBag(void) {
 				for(int i=0;i<save->pouches()[selectedPouch].second;i++) {
 					if(strncasecmp(str.c_str(), Lang::items[save->item(save->pouches()[selectedPouch].first, i)->id()].c_str(), str.size()) == 0) {
 						selection = i;
-						// Redraw if not going to scroll
-						if((selection >= screenPos) && (selection < screenPos+entriesPerScreen)) {
-							drawBag(save->pouches()[selectedPouch].first, maxItem, screenPos);
-						}
 						break;
 					}
 				}
-			} else {
-				drawBag(save->pouches()[selectedPouch].first, maxItem, screenPos);
 			}
+			drawBag(save->pouches()[selectedPouch].first, maxItem, screenPos, true);
 		} else if(held & KEY_UP) {
 			if(selection > 0) selection--;
 			else	selection = maxItem;
@@ -112,33 +114,37 @@ void editBag(void) {
 		} else if(held & KEY_L) {
 			if(selectedPouch > 0)	selectedPouch--;
 			else	selectedPouch = save->pouches().size()-1;
+			changePouch:
 			selection = 0;
 			screenPos = 0;
 			maxItem = getMaxItem(selectedPouch);
-			drawBag(save->pouches()[selectedPouch].first, maxItem, screenPos);
+			drawBag(save->pouches()[selectedPouch].first, maxItem, screenPos, false);
 		} else if(held & KEY_R) {
 			if(selectedPouch < (int)save->pouches().size()-1)	selectedPouch++;
 			else	selectedPouch = 0;
-			selection = 0;
-			screenPos = 0;
-			maxItem = getMaxItem(selectedPouch);
-			drawBag(save->pouches()[selectedPouch].first, maxItem, screenPos);
+			goto changePouch;
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
-			if(touch.px >= 256-searchData.width && touch.py >= 16 && touch.py <= 16+searchData.height) {
+			if(touch.px >= 256-searchData.width && touch.py <= searchData.height) {
 				goto search;
 			}
 			for(int i=0;i<entriesPerScreen;i++) {
-				if(touch.px >= 4 && touch.px <= 4+getTextWidth(Lang::items[save->item(save->pouches()[selectedPouch].first, selection)->id()]) && touch.py >= 17+(i*16) && touch.py <= 17+((i+1)*16)) {
+				if(touch.px >= 4 && touch.px <= 4+getTextWidth(std::to_string(save->item(save->pouches()[selectedPouch].first, selection)->count())) && touch.py >= 17+(i*16) && touch.py <= 17+((i+1)*16)) {
 					column = 0;
 					selection = i;
 					optionSelected = true;
 					break;
-				} else if(touch.px >= 4 && touch.px <= 120+getTextWidth(std::to_string(save->item(save->pouches()[selectedPouch].first, selection)->count())) && touch.py >= 17+(i*16) && touch.py <= 17+((i+1)*16)) {
+				} else if(touch.px >= 4 && touch.px <= 30+getTextWidth(Lang::items[save->item(save->pouches()[selectedPouch].first, selection)->id()]) && touch.py >= 17+(i*16) && touch.py <= 17+((i+1)*16)) {
 					column = 1;
 					selection = i;
 					optionSelected = true;
 					break;
+				}
+			}
+			for(unsigned i=0;i<save->pouches().size();i++) {
+				if(touch.px >= 170 && touch.py >= (104-(10*save->pouches().size()))+i*(20) && touch.py <= (104-(10*save->pouches().size()))+(i+1)*(20)) {
+					selectedPouch = i;
+					goto changePouch;
 				}
 			}
 		}
@@ -148,6 +154,13 @@ void editBag(void) {
 			setSpriteVisibility(arrowID, false, false);
 			updateOam();
 			if(column == 0) {
+				int num = Input::getInt(999);
+				if(num != -1) {
+					std::unique_ptr<Item> item = save->item(save->pouches()[selectedPouch].first, selection);
+					item->count(num);
+					save->item(*item, save->pouches()[selectedPouch].first, selection);
+				}
+			} else if(column == 1) {
 				std::unique_ptr<Item> item = save->item(save->pouches()[selectedPouch].first, selection);
 
 				// Create list of valid items
@@ -187,32 +200,25 @@ void editBag(void) {
 						if(selection == maxItem)	maxItem = std::min(maxItem+1, save->pouches()[selectedPouch].second);
 					}
 				}
-			} else {
-				int num = Input::getInt(999);
-				if(num != -1) {
-					std::unique_ptr<Item> item = save->item(save->pouches()[selectedPouch].first, selection);
-					item->count(num);
-					save->item(*item, save->pouches()[selectedPouch].first, selection);
-				}
 			}
 			setSpriteVisibility(arrowID, false, true);
 			updateOam();
-			drawBag(save->pouches()[selectedPouch].first, maxItem, screenPos);
+			drawBag(save->pouches()[selectedPouch].first, maxItem, screenPos, true);
 		}
 
 		// Scroll screen if needed
 		if(selection < screenPos) {
 			screenPos = selection;
-			drawBag(save->pouches()[selectedPouch].first, maxItem, screenPos);
+			drawBag(save->pouches()[selectedPouch].first, maxItem, screenPos, false);
 		} else if(selection > screenPos + entriesPerScreen - 1) {
 			screenPos = selection - entriesPerScreen + 1;
-			drawBag(save->pouches()[selectedPouch].first, maxItem, screenPos);
+			drawBag(save->pouches()[selectedPouch].first, maxItem, screenPos, false);
 		}
 
 
 		// Move cursor
-		if(column == 0)	setSpritePosition(arrowID, false, 4+getTextWidth(Lang::items[save->item(save->pouches()[selectedPouch].first, selection)->id()]), (16*(selection-screenPos)+15));
-		else if(column == 1)	setSpritePosition(arrowID, false, 120+getTextWidth(std::to_string(save->item(save->pouches()[selectedPouch].first, selection)->count())), (16*(selection-screenPos)+15));
+		if(column == 0)	setSpritePosition(arrowID, false, 4+getTextWidth(std::to_string(save->item(save->pouches()[selectedPouch].first, selection)->count()))+2, (16*(selection-screenPos)+15));
+		else if(column == 1)	setSpritePosition(arrowID, false, 30+getTextWidth(Lang::items[save->item(save->pouches()[selectedPouch].first, selection)->id()])+2, (16*(selection-screenPos)+15));
 		updateOam();
 	}
 }
