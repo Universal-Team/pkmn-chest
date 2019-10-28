@@ -601,6 +601,7 @@ void manageBoxes(void) {
 			}
 
 			// Redraw
+			setSpriteVisibility(arrowID, false, !topScreen);
 			drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
 			drawBox(false);
 			if(topScreen)	drawBox(topScreen);
