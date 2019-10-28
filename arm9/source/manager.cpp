@@ -319,7 +319,7 @@ void drawBox(bool top) {
 			loadPokemonSprite(getPokemonIndex(tempPkm), bmp);
 			fillSpriteImage(i, top, bmp);
 			setSpriteVisibility(i, top, true);
-			if(*save->pkm(top ? currentBankBox : currentSaveBox, i) == *filter) {
+			if(*tempPkm == *filter) {
 				setSpriteAlpha(top, i, 15);
 			} else {
 				setSpriteAlpha(top, i, 8);
