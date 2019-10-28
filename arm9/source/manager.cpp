@@ -319,11 +319,7 @@ void drawBox(bool top) {
 			loadPokemonSprite(getPokemonIndex(tempPkm), bmp);
 			fillSpriteImage(i, top, bmp);
 			setSpriteVisibility(i, top, true);
-			if(*tempPkm == *filter) {
-				setSpriteAlpha(top, i, 15);
-			} else {
-				setSpriteAlpha(top, i, 8);
-			}
+			setSpriteAlpha(i, top, (*tempPkm == *filter) ? 15 : 8);
 		}
 	}
 	updateOam();
