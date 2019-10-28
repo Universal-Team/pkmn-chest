@@ -482,6 +482,7 @@ void setSpritePosition(int id, bool top, int x, int y) {
 	sprites(top)[id].y = y;
 }
 
+void setSpriteAlpha(int id, bool top, int alpha) { oamSetAlpha((top ? &oamMain : &oamSub), id, alpha); }
 void setSpritePriority(int id, bool top, int priority) { oamSetPriority((top ? &oamMain : &oamSub), id, priority); }
 void setSpriteVisibility(int id, bool top, int show) { oamSetHidden((top ? &oamMain : &oamSub), id, !show); }
 Sprite getSpriteInfo(int id, bool top) { return sprites(top)[id]; }

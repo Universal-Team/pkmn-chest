@@ -63,7 +63,7 @@ void drawXMenuButtons(unsigned menuSelection) {
 	for(unsigned i=0;i<xMenuButtons.size();i++) {
 		drawImage(xMenuButtons[i].first, xMenuButtons[i].second, menuButtonData.width, menuButtonData.height, menuSelection == i ? menuButtonBlue : menuButton, false);
 		printText(Lang::xMenuText[i], xMenuButtons[i].first+47, xMenuButtons[i].second+14, false);
-		oamSetAlpha(&oamSub, menuIconID[i], menuSelection == i ? 8 : 15);
+		setSpriteAlpha(false, menuIconID[i], menuSelection == i ? 8 : 15);
 		updateOam();
 	}
 }

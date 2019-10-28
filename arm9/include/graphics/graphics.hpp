@@ -307,6 +307,13 @@ void updateOam(void);
 void setSpritePosition(int id, bool top, int x, int y);
 
 /*
+ * Changes a sprite's alpha
+ * int id is the id of the sprite
+ * int alpha is the alpha to draw the sprite at, 0 is clear, 15 is full opacity
+ */
+void setSpriteAlpha(int id, bool top, int alpha);
+
+/*
  * Changes a sprite's priority
  * int id is the id of the sprite
  * int priority is when the sprite will be drawn (0-3, lower is on top)

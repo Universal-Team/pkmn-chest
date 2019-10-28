@@ -320,9 +320,9 @@ void drawBox(bool top) {
 			fillSpriteImage(i, top, bmp);
 			setSpriteVisibility(i, top, true);
 			if(*save->pkm(currentSaveBox, i) == *filter) {
-				oamSetAlpha(&oamSub, i, 15);
+				setSpriteAlpha(top, i, 15);
 			} else {
-				oamSetAlpha(&oamSub, i, 8);
+				setSpriteAlpha(top, i, 8);
 			}
 		}
 	}
@@ -592,17 +592,18 @@ void manageBoxes(void) {
 		} else if(pressed & KEY_Y) {
 			filter:
 			// Hide sprites below Input::getBool
-			for(int i=7;i<22;i++)	if(i%6)	setSpriteVisibility(i, false, false);
+			for(int i=7;i<24;i++)	if(i%6)	setSpriteVisibility(i, false, false);
 			updateOam();
 			if(Input::getBool(Lang::filter, Lang::sort)) {
 				changeFilter(filter);
 			} else {
-				sortMenu(false);
+				sortMenu(topScreen);
 			}
 
 			// Redraw
 			drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
 			drawBox(false);
+			if(topScreen)	drawBox(topScreen);
 		} else if(pressed & KEY_TOUCH) {
 			for(int x=0;x<6;x++) {
 				for(int y=0;y<5;y++) {

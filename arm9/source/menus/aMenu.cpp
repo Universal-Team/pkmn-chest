@@ -121,7 +121,7 @@ int aMenu(int pkmPos, std::vector<std::pair<int, int>>& buttons, int buttonMode)
 				return 2;
 			} else if(menuSelection == 3) { // Release
 				// Hide sprites below getBool message
-				for(int i=7;i<22;i++)
+				for(int i=7;i<24;i++)
 					if(i%6)	setSpriteVisibility(i, false, false);
 				updateOam();
 				if(Input::getBool(Lang::release, Lang::cancel)) {
