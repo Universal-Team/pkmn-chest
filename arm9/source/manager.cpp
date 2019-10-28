@@ -1,15 +1,17 @@
 #include "manager.hpp"
 #include <dirent.h>
 
+#include "aMenu.hpp"
 #include "banks.hpp"
 #include "colors.hpp"
+#include "filter.hpp"
 #include "flashcard.hpp"
 #include "langStrings.hpp"
 #include "loader.hpp"
 #include "loading.hpp"
-#include "aMenu.hpp"
-#include "xMenu.hpp"
+#include "PKFilter.hpp"
 #include "sound.hpp"
+#include "xMenu.hpp"
 
 bool topScreen;
 int arrowID = 126, shinyID, currentSaveBox, currentBankBox, heldPokemonID = 125, keyboardSpriteID = 124, arrowMode = 0;
@@ -18,6 +20,7 @@ std::string savePath;
 std::vector<u16> arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, boxBgTop, boxButton, fileBrowseBg, infoBox, keyboardKey, menuBg, menuButton, menuButtonBlue, menuIconSheet, optionsBg, search, shiny, summaryBg, types;
 ImageData ballSheetData, bankBoxData, boxBgTopData, boxButtonData, fileBrowseBgData, infoBoxData, keyboardKeyData, menuBgData, menuButtonData, menuButtonBlueData, menuIconSheetData, optionsBgData, searchData, shinyData, summaryBgData, typesData;
 FILE* pokemonSheet;
+std::shared_ptr<PKFilter> filter = std::make_shared<PKFilter>();
 
 struct HeldPkm {
 	std::shared_ptr<PKX> pkm;
@@ -314,6 +317,11 @@ void drawBox(bool top) {
 			loadPokemonSprite(getPokemonIndex(tempPkm), bmp);
 			fillSpriteImage(i, top, bmp);
 			setSpriteVisibility(i, top, true);
+			if(*save->pkm(currentSaveBox, i) == *filter) {
+				oamSetAlpha(&oamSub, i, 15);
+			} else {
+				oamSetAlpha(&oamSub, i, 8);
+			}
 		}
 	}
 	updateOam();
@@ -323,6 +331,10 @@ void drawBox(bool top) {
 
 	// Print box name
 	printTextCenteredTintedMaxW((top ? Banks::bank->boxName(currentBankBox) : save->boxName(currentSaveBox)), 110, 1, GRAY, -44, 20, top, true);
+
+	if(!top) {
+		drawImage(0, 192-searchData.height, searchData.width, searchData.height, search, false);
+	}
 }
 
 void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
@@ -365,6 +377,7 @@ void setHeldPokemon(std::shared_ptr<PKX> pkm) {
 }
 
 void manageBoxes(void) {
+	filter->ball(1);
 	int arrowX = 0, arrowY = 0, heldPokemonBox = -1;
 	std::vector<HeldPkm> heldPokemon;
 	bool heldPokemonScreen = false, heldMode = false;
@@ -574,6 +587,13 @@ void manageBoxes(void) {
 					aMenu((arrowY*6)+arrowX, aMenuEmptySlotButtons, 2);
 				}
 			}
+		} else if(pressed & KEY_Y) {
+			filter:
+			changeFilter(filter);
+
+			// Redraw
+			drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
+			drawBox(false);
 		} else if(pressed & KEY_TOUCH) {
 			for(int x=0;x<6;x++) {
 				for(int y=0;y<5;y++) {
@@ -596,6 +616,8 @@ void manageBoxes(void) {
 			if((touch.px > 26 && touch.px < 141 && touch.py > 19 && touch.py < 37)) {
 				arrowY = -1;
 				goto selection;
+			} else if(touch.px <= searchData.width && touch.py >= 192-searchData.height) {
+				goto filter;
 			}
 		}
 

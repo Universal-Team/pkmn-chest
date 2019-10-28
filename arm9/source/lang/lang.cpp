@@ -105,12 +105,25 @@ void Lang::loadLangStrings(int lang) {
 	Lang::aMenuTopBarText[4] = ini.GetString("aMenu", "dumpBox", Lang::aMenuTopBarText[4]);
 	Lang::aMenuTopBarText[5] = ini.GetString("aMenu", "back", Lang::aMenuTopBarText[5]);
 
+	// [filter]
+	Lang::filterLabels[0]  = ini.GetString("summary", "dexNo", Lang::filterLabels[0]);
+	Lang::filterLabels[1]  = ini.GetString("summary", "nature", Lang::filterLabels[1]);
+	Lang::filterLabels[2]  = ini.GetString("summary", "ability", Lang::filterLabels[2]);
+	Lang::filterLabels[3]  = ini.GetString("filter",  "gender", Lang::filterLabels[3]);
+	Lang::filterLabels[4]  = ini.GetString("summary", "item", Lang::filterLabels[4]);
+	Lang::filterLabels[5]  = ini.GetString("filter",  "ball", Lang::filterLabels[5]);
+	Lang::filterLabels[6]  = ini.GetString("filter",  "form", Lang::filterLabels[6]);
+	Lang::filterLabels[7]  = ini.GetString("summary", "level", Lang::filterLabels[7]);
+	Lang::filterLabels[8]  = ini.GetString("summary", "moves", Lang::filterLabels[8]);
+	Lang::filterLabels[9]  = ini.GetString("summary", "shiny", Lang::filterLabels[9]);
+
 	// [main]
 	Lang::cancel = ini.GetString("main", "cancel", Lang::cancel);
 	Lang::chest = ini.GetString("main", "chest", Lang::chest);
 	Lang::dexNo = ini.GetString("main", "dexNo", Lang::dexNo);
 	Lang::discard = ini.GetString("main", "discard", Lang::discard);
 	Lang::female = ini.GetString("main", "female", Lang::female);
+	Lang::filter = ini.GetString("main", "filter", Lang::filter);
 	Lang::hpType = ini.GetString("main", "hpType", Lang::hpType);
 	Lang::invalidSave = ini.GetString("main", "invalidSave", Lang::invalidSave);
 	Lang::level = ini.GetString("main", "level", Lang::level);

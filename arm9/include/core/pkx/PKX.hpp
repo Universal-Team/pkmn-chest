@@ -40,6 +40,8 @@
 #include "stat.hpp"
 #include "utils.hpp"
 
+class PKFilter;
+
 class PKX {
 protected:
 	u32 expTable(u8 row, u8 col) const;
@@ -62,6 +64,7 @@ public:
 	virtual std::shared_ptr<PKX> clone(void) = 0;
 	virtual ~PKX(){};
 	static std::shared_ptr<PKX> getPKM(Generation gen, u8* data, bool ekx = false, bool party = false);
+	bool operator==(const PKFilter& filter) const;
 
 	virtual Generation generation(void) const = 0;
 	bool gen7(void) const;
