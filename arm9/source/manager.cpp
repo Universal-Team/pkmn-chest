@@ -593,6 +593,7 @@ void manageBoxes(void) {
 			filter:
 			// Hide sprites below Input::getBool
 			for(int i=7;i<24;i++)	if(i%6)	setSpriteVisibility(i, false, false);
+			setSpriteVisibility(arrowID, false, false);
 			updateOam();
 			if(Input::getBool(Lang::filter, Lang::sort)) {
 				changeFilter(filter);
