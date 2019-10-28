@@ -6,10 +6,12 @@
 #include "colors.hpp"
 #include "filter.hpp"
 #include "flashcard.hpp"
+#include "input.hpp"
 #include "langStrings.hpp"
 #include "loader.hpp"
 #include "loading.hpp"
 #include "PKFilter.hpp"
+#include "sort.hpp"
 #include "sound.hpp"
 #include "xMenu.hpp"
 
@@ -589,7 +591,14 @@ void manageBoxes(void) {
 			}
 		} else if(pressed & KEY_Y) {
 			filter:
-			changeFilter(filter);
+			// Hide sprites below Input::getBool
+			for(int i=7;i<22;i++)	if(i%6)	setSpriteVisibility(i, false, false);
+			updateOam();
+			if(Input::getBool(Lang::filter, Lang::sort)) {
+				changeFilter(filter);
+			} else {
+				sortMenu(false);
+			}
 
 			// Redraw
 			drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);

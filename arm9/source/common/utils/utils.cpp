@@ -553,7 +553,7 @@ std::string& StringUtils::toLower(std::string& in) {
 //     {
 //         split[lines - 1] += "...";
 //     }
-//     // Otherwise do some sort of magic
+//     // Otherwise do some sortText of magic
 //     else
 //     {
 //         std::string& finalLine = split[lines - 1];

@@ -139,6 +139,7 @@ void Lang::loadLangStrings(int lang) {
 	Lang::release = ini.GetString("aMenu", "release", Lang::release);
 	Lang::remove = ini.GetString("main", "remove", Lang::remove);
 	Lang::save = ini.GetString("main", "save", Lang::save);
+	Lang::sort = ini.GetString("main", "sort", Lang::sort);
 	Lang::yes = ini.GetString("main", "yes", Lang::yes);
 
 	// [options]
@@ -182,6 +183,35 @@ void Lang::loadLangStrings(int lang) {
 	Lang::songs[5] = ini.GetString("songs", "elmLab", Lang::songs[5]);
 	Lang::songs[6] = ini.GetString("songs", "oakLab", Lang::songs[6]);
 	Lang::songs[7] = ini.GetString("songs", "gameCorner", Lang::songs[7]);
+
+// "Nature", "Level", "TID", "Hidden Power type", "Friendship", "Nickname", "Orig. Trainer", "Shiny"},
+	// [sortText]
+	Lang::sortText[0]  = ini.GetString("sort", "none", Lang::sortText[0]);
+	Lang::sortText[1]  = ini.GetString("main", "dexNo", Lang::sortText[1]);
+	Lang::sortText[2]  = ini.GetString("summary", "dexNo", Lang::sortText[2]);
+	Lang::sortText[3]  = ini.GetString("filter", "form", Lang::sortText[3]);
+	Lang::sortText[4]  = ini.GetString("sort", "type1", Lang::sortText[4]);
+	Lang::sortText[5]  = ini.GetString("sort", "type2", Lang::sortText[5]);
+	Lang::sortText[6]  = ini.GetString("stats", "hp", Lang::sortText[6]);
+	Lang::sortText[7]  = ini.GetString("stats", "attack", Lang::sortText[7]);
+	Lang::sortText[8]  = ini.GetString("stats", "defense", Lang::sortText[8]);
+	Lang::sortText[9]  = ini.GetString("stats", "spAtk", Lang::sortText[9]);
+	Lang::sortText[10] = ini.GetString("stats", "spDef", Lang::sortText[10]);
+	Lang::sortText[11] = ini.GetString("stats", "speed", Lang::sortText[11]);
+	Lang::sortText[12] = ini.GetString("stats", "hp", Lang::sortText[6]) + " " + ini.GetString("stats", "iv", Lang::statsLabels[7]);
+	Lang::sortText[13] = ini.GetString("stats", "attack", Lang::sortText[7]) + " " + ini.GetString("stats", "iv", Lang::statsLabels[7]);
+	Lang::sortText[14] = ini.GetString("stats", "defense", Lang::sortText[8]) + " " + ini.GetString("stats", "iv", Lang::statsLabels[7]);
+	Lang::sortText[15] = ini.GetString("stats", "spAtk", Lang::sortText[9]) + " " + ini.GetString("stats", "iv", Lang::statsLabels[7]);
+	Lang::sortText[16] = ini.GetString("stats", "spDef", Lang::sortText[10]) + " " + ini.GetString("stats", "iv", Lang::statsLabels[7]);
+	Lang::sortText[17] = ini.GetString("stats", "speed", Lang::sortText[11]) + " " + ini.GetString("stats", "iv", Lang::statsLabels[7]);
+	Lang::sortText[18] = ini.GetString("summary", "nature", Lang::sortText[18]);
+	Lang::sortText[19] = ini.GetString("summary", "level", Lang::sortText[19]);
+	Lang::sortText[20] = ini.GetString("summary", "trainerID", Lang::sortText[20]);
+	Lang::sortText[21] = ini.GetString("main", "hpType", Lang::sortText[21]);
+	Lang::sortText[22] = ini.GetString("summary", "friendship", Lang::sortText[22]);
+	Lang::sortText[23] = ini.GetString("summary", "name", Lang::sortText[23]);
+	Lang::sortText[24] = ini.GetString("summary", "origTrainer", Lang::sortText[24]);
+	Lang::sortText[25] = ini.GetString("summary", "shiny", Lang::sortText[25]);
 
 	// [stats]
 	Lang::statsLabels[0] = ini.GetString("stats", "hp", Lang::statsLabels[0]);

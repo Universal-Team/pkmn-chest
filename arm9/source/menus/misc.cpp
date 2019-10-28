@@ -783,8 +783,8 @@ void drawStatsPage(std::shared_ptr<PKX> pkm) {
 	}
 
 	// Draw Hidden Power type
-	printText(Lang::hpType, 20, 118, false);
-	drawImageSegment(24+getTextWidth(Lang::hpType), 120, typesData.width, typesData.height/17, types, typesData.width, 0, (pkm->hpType()+1)*(typesData.height/17), false);
+	printText(Lang::hpType+":", 20, 118, false);
+	drawImageSegment(24+getTextWidth(Lang::hpType+":"), 120, typesData.width, typesData.height/17, types, typesData.width, 0, (pkm->hpType()+1)*(typesData.height/17), false);
 
 }
 
@@ -836,7 +836,7 @@ std::shared_ptr<PKX> selectStats(std::shared_ptr<PKX> pkm) {
 					break;
 				}
 			}
-			if(touch.px > 24+getTextWidth(Lang::hpType) && touch.px < 24+getTextWidth(Lang::hpType)+typesData.width && touch.py > 120 && touch.py < 132) {
+			if(touch.px > 24+getTextWidth(Lang::hpType+":") && touch.px < 24+getTextWidth(Lang::hpType+":")+typesData.width && touch.py > 120 && touch.py < 132) {
 				selection = 6;
 				optionSelected = true;
 			}
@@ -866,7 +866,7 @@ std::shared_ptr<PKX> selectStats(std::shared_ptr<PKX> pkm) {
 		}
 
 		if(selection == 6) { // Hidden Power type
-			setSpritePosition(arrowID, false, 25+getTextWidth(Lang::hpType)+typesData.width+2, 112);
+			setSpritePosition(arrowID, false, 25+getTextWidth(Lang::hpType+":")+typesData.width+2, 112);
 		} else if(column == 0) {
 			setSpritePosition(arrowID, false, 128+(textStatsC2[selection].x+(getTextWidth(textStatsC2[selection].text)/2))+2, textStatsC2[selection].y-6);
 		} else {

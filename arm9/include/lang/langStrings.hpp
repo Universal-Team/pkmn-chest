@@ -18,6 +18,7 @@ namespace Lang {
 	originLabels,
 	pouch,
 	songs,
+	sortText,
 	summaryLabels,
 	statsLabels,
 	trainerText,
@@ -43,6 +44,7 @@ namespace Lang {
 	release,
 	remove,
 	save,
+	sort,
 	unlimited,
 	yes,
 	// [saveMsg]

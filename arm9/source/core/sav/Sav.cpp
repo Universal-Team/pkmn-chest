@@ -138,7 +138,7 @@ void Sav::transfer(std::shared_ptr<PKX>& pk) {
 }
 
 void Sav::fixParty() {
-	// Poor man's bubble sort-like thing
+	// Poor man's bubble sortText-like thing
 	int numPkm = 6;
 	for(int i = 5; i > 0; i--) {
 		auto checkPKM = pkm(i);

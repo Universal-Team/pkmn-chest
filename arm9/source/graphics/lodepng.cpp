@@ -902,7 +902,7 @@ static BPMNode* bpmnode_create(BPMLists* lists, int weight, unsigned index, BPMN
   return result;
 }
 
-/*sort the leaves with stable mergesort*/
+/*sortText the leaves with stable mergesort*/
 static void bpmnode_sort(BPMNode* leaves, size_t num) {
   BPMNode* mem = (BPMNode*)lodepng_malloc(sizeof(*leaves) * num);
   size_t width, counter = 0;
@@ -4873,7 +4873,7 @@ unsigned lodepng_decode(unsigned char** out, unsigned* w, unsigned* h,
       if(state->error) return state->error;
     }
   } else {
-    /*color conversion needed; sort of copy of the data*/
+    /*color conversion needed; sortText of copy of the data*/
     unsigned char* data = *out;
     size_t outsize;
 
