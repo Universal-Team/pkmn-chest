@@ -10,7 +10,7 @@ namespace Lang {
 	aMenuTopBarText = {"Jump to box", "Rename", "Swap", "Wallpaper", "Dump box", "Back"},
 	chestFileMenuText = {"New", "Rename", "Delete", "Change"},
 	filterLabels = {"Species", "Nature", "Ability", "Gender", "Item", "Ball", "Form", "Level", "Moves", "Shiny"},
-	genders = {"Male", "Female", "Genderless"},
+	genders = {"Male", "Female", "Unknown"},
 	optionsTextLabels = {"Chest File", "Chest Size", "Language", "Backups", "Music", "Sound Effects", "D-Pad typing directions", "D-Pad typing groups"},
 	originLabels = {"Met level", "Met year", "Met month", "Met day", "Met location", "Origin game"},
 	pouch = {"Items", "Key Items", "TMs & HMs", "Mail", "Medicine", "Berries", "Poké Balls", "Battle Items"},

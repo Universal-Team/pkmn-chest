@@ -117,23 +117,23 @@ void Lang::loadLangStrings(int lang) {
 	Lang::filterLabels[8] = ini.GetString("summary", "moves", Lang::filterLabels[8]);
 	Lang::filterLabels[9] = ini.GetString("summary", "shiny", Lang::filterLabels[9]);
 
-	// [genders]
-	Lang::genders[0] = ini.GetString("main", "male", Lang::genders[0]);
-	Lang::genders[1] = ini.GetString("main", "female", Lang::genders[1]);
-	Lang::genders[2] = ini.GetString("main", "genderless", Lang::genders[2]);
+	// [gender]
+	Lang::genders[0] = ini.GetString("gender", "male", Lang::genders[0]);
+	Lang::genders[1] = ini.GetString("gender", "female", Lang::genders[1]);
+	Lang::genders[2] = ini.GetString("gender", "unknown", Lang::genders[2]);
 
 	// [main]
 	Lang::cancel = ini.GetString("main", "cancel", Lang::cancel);
 	Lang::chest = ini.GetString("main", "chest", Lang::chest);
 	Lang::dexNo = ini.GetString("main", "dexNo", Lang::dexNo);
 	Lang::discard = ini.GetString("main", "discard", Lang::discard);
-	Lang::female = ini.GetString("main", "female", Lang::female);
+	Lang::female = ini.GetString("gender", "female", Lang::female);
 	Lang::filter = ini.GetString("main", "filter", Lang::filter);
 	Lang::hpType = ini.GetString("main", "hpType", Lang::hpType);
 	Lang::invalidSave = ini.GetString("main", "invalidSave", Lang::invalidSave);
 	Lang::level = ini.GetString("main", "level", Lang::level);
 	Lang::loading = ini.GetString("main", "loading", Lang::loading);
-	Lang::male = ini.GetString("main", "male", Lang::male);
+	Lang::male = ini.GetString("gender", "male", Lang::male);
 	Lang::no = ini.GetString("main", "no", Lang::no);
 	Lang::origin = ini.GetString("main", "origin", Lang::origin);
 	Lang::release = ini.GetString("aMenu", "release", Lang::release);
