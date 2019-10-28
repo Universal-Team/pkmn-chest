@@ -55,6 +55,7 @@ void initGraphics(void) {
 	REG_BG3PD_SUB = 1<<8;
 
 	// Set main background as target for sprite transparency
+	REG_BLDCNT = 1<<11;
 	REG_BLDCNT_SUB = 1<<11;
 }
 
