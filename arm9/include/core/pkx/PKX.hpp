@@ -37,6 +37,7 @@
 #include "Item.hpp"
 #include "personal.hpp"
 #include "random.hpp"
+#include "stat.hpp"
 #include "utils.hpp"
 
 class PKX {
@@ -108,8 +109,8 @@ public:
 	virtual void gender(u8 g)                       = 0;
 	virtual u8 alternativeForm(void) const          = 0;
 	virtual void alternativeForm(u8 v)              = 0;
-	virtual u8 ev(u8 ev) const                      = 0;
-	virtual void ev(u8 ev, u8 v)                    = 0;
+	virtual u8 ev(Stat ev) const                    = 0;
+	virtual void ev(Stat ev, u8 v)                  = 0;
 	virtual u8 contest(u8 contest) const            = 0;
 	virtual void contest(u8 contest, u8 v)          = 0;
 	virtual u8 pkrs(void) const                     = 0;
@@ -130,8 +131,8 @@ public:
 	virtual void PP(u8 move, u8 v)              = 0;
 	virtual u8 PPUp(u8 move) const              = 0;
 	virtual void PPUp(u8 move, u8 v)            = 0;
-	virtual u8 iv(u8 iv) const                  = 0;
-	virtual void iv(u8 iv, u8 v)                = 0;
+	virtual u8 iv(Stat iv) const                = 0;
+	virtual void iv(Stat iv, u8 v)              = 0;
 	virtual bool egg(void) const                = 0;
 	virtual void egg(bool v)                    = 0;
 	virtual bool nicknamed(void) const          = 0;
@@ -189,7 +190,7 @@ public:
 	virtual bool shiny(void) const        = 0;
 	virtual void shiny(bool v)            = 0;
 	virtual u16 formSpecies(void) const   = 0;
-	virtual u16 stat(const u8 stat) const = 0;
+	virtual u16 stat(Stat stat) const     = 0;
 
 	// Hehehehe... to be done
 	// virtual u8 sleepTurns(void) const = 0;
@@ -207,8 +208,8 @@ public:
 	// -1 means not a party pokemon
 	virtual int partyCurrHP(void) const          = 0;
 	virtual void partyCurrHP(u16 v)              = 0;
-	virtual int partyStat(const u8 stat) const   = 0;
-	virtual void partyStat(const u8 stat, u16 v) = 0;
+	virtual int partyStat(Stat stat) const       = 0;
+	virtual void partyStat(Stat stat, u16 v)     = 0;
 	virtual int partyLevel(void) const           = 0;
 	virtual void partyLevel(u8 v)                = 0;
 

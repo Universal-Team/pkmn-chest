@@ -11,6 +11,7 @@
 #include "manager.hpp"
 #include "summary.hpp"
 #include "sound.hpp"
+#include "stat.hpp"
 
 struct FormCount {
 	int dexNo;
@@ -52,7 +53,7 @@ struct Text {
 	{100, 20}, {100, 36}, {100, 52}, {100, 68}, {100, 84}, {100, 100},
 };
 
-int statOrder[] = {0, 1, 2, 4, 5, 3};
+static constexpr Stat statOrder[] = {Stat::HP, Stat::ATK, Stat::DEF, Stat::SPATK, Stat::SPDEF, Stat::SPD};
 
 int pkmLang(void) {
 	switch(Config::lang) {
@@ -845,16 +846,16 @@ std::shared_ptr<PKX> selectStats(std::shared_ptr<PKX> pkm) {
 			optionSelected = 0;
 			setSpriteVisibility(arrowID, false, false);
 			updateOam();
-			if(selection == 6) {
+			if(selection == 6) { // Hidden Power Type
 				int num = Input::getInt(15); // TODO: Add proper selector
 				if(num != -1)	pkm->hpType(num);
-			} else if(column == 0) {
+			} else if(column == 0) { // IV
 				int num = Input::getInt(31);
 				if(num != -1)	pkm->iv(statOrder[selection], num);
-			} else {
+			} else { // EV
 				int total = 0;
 				for(int i=0;i<6;i++) {
-					if(i != selection)	total += pkm->ev(i);
+					if(i != selection)	total += pkm->ev(statOrder[i]);
 				}
 				int num = Input::getInt(std::min(510-total, 255));
 				if(num != -1)	pkm->ev(statOrder[selection], num);
