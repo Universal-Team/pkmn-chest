@@ -106,16 +106,21 @@ void Lang::loadLangStrings(int lang) {
 	Lang::aMenuTopBarText[5] = ini.GetString("aMenu", "back", Lang::aMenuTopBarText[5]);
 
 	// [filter]
-	Lang::filterLabels[0]  = ini.GetString("summary", "dexNo", Lang::filterLabels[0]);
-	Lang::filterLabels[1]  = ini.GetString("summary", "nature", Lang::filterLabels[1]);
-	Lang::filterLabels[2]  = ini.GetString("summary", "ability", Lang::filterLabels[2]);
-	Lang::filterLabels[3]  = ini.GetString("filter",  "gender", Lang::filterLabels[3]);
-	Lang::filterLabels[4]  = ini.GetString("summary", "item", Lang::filterLabels[4]);
-	Lang::filterLabels[5]  = ini.GetString("filter",  "ball", Lang::filterLabels[5]);
-	Lang::filterLabels[6]  = ini.GetString("filter",  "form", Lang::filterLabels[6]);
-	Lang::filterLabels[7]  = ini.GetString("summary", "level", Lang::filterLabels[7]);
-	Lang::filterLabels[8]  = ini.GetString("summary", "moves", Lang::filterLabels[8]);
-	Lang::filterLabels[9]  = ini.GetString("summary", "shiny", Lang::filterLabels[9]);
+	Lang::filterLabels[0] = ini.GetString("summary", "dexNo", Lang::filterLabels[0]);
+	Lang::filterLabels[1] = ini.GetString("summary", "nature", Lang::filterLabels[1]);
+	Lang::filterLabels[2] = ini.GetString("summary", "ability", Lang::filterLabels[2]);
+	Lang::filterLabels[3] = ini.GetString("filter",  "gender", Lang::filterLabels[3]);
+	Lang::filterLabels[4] = ini.GetString("summary", "item", Lang::filterLabels[4]);
+	Lang::filterLabels[5] = ini.GetString("filter",  "ball", Lang::filterLabels[5]);
+	Lang::filterLabels[6] = ini.GetString("filter",  "form", Lang::filterLabels[6]);
+	Lang::filterLabels[7] = ini.GetString("summary", "level", Lang::filterLabels[7]);
+	Lang::filterLabels[8] = ini.GetString("summary", "moves", Lang::filterLabels[8]);
+	Lang::filterLabels[9] = ini.GetString("summary", "shiny", Lang::filterLabels[9]);
+
+	// [genders]
+	Lang::genders[0] = ini.GetString("main", "male", Lang::genders[0]);
+	Lang::genders[1] = ini.GetString("main", "female", Lang::genders[1]);
+	Lang::genders[2] = ini.GetString("main", "genderless", Lang::genders[2]);
 
 	// [main]
 	Lang::cancel = ini.GetString("main", "cancel", Lang::cancel);

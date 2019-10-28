@@ -13,6 +13,7 @@ namespace Lang {
 	aMenuTopBarText,
 	chestFileMenuText,
 	filterLabels,
+	genders,
 	optionsTextLabels,
 	originLabels,
 	pouch,

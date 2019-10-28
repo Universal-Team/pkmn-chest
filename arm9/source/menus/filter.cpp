@@ -13,7 +13,6 @@
 std::vector<std::string> filterValues;
 std::vector<bool> filterEnabled;
 std::vector<bool> filterInversed;
-std::vector<std::string> genders = {Lang::male, Lang::female, "Genderless"}; // TODO: Add to lang
 
 void selectMoves(std::shared_ptr<PKFilter> &filter) {
 	// Clear screen
@@ -126,7 +125,7 @@ void drawFilterMenu(std::shared_ptr<PKFilter> &filter) {
 	filterValues.push_back(Lang::species[filter->species()]);
 	filterValues.push_back(Lang::natures[filter->nature()]);
 	filterValues.push_back(Lang::abilities[filter->ability()]);
-	filterValues.push_back(genders[filter->gender()]);
+	filterValues.push_back(Lang::genders[filter->gender()]);
 	filterValues.push_back(Lang::items[filter->heldItem()]);
 	filterValues.push_back(std::to_string(filter->ball()));
 	filterValues.push_back(std::to_string(filter->alternativeForm()));
@@ -321,7 +320,7 @@ void changeFilter(std::shared_ptr<PKFilter> &filter) {
 						filter->ability(selectItem(filter->ability(), 0, save->maxAbility(), Lang::abilities));
 						break;
 					case 3: // Gender
-						filter->gender(selectItem(filter->gender(), 0, genders.size(), genders));
+						filter->gender(selectItem(filter->gender(), 0, Lang::genders.size(), Lang::genders));
 						break;
 					case 4: // Held item
 						filter->heldItem(selectItem(filter->heldItem(), 0, save->maxItem(), Lang::items));
