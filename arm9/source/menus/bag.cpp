@@ -5,7 +5,7 @@
 #include "flashcard.hpp"
 #include "graphics.hpp"
 #include "input.hpp"
-#include "langStrings.hpp"
+#include "lang.hpp"
 #include "loader.hpp"
 #include "manager.hpp"
 #include "misc.hpp"

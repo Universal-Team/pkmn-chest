@@ -3,7 +3,7 @@
 #include "flashcard.hpp"
 #include "graphics.hpp"
 #include "input.hpp"
-#include "langStrings.hpp"
+#include "lang.hpp"
 #include "loader.hpp"
 #include "manager.hpp"
 #include "misc.hpp"
@@ -13,12 +13,13 @@
 std::vector<std::string> filterValues;
 std::vector<bool> filterEnabled;
 std::vector<bool> filterInversed;
+std::vector<std::string> genders, filterLabels = {"species", "nature", "ability", "gender", "item", "ball", "form", "level", "moves", "shiny"};
 
 void selectMoves(std::shared_ptr<PKFilter> &filter) {
 	// Clear screen
 	if(sdFound())	drawImageSegmentDMA(0, 0, summaryBgData.width, summaryBgData.height, summaryBg, summaryBgData.width, false);
 	else	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
-	printText(Lang::movesString, 4, 1, false);
+	printText(Lang::get("moves"), 4, 1, false);
 
 	// Print moves
 	for(int i=0;i<4;i++) {
@@ -94,7 +95,7 @@ void selectMoves(std::shared_ptr<PKFilter> &filter) {
 			// Clear screen
 			if(sdFound())	drawImageSegmentDMA(0, 0, summaryBgData.width, summaryBgData.height, summaryBg, summaryBgData.width, false);
 			else	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
-			printText(Lang::movesString, 4, 1, false);
+			printText(Lang::get("moves"), 4, 1, false);
 
 			// Print moves
 			for(int i=0;i<4;i++) {
@@ -118,20 +119,20 @@ void drawFilterMenu(std::shared_ptr<PKFilter> &filter) {
 	else {
 		drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
 	}
-	printText(Lang::filter, 4, 1, false);
+	printText(Lang::get("filter"), 4, 1, false);
 
 	// Fill filterValues
 	filterValues.clear();
 	filterValues.push_back(Lang::species[filter->species()]);
 	filterValues.push_back(Lang::natures[filter->nature()]);
 	filterValues.push_back(Lang::abilities[filter->ability()]);
-	filterValues.push_back(Lang::genders[filter->gender()]);
+	filterValues.push_back(Lang::get(genders[filter->gender()]));
 	filterValues.push_back(Lang::items[filter->heldItem()]);
 	filterValues.push_back(std::to_string(filter->ball()));
 	filterValues.push_back(std::to_string(filter->alternativeForm()));
 	filterValues.push_back(std::to_string(filter->level()));
 	filterValues.push_back("……");
-	filterValues.push_back(filter->shiny() ? Lang::yes : Lang::no);
+	filterValues.push_back(filter->shiny() ? Lang::get("yes") : Lang::get("no"));
 
 	// Fill filterEnabled
 	filterEnabled.clear();
@@ -160,9 +161,9 @@ void drawFilterMenu(std::shared_ptr<PKFilter> &filter) {
 	filterInversed.push_back(filter->shinyInversed());
 
 	// Print items
-	for(unsigned i=0;i<Lang::filterLabels.size();i++) {
+	for(unsigned i=0;i<filterLabels.size();i++) {
 		printText(filterEnabled[i] ? "o" : "x", 4, 17+(i*16), false);
-		printTextMaxW(Lang::filterLabels[i], 100, 1, 20, 17+(i*16), false);
+		printTextMaxW(Lang::get(filterLabels[i]), 100, 1, 20, 17+(i*16), false);
 		printText(filterInversed[i] ? "≠" : "=", 120, 17+(i*16), false);
 		printTextMaxW(filterValues[i], 100, 1, 136, 17+(i*16), false);
 	}
@@ -170,6 +171,9 @@ void drawFilterMenu(std::shared_ptr<PKFilter> &filter) {
 
 void changeFilter(std::shared_ptr<PKFilter> &filter) {
 	drawFilterMenu(filter);
+
+	// Set genders vector
+	genders = {Lang::get("male"), Lang::get("female"), Lang::get("unknown")};
 
 	// Set arrow position
 	setSpriteVisibility(arrowID, false, true);
@@ -201,14 +205,14 @@ void changeFilter(std::shared_ptr<PKFilter> &filter) {
 		} else if(held & KEY_UP) {
 			if(selection > 0)	selection--;
 		} else if(held & KEY_DOWN) {
-			if(selection < (int)Lang::filterLabels.size()-1)	selection++;
+			if(selection < (int)filterLabels.size()-1)	selection++;
 		} else if(pressed & KEY_LEFT) {
 			if(column > 0)	column--;
 		} else if(pressed & KEY_RIGHT) {
 			if(column < 2)	column++;
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
-			for(unsigned i=0;i<Lang::filterLabels.size();i++) {
+			for(unsigned i=0;i<filterLabels.size();i++) {
 				if(touch.px >= 4 && touch.px <= 4+getTextWidth(filter->moveEnabled(selection) ? "√" : "x") && touch.py >= 15+(i*16) && touch.py <= 15+((i+1)*16)) {
 					column = 0;
 					selection = i;
@@ -320,7 +324,7 @@ void changeFilter(std::shared_ptr<PKFilter> &filter) {
 						filter->ability(selectItem(filter->ability(), 0, save->maxAbility(), Lang::abilities));
 						break;
 					case 3: // Gender
-						filter->gender(selectItem(filter->gender(), 0, Lang::genders.size(), Lang::genders));
+						filter->gender(selectItem(filter->gender(), 0, genders.size(), genders));
 						break;
 					case 4: // Held item
 						filter->heldItem(selectItem(filter->heldItem(), 0, save->maxItem(), Lang::items));

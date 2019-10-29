@@ -6,7 +6,7 @@
 #include "config.hpp"
 #include "flashcard.hpp"
 #include "input.hpp"
-#include "langStrings.hpp"
+#include "lang.hpp"
 #include "loader.hpp"
 #include "manager.hpp"
 #include "summary.hpp"
@@ -52,6 +52,9 @@ struct Text {
 }, textStatsC4[] {
 	{100, 20}, {100, 36}, {100, 52}, {100, 68}, {100, 84}, {100, 100},
 };
+
+std::vector<std::string> statsLabels = {"hp", "attack", "defense", "spAtk", "spDef", "speed", "base", "iv", "ev", "total"};
+std::vector<std::string> originLabels = {"metLevel", "metYear", "metMonth", "metDay", "metLocation", "originGame"};
 
 static constexpr Stat statOrder[] = {Stat::HP, Stat::ATK, Stat::DEF, Stat::SPATK, Stat::SPDEF, Stat::SPD};
 
@@ -400,18 +403,18 @@ int selectNature(int currentNature) {
 	// Draw labels (not a for loop as speed is 3rd)
 	{
 		int x = -2;
-		printTextCenteredTintedMaxW(Lang::statsLabels[1], 48, 1, RGB::BLUE, ((x++)*48), 4, false);
-		printTextCenteredTintedMaxW(Lang::statsLabels[2], 48, 1, RGB::BLUE, ((x++)*48), 4, false);
-		printTextCenteredTintedMaxW(Lang::statsLabels[5], 48, 1, RGB::BLUE, ((x++)*48), 4, false);
-		printTextCenteredTintedMaxW(Lang::statsLabels[3], 48, 1, RGB::BLUE, ((x++)*48), 4, false);
-		printTextCenteredTintedMaxW(Lang::statsLabels[4], 48, 1, RGB::BLUE, ((x++)*48), 4, false);
+		printTextCenteredTintedMaxW(Lang::get(statsLabels[1]), 48, 1, RGB::BLUE, ((x++)*48), 4, false);
+		printTextCenteredTintedMaxW(Lang::get(statsLabels[2]), 48, 1, RGB::BLUE, ((x++)*48), 4, false);
+		printTextCenteredTintedMaxW(Lang::get(statsLabels[5]), 48, 1, RGB::BLUE, ((x++)*48), 4, false);
+		printTextCenteredTintedMaxW(Lang::get(statsLabels[3]), 48, 1, RGB::BLUE, ((x++)*48), 4, false);
+		printTextCenteredTintedMaxW(Lang::get(statsLabels[4]), 48, 1, RGB::BLUE, ((x++)*48), 4, false);
 
 		int y = 0;
-		printTextTintedScaled(Lang::statsLabels[1], 0.8, 0.8, RGB::RED, 1, ((y++)*32)+22, false);
-		printTextTintedScaled(Lang::statsLabels[2], 0.8, 0.8, RGB::RED, 1, ((y++)*32)+22, false);
-		printTextTintedScaled(Lang::statsLabels[5], 0.8, 0.8, RGB::RED, 1, ((y++)*32)+22, false);
-		printTextTintedScaled(Lang::statsLabels[3], 0.8, 0.8, RGB::RED, 1, ((y++)*32)+22, false);
-		printTextTintedScaled(Lang::statsLabels[4], 0.8, 0.8, RGB::RED, 1, ((y++)*32)+22, false);
+		printTextTintedScaled(Lang::get(statsLabels[1]), 0.8, 0.8, RGB::RED, 1, ((y++)*32)+22, false);
+		printTextTintedScaled(Lang::get(statsLabels[2]), 0.8, 0.8, RGB::RED, 1, ((y++)*32)+22, false);
+		printTextTintedScaled(Lang::get(statsLabels[5]), 0.8, 0.8, RGB::RED, 1, ((y++)*32)+22, false);
+		printTextTintedScaled(Lang::get(statsLabels[3]), 0.8, 0.8, RGB::RED, 1, ((y++)*32)+22, false);
+		printTextTintedScaled(Lang::get(statsLabels[4]), 0.8, 0.8, RGB::RED, 1, ((y++)*32)+22, false);
 	}
 
 	// Print natures
@@ -623,8 +626,8 @@ void drawOriginPage(std::shared_ptr<PKX> pkm, std::vector<std::string> &varText)
 		: (pkm->metLocation() > Lang::locations5.size() ? "" : Lang::locations5[pkm->metLocation()]),
 		Lang::games[pkm->version()],
 	};
-	for(unsigned i=0;i<Lang::originLabels.size();i++) {
-		printText(Lang::originLabels[i]+": "+varText[i], 4, 4+(i*20), false);
+	for(unsigned i=0;i<originLabels.size();i++) {
+		printText(Lang::get(originLabels[i])+": "+varText[i], 4, 4+(i*20), false);
 	}
 }
 
@@ -633,7 +636,7 @@ std::shared_ptr<PKX> selectOrigin(std::shared_ptr<PKX> pkm) {
 	drawOriginPage(pkm, varText);
 
 	setSpriteVisibility(arrowID, false, true);
-	setSpritePosition(arrowID, false, 4+getTextWidth(Lang::originLabels[0]+": "+varText[0]), -2);
+	setSpritePosition(arrowID, false, 4+getTextWidth(Lang::get(originLabels[0])+": "+varText[0]), -2);
 	updateOam();
 
 	bool optionSelected = false;
@@ -649,7 +652,7 @@ std::shared_ptr<PKX> selectOrigin(std::shared_ptr<PKX> pkm) {
 		if(held & KEY_UP) {
 			if(selection > 0)	selection--;
 		} else if(held & KEY_DOWN) {
-			if(selection < (int)Lang::originLabels.size()-1)	selection++;
+			if(selection < (int)originLabels.size()-1)	selection++;
 		} else if(pressed & KEY_A) {
 			optionSelected = true;
 		} else if(pressed & KEY_B) {
@@ -658,7 +661,7 @@ std::shared_ptr<PKX> selectOrigin(std::shared_ptr<PKX> pkm) {
 		} else if(pressed & KEY_TOUCH) {
 			touchPosition touch;
 			touchRead(&touch);
-			for(unsigned i=0;i<Lang::originLabels.size();i++) {
+			for(unsigned i=0;i<originLabels.size();i++) {
 				if(touch.py > 4+(i*20) && touch.py < 4+(i+1)*20) {
 					selection = i;
 					optionSelected = true;
@@ -730,7 +733,7 @@ std::shared_ptr<PKX> selectOrigin(std::shared_ptr<PKX> pkm) {
 		}
 
 		// Move arrow
-		setSpritePosition(arrowID, false, 4+getTextWidth(Lang::originLabels[selection]+": "+varText[selection]), (selection*20)-2);
+		setSpritePosition(arrowID, false, 4+getTextWidth(Lang::get(originLabels[selection])+": "+varText[selection]), (selection*20)-2);
 		updateOam();
 	}
 }
@@ -749,18 +752,18 @@ void drawStatsPage(std::shared_ptr<PKX> pkm) {
 
 	// Print stat info labels
 	int i = pkm->nature();
-	printText(Lang::statsLabels[0], 20, textStatsC1[0].y, false);
-	printTextTintedMaxW(Lang::statsLabels[1], 80, 1, (i!=0&&i<5         ? RGB::RED : i!=0&&!(i%5)      ? RGB::BLUE : WHITE), 20, textStatsC1[1].y, false);
-	printTextTintedMaxW(Lang::statsLabels[2], 80, 1, (i!=6&&i>4&&i<10   ? RGB::RED : i!=6&&!((i-1)%5)  ? RGB::BLUE : WHITE), 20, textStatsC1[2].y, false);
-	printTextTintedMaxW(Lang::statsLabels[3], 80, 1, (i!=18&&i>14&&i<20 ? RGB::RED : i!=18&&!((i-3)%5) ? RGB::BLUE : WHITE), 20, textStatsC1[3].y, false);
-	printTextTintedMaxW(Lang::statsLabels[4], 80, 1, (i!=24&&i>19       ? RGB::RED : i!=24&&!((i-4)%5) ? RGB::BLUE : WHITE), 20, textStatsC1[4].y, false);
-	printTextTintedMaxW(Lang::statsLabels[5], 80, 1, (i!=12&&i>9&&i<15  ? RGB::RED : i!=12&&!((i-2)%5) ? RGB::BLUE : WHITE), 20, textStatsC1[5].y, false);
+	printText(Lang::get(statsLabels[0]), 20, textStatsC1[0].y, false);
+	printTextTintedMaxW(Lang::get(statsLabels[1]), 80, 1, (i!=0&&i<5         ? RGB::RED : i!=0&&!(i%5)      ? RGB::BLUE : WHITE), 20, textStatsC1[1].y, false);
+	printTextTintedMaxW(Lang::get(statsLabels[2]), 80, 1, (i!=6&&i>4&&i<10   ? RGB::RED : i!=6&&!((i-1)%5)  ? RGB::BLUE : WHITE), 20, textStatsC1[2].y, false);
+	printTextTintedMaxW(Lang::get(statsLabels[3]), 80, 1, (i!=18&&i>14&&i<20 ? RGB::RED : i!=18&&!((i-3)%5) ? RGB::BLUE : WHITE), 20, textStatsC1[3].y, false);
+	printTextTintedMaxW(Lang::get(statsLabels[4]), 80, 1, (i!=24&&i>19       ? RGB::RED : i!=24&&!((i-4)%5) ? RGB::BLUE : WHITE), 20, textStatsC1[4].y, false);
+	printTextTintedMaxW(Lang::get(statsLabels[5]), 80, 1, (i!=12&&i>9&&i<15  ? RGB::RED : i!=12&&!((i-2)%5) ? RGB::BLUE : WHITE), 20, textStatsC1[5].y, false);
 
 	// Print column titles
-	printTextCenteredMaxW(Lang::statsLabels[6], 30, 1, textStatsC1[0].x, textStatsC1[0].y-16, false);
-	printTextCentered(Lang::statsLabels[7], textStatsC2[0].x, textStatsC2[0].y-16, false);
-	printTextCentered(Lang::statsLabels[8], textStatsC3[0].x, textStatsC3[0].y-16, false);
-	printTextCenteredMaxW(Lang::statsLabels[9], 30, 1, textStatsC4[0].x, textStatsC4[0].y-16, false);
+	printTextCenteredMaxW(Lang::get(statsLabels[6]), 30, 1, textStatsC1[0].x, textStatsC1[0].y-16, false);
+	printTextCentered(Lang::get(statsLabels[7]), textStatsC2[0].x, textStatsC2[0].y-16, false);
+	printTextCentered(Lang::get(statsLabels[8]), textStatsC3[0].x, textStatsC3[0].y-16, false);
+	printTextCenteredMaxW(Lang::get(statsLabels[9]), 30, 1, textStatsC4[0].x, textStatsC4[0].y-16, false);
 
 	// Set base stat info
 	snprintf(textStatsC1[0].text,  sizeof(textStatsC1[0].text), "%i", pkm->baseHP());
@@ -783,8 +786,8 @@ void drawStatsPage(std::shared_ptr<PKX> pkm) {
 	}
 
 	// Draw Hidden Power type
-	printText(Lang::hpType+":", 20, 118, false);
-	drawImageSegment(24+getTextWidth(Lang::hpType+":"), 120, typesData.width, typesData.height/17, types, typesData.width, 0, (pkm->hpType()+1)*(typesData.height/17), false);
+	printText(Lang::get("hpType")+":", 20, 118, false);
+	drawImageSegment(24+getTextWidth(Lang::get("hpType")+":"), 120, typesData.width, typesData.height/17, types, typesData.width, 0, (pkm->hpType()+1)*(typesData.height/17), false);
 
 }
 
@@ -836,7 +839,7 @@ std::shared_ptr<PKX> selectStats(std::shared_ptr<PKX> pkm) {
 					break;
 				}
 			}
-			if(touch.px > 24+getTextWidth(Lang::hpType+":") && touch.px < 24+getTextWidth(Lang::hpType+":")+typesData.width && touch.py > 120 && touch.py < 132) {
+			if(touch.px > 24+getTextWidth(Lang::get("hpType")+":") && touch.px < 24+getTextWidth(Lang::get("hpType")+":")+typesData.width && touch.py > 120 && touch.py < 132) {
 				selection = 6;
 				optionSelected = true;
 			}
@@ -866,7 +869,7 @@ std::shared_ptr<PKX> selectStats(std::shared_ptr<PKX> pkm) {
 		}
 
 		if(selection == 6) { // Hidden Power type
-			setSpritePosition(arrowID, false, 25+getTextWidth(Lang::hpType+":")+typesData.width+2, 112);
+			setSpritePosition(arrowID, false, 25+getTextWidth(Lang::get("hpType")+":")+typesData.width+2, 112);
 		} else if(column == 0) {
 			setSpritePosition(arrowID, false, 128+(textStatsC2[selection].x+(getTextWidth(textStatsC2[selection].text)/2))+2, textStatsC2[selection].y-6);
 		} else {

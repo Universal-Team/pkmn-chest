@@ -31,7 +31,7 @@
 #include "colors.hpp"
 #include "graphics.hpp"
 #include "input.hpp"
-#include "langStrings.hpp"
+#include "lang.hpp"
 #include "loader.hpp"
 #include "manager.hpp"
 #include "cardSaves.hpp"
@@ -328,7 +328,7 @@ std::string topMenuSelect(void) {
 		} else if(pressed & KEY_X) {
 			Sound::play(Sound::click);
 			if((topMenuContents[tmCurPos].name != "fat:") && (topMenuContents[tmCurPos].name != "sd:") && (topMenuContents[tmCurPos].name != "card:")) {
-				if(Input::getBool(Lang::remove, Lang::cancel)) {
+				if(Input::getBool(Lang::get("remove"), Lang::get("cancel"))) {
 					topMenuContents.erase(topMenuContents.begin()+tmCurPos);
 
 					FILE* out = fopen((sdFound() ? "sd:/_nds/pkmn-chest/favorites.lst" : "fat:/_nds/pkmn-chest/favorites.lst"), "wb");

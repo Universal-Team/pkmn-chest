@@ -1,7 +1,7 @@
 #include "summary.hpp"
 #include "colors.hpp"
 #include "flashcard.hpp"
-#include "langStrings.hpp"
+#include "lang.hpp"
 #include "loader.hpp"
 #include "input.hpp"
 #include "manager.hpp"
@@ -39,6 +39,7 @@ Text textC2[] = {
 };
 
 int summaryPage = 0;
+std::vector<std::string> summaryLabels = {"species", "name", "level", "ability", "nature", "item", "shiny", "pokerus", "origTrainer", "trainerID", "secretID", "friendship"};
 
 std::pair<int, int> getPokeballPosition(u8 ball) {
 	if(ball > 25)	return {0, 0};
@@ -129,8 +130,8 @@ void drawSummaryPage(std::shared_ptr<PKX> pkm) {
 	if(pkm->shiny())	drawImage(150, 45, shinyData.width, shinyData.height, shiny, false);
 
 	// Print Pokémon and trainer info labels
-	for(unsigned i=0;i<Lang::summaryLabels.size();i++) {
-		printTextMaxW(Lang::summaryLabels[i], textC1[i].x-8, 1, 4, textC1[i].y, false);
+	for(unsigned i=0;i<summaryLabels.size();i++) {
+		printTextMaxW(Lang::get(summaryLabels[i]), textC1[i].x-8, 1, 4, textC1[i].y, false);
 
 	}
 
@@ -143,8 +144,8 @@ void drawSummaryPage(std::shared_ptr<PKX> pkm) {
 	snprintf(textC1[3].text,  sizeof(textC1[3].text), "%s", Lang::abilities[pkm->ability()].c_str());
 	snprintf(textC1[4].text,  sizeof(textC1[4].text), "%s", Lang::natures[pkm->nature()].c_str());
 	snprintf(textC1[5].text,  sizeof(textC1[5].text), "%s", Lang::items[pkm->heldItem()].c_str());
-	snprintf(textC1[6].text,  sizeof(textC1[6].text), "%s", pkm->shiny() ? Lang::yes.c_str() : Lang::no.c_str());
-	snprintf(textC1[7].text,  sizeof(textC1[7].text), "%s", pkm->pkrs() ? Lang::yes.c_str() : Lang::no.c_str());
+	snprintf(textC1[6].text,  sizeof(textC1[6].text), "%s", pkm->shiny() ? Lang::get("yes").c_str() : Lang::get("no").c_str());
+	snprintf(textC1[7].text,  sizeof(textC1[7].text), "%s", pkm->pkrs() ? Lang::get("yes").c_str() : Lang::get("no").c_str());
 	snprintf(textC1[8].text,  sizeof(textC1[8].text), "%s", pkm->otName().c_str());
 	snprintf(textC1[9].text,  sizeof(textC1[9].text), "%.5i", pkm->TID());
 	snprintf(textC1[10].text, sizeof(textC1[10].text),"%.5i", pkm->SID());
@@ -159,9 +160,9 @@ void drawSummaryPage(std::shared_ptr<PKX> pkm) {
 	for(unsigned i=2;i<sizeof(textC2)/sizeof(textC2[0]);i++) {
 		drawImage(textC2[i].x-4, textC2[i].y-4, boxButtonData.width, boxButtonData.height, boxButton, false);
 	}
-	snprintf(textC2[2].text, sizeof(textC2[2].text),"%s", Lang::movesString.c_str());
-	snprintf(textC2[3].text, sizeof(textC2[3].text),"%s", Lang::stats.c_str());
-	snprintf(textC2[4].text, sizeof(textC2[4].text),"%s", Lang::origin.c_str());
+	snprintf(textC2[2].text, sizeof(textC2[2].text),"%s", Lang::get("moves").c_str());
+	snprintf(textC2[3].text, sizeof(textC2[3].text),"%s", Lang::get("stats").c_str());
+	snprintf(textC2[4].text, sizeof(textC2[4].text),"%s", Lang::get("origin").c_str());
 	for(unsigned i=0;i<(sizeof(textC2)/sizeof(textC2[0]));i++) {
 		printTextMaxW(textC2[i].text, 80, 1, textC2[i].x, textC2[i].y, false);
 	}
@@ -262,7 +263,7 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 						else if(pkm->genderType() == 0)	pkm->gender(0);
 						else if(pkm->genderType() == 254 || pkm->genderType() == 127)	pkm->gender(1);
 						else {
-							pkm->gender(Input::getBool(Lang::female, Lang::male));
+							pkm->gender(Input::getBool(Lang::get("female"), Lang::get("male")));
 							pkm->PID(PKX::getRandomPID(pkm->species(), pkm->gender(), pkm->version(), pkm->nature(), pkm->alternativeForm(), pkm->abilityNumber(), pkm->PID(), pkm->generation()));
 						}
 						break;
@@ -290,7 +291,7 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 					} case 8: {
 						std::string name = Input::getLine(7);
 						if(name != "")	pkm->otName(name);
-						pkm->otGender(Input::getBool(Lang::female, Lang::male));
+						pkm->otGender(Input::getBool(Lang::get("female"), Lang::get("male")));
 						break;
 					} case 9: {
 						int num = Input::getInt(65535);

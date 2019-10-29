@@ -25,7 +25,7 @@
  */
 
 #include "Sav5.hpp"
-#include "langStrings.hpp"
+#include "lang.hpp"
 
 u16 Sav5::TID(void) const {
 	return *(u16*)(data + Trainer1 + 0x14);
@@ -429,15 +429,15 @@ std::vector<std::pair<Pouch, int>> Sav5::pouches() const {
 std::string Sav5::pouchName(Pouch pouch) const {
 	switch(pouch) {
 		case NormalItem:
-			return Lang::pouch[0];
+			return Lang::get("items");
 		case KeyItem:
-			return Lang::pouch[1];
+			return Lang::get("keyItems");
 		case TM:
-			return Lang::pouch[2];
+			return Lang::get("tmHm");
 		case Medicine:
-			return Lang::pouch[4];
+			return Lang::get("medicine");
 		case Berry:
-			return Lang::pouch[5];
+			return Lang::get("berries");
 		default:
 			return "";
 	}

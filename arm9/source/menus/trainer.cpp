@@ -3,7 +3,7 @@
 #include "flashcard.hpp"
 #include "graphics.hpp"
 #include "input.hpp"
-#include "langStrings.hpp"
+#include "lang.hpp"
 #include "loader.hpp"
 #include "manager.hpp"
 #include "sound.hpp"
@@ -24,6 +24,8 @@ Text textTP1[] {
 	{4, 110},
 };
 
+std::vector<std::string> trainerText = {"name", "trainerID", "secretID", "money", "bp", "badges", "playTime"};
+
 void drawTrainerCard(void) {
 	// Draw background
 	if(sdFound())	drawImageDMA(0, 0, optionsBgData.width, optionsBgData.height, optionsBg, false);
@@ -35,7 +37,7 @@ void drawTrainerCard(void) {
 
 	// Print labels
 	for(unsigned i=0;i<sizeof(textTP1)/sizeof(textTP1[0]);i++) {
-		printTextTinted(Lang::trainerText[i]+":", GRAY, textTP1[i].x, textTP1[i].y, false, true);
+		printTextTinted(Lang::get(trainerText[i])+":", GRAY, textTP1[i].x, textTP1[i].y, false, true);
 	}
 
 	// Set info text
@@ -48,9 +50,9 @@ void drawTrainerCard(void) {
 	snprintf(textTP1[6].text,  sizeof(textTP1[6].text), "%i:%i:%i", save->playedHours(), save->playedMinutes(), save->playedSeconds());
 	
 	// Print info
-	printTextTinted(textTP1[0].text, (save->gender() ? RGB::RED : RGB::BLUE), textTP1[0].x+getTextWidth(Lang::trainerText[0])+8, textTP1[0].y, false);
+	printTextTinted(textTP1[0].text, (save->gender() ? RGB::RED : RGB::BLUE), textTP1[0].x+getTextWidth(Lang::get(trainerText[0]))+8, textTP1[0].y, false);
 	for(unsigned i=1;i<(sizeof(textTP1)/sizeof(textTP1[0]));i++) {
-			printTextTinted(textTP1[i].text, GRAY, textTP1[i].x+getTextWidth(Lang::trainerText[i])+8, textTP1[i].y, false, true);
+			printTextTinted(textTP1[i].text, GRAY, textTP1[i].x+getTextWidth(Lang::get(trainerText[i]))+8, textTP1[i].y, false, true);
 	}
 }
 
@@ -60,7 +62,7 @@ void showTrainerCard(void) {
 
 	// Move arrow to first option
 	setSpriteVisibility(arrowID, false, true);
-	setSpritePosition(arrowID, false, textTP1[0].x+getTextWidth(Lang::trainerText[0])+8+getTextWidth(textTP1[0].text), textTP1[0].y-6);
+	setSpritePosition(arrowID, false, textTP1[0].x+getTextWidth(Lang::get(trainerText[0]))+8+getTextWidth(textTP1[0].text), textTP1[0].y-6);
 	updateOam();
 
 	bool optionSelected = false;
@@ -90,7 +92,7 @@ void showTrainerCard(void) {
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
 			for(unsigned i=0;i<(sizeof(textTP1)/sizeof(textTP1[0]));i++) {
-				if(touch.px >= textTP1[i].x+getTextWidth(Lang::trainerText[i])+8 && touch.px <= textTP1[i].x+getTextWidth(Lang::trainerText[i])+8+getTextWidth(textTP1[i].text) && touch.py >= textTP1[i].y && touch.py <= textTP1[i].y+16) {
+				if(touch.px >= textTP1[i].x+getTextWidth(Lang::get(trainerText[i]))+8 && touch.px <= textTP1[i].x+getTextWidth(Lang::get(trainerText[i]))+8+getTextWidth(textTP1[i].text) && touch.py >= textTP1[i].y && touch.py <= textTP1[i].y+16) {
 					selection = i;
 					optionSelected = true;
 					break;
@@ -107,7 +109,7 @@ void showTrainerCard(void) {
 				case 0: {
 					std::string name = Input::getLine(7);
 					if(name != "")	save->otName(name);
-					save->gender(Input::getBool(Lang::female, Lang::male));
+					save->gender(Input::getBool(Lang::get("female"), Lang::get("male")));
 					break;
 				} case 1: {
 					int num = Input::getInt(65535);
@@ -139,7 +141,7 @@ void showTrainerCard(void) {
 			setSpriteVisibility(arrowID, false, true);
 		}
 
-		setSpritePosition(arrowID, false, textTP1[selection].x+getTextWidth(Lang::trainerText[selection])+8+getTextWidth(textTP1[selection].text), textTP1[selection].y-6);
+		setSpritePosition(arrowID, false, textTP1[selection].x+getTextWidth(Lang::get(trainerText[selection]))+8+getTextWidth(textTP1[selection].text), textTP1[selection].y-6);
 		updateOam();
 	}
 }

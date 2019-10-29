@@ -8,17 +8,17 @@
 #include "configMenu.hpp"
 #include "flashcard.hpp"
 #include "input.hpp"
-#include "langStrings.hpp"
+#include "lang.hpp"
 #include "loader.hpp"
 #include "manager.hpp"
 #include "party.hpp"
 #include "sound.hpp"
 #include "trainer.hpp"
 
-std::vector<std::pair<int, int>> xMenuButtons = {
-	{2,  24}, {130,  24},
-	{2,  72}, {130,  72},
-	{2, 120}, {130, 120},
+std::vector<Label> xMenuButtons = {
+	{2,  24, "party"}, {130,  24, "options"},
+	{2,  72,   "bag"}, {130,  72,        ""},
+	{2, 120,  "save"}, {130, 120,    "exit"},
 };
 
 void savePrompt(void) {
@@ -27,18 +27,18 @@ void savePrompt(void) {
 	drawRectangle(0, 32, 256, 144, DARK_GRAY, false);
 	drawRectangle(0, 176, 256, 16, BLACK, false);
 
-	printTextTinted(Lang::saveMsgChest, GRAY, 5, 0, false, true);
-	if(Input::getBool(Lang::save, Lang::discard)) {
+	printTextTinted(Lang::get("saveMsgChest"), GRAY, 5, 0, false, true);
+	if(Input::getBool(Lang::get("save"), Lang::get("discard"))) {
 		if(Config::backupAmount != 0) Banks::bank->backup();
 		Banks::bank->save();
 	}
 
 	drawRectangle(5, 33, 246, 16, DARK_GRAY, false);
 	drawRectangle(0, 0, 256, 32, LIGHT_GRAY, false);
-	if(savePath == cardSave)	printTextTinted(Lang::saveMsgCard, GRAY, 5, 0, false, true);
-	else	printTextTinted(Lang::saveMsgSave, GRAY, 5, 0, false, true);
+	if(savePath == cardSave)	printTextTinted(Lang::get("saveMsgCard"), GRAY, 5, 0, false, true);
+	else	printTextTinted(Lang::get("saveMsgSave"), GRAY, 5, 0, false, true);
 
-	if(Input::getBool(Lang::save, Lang::discard)) {
+	if(Input::getBool(Lang::get("save"), Lang::get("discard"))) {
 		// Re-encrypt the box data
 		save->cryptBoxData(false);
 		// Save changes to save file
@@ -58,11 +58,11 @@ void savePrompt(void) {
 }
 
 void drawXMenuButtons(unsigned menuSelection) {
-	Lang::xMenuText[3] = save->otName();
+	xMenuButtons[3].label = save->otName();
 
 	for(unsigned i=0;i<xMenuButtons.size();i++) {
-		drawImage(xMenuButtons[i].first, xMenuButtons[i].second, menuButtonData.width, menuButtonData.height, menuSelection == i ? menuButtonBlue : menuButton, false);
-		printText(Lang::xMenuText[i], xMenuButtons[i].first+47, xMenuButtons[i].second+14, false);
+		drawImage(xMenuButtons[i].x, xMenuButtons[i].y, menuButtonData.width, menuButtonData.height, menuSelection == i ? menuButtonBlue : menuButton, false);
+		printText((i==3) ? xMenuButtons[i].label : Lang::get(xMenuButtons[i].label), xMenuButtons[i].x+47, xMenuButtons[i].y+14, false);
 		setSpriteAlpha(false, menuIconID[i], menuSelection == i ? 8 : 15);
 		updateOam();
 	}
@@ -89,7 +89,7 @@ bool xMenu(void) {
 
 	// Enable sprites and set positions
 	for(unsigned i=0;i<menuIconID.size();i++) {
-		setSpritePosition(menuIconID[i], false, xMenuButtons[i].first+3, xMenuButtons[i].second+6);
+		setSpritePosition(menuIconID[i], false, xMenuButtons[i].x+3, xMenuButtons[i].y+6);
 		setSpriteVisibility(menuIconID[i], false, true);
 	}
 	updateOam();
@@ -114,7 +114,7 @@ bool xMenu(void) {
 					else	iconDirection = true;
 				}
 				if(iconOffset < 7) {
-					setSpritePosition(menuIconID[menuSelection], false, xMenuButtons[menuSelection].first+3, xMenuButtons[menuSelection].second+6-(iconOffset/3));
+					setSpritePosition(menuIconID[menuSelection], false, xMenuButtons[menuSelection].x+3, xMenuButtons[menuSelection].y+6-(iconOffset/3));
 					updateOam();
 				}
 			}
@@ -124,7 +124,7 @@ bool xMenu(void) {
 			menuSelection = 0;
 		} else if(pressed & KEY_UP) {
 			if(menuSelection > 1) {
-				setSpritePosition(menuIconID[menuSelection], false, xMenuButtons[menuSelection].first+3, xMenuButtons[menuSelection].second+6);
+				setSpritePosition(menuIconID[menuSelection], false, xMenuButtons[menuSelection].x+3, xMenuButtons[menuSelection].y+6);
 				iconOffset = 0;
 				iconDirection = true;
 
@@ -132,7 +132,7 @@ bool xMenu(void) {
 			}
 		} else if(pressed & KEY_DOWN) {
 			if(menuSelection < (int)xMenuButtons.size()-2) {
-				setSpritePosition(menuIconID[menuSelection], false, xMenuButtons[menuSelection].first+3, xMenuButtons[menuSelection].second+6);
+				setSpritePosition(menuIconID[menuSelection], false, xMenuButtons[menuSelection].x+3, xMenuButtons[menuSelection].y+6);
 				iconOffset = 0;
 				iconDirection = true;
 
@@ -140,7 +140,7 @@ bool xMenu(void) {
 			}
 		} else if(pressed & KEY_LEFT) {
 			if(menuSelection % 2) {
-				setSpritePosition(menuIconID[menuSelection], false, xMenuButtons[menuSelection].first+3, xMenuButtons[menuSelection].second+6);
+				setSpritePosition(menuIconID[menuSelection], false, xMenuButtons[menuSelection].x+3, xMenuButtons[menuSelection].y+6);
 				iconOffset = 0;
 				iconDirection = true;
 
@@ -148,7 +148,7 @@ bool xMenu(void) {
 			}
 		} else if(pressed & KEY_RIGHT) {
 			if(!(menuSelection % 2)) {
-				setSpritePosition(menuIconID[menuSelection], false, xMenuButtons[menuSelection].first+3, xMenuButtons[menuSelection].second+6);
+				setSpritePosition(menuIconID[menuSelection], false, xMenuButtons[menuSelection].x+3, xMenuButtons[menuSelection].y+6);
 				iconOffset = 0;
 				iconDirection = true;
 
@@ -157,12 +157,12 @@ bool xMenu(void) {
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
 			for(unsigned i=0; i<xMenuButtons.size();i++) {
-				if(touch.px >= xMenuButtons[i].first && touch.px <= xMenuButtons[i].first+menuButtonData.width && touch.py >= xMenuButtons[i].second && touch.py <= xMenuButtons[i].second+menuButtonData.height) {
+				if(touch.px >= xMenuButtons[i].x && touch.px <= xMenuButtons[i].x+menuButtonData.width && touch.py >= xMenuButtons[i].y && touch.py <= xMenuButtons[i].y+menuButtonData.height) {
 					selectedOption = i;
 				}
 			}
 			if(menuSelection != -1) {
-				setSpritePosition(menuIconID[menuSelection], false, xMenuButtons[menuSelection].first+3, xMenuButtons[menuSelection].second+6);
+				setSpritePosition(menuIconID[menuSelection], false, xMenuButtons[menuSelection].x+3, xMenuButtons[menuSelection].y+6);
 				iconOffset = 0;
 				iconDirection = true;
 
@@ -237,7 +237,7 @@ bool xMenu(void) {
 				drawRectangle(0, 176, 256, 16, BLACK, false);
 			}
 			for(unsigned i=0;i<menuIconID.size();i++) {
-				setSpritePosition(menuIconID[i], false, xMenuButtons[i].first+3, xMenuButtons[i].second+6);
+				setSpritePosition(menuIconID[i], false, xMenuButtons[i].x+3, xMenuButtons[i].y+6);
 				setSpriteVisibility(menuIconID[i], false, true);
 			}
 			updateOam();

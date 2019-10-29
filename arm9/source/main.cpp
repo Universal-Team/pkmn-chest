@@ -7,7 +7,7 @@
 #include "flashcard.hpp"
 #include "graphics.hpp"
 #include "lang.hpp"
-#include "langStrings.hpp"
+#include "lang.hpp"
 #include "loader.hpp"
 #include "loading.hpp"
 #include "manager.hpp"
@@ -67,8 +67,8 @@ int main(int argc, char **argv) {
 
 	loadFont();
 	Config::loadConfig();
-	Lang::loadLangStrings(Config::lang);
-	printTextCentered(Lang::loading, 0, 32, false);
+	Lang::load(Config::lang);
+	printTextCentered(Lang::get("loading"), 0, 32, false);
 
 	Sound::init();
 	Banks::init();
@@ -79,7 +79,7 @@ int main(int argc, char **argv) {
 	while(1) {
 		if(!loadSave(savePath = browseForSave())) {
 			drawRectangle(20, 20, 216, 152, RGB::DARK_RED, true);
-			printTextCentered(Lang::invalidSave, 0, 24, true);
+			printTextCentered(Lang::get("invalidSave"), 0, 24, true);
 			for(int i=0;i<120;i++)	swiWaitForVBlank();
 			continue;
 		}

@@ -7,7 +7,7 @@
 #include "filter.hpp"
 #include "flashcard.hpp"
 #include "input.hpp"
-#include "langStrings.hpp"
+#include "lang.hpp"
 #include "loader.hpp"
 #include "loading.hpp"
 #include "PKFilter.hpp"
@@ -345,7 +345,7 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 
 		// Print Pokédex number
 		char str[9];
-		snprintf(str, sizeof(str), "%s%.3i", Lang::dexNo.c_str(), pkm->species());
+		snprintf(str, sizeof(str), "%s%.3i", Lang::get("dexNo").c_str(), pkm->species());
 		printTextTinted(str, GRAY, 170, 8, true, true);
 
 		// Print name
@@ -358,7 +358,7 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 			drawImageSegment(205, 43-(((typesData.height/17)-12)/2), typesData.width, typesData.height/17, types, typesData.width, 0, (((pkm->generation() == Generation::FOUR && pkm->type2() > 8) ? pkm->type2()-1 : pkm->type2())*(typesData.height/17)), true);
 
 		// Print Level
-		printTextTinted(Lang::level+std::to_string(pkm->level()), GRAY, 170, 57, true, true);
+		printTextTinted(Lang::get("lv")+std::to_string(pkm->level()), GRAY, 170, 57, true, true);
 	} else {
 		// Hide shiny star
 		setSpriteVisibility(shinyID, true, false);
@@ -591,7 +591,7 @@ void manageBoxes(void) {
 			for(int i=7;i<24;i++)	if(i%6)	setSpriteVisibility(i, false, false);
 			setSpriteVisibility(arrowID, false, false);
 			updateOam();
-			if(Input::getBool(Lang::filter, Lang::sort)) {
+			if(Input::getBool(Lang::get("filter"), Lang::get("sort"))) {
 				changeFilter(filter);
 			} else {
 				sortMenu(topScreen);

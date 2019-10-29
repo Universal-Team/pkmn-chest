@@ -4,7 +4,7 @@
 #include "flashcard.hpp"
 #include "graphics.hpp"
 #include "input.hpp"
-#include "langStrings.hpp"
+#include "lang.hpp"
 #include "loader.hpp"
 #include "manager.hpp"
 #include "misc.hpp"
@@ -12,6 +12,7 @@
 #include "sound.hpp"
 
 std::vector<SortType> sortTypes;
+std::vector<std::string> sortText = {"none", "dexNo", "species", "form", "type1", "type2", "hp", "attack", "defense", "spAtk", "spDef", "speed", "hpIV", "attackIV", "defenseIV", "spAtkIV", "spDefIV", "speedIV", "nature", "level", "trainerID", "hpType", "friendship", "name", "origTrainer", "shiny"};
 
 bool sortPokemonFilter(const std::shared_ptr<PKX>& pkm1, const std::shared_ptr<PKX>& pkm2) {
 	for(const auto& type : sortTypes) {
@@ -219,11 +220,11 @@ void drawSortMenu(void) {
 	else {
 		drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
 	}
-	printText(Lang::sort, 4, 1, false);
+	printText(Lang::get("sort"), 4, 1, false);
 
 	// Print items
 	for(unsigned i=0;i<sortTypes.size();i++) {
-		printText(Lang::sortText[int(sortTypes[i])], 4, 17+(i*16), false);
+		printText(Lang::get(sortText[int(sortTypes[i])]), 4, 17+(i*16), false);
 	}
 }
 
@@ -233,7 +234,7 @@ void sortMenu(bool top) {
 
 	// Set arrow position
 	setSpriteVisibility(arrowID, false, true);
-	setSpritePosition(arrowID, false, 4+getTextWidth(Lang::sortText[int(sortTypes[0])])+2, (15));
+	setSpritePosition(arrowID, false, 4+getTextWidth(Lang::get(sortText[int(sortTypes[0])]))+2, (15));
 	// Hide all Pokémon sprites
 	for(int i=0;i<30;i++) {
 		setSpriteVisibility(i, false, false);
@@ -279,12 +280,16 @@ void sortMenu(bool top) {
 
 		if(optionSelected) {
 			optionSelected = false;
-			sortTypes[selection] = SortType(selectItem(int(sortTypes[selection]), 0, Lang::sortText.size(), Lang::sortText));
+			std::vector<std::string> sortTextLocalized;
+			for(unsigned i=0;i<sortText.size();i++) {
+				sortTextLocalized.push_back(Lang::get(sortText[i]));
+			}
+			sortTypes[selection] = SortType(selectItem(int(sortTypes[selection]), 0, sortTextLocalized.size(), sortTextLocalized));
 			drawSortMenu();
 		}
 
 		// Move cursor
-		setSpritePosition(arrowID, false, 4+getTextWidth(Lang::sortText[int(sortTypes[selection])])+2, (16*(selection)+15));
+		setSpritePosition(arrowID, false, 4+getTextWidth(Lang::get(sortText[int(sortTypes[selection])]))+2, (16*(selection)+15));
 		updateOam();
 	}
 }

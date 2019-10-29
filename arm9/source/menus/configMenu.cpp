@@ -9,28 +9,30 @@
 #include "graphics.hpp"
 #include "input.hpp"
 #include "lang.hpp"
-#include "langStrings.hpp"
+#include "lang.hpp"
 #include "manager.hpp"
 #include "xMenu.hpp"
 #include "sound.hpp"
 
-std::pair<int, int> textCP1Labels[] {
-	{4,  14}, // Chest file
-	{4,  30}, // Chest size
-	{4,  46}, // Language
-	{4,  62}, // Backups
-	{4,  78}, // Music
-	{4,  94}, // Sound FX
-	{4, 110}, // D-Pad typing directions
-	{4, 126}, // D-Pad typing groups
+std::vector<Label> textCP1Labels {
+	{4,  14,      "chestFile"}, // Chest file
+	{4,  30,      "chestSize"}, // Chest size
+	{4,  46,       "language"}, // Language
+	{4,  62,   "backupAmount"}, // Backups
+	{4,  78,          "music"}, // Music
+	{4,  94,        "soundFX"}, // Sound FX
+	{4, 110, "dPadDirections"}, // D-Pad typing directions
+	{4, 126,     "dPadGroups"}, // D-Pad typing groups
 };
 
-std::pair<int, int> textChestFile[] {
-	{12, 30}, // New
-	{12, 46}, // Rename
-	{12, 62}, // Delete
-	{12, 78}, // Change
+std::vector<Label> textChestFile {
+	{12, 30,    "new"}, // New
+	{12, 46, "rename"}, // Rename
+	{12, 62, "delete"}, // Delete
+	{12, 78, "change"}, // Change
 };
+
+std::vector<std::string> songs = {"off", "center1", "center4", "center5", "elmLab", "oakLab", "gameCorner", "twinleafTown"};
 
 std::vector<std::string> optionsText = {}; // Placeholders to be filled
 
@@ -46,9 +48,9 @@ void drawChestFileMenu(void) {
 	}
 
 	// Print text
-	printTextTinted(Lang::optionsTextLabels[0]+": "+optionsText[0], GRAY, textCP1Labels[0].first, textCP1Labels[0].second, false, true);
+	printTextTinted(Lang::get(textCP1Labels[0].label)+": "+optionsText[0], GRAY, textCP1Labels[0].x, textCP1Labels[0].y, false, true);
 	for(unsigned i=0;i<(sizeof(textChestFile)/sizeof(textChestFile[0]));i++) {
-		printTextTinted(Lang::chestFileMenuText[i], GRAY, textChestFile[i].first, textChestFile[i].second, false, true);
+		printTextTinted(Lang::get(textChestFile[i].label), GRAY, textChestFile[i].x, textChestFile[i].y, false, true);
 	}
 }
 
@@ -56,7 +58,7 @@ void chestFileMenu(void) {
 	drawChestFileMenu();
 
 	setSpriteVisibility(arrowID, false, true);
-	setSpritePosition(arrowID, false, textChestFile[0].first+getTextWidth(Lang::chestFileMenuText[0]), textChestFile[0].second-6);
+	setSpritePosition(arrowID, false, textChestFile[0].x+getTextWidth(Lang::get(textChestFile[0].label)), textChestFile[0].y-6);
 	updateOam();
 
 	bool optionSelected = false;
@@ -73,7 +75,7 @@ void chestFileMenu(void) {
 		if(held & KEY_UP) {
 			if(selection > 0)	selection--;
 		} else if(held & KEY_DOWN) {
-			if(selection < (int)(Lang::chestFileMenuText.size())-1)	selection++;
+			if(selection < (int)(textChestFile.size())-1)	selection++;
 		} else if(pressed & KEY_A) {
 			optionSelected = true;
 		} else if(pressed & KEY_B) {
@@ -82,7 +84,7 @@ void chestFileMenu(void) {
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
 			for(unsigned i=0;i<(sizeof(textChestFile)/sizeof(textChestFile[0]));i++) {
-				if(touch.px >= textChestFile[i].first && touch.px <= textChestFile[i].first+getTextWidth(Lang::chestFileMenuText[i]) && touch.py >= textChestFile[i].second && touch.py <= textChestFile[i].second+16) {
+				if(touch.px >= textChestFile[i].x && touch.px <= textChestFile[i].x+getTextWidth(Lang::get(textChestFile[i].label)) && touch.py >= textChestFile[i].y && touch.py <= textChestFile[i].y+16) {
 					selection = i;
 					optionSelected = true;
 					break;
@@ -150,7 +152,7 @@ void chestFileMenu(void) {
 			setSpriteVisibility(arrowID, false, true);
 		}
 
-		setSpritePosition(arrowID, false, textChestFile[selection].first+getTextWidth(Lang::chestFileMenuText[selection]), textChestFile[selection].second-6);
+		setSpritePosition(arrowID, false, textChestFile[selection].x+getTextWidth(Lang::get(textChestFile[selection].label)), textChestFile[selection].y-6);
 		updateOam();
 	}
 }
@@ -164,8 +166,8 @@ void drawConfigMenu(void) {
 		drawRectangle(0, 176, 256, 16, DARKER_GRAY, false);
 	}
 
-	if(optionsText.size() < Lang::optionsTextLabels.size()) {
-		optionsText.resize(Lang::optionsTextLabels.size());
+	if(optionsText.size() < textCP1Labels.size()) {
+		optionsText.resize(textCP1Labels.size());
 	}
 
 	// Set variable text
@@ -173,20 +175,20 @@ void drawConfigMenu(void) {
 	optionsText[1] = std::to_string(Banks::bank->boxes());
 	optionsText[2] = langNames[Config::lang];
 	if(Config::backupAmount == 0)
-		optionsText[3] = Lang::unlimited;
+		optionsText[3] = Lang::get("unlimited");
 	else
 		optionsText[3] = std::to_string(Config::backupAmount);
-	optionsText[4] = Lang::songs[Config::music];
-	optionsText[5] = Config::playSfx ? Lang::yes : Lang::no;
+	optionsText[4] = Lang::get(songs[Config::music]);
+	optionsText[5] = Config::playSfx ? Lang::get("yes") : Lang::get("no");
 	optionsText[6] = Config::keyboardDirections ? "4" : "8";
 	optionsText[7] = Config::keyboardGroupAmount ? "ABCD" : "ABC.";
 
 	// Print text
-	for(unsigned i=0;i<Lang::optionsTextLabels.size();i++) {
-		printTextTinted(Lang::optionsTextLabels[i]+":", GRAY, textCP1Labels[i].first, textCP1Labels[i].second, false, true);
+	for(unsigned i=0;i<textCP1Labels.size();i++) {
+		printTextTinted(Lang::get(textCP1Labels[i].label)+":", GRAY, textCP1Labels[i].x, textCP1Labels[i].y, false, true);
 	}
 	for(unsigned i=0;i<optionsText.size();i++) {
-		printTextTinted(optionsText[i], GRAY, textCP1Labels[i].first+getTextWidth(Lang::optionsTextLabels[i])+11, textCP1Labels[i].second, false, true);
+		printTextTinted(optionsText[i], GRAY, textCP1Labels[i].x+getTextWidth(Lang::get(textCP1Labels[i].label))+11, textCP1Labels[i].y, false, true);
 	}
 }
 
@@ -194,7 +196,7 @@ void configMenu(void) {
 	drawConfigMenu();
 
 	setSpriteVisibility(arrowID, false, true);
-	setSpritePosition(arrowID, false, textCP1Labels[0].first+getTextWidth(Lang::chestFileMenuText[0]), textCP1Labels[0].second-6);
+	setSpritePosition(arrowID, false, textCP1Labels[0].x+getTextWidth(Lang::get(textChestFile[0].label)), textCP1Labels[0].y-6);
 	updateOam();
 
 	bool optionSelected = false;
@@ -225,7 +227,7 @@ void configMenu(void) {
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
 			for(unsigned i=0;i<optionsText.size();i++) {
-				if(touch.px >= textCP1Labels[i].first+getTextWidth(Lang::optionsTextLabels[i])+11 && touch.px < textCP1Labels[i].first+getTextWidth(Lang::optionsTextLabels[i])+11+getTextWidth(optionsText[i]) && touch.py >= textCP1Labels[i].second && touch.py <= textCP1Labels[i].second+16) {
+				if(touch.px >= textCP1Labels[i].x+getTextWidth(Lang::get(textCP1Labels[i].label))+11 && touch.px < textCP1Labels[i].x+getTextWidth(Lang::get(textCP1Labels[i].label))+11+getTextWidth(optionsText[i]) && touch.py >= textCP1Labels[i].y && touch.py <= textCP1Labels[i].y+16) {
 					selection = i;
 					optionSelected = true;
 					break;
@@ -254,7 +256,7 @@ void configMenu(void) {
 						if(Config::lang < (int)(sizeof(langNames)/sizeof(langNames[0]))-1)	Config::lang++;
 						else	Config::lang = 0;
 					}
-					Lang::loadLangStrings(Config::lang);
+					Lang::load(Config::lang);
 					break;
 				} case 3: { // Backup Amount
 					if(pressed & KEY_LEFT) {
@@ -293,7 +295,7 @@ void configMenu(void) {
 			setSpriteVisibility(arrowID, false, true);
 		}
 
-		setSpritePosition(arrowID, false, textCP1Labels[selection].first+getTextWidth(Lang::optionsTextLabels[selection])+12+getTextWidth(optionsText[selection]), textCP1Labels[selection].second-6);
+		setSpritePosition(arrowID, false, textCP1Labels[selection].x+getTextWidth(Lang::get(textCP1Labels[selection].label))+12+getTextWidth(optionsText[selection]), textCP1Labels[selection].y-6);
 		updateOam();
 	}
 }

@@ -28,7 +28,7 @@
 #include <unistd.h>
 
 #include "flashcard.hpp"
-#include "langStrings.hpp"
+#include "lang.hpp"
 #include "PK4.hpp"
 #include "../fileBrowse.hpp"
 #include "../graphics/graphics.hpp"
@@ -252,7 +252,7 @@ bool Bank::backup() const {
 
 std::string Bank::boxName(int box) const {
 	std::string name = boxNames[box].get<std::string>();
-	if(name.substr(0, 7) == "%CHEST%")	name = Lang::chest + name.substr(7);
+	if(name.substr(0, 7) == "%CHEST%")	name = Lang::get("chest") + name.substr(7);
 	return name;
 }
 

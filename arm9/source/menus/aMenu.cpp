@@ -7,51 +7,44 @@
 #include "flashcard.hpp"
 #include "graphics.hpp"
 #include "input.hpp"
-#include "langStrings.hpp"
+#include "lang.hpp"
 #include "loader.hpp"
 #include "manager.hpp"
 #include "misc.hpp"
 #include "summary.hpp"
 #include "sound.hpp"
 
-
-std::vector<std::pair<int, int>> aMenuButtons = {
-	{170,  16}, // Move
-	{170,  42}, // Edit
-	{170,  68}, // Copy
-	{170,  94}, // Release
-	{170, 120}, // Dump
-	{170, 146}, // Back
+std::vector<Label> aMenuButtons = {
+	{170,  16,    "move"}, // Move
+	{170,  42,    "edit"}, // Edit
+	{170,  68,    "copy"}, // Copy
+	{170,  94, "release"}, // Release
+	{170, 120,    "dump"}, // Dump
+	{170, 146,    "back"}, // Back
 };
-std::vector<std::pair<int, int>> aMenuEmptySlotButtons = {
-	{170, 16}, // Inject
-	{170, 42}, // Create
-	{170, 68}, // Back
+std::vector<Label> aMenuEmptySlotButtons = {
+	{170, 16, "inject"}, // Inject
+	{170, 42, "create"}, // Create
+	{170, 68,   "back"}, // Back
 };
-std::vector<std::pair<int, int>> aMenuTopBarButtons = {
-	{170, 16}, // Jump
-	{170, 42}, // Rename
-	{170, 68}, // Swap
-	{170, 94}, // Wallpaper
-	{170, 120}, // Dump box
-	{170, 146}, // Back
+std::vector<Label> aMenuTopBarButtons = {
+	{170,  16,      "jump"}, // Jump
+	{170,  42,    "rename"}, // Rename
+	{170,  68,      "swap"}, // Swap
+	{170,  94, "wallpaper"}, // Wallpaper
+	{170, 120,   "dumpBox"}, // Dump box
+	{170, 146,      "back"}, // Back
 };
 
-std::string aMenuText(int buttonMode, int i) {
-	if(buttonMode == 0)	return Lang::aMenuText[i];
-	else if(buttonMode == 1)	return Lang::aMenuTopBarText[i];
-	else return Lang::aMenuEmptySlotText[i];
-}
-
-void drawAMenuButtons(std::vector<std::pair<int, int>>& buttons, int buttonMode) {
+void drawAMenuButtons(std::vector<Label>& buttons, int buttonMode) {
 	for(unsigned i=0;i<buttons.size();i++) {
-		drawImage(buttons[i].first, buttons[i].second, boxButtonData.width, boxButtonData.height, boxButton, false);
-		printTextMaxW(aMenuText(buttonMode, i), 80, 1, buttons[i].first+4, buttons[i].second+4, false);
+		drawImage(buttons[i].x, buttons[i].y, boxButtonData.width, boxButtonData.height, boxButton, false);
+		printTextMaxW(Lang::get(buttons[i].label), 80, 1, buttons[i].x+4, buttons[i].y+4, false);
 	}
 }
 
-int aMenu(int pkmPos, std::vector<std::pair<int, int>>& buttons, int buttonMode) {
-	setSpritePosition(arrowID, false, buttons[0].first+getTextWidthMaxW(aMenuText(buttonMode, 0), 80)+4, buttons[0].second);
+int aMenu(int pkmPos, std::vector<Label>& buttons, int buttonMode) {
+	setSpritePosition(arrowID, false, buttons[0].x+getTextWidthMaxW(Lang::get(buttons[0].label), 80)+4, buttons[0].y);
 	setSpriteVisibility(arrowID, true, false);
 	setSpriteVisibility(arrowID, false, true);
 	updateOam();
@@ -78,7 +71,7 @@ int aMenu(int pkmPos, std::vector<std::pair<int, int>>& buttons, int buttonMode)
 			touchRead(&touch);
 
 			for(unsigned i=0; i<buttons.size();i++) {
-				if(touch.px >= buttons[i].first && touch.px <= buttons[i].first+64 && touch.py >= buttons[i].second && touch.py <= buttons[i].second+25) {
+				if(touch.px >= buttons[i].x && touch.px <= buttons[i].x+64 && touch.py >= buttons[i].y && touch.py <= buttons[i].y+25) {
 					menuSelection = i;
 					optionSelected = true;
 				}
@@ -124,7 +117,7 @@ int aMenu(int pkmPos, std::vector<std::pair<int, int>>& buttons, int buttonMode)
 				for(int i=7;i<24;i++)
 					if(i%6)	setSpriteVisibility(i, false, false);
 				updateOam();
-				if(Input::getBool(Lang::release, Lang::cancel)) {
+				if(Input::getBool(Lang::get("release"), Lang::get("cancel"))) {
 					if(topScreen)	Banks::bank->pkm(save->emptyPkm(), currentBankBox, pkmPos);
 					else	save->pkm(save->emptyPkm(), currentSaveBox, pkmPos, false);
 					drawBox(false);
@@ -344,7 +337,7 @@ int aMenu(int pkmPos, std::vector<std::pair<int, int>>& buttons, int buttonMode)
 			}
 		}
 
-		setSpritePosition(arrowID, false, buttons[menuSelection].first+getTextWidthMaxW(aMenuText(buttonMode, menuSelection), 80)+4, buttons[menuSelection].second);
+		setSpritePosition(arrowID, false, buttons[menuSelection].x+getTextWidthMaxW(Lang::get(buttons[menuSelection].label), 80)+4, buttons[menuSelection].y);
 		updateOam();
 	}
 	return false;

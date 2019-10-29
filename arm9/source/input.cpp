@@ -7,7 +7,7 @@
 #include "config.hpp"
 #include "colors.hpp"
 #include "graphics.hpp"
-#include "langStrings.hpp"
+#include "lang.hpp"
 #include "manager.hpp"
 #include "sound.hpp"
 
@@ -868,7 +868,7 @@ int Input::getInt(unsigned max) {
 	return i;
 }
 
-bool Input::getBool() { return getBool(Lang::yes, Lang::no); }
+bool Input::getBool() { return getBool(Lang::get("yes"), Lang::get("no")); }
 bool Input::getBool(std::string optionTrue, std::string optionFalse) {
 	// Draw rectangles
 	drawRectangle(38, 66, 180, 60, DARKER_GRAY, false);
