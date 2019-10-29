@@ -13,7 +13,7 @@
 std::vector<std::string> filterValues;
 std::vector<bool> filterEnabled;
 std::vector<bool> filterInversed;
-std::vector<std::string> genders, filterLabels = {"species", "nature", "ability", "gender", "item", "ball", "form", "level", "moves", "shiny"};
+std::vector<std::string> genders = {"male", "female", "unknown"}, filterLabels = {"species", "nature", "ability", "gender", "item", "ball", "form", "level", "moves", "shiny"};
 
 void selectMoves(std::shared_ptr<PKFilter> &filter) {
 	// Clear screen
@@ -172,9 +172,6 @@ void drawFilterMenu(std::shared_ptr<PKFilter> &filter) {
 void changeFilter(std::shared_ptr<PKFilter> &filter) {
 	drawFilterMenu(filter);
 
-	// Set genders vector
-	genders = {Lang::get("male"), Lang::get("female"), Lang::get("unknown")};
-
 	// Set arrow position
 	setSpriteVisibility(arrowID, false, true);
 	setSpritePosition(arrowID, false, 4+getTextWidth(filterEnabled[0] ? "√" : "x")+2, (15));
@@ -324,8 +321,11 @@ void changeFilter(std::shared_ptr<PKFilter> &filter) {
 						filter->ability(selectItem(filter->ability(), 0, save->maxAbility(), Lang::abilities));
 						break;
 					case 3: // Gender
-						filter->gender(selectItem(filter->gender(), 0, genders.size(), genders));
-						break;
+						{
+							std::vector<std::string> genderList = {Lang::get("male"), Lang::get("female"), Lang::get("unknown")};
+							filter->gender(selectItem(filter->gender(), 0, genderList.size(), genderList));
+							break;
+						}
 					case 4: // Held item
 						filter->heldItem(selectItem(filter->heldItem(), 0, save->maxItem(), Lang::items));
 						break;
