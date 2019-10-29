@@ -10,7 +10,6 @@ std::vector<char> fontTiles;
 std::vector<char> fontWidths;
 std::vector<u16> fontMap;
 u16 tileSize, tileWidth, tileHeight;
-std::u16string newline = StringUtils::UTF8toUTF16("»");
 
 #define sprites(top) (top ? spritesMain : spritesSub)
 #define maxSprite(top) (top ? maxSpriteMain : maxSpriteSub)
@@ -506,7 +505,7 @@ void printTextTinted(std::u16string text, u16 color, int xPos, int yPos, bool to
 		0
 	};
 	for(unsigned c=0;c<text.size();c++) {
-		if(text[c] == newline[0]) {
+		if(text[c] == 0xA) {
 			x = xPos;
 			yPos += tileHeight;
 			continue;
@@ -569,7 +568,7 @@ void printTextTintedScaled(std::u16string text, double scaleX, double scaleY, u1
 		0
 	};
 	for(unsigned c=0;c<text.size();c++) {
-		if(text[c] == newline[0]) {
+		if(text[c] == 0xA) {
 			x = xPos;
 			yPos += tileHeight;
 			continue;
