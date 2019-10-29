@@ -1,7 +1,7 @@
 {
 	"ability": "Gebėjimas",
-	"attack": "Ataka",
-	"attackIV": "Attack IV",
+	"attack": "Puolimas",
+	"attackIV": "Puolimo IV",
 	"back": "Grįžti",
 	"backupAmount": "Atsarginės kopijos",
 	"badges": "Ženkleliai",
@@ -92,7 +92,7 @@
 	"shiny": "Blizgus",
 	"sort": "Sort",
 	"soundFX": "Garso efektai",
-	"spAtk": "Spec. Ataka",
+	"spAtk": "Spec. Puolimas",
 	"spAtkIV": "Sp.Attack IV",
 	"spDef": "Spec. Gynyba",
 	"spDefIV": "Sp. Def IV",
