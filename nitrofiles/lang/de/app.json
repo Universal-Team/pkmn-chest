@@ -97,6 +97,7 @@
 	"spDef": "Sp. Vert.",
 	"spDefIV": "Sp-Verteidigung DV",
 	"species": "Spezies",
+	"speciesName": "Species Name",
 	"speed": "Initiative",
 	"speedIV": "Initiative DV",
 	"stats": "Status",
