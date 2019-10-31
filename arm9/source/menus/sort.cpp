@@ -12,7 +12,7 @@
 #include "sound.hpp"
 
 std::vector<SortType> sortTypes;
-std::vector<std::string> sortText = {"none", "dexNo", "species", "form", "type1", "type2", "hp", "attack", "defense", "spAtk", "spDef", "speed", "hpIV", "attackIV", "defenseIV", "spAtkIV", "spDefIV", "speedIV", "nature", "level", "trainerID", "hpType", "friendship", "name", "origTrainer", "shiny"};
+std::vector<std::string> sortText = {"none", "dexNo", "speciesName", "form", "type1", "type2", "hp", "attack", "defense", "spAtk", "spDef", "speed", "hpIV", "attackIV", "defenseIV", "spAtkIV", "spDefIV", "speedIV", "nature", "level", "trainerID", "hpType", "friendship", "name", "origTrainer", "shiny"};
 
 bool sortPokemonFilter(const std::shared_ptr<PKX>& pkm1, const std::shared_ptr<PKX>& pkm2) {
 	for(const auto& type : sortTypes) {
@@ -224,8 +224,11 @@ void drawSortMenu(void) {
 
 	// Print items
 	for(unsigned i=0;i<sortTypes.size();i++) {
-		printText(Lang::get(sortText[int(sortTypes[i])]), 4, 17+(i*16), false);
+		printText(Lang::get("filter")+" "+std::to_string(i+1)+": "+Lang::get(sortText[int(sortTypes[i])]), 4, 17+(i*16), false);
 	}
+
+	drawImage(253-boxButtonData.width, 189-boxButtonData.height, boxButtonData.width, boxButtonData.height, boxButton, false);
+	printTextMaxW(Lang::get("sort"), boxButtonData.width-8, 1, 260-boxButtonData.width, 193-boxButtonData.height, false);
 }
 
 void sortMenu(bool top) {
@@ -234,7 +237,7 @@ void sortMenu(bool top) {
 
 	// Set arrow position
 	setSpriteVisibility(arrowID, false, true);
-	setSpritePosition(arrowID, false, 4+getTextWidth(Lang::get(sortText[int(sortTypes[0])]))+2, (15));
+	setSpritePosition(arrowID, false, 4+getTextWidth(Lang::get("filter")+" "+std::to_string(1)+": "+Lang::get(sortText[int(sortTypes[0])]))+2, (15));
 	// Hide all Pokémon sprites
 	for(int i=0;i<30;i++) {
 		setSpriteVisibility(i, false, false);
@@ -254,42 +257,48 @@ void sortMenu(bool top) {
 		} while(!held);
 
 		if(pressed & KEY_A) {
-			Sound::play(Sound::click);
 			optionSelected = true;
 		} else if(pressed & KEY_B) {
 			Sound::play(Sound::back);
 			break;
-		} else if(pressed & KEY_Y) {
-			sortPokemon(top);
-			Sound::play(Sound::click);
-			break;
 		} else if(held & KEY_UP) {
 			if(selection > 0)	selection--;
 		} else if(held & KEY_DOWN) {
-			if(selection < (int)sortTypes.size()-1)	selection++;
+			if(selection < (int)sortTypes.size())	selection++;
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
 			for(unsigned i=0;i<sortTypes.size();i++) {
-				if(touch.px >= 4 && touch.px <= 4 && touch.py >= 15+(i*16) && touch.py <= 15+((i+1)*16)) {
+				if(touch.px <= 4+getTextWidth(Lang::get("filter")+" "+std::to_string(selection+1)+": "+Lang::get(sortText[int(sortTypes[selection])])) && touch.py >= 15+(i*16) && touch.py <= 15+((i+1)*16)) {
 					selection = i;
 					optionSelected = true;
 					break;
 				}
 			}
+			if(touch.px >= 253-boxButtonData.width && touch.py >= 189-boxButtonData.height) {
+				selection = sortTypes.size();
+				optionSelected = true;
+			}
 		}
 
 		if(optionSelected) {
 			optionSelected = false;
-			std::vector<std::string> sortTextLocalized;
-			for(unsigned i=0;i<sortText.size();i++) {
-				sortTextLocalized.push_back(Lang::get(sortText[i]));
+			Sound::play(Sound::click);
+			if(selection < (int)sortTypes.size()) {
+				std::vector<std::string> sortTextLocalized;
+				for(unsigned i=0;i<sortText.size();i++) {
+					sortTextLocalized.push_back(Lang::get(sortText[i]));
+				}
+				sortTypes[selection] = SortType(selectItem(int(sortTypes[selection]), 0, sortTextLocalized.size(), sortTextLocalized));
+			} else {
+				sortPokemon(top);
+				break;
 			}
-			sortTypes[selection] = SortType(selectItem(int(sortTypes[selection]), 0, sortTextLocalized.size(), sortTextLocalized));
 			drawSortMenu();
 		}
 
 		// Move cursor
-		setSpritePosition(arrowID, false, 4+getTextWidth(Lang::get(sortText[int(sortTypes[selection])]))+2, (16*(selection)+15));
+		if(selection < (int)sortTypes.size())	setSpritePosition(arrowID, false, 4+getTextWidth(Lang::get("filter")+" "+std::to_string(selection+1)+": "+Lang::get(sortText[int(sortTypes[selection])]))+2, (16*(selection)+15));
+		else	setSpritePosition(arrowID, false, 260-boxButtonData.width+getTextWidth(Lang::get("sort"))+2, 191-boxButtonData.height);
 		updateOam();
 	}
 }

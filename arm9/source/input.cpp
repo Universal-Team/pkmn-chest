@@ -25,7 +25,7 @@ char16_t tohiragana(char16_t c) {
 char16_t nextcharver(char16_t c) {
 	bool katakana = iskatakana(c);
 	if(katakana)	c -= 96;
-	if((c >= 0x3041 && c <= 0x3061 && c % 2)
+	if((c >= 0x3041 && c <= 0x3061 && c % 2 && c != 0x3045)
 	|| (c == 0x3066 || c == 0x3068)
 	|| (c >= 0x306F && c <= 0x307C && (c % 3 != 2))
 	|| (c >= 0x3083 && c <= 0x3087 && c % 2)) {
@@ -38,6 +38,10 @@ char16_t nextcharver(char16_t c) {
 		c--;
 	} else if(c >= 0x3071 && c <= 0x307D && (c % 3 == 2)) {
 		c -= 2;
+	} else if(c == 0x3045) {
+		c = 0x3094;
+	} else if(c == 0x3094) {
+		c = 0x3046;
 	}
 	return katakana ? c+96 : c;
 }
@@ -1140,10 +1144,12 @@ int Input::getInt(unsigned max) {
 bool Input::getBool() { return getBool(Lang::get("yes"), Lang::get("no")); }
 bool Input::getBool(std::string optionTrue, std::string optionFalse) {
 	// Draw rectangles
-	drawRectangle(38, 66, 180, 60, DARKER_GRAY, false);
-	drawRectangle(48, 76, 70, 40, LIGHT_GRAY, false);
-	drawRectangle(138, 76, 70, 40, LIGHT_GRAY, false);
-	drawOutline(38, 66, 180, 60, BLACK, false);
+	drawRectangle(38, 65, 180, 61, DARKER_GRAY, false);
+	drawRectangle(48, 75, 70, 41, LIGHT_GRAY, false);
+	drawOutline(48, 75, 70, 41, BLACK, false);
+	drawRectangle(138, 75, 70, 41, LIGHT_GRAY, false);
+	drawOutline(138, 75, 70, 41, BLACK, false);
+	drawOutline(38, 65, 180, 61, BLACK, false);
 
 	// Print text
 	printTextCenteredTintedMaxW(optionFalse, 60, 1, GRAY, -45, 88, false, true);

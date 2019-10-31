@@ -23,17 +23,26 @@ std::vector<Label> xMenuButtons = {
 
 void savePrompt(void) {
 	// Draw background
-	drawRectangle(0, 0, 256, 32, LIGHT_GRAY, false);
-	drawRectangle(0, 32, 256, 144, DARK_GRAY, false);
-	drawRectangle(0, 176, 256, 16, BLACK, false);
+	if(sdFound()) {
+		drawImageDMA(0, 0, menuBgData.width, menuBgData.height, menuBg, false);
+		drawRectangle(0, 0, 256, 33, LIGHT_GRAY, false);
+		drawRectangle(0, 33, 256, 1, BLACK, false);
+		drawRectangle(0, 34, 256, 2, DARK_GRAY, false);
+		drawRectangle(0, 36, 256, 1, DARKERER_GRAY, false);
+	} else {
+		drawRectangle(0, 0, 256, 33, LIGHT_GRAY, false);
+		drawRectangle(0, 33, 256, 139, DARKER_GRAY, DARKERER_GRAY, false);
+		drawRectangle(0, 176, 256, 16, BLACK, false);
+	}
 
 	printTextTinted(Lang::get("saveMsgChest"), GRAY, 5, 0, false, true);
 	if(Input::getBool(Lang::get("save"), Lang::get("discard"))) {
-		if(Config::backupAmount != 0) Banks::bank->backup();
+		Banks::bank->backup();
 		Banks::bank->save();
 	}
 
-	drawRectangle(5, 33, 246, 16, DARK_GRAY, false);
+	if(sdFound())	drawImageSegment(4, 39, 248, 18, menuBg, menuBgData.width, 4, 39, false);
+	else	drawRectangle(4, 39, 248, 18, DARK_GRAY, false);
 	drawRectangle(0, 0, 256, 32, LIGHT_GRAY, false);
 	if(savePath == cardSave)	printTextTinted(Lang::get("saveMsgCard"), GRAY, 5, 0, false, true);
 	else	printTextTinted(Lang::get("saveMsgSave"), GRAY, 5, 0, false, true);
@@ -63,7 +72,7 @@ void drawXMenuButtons(unsigned menuSelection) {
 	for(unsigned i=0;i<xMenuButtons.size();i++) {
 		drawImage(xMenuButtons[i].x, xMenuButtons[i].y, menuButtonData.width, menuButtonData.height, menuSelection == i ? menuButtonBlue : menuButton, false);
 		printText((i==3) ? xMenuButtons[i].label : Lang::get(xMenuButtons[i].label), xMenuButtons[i].x+47, xMenuButtons[i].y+14, false);
-		setSpriteAlpha(false, menuIconID[i], menuSelection == i ? 8 : 15);
+		setSpriteAlpha(menuIconID[i], false, menuSelection == i ? 8 : 15);
 		updateOam();
 	}
 }

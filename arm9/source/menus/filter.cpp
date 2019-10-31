@@ -53,7 +53,6 @@ void selectMoves(std::shared_ptr<PKFilter> &filter) {
 		} else if(pressed & KEY_RIGHT) {
 			if(column < 2)	column++;
 		} else if(pressed & KEY_A) {
-			Sound::play(Sound::click);
 			optionSelected = true;
 		} else if(pressed & KEY_B) {
 			Sound::play(Sound::back);
@@ -84,6 +83,7 @@ void selectMoves(std::shared_ptr<PKFilter> &filter) {
 
 		if(optionSelected) {
 			optionSelected = false;
+			Sound::play(Sound::click);
 			if(column == 0) {
 				filter->moveEnabled(selection, !filter->moveEnabled(selection));
 			} else if(column == 1) {
