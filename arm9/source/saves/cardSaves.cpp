@@ -126,8 +126,9 @@ bool restoreSave(void) {
 		}
 		if(auxspi){
 			buffer = new unsigned char[LEN];
+			drawOutline(4, 39, 248, 18, DARKERER_GRAY, false);
 			for(unsigned int i = 0; i < num_blocks; i++) {
-				drawRectangle((((double)i/num_blocks)*246)+5, 33, 1, 16, LIGHT_GRAY, false);
+				drawRectangle((((double)i/num_blocks)*246)+5, 40, 1, 16, LIGHT_GRAY, false);
 
 				fread(buffer, 1, LEN, in);
 				auxspi_write_data(i << shift, buffer, LEN, type, card_type);
@@ -136,8 +137,9 @@ bool restoreSave(void) {
 			int blocks = size / 32;
 			int written = 0;
 			buffer = new unsigned char[blocks];
+			drawOutline(4, 39, 248, 18, DARKERER_GRAY, false);
 			for(unsigned int i = 0; i < 32; i++) {
-				drawRectangle(((i/32)*246)+5, 33, 8, 16, LIGHT_GRAY, false);
+				drawRectangle(((i/32)*246)+5, 40, 8, 16, LIGHT_GRAY, false);
 				fread(buffer, 1, blocks, in);
 				cardWriteEeprom(written, buffer, blocks, type);
 				written += blocks;

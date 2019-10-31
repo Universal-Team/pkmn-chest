@@ -31,7 +31,7 @@ void savePrompt(void) {
 		drawRectangle(0, 36, 256, 1, DARKERER_GRAY, false);
 	} else {
 		drawRectangle(0, 0, 256, 33, LIGHT_GRAY, false);
-		drawRectangle(0, 33, 256, 139, DARKER_GRAY, DARKERER_GRAY, false);
+		drawRectangle(0, 33, 256, 143, DARKER_GRAY, DARKERER_GRAY, false);
 		drawRectangle(0, 176, 256, 16, BLACK, false);
 	}
 
@@ -42,7 +42,7 @@ void savePrompt(void) {
 	}
 
 	if(sdFound())	drawImageSegment(4, 39, 248, 18, menuBg, menuBgData.width, 4, 39, false);
-	else	drawRectangle(4, 39, 248, 18, DARK_GRAY, false);
+	else	drawRectangle(4, 39, 248, 18, DARKERER_GRAY, DARK_GRAY, false);
 	drawRectangle(0, 0, 256, 32, LIGHT_GRAY, false);
 	if(savePath == cardSave)	printTextTinted(Lang::get("saveMsgCard"), GRAY, 5, 0, false, true);
 	else	printTextTinted(Lang::get("saveMsgSave"), GRAY, 5, 0, false, true);
@@ -56,10 +56,10 @@ void savePrompt(void) {
 		loadSave(savePath);
 		save->cryptBoxData(true);
 		if(savePath == cardSave) {
-			drawRectangle(0, 32, 256, 32, DARK_GRAY, false);
+			drawImageSegment(4, 39, 248, 18, menuBg, menuBgData.width, 4, 39, false);
 			updateCardInfo();
 			if(!restoreSave()) {
-				drawRectangle(0, 0, 256, 192, DARK_GRAY, true);
+				drawImageDMA(0, 0, boxBgTopData.width, boxBgTopData.height, boxBgTop, true);
 				drawBox(true);
 			}
 		}
