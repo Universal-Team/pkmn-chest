@@ -15,6 +15,26 @@ u16 tileSize, tileWidth, tileHeight;
 #define maxSprite(top) (top ? maxSpriteMain : maxSpriteSub)
 
 int getCharIndex(char16_t c) {
+	// Try a binary search
+	int left = 0;
+	int mid = 0;
+	int right = fontMap.size();
+
+	while(left <= right) {
+		mid = left + ((right - left) / 2);
+		if(fontMap[mid] == c) {
+			return mid;
+			break;
+		}
+
+		if(fontMap[mid] < c) {
+			left = mid + 1;
+		} else {
+			right = mid - 1;
+		}
+	}
+
+	// If that doesn't find the char, do a linear search
 	for(unsigned int i=0;i<fontMap.size();i++) {
 		if(fontMap[i] == c)	return i;
 	}

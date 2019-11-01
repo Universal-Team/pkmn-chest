@@ -312,13 +312,13 @@ void changeFilter(std::shared_ptr<PKFilter> &filter) {
 			} else if(column == 2) {
 				switch(selection) {
 					case 0: // Species
-						filter->species(selectItem(filter->species(), 0, save->maxSpecies(), Lang::species));
+						filter->species(selectItem(filter->species(), 0, save->maxSpecies()+1, Lang::species));
 						break;
 					case 1: // Nature
 						filter->nature(selectNature(filter->nature()));
 						break;
 					case 2: // Ability
-						filter->ability(selectItem(filter->ability(), 0, save->maxAbility(), Lang::abilities));
+						filter->ability(selectItem(filter->ability(), 0, save->maxAbility()+1, Lang::abilities));
 						break;
 					case 3: // Gender
 						{
@@ -327,7 +327,7 @@ void changeFilter(std::shared_ptr<PKFilter> &filter) {
 							break;
 						}
 					case 4: // Held item
-						filter->heldItem(selectItem(filter->heldItem(), 0, save->maxItem(), Lang::items));
+						filter->heldItem(selectItem(filter->heldItem(), 0, save->maxItem()+1, Lang::items));
 						break;
 					case 5: // Ball
 						filter->ball(selectPokeball(filter->ball()));
