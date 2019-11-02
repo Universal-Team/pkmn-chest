@@ -105,11 +105,13 @@
 	"tmHm": "わざマシン",
 	"total": "合計",
 	"trainerID": "トレーナーID",
+	"trainerInfo": "Trainer Info",
 	"twinleafTown": "フタバタウン",
 	"type1": "タイプ1",
 	"type2": "タイプ2",
 	"unknown": "不明",
 	"unlimited": "無制限",
 	"wallpaper": "壁紙",
+	"wrongSaveSize": "Warning: The size of the save\ndoesn't match the size of the\ncurrent gamecard! Write stopped.",
 	"yes": "はい"
 }
