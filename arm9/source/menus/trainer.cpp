@@ -15,44 +15,40 @@ struct Text {
 };
 
 Text textTP1[] {
-	{4, 14},
-	{4, 30},
-	{4, 46},
-	{4, 62},
-	{4, 78},
-	{4, 94},
-	{4, 110},
+	{4, 16},
+	{4, 32},
+	{4, 48},
+	{4, 64},
+	{4, 80},
+	{4, 96},
+	{4, 112},
 };
 
 std::vector<std::string> trainerText = {"name", "trainerID", "secretID", "money", "bp", "badges", "playTime"};
 
 void drawTrainerCard(void) {
 	// Draw background
-	if(sdFound())	drawImageDMA(0, 0, optionsBgData.width, optionsBgData.height, optionsBg, false);
-	else {
-		drawRectangle(0, 0, 256, 14, DARKER_GRAY, false);
-		drawRectangle(0, 14, 256, 164, LIGHT_GRAY, false);
-		drawRectangle(0, 176, 256, 14, DARKER_GRAY, false);
-	}
+	drawImageDMA(0, 0, listBgData.width, listBgData.height, listBg, false);
+	printText(Lang::get("trainerInfo"), 4, 0, false);
 
 	// Print labels
 	for(unsigned i=0;i<sizeof(textTP1)/sizeof(textTP1[0]);i++) {
-		printTextTinted(Lang::get(trainerText[i])+":", GRAY, textTP1[i].x, textTP1[i].y, false, true);
+		printText(Lang::get(trainerText[i])+":", textTP1[i].x, textTP1[i].y, false);
 	}
 
 	// Set info text
-	snprintf(textTP1[0].text,  sizeof(textTP1[0].text), "%s", save->otName().c_str());
-	snprintf(textTP1[1].text,  sizeof(textTP1[1].text), "%.5i", save->TID());
-	snprintf(textTP1[2].text,  sizeof(textTP1[2].text), "%.5i", save->SID());
-	snprintf(textTP1[3].text,  sizeof(textTP1[3].text), "$%li", save->money());
-	snprintf(textTP1[4].text,  sizeof(textTP1[4].text), "%li", save->BP());
-	snprintf(textTP1[5].text,  sizeof(textTP1[5].text), "%i", save->badges());
-	snprintf(textTP1[6].text,  sizeof(textTP1[6].text), "%i:%i:%i", save->playedHours(), save->playedMinutes(), save->playedSeconds());
+	snprintf(textTP1[0].text, sizeof(textTP1[0].text), "%s", save->otName().c_str());
+	snprintf(textTP1[1].text, sizeof(textTP1[1].text), "%.5i", save->TID());
+	snprintf(textTP1[2].text, sizeof(textTP1[2].text), "%.5i", save->SID());
+	snprintf(textTP1[3].text, sizeof(textTP1[3].text), "$%li", save->money());
+	snprintf(textTP1[4].text, sizeof(textTP1[4].text), "%li", save->BP());
+	snprintf(textTP1[5].text, sizeof(textTP1[5].text), "%i", save->badges());
+	snprintf(textTP1[6].text, sizeof(textTP1[6].text), "%i:%i:%i", save->playedHours(), save->playedMinutes(), save->playedSeconds());
 	
 	// Print info
 	printTextTinted(textTP1[0].text, (save->gender() ? RGB::RED : RGB::BLUE), textTP1[0].x+getTextWidth(Lang::get(trainerText[0]))+8, textTP1[0].y, false);
 	for(unsigned i=1;i<(sizeof(textTP1)/sizeof(textTP1[0]));i++) {
-			printTextTinted(textTP1[i].text, GRAY, textTP1[i].x+getTextWidth(Lang::get(trainerText[i]))+8, textTP1[i].y, false, true);
+		printText(textTP1[i].text, textTP1[i].x+getTextWidth(Lang::get(trainerText[i]))+8, textTP1[i].y, false);
 	}
 }
 

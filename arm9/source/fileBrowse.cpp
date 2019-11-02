@@ -113,13 +113,13 @@ void showDirectoryContents(const std::vector<DirEntry>& dirContents, int startRo
 	getcwd(path, PATH_MAX);
 
 	// Print path
-	drawImageSegment(0, 0, fileBrowseBgData.width, 17, fileBrowseBg, fileBrowseBgData.width, 0, 0, false);
-	printTextMaxW(path, 250, 1, 5, 0, false);
+	drawImageSegment(0, 0, listBgData.width, 17, listBg, listBgData.width, 0, 0, false);
+	printTextMaxW(path, 250, 1, 4, 0, false);
 
 	// Print directory listing
 	for(int i=0;i < ENTRIES_PER_SCREEN; i++) {
 		// Clear row
-		drawImageSegment(10, i*16+16, 246, 16, fileBrowseBg, fileBrowseBgData.width, 10, i*16+16, false);
+		drawImageSegment(10, i*16+16, 246, 16, listBg, listBgData.width, 10, i*16+16, false);
 
 		if(i < ((int)dirContents.size() - startRow)) {
 			std::u16string name = StringUtils::UTF8toUTF16(dirContents[i + startRow].name);
@@ -132,7 +132,7 @@ void showDirectoryContents(const std::vector<DirEntry>& dirContents, int startRo
 			}
 			if(addEllipsis)	name += StringUtils::UTF8toUTF16("...");
 
-			printTextTinted(name, GRAY, 10, i*16+16, false, true);
+			printText(name, 10, i*16+16, false);
 		}
 	}
 }
@@ -168,20 +168,20 @@ void drawSdText(int i, bool valid) {
 	char str[19];
 	updateDriveLabel(false);
 	snprintf(str, sizeof(str), "sd: (%s)", sdLabel[0] == '\0' ? "SD Card" : sdLabel);
-	printTextTinted(str, valid ? GRAY : RGB::RED, 10, (i+1)*16, false, true);
+	printTextTinted(str, valid ? WHITE : RGB::RED, 10, (i+1)*16, false);
 }
 
 void drawFatText(int i, bool valid) {
 	char str[20];
 	updateDriveLabel(true);
 	snprintf(str, sizeof(str), "fat: (%s)", fatLabel[0] == '\0' ? "Flashcard" : fatLabel);
-	printTextTinted(str, valid ? GRAY : RGB::RED, 10, (i+1)*16, false, true);
+	printTextTinted(str, valid ? WHITE : RGB::RED, 10, (i+1)*16, false);
 }
 
 void drawSlot1Text(int i, bool valid) {
 	char slot1Text[34];
 	snprintf(slot1Text, sizeof(slot1Text), "Slot-1: (%s) [%s]", REG_SCFG_MC == 0x11 ? "No card inserted" : gamename, gameid);
-	printTextTinted(slot1Text, valid ? GRAY : RGB::RED, 10, (i+1)*16, false, true);
+	printTextTinted(slot1Text, valid ? WHITE : RGB::RED, 10, (i+1)*16, false);
 }
 
 bool updateSlot1Text(int &cardWait, bool valid) {
@@ -189,8 +189,8 @@ bool updateSlot1Text(int &cardWait, bool valid) {
 		disableSlot1();
 		cardWait = 30;
 		if(!noCardMessageSet) {
-			drawImageSegment(10, ((tmSlot1Offset-tmScreenOffset)+1)*16+1, 200, 16, fileBrowseBg, fileBrowseBgData.width, 10, ((tmSlot1Offset-tmScreenOffset)+1)*16+1, false);
-			printTextTinted("Slot-1: (No card inserted)", GRAY, 10, ((tmSlot1Offset-tmScreenOffset)+1)*16, false, true);
+			drawImageSegment(10, ((tmSlot1Offset-tmScreenOffset)+1)*16+1, 200, 16, listBg, listBgData.width, 10, ((tmSlot1Offset-tmScreenOffset)+1)*16+1, false);
+			printText("Slot-1: (No card inserted)", 10, ((tmSlot1Offset-tmScreenOffset)+1)*16, false);
 			noCardMessageSet = true;
 			return false;
 		}
@@ -202,7 +202,7 @@ bool updateSlot1Text(int &cardWait, bool valid) {
 		enableSlot1();
 		if(updateCardInfo()) {
 			valid = isValidTid(gameid);
-			drawImageSegment(10, ((tmSlot1Offset-tmScreenOffset)+1)*16+1, 200, 16, fileBrowseBg, fileBrowseBgData.width, 10, ((tmSlot1Offset-tmScreenOffset)+1)*16+1, false);
+			drawImageSegment(10, ((tmSlot1Offset-tmScreenOffset)+1)*16+1, 200, 16, listBg, listBgData.width, 10, ((tmSlot1Offset-tmScreenOffset)+1)*16+1, false);
 			drawSlot1Text(tmSlot1Offset-tmScreenOffset, valid);
 			noCardMessageSet = false;
 			return valid;
@@ -214,7 +214,7 @@ bool updateSlot1Text(int &cardWait, bool valid) {
 void showTopMenu(std::vector<topMenuItem> topMenuContents) {
 	for(unsigned i=0;i<ENTRIES_PER_SCREEN;i++) {
 		// Clear row
-		drawImageSegment(10, i*16+16, 246, 16, fileBrowseBg, fileBrowseBgData.width, 10, i*16+16, false);
+		drawImageSegment(10, i*16+16, 246, 16, listBg, listBgData.width, 10, i*16+16, false);
 
 		if(i<topMenuContents.size()) {
 			if(topMenuContents[i+tmScreenOffset].name == "fat:")	drawFatText(i, topMenuContents[i+tmScreenOffset].valid);
@@ -232,7 +232,7 @@ void showTopMenu(std::vector<topMenuItem> topMenuContents) {
 				}
 				if(addEllipsis)	name += StringUtils::UTF8toUTF16("...");
 
-				printTextTinted(name, topMenuContents[i+tmScreenOffset].valid ? GRAY : RGB::RED, 10, i*16+16, false, true);
+				printTextTinted(name, topMenuContents[i+tmScreenOffset].valid ? WHITE : RGB::RED, 10, i*16+16, false);
 			}
 		}
 	}
@@ -244,7 +244,7 @@ std::string topMenuSelect(void) {
 
 	// Clear screens
 	drawImage(0, 0, boxBgTopData.width, boxBgTopData.height, boxBgTop, true);
-	drawImage(0, 0, fileBrowseBgData.width, fileBrowseBgData.height, fileBrowseBg, false);
+	drawImage(0, 0, listBgData.width, listBgData.height, listBg, false);
 
 	// Print version number
 	printText(VER_NUMBER, 256-getTextWidth(VER_NUMBER)-1, 176, true);
@@ -279,10 +279,10 @@ std::string topMenuSelect(void) {
 	bool bigJump = false;
 	while(1) {
 		// Clear old cursors
-		drawImageSegment(0, 17, 10, 175, fileBrowseBg, fileBrowseBgData.width, 0, 17, false);
+		drawImageSegment(0, 17, 10, 175, listBg, listBgData.width, 0, 17, false);
 
 		// Draw cursor
-		drawRectangle(3, (tmCurPos-tmScreenOffset)*16+24, 4, 3, DARK_GRAY, false);
+		drawRectangle(3, (tmCurPos-tmScreenOffset)*16+24, 4, 3, LIGHT_GRAY, false);
 
 		// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
 		do {
@@ -379,12 +379,12 @@ std::string topMenuSelect(void) {
 
 		if(held & KEY_UP || held & KEY_DOWN || held & KEY_LEFT || held & KEY_RIGHT || pressed & KEY_X) {
 			// Clear the path area of the screen
-			drawImage(0, 0, fileBrowseBgData.width, 17, fileBrowseBg, false);
+			drawImage(0, 0, listBgData.width, 17, listBg, false);
 
 			// Print the path to the currently selected file
 			std::u16string path = StringUtils::UTF8toUTF16(topMenuContents[tmCurPos].name);
 			path = path.substr(0, path.find_last_of(StringUtils::UTF8toUTF16("/"))+1); // Cut to just the path
-			printTextMaxW(path, 250, 1, 5, 0, false);
+			printTextMaxW(path, 250, 1, 4, 0, false);
 		}
 	}
 }
@@ -402,10 +402,10 @@ std::string browseForFile(const std::vector<std::string>& extensionList, bool ac
 
 	while(1) {
 		// Clear old cursors
-		drawImageSegment(0, 17, 10, 175, fileBrowseBg, fileBrowseBgData.width, 0, 17, false);
+		drawImageSegment(0, 17, 10, 175, listBg, listBgData.width, 0, 17, false);
 
 		// Draw cursor
-		drawRectangle(3, (fileOffset-screenOffset)*16+24, 4, 3, DARK_GRAY, false);
+		drawRectangle(3, (fileOffset-screenOffset)*16+24, 4, 3, LIGHT_GRAY, false);
 
 
 		// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
@@ -519,7 +519,7 @@ std::string browseForSave(void) {
 
 	// Clear screens
 	drawImage(0, 0, boxBgTopData.width, boxBgTopData.height, boxBgTop, true);
-	drawImage(0, 0, fileBrowseBgData.width, fileBrowseBgData.height, fileBrowseBg, false);
+	drawImage(0, 0, listBgData.width, listBgData.height, listBg, false);
 
 	// Print version number
 	printText(VER_NUMBER, 256-getTextWidth(VER_NUMBER)-1, 176, true);
@@ -558,9 +558,9 @@ int fcopy(const char *sourcePath, const char *destinationPath) {
 
 		off_t offset = 0;
 		int numr;
-		drawOutline(4, 39, 248, 18, DARKERER_GRAY, false);
+		drawOutline(5, 39, 247, 18, DARKERER_GRAY, false);
 		while(1) {
-			drawRectangle(((offset < fsize ? (double)offset/fsize : 1)*227)+5, 40, 19, 16, LIGHT_GRAY, false);
+			drawRectangle(((offset < fsize ? (double)offset/fsize : 1)*226)+6, 40, 19, 16, LIGHT_GRAY, false);
 			// Copy file to destination path
 			numr = fread(copyBuf, 2, copyBufSize, sourceFile);
 			fwrite(copyBuf, 2, numr, destinationFile);

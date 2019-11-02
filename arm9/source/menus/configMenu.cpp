@@ -15,42 +15,38 @@
 #include "sound.hpp"
 
 std::vector<Label> textCP1Labels {
-	{4,  14,      "chestFile"}, // Chest file
-	{4,  30,      "chestSize"}, // Chest size
-	{4,  46,       "language"}, // Language
-	{4,  62,   "backupAmount"}, // Backups
-	{4,  78,          "music"}, // Music
-	{4,  94,        "soundFX"}, // Sound FX
-	{4, 110, "dPadDirections"}, // D-Pad typing directions
-	{4, 126,     "dPadGroups"}, // D-Pad typing groups
+	{4,  16,      "chestFile"}, // Chest file
+	{4,  32,      "chestSize"}, // Chest size
+	{4,  48,       "language"}, // Language
+	{4,  64,   "backupAmount"}, // Backups
+	{4,  80,          "music"}, // Music
+	{4,  96,        "soundFX"}, // Sound FX
+	{4, 112, "dPadDirections"}, // D-Pad typing directions
+	{4, 128,     "dPadGroups"}, // D-Pad typing groups
 };
 
 std::vector<Label> textChestFile {
-	{12, 30,    "new"}, // New
-	{12, 46, "rename"}, // Rename
-	{12, 62, "delete"}, // Delete
-	{12, 78, "change"}, // Change
+	{12, 32,    "new"}, // New
+	{12, 48, "rename"}, // Rename
+	{12, 64, "delete"}, // Delete
+	{12, 80, "change"}, // Change
 };
 
 std::vector<std::string> songs = {"off", "center1", "center4", "center5", "elmLab", "oakLab", "gameCorner", "twinleafTown"};
 
-std::vector<std::string> optionsText = {}; // Placeholders to be filled
+std::vector<std::string> optionsText;
 
 std::string langNames[] = { "Deutsche", "English", "Español", "Français", "Italiano", "Lietuvių", "Português", "русский", "日本語", "한국"};
 
 void drawChestFileMenu(void) {
 	// Draw background
-	if(sdFound())	drawImageDMA(0, 0, optionsBgData.width, optionsBgData.height, optionsBg, false);
-	else {
-		drawRectangle(0, 0, 256, 14, DARKER_GRAY, false);
-		drawRectangle(0, 14, 256, 164, LIGHT_GRAY, false);
-		drawRectangle(0, 176, 256, 16, DARKER_GRAY, false);
-	}
+	drawImageDMA(0, 0, listBgData.width, listBgData.height, listBg, false);
+	printText(Lang::get("options"), 4, 0, false);
 
 	// Print text
-	printTextTinted(Lang::get(textCP1Labels[0].label)+": "+optionsText[0], GRAY, textCP1Labels[0].x, textCP1Labels[0].y, false, true);
-	for(unsigned i=0;i<(sizeof(textChestFile)/sizeof(textChestFile[0]));i++) {
-		printTextTinted(Lang::get(textChestFile[i].label), GRAY, textChestFile[i].x, textChestFile[i].y, false, true);
+	printText(Lang::get(textCP1Labels[0].label)+": "+optionsText[0], textCP1Labels[0].x, textCP1Labels[0].y, false);
+	for(unsigned i=0;i<textChestFile.size();i++) {
+		printText(Lang::get(textChestFile[i].label), textChestFile[i].x, textChestFile[i].y, false);
 	}
 }
 
@@ -159,12 +155,8 @@ void chestFileMenu(void) {
 
 void drawConfigMenu(void) {
 	// Draw background
-	if(sdFound())	drawImageDMA(0, 0, optionsBgData.width, optionsBgData.height, optionsBg, false);
-	else {
-		drawRectangle(0, 0, 256, 14, DARKER_GRAY, false);
-		drawRectangle(0, 14, 256, 164, LIGHT_GRAY, false);
-		drawRectangle(0, 176, 256, 16, DARKER_GRAY, false);
-	}
+	drawImageDMA(0, 0, listBgData.width, listBgData.height, listBg, false);
+	printText(Lang::get("options"), 4, 0, false);
 
 	if(optionsText.size() < textCP1Labels.size()) {
 		optionsText.resize(textCP1Labels.size());
@@ -185,10 +177,10 @@ void drawConfigMenu(void) {
 
 	// Print text
 	for(unsigned i=0;i<textCP1Labels.size();i++) {
-		printTextTinted(Lang::get(textCP1Labels[i].label)+":", GRAY, textCP1Labels[i].x, textCP1Labels[i].y, false, true);
+		printText(Lang::get(textCP1Labels[i].label)+":", textCP1Labels[i].x, textCP1Labels[i].y, false);
 	}
 	for(unsigned i=0;i<optionsText.size();i++) {
-		printTextTinted(optionsText[i], GRAY, textCP1Labels[i].x+getTextWidth(Lang::get(textCP1Labels[i].label))+11, textCP1Labels[i].y, false, true);
+		printText(optionsText[i], textCP1Labels[i].x+getTextWidth(Lang::get(textCP1Labels[i].label))+11, textCP1Labels[i].y, false);
 	}
 }
 
@@ -196,7 +188,7 @@ void configMenu(void) {
 	drawConfigMenu();
 
 	setSpriteVisibility(arrowID, false, true);
-	setSpritePosition(arrowID, false, textCP1Labels[0].x+getTextWidth(Lang::get(textChestFile[0].label)), textCP1Labels[0].y-6);
+	setSpritePosition(arrowID, false, textCP1Labels[0].x+getTextWidth(Lang::get(textCP1Labels[0].label))+12+getTextWidth(optionsText[0]), textCP1Labels[0].y-6);
 	updateOam();
 
 	bool optionSelected = false;

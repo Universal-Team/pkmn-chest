@@ -5,6 +5,7 @@
 #include "flashcard.hpp"
 #include "colors.hpp"
 #include "graphics.hpp"
+#include "tonccpy.h"
 
 int angle = 0;
 int angleChange = 190;
@@ -20,13 +21,13 @@ void loadLoadingLogo(void) {
 	logoGfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_Bmp);
 	
 	std::vector<u16> logo;
-	loadBmp("nitro:/graphics/icon.bmp", logo);
+	loadPng("nitro:/graphics/icon.png", logo);
 	if(!(rand() % 8192)) { // Full odds shiny chest ;P
 		for(unsigned i=0;i<logo.size();i++) {
 			if(logo[i] == 0x801F || logo[i] == 0x8C9F || logo[i] == 0x8018)	logo[i] |= RGB::BLUE & GRAY;
 		}
 	}
-	dmaCopyWords(0, logo.data(), logoGfx, 2048);
+	tonccpy(logoGfx, logo.data(), 32*32*2);
 }
 
 void showLoadingLogo(void) {

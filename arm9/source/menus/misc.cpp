@@ -243,7 +243,7 @@ int selectItem(int current, int start, int max, std::vector<std::string> &items)
 	setSpriteVisibility(arrowID, false, true);
 	updateOam();
 
-	// Print moves
+	// Print items
 	std::vector<std::string> itemList(&items[start], &items[max]);
 	drawItemList(current-start, itemList);
 
@@ -329,16 +329,17 @@ int selectItem(int current, int start, int max, std::vector<std::string> &items)
 }
 
 std::shared_ptr<PKX> selectMoves(std::shared_ptr<PKX> pkm) {
-	// Clear the screen
-	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
+	// Clear screen
+	drawImageSegmentDMA(0, 0, listBgData.width, listBgData.height, listBg, listBgData.width, false);
+	printText(Lang::get("moves"), 4, 0, false);
 
 	// Print moves
 	for(int i=0;i<4;i++) {
-		printText(Lang::moves[pkm->move(i)], 4, 4+(i*20), false);
+		printText(Lang::moves[pkm->move(i)], 4, 16+(i*16), false);
 	}
 
 	// Set arrow position
-	setSpritePosition(arrowID, false, 4+getTextWidth(Lang::moves[pkm->move(0)]), -2);
+	setSpritePosition(arrowID, false, 4+getTextWidth(Lang::moves[pkm->move(0)]), 10);
 	setSpriteVisibility(arrowID, false, true);
 	updateOam();
 
@@ -370,7 +371,7 @@ std::shared_ptr<PKX> selectMoves(std::shared_ptr<PKX> pkm) {
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
 			for(unsigned i=0;i<4;i++) {
-				if(touch.px >= 4 && touch.px <= 4+getTextWidth(Lang::moves[pkm->move(i)]) && touch.py >= 4+(i*20) && touch.py <= 4+((i+1)*20)) {
+				if(touch.px >= 4 && touch.px <= 4+getTextWidth(Lang::moves[pkm->move(i)]) && touch.py >= 16+(i*16) && touch.py <= 16+((i+1)*16)) {
 					selection = i;
 					optionSelected = true;
 					break;
@@ -382,16 +383,17 @@ std::shared_ptr<PKX> selectMoves(std::shared_ptr<PKX> pkm) {
 			optionSelected = false;
 			pkm->move(selection, selectItem(pkm->move(selection), 0, save->maxMove()+1, Lang::moves));
 
-			// Clear the screen
-			drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
+			// Clear screen
+			drawImageSegmentDMA(0, 0, listBgData.width, listBgData.height, listBg, listBgData.width, false);
+			printText(Lang::get("moves"), 4, 0, false);
 
 			// Print moves
 			for(int i=0;i<4;i++) {
-				printText(Lang::moves[pkm->move(i)], 4, 4+(i*20), false);
+				printText(Lang::moves[pkm->move(i)], 4, 16+(i*16), false);
 			}
 		}
 
-		setSpritePosition(arrowID, false, 4+getTextWidth(Lang::moves[pkm->move(selection)]), (selection*20)-2);
+		setSpritePosition(arrowID, false, 4+getTextWidth(Lang::moves[pkm->move(selection)]), (selection*16)+10);
 		updateOam();
 	}
 }

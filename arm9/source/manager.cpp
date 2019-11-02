@@ -19,8 +19,8 @@ bool topScreen;
 int arrowID = 126, shinyID, currentSaveBox, currentBankBox, heldPokemonID = 125, keyboardSpriteID = 124, arrowMode = 0;
 std::vector<int> menuIconID, partyIconID;
 std::string savePath;
-std::vector<u16> arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, boxBgTop, boxButton, fileBrowseBg, infoBox, keyboardKey, menuBg, menuButton, menuButtonBlue, menuIconSheet, optionsBg, search, shiny, summaryBg, types;
-ImageData ballSheetData, bankBoxData, boxBgTopData, boxButtonData, fileBrowseBgData, infoBoxData, keyboardKeyData, menuBgData, menuButtonData, menuButtonBlueData, menuIconSheetData, optionsBgData, searchData, shinyData, summaryBgData, typesData;
+std::vector<u16> arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, boxBgTop, boxButton, infoBox, keyboardKey, menuBg, menuButton, menuButtonBlue, menuIconSheet, search, shiny, listBg, types;
+ImageData ballSheetData, bankBoxData, boxBgTopData, boxButtonData, infoBoxData, keyboardKeyData, menuBgData, menuButtonData, menuButtonBlueData, menuIconSheetData, searchData, shinyData, listBgData, typesData;
 FILE* pokemonSheet;
 std::shared_ptr<PKFilter> filter = std::make_shared<PKFilter>();
 
@@ -173,7 +173,6 @@ void loadGraphics(void) {
 	ballSheetData = loadPng("nitro:/graphics/ballSheet.png", ballSheet);
 	boxBgTopData = loadPng("nitro:/graphics/boxBgTop.png", boxBgTop);
 	boxButtonData = loadPng("nitro:/graphics/boxButton.png", boxButton);
-	fileBrowseBgData = loadPng("nitro:/graphics/fileBrowseBg.png", fileBrowseBg);
 	infoBoxData = loadPng("nitro:/graphics/infoBox.png", infoBox);
 	keyboardKeyData = loadPng("nitro:/graphics/keyboardKey.png", keyboardKey);
 	menuButtonData = loadPng("nitro:/graphics/menuButton.png", menuButton);
@@ -181,13 +180,12 @@ void loadGraphics(void) {
 	menuIconSheetData = loadPng("nitro:/graphics/menuIconSheet.png", menuIconSheet);
 	searchData = loadPng("nitro:/graphics/search.png", search);
 	shinyData = loadPng("nitro:/graphics/shiny.png", shiny);
+	listBgData = loadPng("nitro:/graphics/listBg.png", listBg);
 	loadPng("nitro:/graphics/arrowBlue.png", arrowBlue);
 	loadPng("nitro:/graphics/arrowRed.png", arrowRed);
 	loadPng("nitro:/graphics/arrowYellow.png", arrowYellow);
 	if(sdFound()) {
 		menuBgData = loadPng("nitro:/graphics/menuBg.png", menuBg);
-		optionsBgData = loadPng("nitro:/graphics/optionsBg.png", optionsBg);
-		summaryBgData = loadPng("nitro:/graphics/summaryBg.png", summaryBg);
 	}
 	pokemonSheet = fopen("nitro:/graphics/pokemonSheet.bmps", "rb");
 
@@ -243,15 +241,8 @@ void loadGraphics(void) {
 	prepareSprite(heldPokemonID, true, 0, 0, 1);
 	setSpriteVisibility(heldPokemonID, true, false);
 
-	// Prepare shiny sprite
-	shinyID = initSprite(true, SpriteSize_16x16); // 8x8 wasn't working
-	fillSpriteImage(shinyID, true, shiny);
-	prepareSprite(shinyID, true, 239, 45, 0);
-	setSpriteVisibility(shinyID, true, false);
-
 	// Prepare button keyboard sprite
 	initSprite(false, SpriteSize_32x32, keyboardSpriteID);
-	fillSpriteImage(keyboardSpriteID, false, shiny);
 	prepareSprite(keyboardSpriteID, false, 0, 0, 0);
 	setSpriteVisibility(keyboardSpriteID, false, false);
 }
@@ -341,7 +332,7 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 
 	if(pkm->species() > 0 && pkm->species() < 650) {
 		// Show shiny star if applicable
-		setSpriteVisibility(shinyID, true, pkm->shiny());
+		if(pkm->shiny())	drawImage(239, 45, shinyData.width, shinyData.height, shiny, true);
 
 		// Print Pokédex number
 		char str[9];
@@ -349,8 +340,8 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 		printTextTinted(str, GRAY, 170, 8, true, true);
 
 		// Print name
-		if(pkm->nicknamed())	printTextTintedMaxW(pkm->nickname(), 80, 1, (pkm->gender() ? (pkm->gender() == 1 ? RGB::RED : GRAY) : RGB::BLUE), 170, 25, true, true);
-		else	printTextTintedMaxW(Lang::species[pkm->species()], 80, 1, (pkm->gender() ? (pkm->gender() == 1 ? RGB::RED : GRAY) : RGB::BLUE), 170, 25, true, true);
+		if(pkm->nicknamed())	printTextTintedMaxW(pkm->nickname(), 80, 1, (pkm->gender() ? (pkm->gender() == 1 ? RGB::RED : GRAY) : RGB::BLUE), 170, 25, true, pkm->gender() > 1);
+		else	printTextTintedMaxW(Lang::species[pkm->species()], 80, 1, (pkm->gender() ? (pkm->gender() == 1 ? RGB::RED : GRAY) : RGB::BLUE), 170, 25, true, pkm->gender() > 1);
 
 		// Draw types
 		drawImageSegment(170, 43-(((typesData.height/17)-12)/2), typesData.width, typesData.height/17, types, typesData.width, 0, (((pkm->generation() == Generation::FOUR && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1())*(typesData.height/17)), true);

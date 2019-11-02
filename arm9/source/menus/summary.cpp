@@ -16,13 +16,13 @@ struct Text {
 };
 
 Text textC1[] {
-	{64, 1},
-	{64, 17},
-	{64, 33},
-	{64, 49},
-	{64, 65},
-	{64, 81},
-	{64, 97},
+	{64, 0},
+	{64, 16},
+	{64, 32},
+	{64, 48},
+	{64, 64},
+	{64, 80},
+	{64, 96},
 	{64, 112},
 	{96, 128},
 	{96, 144},
@@ -101,8 +101,7 @@ void changeAbility(std::shared_ptr<PKX> &pkm) {
 
 void drawSummaryPage(std::shared_ptr<PKX> pkm) {
 	// Draw background
-	if(sdFound())	drawImageDMA(0, 0, summaryBgData.width, summaryBgData.height, summaryBg, false);
-	else	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
+	drawImageDMA(0, 0, listBgData.width, listBgData.height, listBg, false);
 	drawImageScaled(145, 1, infoBoxData.width, infoBoxData.height, 1.2, 1, infoBox, false);
 	// Draw lines
 	drawOutline(0, 128, 160, 65, LIGHT_GRAY, false);
@@ -114,7 +113,7 @@ void drawSummaryPage(std::shared_ptr<PKX> pkm) {
 	updateOam();
 
 	// Print Pokémon name
-	printTextTintedMaxW(Lang::species[pkm->species()], 90, 1, (pkm->gender() ? (pkm->gender() == 1 ? RGB::RED : GRAY) : RGB::BLUE), 165, 8, false, true);
+	printTextTintedMaxW(Lang::species[pkm->species()], 90, 1, (pkm->gender() ? (pkm->gender() == 1 ? RGB::RED : GRAY) : RGB::BLUE), 165, 8, false, pkm->gender() > 1);
 
 	// Draw Pokémon, Pokéball, types, and shiny star (if shiny)
 	std::pair<int, int> xy = getPokeballPosition(pkm->ball());

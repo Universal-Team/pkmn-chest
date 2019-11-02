@@ -17,15 +17,14 @@ std::vector<std::string> genders = {"male", "female", "unknown"}, filterLabels =
 
 void selectMoves(std::shared_ptr<PKFilter> &filter) {
 	// Clear screen
-	if(sdFound())	drawImageSegmentDMA(0, 0, summaryBgData.width, summaryBgData.height, summaryBg, summaryBgData.width, false);
-	else	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
-	printText(Lang::get("moves"), 4, 1, false);
+	drawImageSegmentDMA(0, 0, listBgData.width, listBgData.height, listBg, listBgData.width, false);
+	printText(Lang::get("moves"), 4, 0, false);
 
 	// Print moves
 	for(int i=0;i<4;i++) {
-		printText(filter->moveEnabled(i) ? "√" : "x", 4, 17+(i*16), false);
-		printTextMaxW(Lang::moves[filter->move(i)], 100, 1, 20, 17+(i*16), false);
-		printText(filter->moveInversed(i) ? "≠" : "=", 120, 17+(i*16), false);
+		printText(filter->moveEnabled(i) ? "√" : "x", 4, 16+(i*16), false);
+		printTextMaxW(Lang::moves[filter->move(i)], 100, 1, 20, 16+(i*16), false);
+		printText(filter->moveInversed(i) ? "≠" : "=", 120, 16+(i*16), false);
 	}
 
 	// Set arrow position
@@ -93,15 +92,14 @@ void selectMoves(std::shared_ptr<PKFilter> &filter) {
 			}
 
 			// Clear screen
-			if(sdFound())	drawImageSegmentDMA(0, 0, summaryBgData.width, summaryBgData.height, summaryBg, summaryBgData.width, false);
-			else	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
-			printText(Lang::get("moves"), 4, 1, false);
+			drawImageSegmentDMA(0, 0, listBgData.width, listBgData.height, listBg, listBgData.width, false);
+			printText(Lang::get("moves"), 4, 0, false);
 
 			// Print moves
 			for(int i=0;i<4;i++) {
-				printText(filter->moveEnabled(i) ? "√" : "x", 4, 17+(i*16), false);
-				printTextMaxW(Lang::moves[filter->move(i)], 100, 1, 20, 17+(i*16), false);
-				printText(filter->moveInversed(i) ? "≠" : "=", 120, 17+(i*16), false);
+				printText(filter->moveEnabled(i) ? "√" : "x", 4, 16+(i*16), false);
+				printTextMaxW(Lang::moves[filter->move(i)], 100, 1, 20, 16+(i*16), false);
+				printText(filter->moveInversed(i) ? "≠" : "=", 120, 16+(i*16), false);
 			}
 		}
 
@@ -115,11 +113,8 @@ void selectMoves(std::shared_ptr<PKFilter> &filter) {
 
 void drawFilterMenu(std::shared_ptr<PKFilter> &filter) {
 	// Clear screen
-	if(sdFound())	drawImageSegmentDMA(0, 0, summaryBgData.width, summaryBgData.height, summaryBg, summaryBgData.width, false);
-	else {
-		drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
-	}
-	printText(Lang::get("filter"), 4, 1, false);
+	drawImageSegmentDMA(0, 0, listBgData.width, listBgData.height, listBg, listBgData.width, false);
+	printText(Lang::get("filter"), 4, 0, false);
 
 	// Fill filterValues
 	filterValues.clear();
@@ -162,10 +157,10 @@ void drawFilterMenu(std::shared_ptr<PKFilter> &filter) {
 
 	// Print items
 	for(unsigned i=0;i<filterLabels.size();i++) {
-		printText(filterEnabled[i] ? "o" : "x", 4, 17+(i*16), false);
-		printTextMaxW(Lang::get(filterLabels[i]), 100, 1, 20, 17+(i*16), false);
-		printText(filterInversed[i] ? "≠" : "=", 120, 17+(i*16), false);
-		printTextMaxW(filterValues[i], 100, 1, 136, 17+(i*16), false);
+		printText(filterEnabled[i] ? "o" : "x", 4, 16+(i*16), false);
+		printTextMaxW(Lang::get(filterLabels[i]), 100, 1, 20, 16+(i*16), false);
+		printText(filterInversed[i] ? "≠" : "=", 120, 16+(i*16), false);
+		printTextMaxW(filterValues[i], 100, 1, 136, 16+(i*16), false);
 	}
 }
 

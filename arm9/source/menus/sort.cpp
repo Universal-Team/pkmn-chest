@@ -216,15 +216,12 @@ void sortPokemon(bool top) {
 }
 void drawSortMenu(void) {
 	// Clear screen
-	if(sdFound())	drawImageSegmentDMA(0, 0, summaryBgData.width, summaryBgData.height, summaryBg, summaryBgData.width, false);
-	else {
-		drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
-	}
-	printText(Lang::get("sort"), 4, 1, false);
+	drawImageSegmentDMA(0, 0, listBgData.width, listBgData.height, listBg, listBgData.width, false);
+	printText(Lang::get("sort"), 4, 0, false);
 
 	// Print items
 	for(unsigned i=0;i<sortTypes.size();i++) {
-		printText(Lang::get("filter")+" "+std::to_string(i+1)+": "+Lang::get(sortText[int(sortTypes[i])]), 4, 17+(i*16), false);
+		printText(Lang::get("filter")+" "+std::to_string(i+1)+": "+Lang::get(sortText[int(sortTypes[i])]), 4, 16+(i*16), false);
 	}
 
 	drawImage(253-boxButtonData.width, 189-boxButtonData.height, boxButtonData.width, boxButtonData.height, boxButton, false);
@@ -268,7 +265,7 @@ void sortMenu(bool top) {
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
 			for(unsigned i=0;i<sortTypes.size();i++) {
-				if(touch.px <= 4+getTextWidth(Lang::get("filter")+" "+std::to_string(selection+1)+": "+Lang::get(sortText[int(sortTypes[selection])])) && touch.py >= 15+(i*16) && touch.py <= 15+((i+1)*16)) {
+				if(touch.px <= 4+getTextWidth(Lang::get("filter")+" "+std::to_string(selection+1)+": "+Lang::get(sortText[int(sortTypes[selection])])) && touch.py >= 16+(i*16) && touch.py <= 16+((i+1)*16)) {
 					selection = i;
 					optionSelected = true;
 					break;

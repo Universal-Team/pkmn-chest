@@ -24,12 +24,9 @@ int getMaxItem(int pouchIndex) {
 
 void drawBag(Pouch pouch, int maxItem, int screenPos, bool rightSide) {
 	// Clear screen
-	if(sdFound())	drawImageSegmentDMA(0, 0, rightSide ? summaryBgData.width : 169, summaryBgData.height, summaryBg, summaryBgData.width, false);
-	else {
-		drawRectangle(0, 0, rightSide ? 256 : 169, 192, DARKERER_GRAY, DARKER_GRAY, false);
-	}
+	drawImageSegmentDMA(0, 0, rightSide ? listBgData.width : 169, listBgData.height, listBg, listBgData.width, false);
 
-	printText(save->pouchName(pouch), 4, 1, false);
+	printText(save->pouchName(pouch), 4, 0, false);
 
 	if(rightSide) {
 		// Draw search icon
@@ -44,8 +41,8 @@ void drawBag(Pouch pouch, int maxItem, int screenPos, bool rightSide) {
 
 	// Print items
 	for(int i=0;i<std::min(entriesPerScreen, maxItem+1);i++) {
-		printTextMaxW(Lang::items[save->item(pouch, screenPos+i)->id()], 127, 1, 30, 17+(i*16), false);
-		printText(std::to_string(save->item(pouch, screenPos+i)->count()), 4, 17+(i*16), false);
+		printTextMaxW(Lang::items[save->item(pouch, screenPos+i)->id()], 127, 1, 30, 16+(i*16), false);
+		printText(std::to_string(save->item(pouch, screenPos+i)->count()), 4, 16+(i*16), false);
 	}
 }
 
@@ -129,12 +126,12 @@ void editBag(void) {
 				goto search;
 			}
 			for(int i=0;i<entriesPerScreen;i++) {
-				if(touch.px >= 4 && touch.px <= 4+getTextWidth(std::to_string(save->item(save->pouches()[selectedPouch].first, selection)->count())) && touch.py >= 17+(i*16) && touch.py <= 17+((i+1)*16)) {
+				if(touch.px >= 4 && touch.px <= 4+getTextWidth(std::to_string(save->item(save->pouches()[selectedPouch].first, selection)->count())) && touch.py >= 16+(i*16) && touch.py <= 16+((i+1)*16)) {
 					column = 0;
 					selection = i;
 					optionSelected = true;
 					break;
-				} else if(touch.px >= 4 && touch.px <= 30+getTextWidth(Lang::items[save->item(save->pouches()[selectedPouch].first, selection)->id()]) && touch.py >= 17+(i*16) && touch.py <= 17+((i+1)*16)) {
+				} else if(touch.px >= 4 && touch.px <= 30+getTextWidth(Lang::items[save->item(save->pouches()[selectedPouch].first, selection)->id()]) && touch.py >= 16+(i*16) && touch.py <= 16+((i+1)*16)) {
 					column = 1;
 					selection = i;
 					optionSelected = true;
