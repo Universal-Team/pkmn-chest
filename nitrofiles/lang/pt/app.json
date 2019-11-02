@@ -105,11 +105,13 @@
 	"tmHm": "TMs e HMs",
 	"total": "Total",
 	"trainerID": "ID do Treinador",
+	"trainerInfo": "Trainer Info",
 	"twinleafTown": "Aldeia da Folha Verde",
 	"type1": "Tipo 1",
 	"type2": "Tipo 2",
 	"unknown": "Desconhecido",
 	"unlimited": "Ilimitadas",
 	"wallpaper": "Imagem de fundo",
+	"wrongSaveSize": "Warning: The size of the save\ndoesn't match the size of the\ncurrent gamecard! Write stopped.",
 	"yes": "Sim"
 }
