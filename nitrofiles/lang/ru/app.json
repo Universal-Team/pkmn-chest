@@ -105,11 +105,13 @@
 	"tmHm": "TMs & HMs",
 	"total": "всего",
 	"trainerID": "тренера ID",
+	"trainerInfo": "Trainer Info",
 	"twinleafTown": "Twinleaf Town",
 	"type1": "Type 1",
 	"type2": "Type 2",
 	"unknown": "Unknown",
 	"unlimited": "неограниченно",
 	"wallpaper": "Wallpaper",
+	"wrongSaveSize": "Warning: The size of the save\ndoesn't match the size of the\ncurrent gamecard! Write stopped.",
 	"yes": "да"
 }
