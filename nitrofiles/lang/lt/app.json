@@ -105,13 +105,13 @@
 	"tmHm": "TM ir HM",
 	"total": "Viso",
 	"trainerID": "Trenerio ID",
-	"trainerInfo": "Trainer Info",
+	"trainerInfo": "Trenerio info",
 	"twinleafTown": "Twinleaf miestas",
 	"type1": "Tipas 1",
 	"type2": "Tipas 2",
 	"unknown": "Nežinoma",
 	"unlimited": "Neribotos",
 	"wallpaper": "Fonas",
-	"wrongSaveSize": "Warning: The size of the save\ndoesn't match the size of the\ncurrent gamecard! Write stopped.",
+	"wrongSaveSize": "Įspėjimas: išsaugoto žaidimo dydis neatitinka dabartinės žaidimo kasetės dydžio! Rašymas sustabdytas.",
 	"yes": "Taip"
 }
