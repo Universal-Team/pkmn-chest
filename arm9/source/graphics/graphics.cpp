@@ -565,10 +565,10 @@ void printTextCenteredTintedMaxW(std::string text, double w, double scaleY, u16 
 void printTextCenteredTintedMaxW(std::u16string text, double w, double scaleY, u16 color, int xOffset, int yPos, bool top, bool invert) {
 	int i = 0;
 	while(text.find('\n') != text.npos) {
-		printTextTintedScaled(text.substr(0, text.find('\n')), std::min(1.0, w/getTextWidth(text.substr(0, text.find('\n')))), scaleY, color, ((256-getTextWidthMaxW(text.substr(0, text.find('\n')), w))/2)+xOffset, yPos, top, invert);
+		printTextTintedScaled(text.substr(0, text.find('\n')), std::min(1.0, w/getTextWidth(text.substr(0, text.find('\n')))), scaleY, color, ((256-getTextWidthMaxW(text.substr(0, text.find('\n')), w))/2)+xOffset, yPos+(i++*(16*scaleY)), top, invert);
 		text = text.substr(text.find('\n')+1);
 	}
-	printTextTintedScaled(text.substr(0, text.find('\n')), std::min(1.0, w/getTextWidth(text.substr(0, text.find('\n')))), scaleY, color, ((256-getTextWidthMaxW(text.substr(0, text.find('\n')), w))/2)+xOffset, yPos, top, invert);
+	printTextTintedScaled(text.substr(0, text.find('\n')), std::min(1.0, w/getTextWidth(text.substr(0, text.find('\n')))), scaleY, color, ((256-getTextWidthMaxW(text.substr(0, text.find('\n')), w))/2)+xOffset, yPos+(i*(16*scaleY)), top, invert);
 }
 void printTextTintedMaxW(std::string text, double w, double scaleY, u16 color, int xPos, int yPos, bool top, bool invert) { printTextTintedScaled(StringUtils::UTF8toUTF16(text), std::min(1.0, w/getTextWidth(text)), scaleY, color, xPos, yPos, top, invert); }
 void printTextTintedMaxW(std::u16string text, double w,  double scaleY, u16 color, int xPos, int yPos, bool top, bool invert) { printTextTintedScaled(text, std::min(1.0, w/getTextWidth(text)), scaleY, color, xPos, yPos, top, invert); }
@@ -581,10 +581,10 @@ void printTextCenteredTintedScaled(std::string text, double scaleX, double scale
 void printTextCenteredTintedScaled(std::u16string text, double scaleX, double scaleY, u16 color, int xOffset, int yPos, bool top, bool invert) {
 	int i = 0;
 	while(text.find('\n') != text.npos) {
-		printTextTintedScaled(text.substr(0, text.find('\n')), scaleX, scaleY, color, ((256-getTextWidth(text.substr(0, text.find('\n'))))/2)+xOffset, yPos, top, invert);
+		printTextTintedScaled(text.substr(0, text.find('\n')), scaleX, scaleY, color, ((256-getTextWidth(text.substr(0, text.find('\n'))))/2)+xOffset, yPos+(i++*(16*scaleY)), top, invert);
 		text = text.substr(text.find('\n')+1);
 	}
-	printTextTintedScaled(text.substr(0, text.find('\n')), scaleX, scaleY, color, ((256-getTextWidth(text.substr(0, text.find('\n'))))/2)+xOffset, yPos, top, invert);
+	printTextTintedScaled(text.substr(0, text.find('\n')), scaleX, scaleY, color, ((256-getTextWidth(text.substr(0, text.find('\n'))))/2)+xOffset, yPos+(i*(16*scaleY)), top, invert);
 }
 void printTextTintedScaled(std::string text, double scaleX, double scaleY, u16 color, int xPos, int yPos, bool top, bool invert) { printTextTintedScaled(StringUtils::UTF8toUTF16(text), scaleX, scaleY, color, xPos, yPos, top, invert); }
 

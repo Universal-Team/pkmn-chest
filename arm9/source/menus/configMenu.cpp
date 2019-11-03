@@ -32,7 +32,7 @@ std::vector<Label> textChestFile {
 	{12, 80, "change"}, // Change
 };
 
-std::vector<std::string> songs = {"off", "center1", "center4", "center5", "elmLab", "oakLab", "gameCorner", "twinleafTown"};
+std::vector<std::string> songs = {"off", "center1", "center4", "center5", "twinleafTown", "elmLab", "oakLab", "gameCorner"};
 
 std::vector<std::string> optionsText;
 
