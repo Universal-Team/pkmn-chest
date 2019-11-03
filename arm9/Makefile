@@ -43,7 +43,7 @@ MUSIC		:=	../sound
 #---------------------------------------------------------------------------------
 ARCH	:=	-mthumb-interwork
 
-CFLAGS	:=	-g -Wall -O2\
+CFLAGS	:=	-g -Wall -Wno-psabi -O2\
  			-march=armv5te -mtune=arm946e-s -fomit-frame-pointer\
 			-ffast-math \
 			-DVER_NUMBER=\"$(GIT_VER)\" \
