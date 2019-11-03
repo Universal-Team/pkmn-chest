@@ -14,6 +14,8 @@
 #include "xMenu.hpp"
 #include "sound.hpp"
 
+#define getChestFile() (Config::getString("chestFile") == "" ? "pkmn-chest_1" : Config::getString("chestFile"))
+
 std::vector<Label> textCP1Labels {
 	{4,  16,      "chestFile"}, // Chest file
 	{4,  32,      "chestSize"}, // Chest size
@@ -106,7 +108,7 @@ void chestFileMenu(void) {
 					break;
 				} case 1: { // Rename
 					std::string str = Input::getLine();
-					if(str != "")	Banks::renameBank(Config::getString("chestFile"), str);
+					if(str != "")	Banks::renameBank(getChestFile(), str);
 					Config::setString("chestFile", str);
 					Config::save();
 					break;
@@ -117,7 +119,7 @@ void chestFileMenu(void) {
 					std::vector<std::string> extList;
 					extList.push_back(".bnk");
 					std::string str = browseForFile(extList, false);
-					if(str.substr(0, str.find_last_of(".")) != Config::getString("chestFile") && str != "")	Banks::removeBank(str.substr(0, str.find_last_of(".")));
+					if(str.substr(0, str.find_last_of(".")) != getChestFile() && str != "")	Banks::removeBank(str.substr(0, str.find_last_of(".")));
 					else if(str != "") {
 						drawRectangle(20, 20, 216, 152, RGB::DARK_RED, false);
 						printTextCentered("You can not delete", 0, 24, false);
@@ -133,7 +135,7 @@ void chestFileMenu(void) {
 					std::vector<std::string> extList;
 					extList.push_back(".bnk");
 					std::string str = browseForFile(extList, false);
-					if(str != Config::getString("chestFile") && str != "") {
+					if(str != getChestFile() && str != "") {
 						savePrompt();
 						Config::setString("chestFile", str.substr(0, str.find_last_of(".")));
 						Config::save();
@@ -238,7 +240,9 @@ void configMenu(void) {
 					break;
 				} case 1: { // Chest Size
 					int num = Input::getInt(sdFound() ? 500 : 50);
-					if(num > 0)	Banks::setBankSize(Config::getString("chestFile"), num);
+					if(num > 0) {
+						Banks::setBankSize(getChestFile(), num);
+					}
 					break;
 				} case 2: { // Language
 					if(pressed & KEY_LEFT) {
