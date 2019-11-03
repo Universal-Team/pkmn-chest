@@ -66,8 +66,8 @@ int main(int argc, char **argv) {
 	showLoadingLogo();
 
 	loadFont();
-	Config::loadConfig();
-	Lang::load(Config::lang);
+	Config::load();
+	Lang::load(Config::getLang("lang"));
 	printTextCentered(Lang::get("loading"), 0, 32, false);
 
 	Sound::init();

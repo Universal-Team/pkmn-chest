@@ -98,17 +98,17 @@ void chestFileMenu(void) {
 					std::string str = Input::getLine();
 					if(str != "") {
 						savePrompt();
-						Config::chestFile = str;
-						Config::saveConfig();
+						Config::setString("chestFile", str);
+						Config::save();
 						Banks::loadBank(str);
 					}
 					drawBox(true);
 					break;
 				} case 1: { // Rename
 					std::string str = Input::getLine();
-					if(str != "")	Banks::renameBank(Config::chestFile, str);
-					Config::chestFile = str;
-					Config::saveConfig();
+					if(str != "")	Banks::renameBank(Config::getString("chestFile"), str);
+					Config::setString("chestFile", str);
+					Config::save();
 					break;
 				} case 2: { // Delete
 					char path[PATH_MAX];
@@ -117,7 +117,7 @@ void chestFileMenu(void) {
 					std::vector<std::string> extList;
 					extList.push_back(".bnk");
 					std::string str = browseForFile(extList, false);
-					if(str.substr(0, str.find_last_of(".")) != Config::chestFile && str != "")	Banks::removeBank(str.substr(0, str.find_last_of(".")));
+					if(str.substr(0, str.find_last_of(".")) != Config::getString("chestFile") && str != "")	Banks::removeBank(str.substr(0, str.find_last_of(".")));
 					else if(str != "") {
 						drawRectangle(20, 20, 216, 152, RGB::DARK_RED, false);
 						printTextCentered("You can not delete", 0, 24, false);
@@ -133,10 +133,10 @@ void chestFileMenu(void) {
 					std::vector<std::string> extList;
 					extList.push_back(".bnk");
 					std::string str = browseForFile(extList, false);
-					if(str != Config::chestFile && str != "") {
+					if(str != Config::getString("chestFile") && str != "") {
 						savePrompt();
-						Config::chestFile = str.substr(0, str.find_last_of("."));
-						Config::saveConfig();
+						Config::setString("chestFile", str.substr(0, str.find_last_of(".")));
+						Config::save();
 						Banks::init();
 					}
 					chdir(path);
@@ -165,15 +165,15 @@ void drawConfigMenu(void) {
 	// Set variable text
 	optionsText[0] = Banks::bank->name();
 	optionsText[1] = std::to_string(Banks::bank->boxes());
-	optionsText[2] = langNames[Config::lang];
-	if(Config::backupAmount == 0)
+	optionsText[2] = langNames[Config::getLang("lang")];
+	if(Config::getInt("backupAmount") == 0)
 		optionsText[3] = Lang::get("unlimited");
 	else
-		optionsText[3] = std::to_string(Config::backupAmount);
-	optionsText[4] = Lang::get(songs[Config::music]);
-	optionsText[5] = Config::playSfx ? Lang::get("yes") : Lang::get("no");
-	optionsText[6] = Config::keyboardDirections ? "4" : "8";
-	optionsText[7] = Config::keyboardGroupAmount ? "ABCD" : "ABC.";
+		optionsText[3] = std::to_string(Config::getInt("backupAmount"));
+	optionsText[4] = Lang::get(songs[Config::getInt("music")]);
+	optionsText[5] = Config::getBool("playSfx") ? Lang::get("yes") : Lang::get("no");
+	optionsText[6] = Config::getInt("keyboardDirections") ? "4" : "8";
+	optionsText[7] = Config::getInt("keyboardGroupAmount") ? "ABCD" : "ABC.";
 
 	// Print text
 	for(unsigned i=0;i<textCP1Labels.size();i++) {
@@ -212,7 +212,7 @@ void configMenu(void) {
 			optionSelected = true;
 		} else if(pressed & KEY_B) {
 			Sound::play(Sound::back);
-			Config::saveConfig();
+			Config::save();
 			setSpriteVisibility(arrowID, false, false);
 			updateOam();
 			return;
@@ -238,48 +238,48 @@ void configMenu(void) {
 					break;
 				} case 1: { // Chest Size
 					int num = Input::getInt(sdFound() ? 500 : 50);
-					if(num > 0)	Banks::setBankSize(Config::chestFile, num);
+					if(num > 0)	Banks::setBankSize(Config::getString("chestFile"), num);
 					break;
 				} case 2: { // Language
 					if(pressed & KEY_LEFT) {
-						if(Config::lang > 0)	Config::lang--;
-						else	Config::lang = (sizeof(langNames)/sizeof(langNames[0]))-1;
+						if(Config::getLang("lang") > 0)	Config::setInt("lang", Config::getLang("lang")-1);
+						else	Config::setInt("lang", (sizeof(langNames)/sizeof(langNames[0]))-1);
 					} else {
-						if(Config::lang < (int)(sizeof(langNames)/sizeof(langNames[0]))-1)	Config::lang++;
-						else	Config::lang = 0;
+						if(Config::getLang("lang") < (int)(sizeof(langNames)/sizeof(langNames[0]))-1)	Config::setInt("lang", Config::getLang("lang")+1);
+						else	Config::setInt("lang", 0);
 					}
-					Lang::load(Config::lang);
+					Lang::load(Config::getLang("lang"));
 					break;
 				} case 3: { // Backup Amount
 					if(pressed & KEY_LEFT) {
-						if(Config::backupAmount > 0)	Config::backupAmount--;
+						if(Config::getInt("backupAmount") > 0)	Config::setInt("backupAmount", Config::getInt("backupAmount")-1);
 					} else if(pressed & KEY_RIGHT) {
-						Config::backupAmount++;
+						Config::setInt("backupAmount", Config::getInt("backupAmount")+1);
 					} else {
 						int num = Input::getInt(9);
 						if(num != -1) {
-							Config::backupAmount = num;
+							Config::setInt("backupAmount", num);
 						}
 					}
 					break;
 				} case 4: { // Music
 					if(pressed & KEY_LEFT) {
-						if(Config::music > 0)	Config::music--;
-						else	Config::music = 7;
+						if(Config::getInt("music") > 0)	Config::setInt("music", Config::getInt("music")-1);
+						else	Config::setInt("music", songs.size()-1);
 					} else {
-						if(Config::music < 7)	Config::music++;
-						else	Config::music = 0;
+						if(Config::getInt("music") < (int)songs.size()-1)	Config::setInt("music", Config::getInt("music")+1);
+						else	Config::setInt("music", 0);
 					}
-					Sound::playBgm(Config::music);
+					Sound::playBgm(Config::getInt("music"));
 					break;
 				} case 5: { // Sound FX
-					Config::playSfx = !Config::playSfx;
+					Config::setBool("playSfx", !Config::getBool("playSfx"));
 					break;
 				} case 6: { // D-Pad typing directions
-					Config::keyboardDirections = !Config::keyboardDirections;
+					Config::setBool("keyboardDirections", !Config::getBool("keyboardDirections"));
 					break;
 				} case 7: { // D-Pad typing grounds
-					Config::keyboardGroupAmount = !Config::keyboardGroupAmount;
+					Config::setBool("keyboardGroupAmount", !Config::getBool("keyboardGroupAmount"));
 					break;
 				}
 			}

@@ -59,7 +59,7 @@ std::vector<std::string> originLabels = {"metLevel", "metYear", "metMonth", "met
 static constexpr Stat statOrder[] = {Stat::HP, Stat::ATK, Stat::DEF, Stat::SPATK, Stat::SPDEF, Stat::SPD};
 
 int pkmLang(void) {
-	switch(Config::lang) {
+	switch(Config::getLang("lang")) {
 		case 0:
 			return 5; // German
 		case 1:

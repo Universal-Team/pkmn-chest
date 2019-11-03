@@ -289,7 +289,7 @@ void processInputABC(u16 held, unsigned maxLength) {
 		prevHeld = keysHeld();
 
 		int direction = -1;
-		if(Config::keyboardDirections) {
+		if(Config::getInt("keyboardDirections")) {
 			switch(keysHeld() & (KEY_UP | KEY_DOWN | KEY_LEFT | KEY_RIGHT)) {
 				case KEY_UP:
 					direction = 0;
@@ -336,9 +336,9 @@ void processInputABC(u16 held, unsigned maxLength) {
 		if(direction != -1) {
 			bool upper = keysHeld() & KEY_R;
 			std::u16string *character;
-				if(Config::keyboardDirections) character = &(Config::keyboardGroupAmount ? keysDPadABC4 : keysDPadABC3)[direction + ((keysHeld() & KEY_L) ? 4 : 0)];
-				else	character = (keysHeld() & KEY_L) ? &keysDPadABCSymbols[direction] : (Config::keyboardGroupAmount ? &keysDPadABC4[direction] : &keysDPadABC3[direction]);
-			std::pair<int, int> *pos = (Config::keyboardDirections ? &keysDPad4[direction] : &keysDPad8[direction]);
+				if(Config::getInt("keyboardDirections")) character = &(Config::getInt("keyboardGroupAmount") ? keysDPadABC4 : keysDPadABC3)[direction + ((keysHeld() & KEY_L) ? 4 : 0)];
+				else	character = (keysHeld() & KEY_L) ? &keysDPadABCSymbols[direction] : (Config::getInt("keyboardGroupAmount") ? &keysDPadABC4[direction] : &keysDPadABC3[direction]);
+			std::pair<int, int> *pos = (Config::getInt("keyboardDirections") ? &keysDPad4[direction] : &keysDPad8[direction]);
 
 			fillSpriteImageScaled(keyboardSpriteID, false, 0, 0, keyboardKeyData.width, keyboardKeyData.height, 2, keyboardKey);
 			setSpritePosition(keyboardSpriteID, false, pos->first, pos->second);
@@ -372,8 +372,8 @@ void processInputABC(u16 held, unsigned maxLength) {
 
 			if(direction != -1 && key != -1 && key < (int)keysDPadABC3[direction].size() && string.size() < maxLength) {
 				std::u16string character;
-				if(Config::keyboardDirections) character = (Config::keyboardGroupAmount ? keysDPadABC4 : keysDPadABC3)[direction + ((keysHeld() & KEY_L) ? 4 : 0)];
-				else	character = (keysHeld() & KEY_L) ? keysDPadABCSymbols[direction] : (Config::keyboardGroupAmount ? keysDPadABC4[direction] : keysDPadABC3[direction]);
+				if(Config::getInt("keyboardDirections")) character = (Config::getInt("keyboardGroupAmount") ? keysDPadABC4 : keysDPadABC3)[direction + ((keysHeld() & KEY_L) ? 4 : 0)];
+				else	character = (keysHeld() & KEY_L) ? keysDPadABCSymbols[direction] : (Config::getInt("keyboardGroupAmount") ? keysDPadABC4[direction] : keysDPadABC3[direction]);
 
 				char16_t c = character[key];
 				string += (keysHeld() & KEY_R) ? toupper(c) : c;
@@ -1008,7 +1008,7 @@ std::string Input::getLine() { return Input::getLine(-1); }
 
 std::string Input::getLine(unsigned maxLength) {
 	clearVars();
-	drawKeyboard(Config::keyboardLayout);
+	drawKeyboard(Config::getInt("keyboardLayout"));
 	int held, pressed, cursorBlink = 30;
 	touchPosition touch;
 	while(1) {
@@ -1069,9 +1069,10 @@ std::string Input::getLine(unsigned maxLength) {
 		}
 		if(held & KEY_START || enter) {
 			Sound::play(Sound::click);
-			Config::keyboardLayout = loadedLayout;
-			if(loadedLayout < 3)	Config::keyboardXPos = xPos;
-			Config::saveConfig();
+			int prevLayout = Config::getInt("keyboardLayout"), prevXPos = Config::getInt("keyboardXPos");
+			Config::setInt("keyboardLayout", loadedLayout);
+			if(loadedLayout < 3)	Config::setInt("keyboardXPos", xPos);
+			if(prevLayout != loadedLayout || prevXPos != xPos)	Config::save();
 			break;
 		} else if (pressed & KEY_SELECT) {
 			if(loadedLayout < 4)	drawKeyboard(loadedLayout+1);

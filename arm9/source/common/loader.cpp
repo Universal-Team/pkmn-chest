@@ -50,14 +50,14 @@ void saveChanges(std::string savePath) {
 
 	fcopy(savePath.c_str(), backupPath);
 
-	if(Config::backupAmount > 0) { // 0 = unlimited
+	if(Config::getInt("backupAmount") > 0) { // 0 = unlimited
 		char savDir[PATH_MAX];
 		getcwd(savDir, PATH_MAX);
 		chdir(backupDir);
 		std::vector<DirEntry> dirContents;
 		getDirectoryContents(dirContents, {"bak"});
 
-		if((int)dirContents.size() > Config::backupAmount)	remove(dirContents[1].name.c_str()); // index 0 is '..'
+		if((int)dirContents.size() > Config::getInt("backupAmount"))	remove(dirContents[1].name.c_str()); // index 0 is '..'
 
 		chdir(savDir);
 	}

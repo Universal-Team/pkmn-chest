@@ -6,7 +6,7 @@
 
 std::vector<std::string> Lang::abilities, Lang::games, Lang::items, Lang::locations4, Lang::locations5, Lang::moves, Lang::natures, Lang::species;
 std::string langs[] = {"de", "en", "es", "fr", "it", "lt", "pt", "ru", "jp", "ko"};
-nlohmann::json appJson;
+nlohmann::json langJson;
 
 void loadToVector(std::string path, std::vector<std::string> &vec) {
 	char* line = NULL;
@@ -41,14 +41,14 @@ void Lang::load(int lang) {
 	typesData = loadPng("nitro:/lang/"+langs[tempLang]+"/types.png", types);
 
 	// Load app strings
-	FILE* values = fopen(("nitro:/lang/"+langs[lang]+"/app.json").c_str(), "rt");
-	if(values)	appJson = nlohmann::json::parse(values, nullptr, false);
-	fclose(values);
+	FILE* file = fopen(("nitro:/lang/"+langs[lang]+"/app.json").c_str(), "rt");
+	if(file)	langJson = nlohmann::json::parse(file, nullptr, false);
+	fclose(file);
 }
 
 std::string Lang::get(const std::string &key) {
-	if(!appJson.contains(key)) {
+	if(!langJson.contains(key)) {
 		return "MISSING: " + key;
 	}
-	return appJson.at(key).get_ref<const std::string&>();
+	return langJson.at(key).get_ref<const std::string&>();
 }

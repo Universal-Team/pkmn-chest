@@ -1,16 +1,13 @@
 #include "config.hpp"
 #include <nds/system.h>
 
-#include "inifile.hpp"
 #include "json.hpp"
 #include "flashcard.hpp"
 #include "lang.hpp"
 
-std::string Config::chestFile;
-bool Config::keyboardDirections, Config::keyboardGroupAmount, Config::playSfx;
-int Config::backupAmount, Config::keyboardLayout, Config::keyboardXPos, Config::lang, Config::music;
+nlohmann::json configJson;
 
-int sysLang() {
+Lang::Language sysLang() {
 	switch(PersonalData->language) {
 		case 0:
 			return Lang::jp;
@@ -26,29 +23,51 @@ int sysLang() {
 	}
 }
 
-void Config::loadConfig() {
-	CIniFile ini(sdFound() ? "sd:/_nds/pkmn-chest/config.ini" : "fat:/_nds/pkmn-chest/config.ini");
-	Config::backupAmount = ini.GetInt("backup", "amount", 0);
-	Config::chestFile = ini.GetString("chest", "file", "pkmn-chest_1");
-	Config::keyboardLayout = ini.GetInt("keyboard", "layout", 0);
-	Config::keyboardDirections = ini.GetInt("keyboard", "directions", 0);
-	Config::keyboardGroupAmount = ini.GetInt("keyboard", "groupAmount", 0);
-	Config::keyboardXPos = ini.GetInt("keyboard", "xPos", 0);
-	Config::lang = ini.GetInt("language", "lang", sysLang());
-	Config::music = ini.GetInt("sound", "music", 0);
-	Config::playSfx = ini.GetInt("sound", "sfx", 0);
+void Config::load() {
+	FILE* file = fopen(sdFound() ? "sd:/_nds/pkmn-chest/config.json" : "fat:/_nds/pkmn-chest/config.json", "r");
+	if(file)	configJson = nlohmann::json::parse(file, nullptr, false);
+	fclose(file);
 }
 
-void Config::saveConfig() {
-	CIniFile ini(sdFound() ? "sd:/_nds/pkmn-chest/config.ini" : "fat:/_nds/pkmn-chest/config.ini");
-	ini.SetInt("backup", "amount", Config::backupAmount);
-	ini.SetString("chest", "file", Config::chestFile);
-	ini.SetInt("keyboard", "layout", Config::keyboardLayout);
-	ini.SetInt("keyboard", "xPos", Config::keyboardXPos);
-	ini.SetInt("keyboard", "directions", Config::keyboardDirections);
-	ini.SetInt("keyboard", "groupAmount", Config::keyboardGroupAmount);
-	ini.SetInt("language", "lang", Config::lang);
-	ini.SetInt("sound", "music", Config::music);
-	ini.SetInt("sound", "sfx", Config::playSfx);
-	ini.SaveIniFile(sdFound() ? "sd:/_nds/pkmn-chest/config.ini" : "fat:/_nds/pkmn-chest/config.ini");
+void Config::save() {
+	FILE* file = fopen(sdFound() ? "sd:/_nds/pkmn-chest/config.json" : "fat:/_nds/pkmn-chest/config.json", "w");
+	if(file)	fwrite(configJson.dump(1, '\t').c_str(), 1, configJson.dump(1, '\t').size(), file);
+	fclose(file);
+}
+
+bool Config::getBool(const std::string &key) {
+	if(!configJson.contains(key)) {
+		return false;
+	}
+	return configJson.at(key).get_ref<const bool&>();
+}
+void Config::setBool(const std::string &key, bool v) {
+	configJson[key] = v;
+}
+
+int Config::getInt(const std::string &key) {
+	if(!configJson.contains(key)) {
+		return 0;
+	}
+	return configJson.at(key).get_ref<const int64_t&>();
+}
+void Config::setInt(const std::string &key, int v) {
+	configJson[key] = v;
+}
+
+std::string Config::getString(const std::string &key) {
+	if(!configJson.contains(key)) {
+		return "";
+	}
+	return configJson.at(key).get_ref<const std::string&>();
+}
+void Config::setString(const std::string &key, const std::string &v) {
+	configJson[key] = v;
+}
+
+int Config::getLang(const std::string &key) {
+	if(!configJson.contains(key)) {
+		return sysLang();
+	}
+	return configJson.at(key).get_ref<const int64_t&>();
 }

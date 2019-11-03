@@ -38,17 +38,17 @@ void Sound::init(void) {
 		0x80,	// panning
 	};
 
-	if(Config::music == 1)		mmStart(MOD_BGMCENTER1, MM_PLAY_LOOP);
-	else if(Config::music == 2)	mmStart(MOD_BGMCENTER4, MM_PLAY_LOOP);
-	else if(Config::music == 3)	mmStart(MOD_BGMCENTER5, MM_PLAY_LOOP);
-	else if(Config::music == 4)	mmStart(MOD_BGMTWINLEAFTOWN, MM_PLAY_LOOP);
-	else if(Config::music == 5)	mmStart(MOD_BGMELM, MM_PLAY_LOOP);
-	else if(Config::music == 6)	mmStart(MOD_BGMOAK, MM_PLAY_LOOP);
-	else if(Config::music == 7)	mmStart(MOD_BGMGAMECORNER, MM_PLAY_LOOP);
+	if(Config::getInt("music") == 1)		mmStart(MOD_BGMCENTER1, MM_PLAY_LOOP);
+	else if(Config::getInt("music") == 2)	mmStart(MOD_BGMCENTER4, MM_PLAY_LOOP);
+	else if(Config::getInt("music") == 3)	mmStart(MOD_BGMCENTER5, MM_PLAY_LOOP);
+	else if(Config::getInt("music") == 4)	mmStart(MOD_BGMTWINLEAFTOWN, MM_PLAY_LOOP);
+	else if(Config::getInt("music") == 5)	mmStart(MOD_BGMELM, MM_PLAY_LOOP);
+	else if(Config::getInt("music") == 6)	mmStart(MOD_BGMOAK, MM_PLAY_LOOP);
+	else if(Config::getInt("music") == 7)	mmStart(MOD_BGMGAMECORNER, MM_PLAY_LOOP);
 }
 
 void Sound::play(mm_sound_effect &sound) {
-	if(Config::playSfx)	mmEffectEx(&sound);
+	if(Config::getBool("playSfx"))	mmEffectEx(&sound);
 }
 
 void Sound::playBgm(int song) {

@@ -86,7 +86,8 @@ int Banks::init() {
 	if(g_banks.is_discarded())
 		return -2;
 
-	auto i = g_banks.find(Config::chestFile);
+	std::string chestFile = Config::getString("chestFile") == "" ? "pkmn-chest_1" : Config::getString("chestFile");
+	auto i = g_banks.find(chestFile);
 	if(i == g_banks.end()) {
 		i = g_banks.begin();
 	}
