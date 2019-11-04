@@ -21,7 +21,7 @@ void loadLoadingLogo(void) {
 	logoGfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_Bmp);
 	
 	Image logo;
-	logo = loadImage("nitro:/graphics/icon.grf");
+	logo = loadImage("nitro:/graphics/icon.gfx");
 	if(!(rand() % 8192)) { // Full odds shiny chest ;P
 		for(unsigned i=0;i<logo.palette.size();i++) {
 			if(logo.palette[i] == 0x801F || logo.palette[i] == 0x8C9F || logo.palette[i] == 0x8018)	logo.palette[i] |= RGB::BLUE & GRAY;

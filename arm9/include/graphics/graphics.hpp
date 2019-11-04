@@ -10,6 +10,8 @@
 #define BGR15(b, g, r)   ((b)|((g)<<5)|((r)<<10))
 
 struct Image {
+	u16 width;
+	u16 height;
 	std::vector<u8> bitmap;
 	std::vector<u16> palette;
 };
@@ -33,8 +35,8 @@ void initGraphics(void);
 void loadFont(void);
 
 /*
- * Loads a .grf image into an Image struct
- * std::string path is the path to the .grf file
+ * Loads a .gfx image into an Image struct
+ * std::string path is the path to the .gfx file
  */
 Image loadImage(std::string path);
 

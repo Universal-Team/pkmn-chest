@@ -235,10 +235,10 @@ void drawKeyboard(int layout) {
 		std::pair<int, int> prevData = {keyboardWidth(), keyboardHeight()};
 		int prevLayout = loadedLayout;
 		if(layout < 3) {
-			keyboard = loadImage("nitro:/graphics/keyboardKana.grf");
+			keyboard = loadImage("nitro:/graphics/keyboardKana.gfx");
 			loadedLayout = layout;
 		} else {
-			keyboard = loadImage("nitro:/graphics/keyboardQWE.grf");
+			keyboard = loadImage("nitro:/graphics/keyboardQWE.gfx");
 			loadedLayout = layout;
 			xPos = 0;
 		}

@@ -1,7 +1,7 @@
 */build
 *.nds
 *.elf
-*.grf
+*.gfx
 
 *.DS_Store
 .vscode/ipch

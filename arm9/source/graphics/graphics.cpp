@@ -167,22 +167,23 @@ void loadFont(void) {
 
 Image loadImage(std::string path) {
 	Image image;
+	drawRectangle(0, 0, 256, 20, 0x8000, true);
+	printText(path, 0, 0, true);
 
 	FILE *file = fopen(path.c_str(), "rb");
 	if(file) {
-		fseek(file, 0x28, SEEK_SET);
-		u32 size;
-		fread(&size, 1, 4, file);
-		fseek(file, 4, SEEK_CUR);
-		image.bitmap = std::vector<u8>(size);
-		fread(image.bitmap.data(), 1, size-4, file);
+		drawRectangle(0, 0, 30, 20, 0x8000, true);
+		printText("yes", 0, 0, true);
+		char formatCheck[4];
+		fread(formatCheck, 1, sizeof(formatCheck), file);
+		if(strcmp(formatCheck, ".GFX") == 0)	return image; // Invlaid file
 
-		// PAL
-		fseek(file, 4, SEEK_CUR);
-		fread(&size, 1, 4, file);
-		fseek(file, 4, SEEK_CUR);
-		image.palette = std::vector<u16>(size/2);
-		fread(image.palette.data(), 1, size-4 , file);
+		fread(&image.width, 1, 2, file);
+		fread(&image.height, 1, 2, file);
+		image.bitmap = std::vector<u8>(image.width*image.height);
+		fread(image.bitmap.data(), 1, image.width*image.height, file);
+		image.palette = std::vector<u16>(16);
+		fread(image.palette.data(), 2, 16, file);
 	}
 
 	return image;
@@ -240,7 +241,7 @@ void drawImageSegment(int x, int y, int w, int h, Image &image, int imageWidth, 
 void drawImageSegmentScaled(int x, int y, int w, int h, double scaleX, double scaleY, Image &image, int imageWidth, int xOffset, int yOffset, bool top) {
 	if(scaleX == 1 && scaleY == 1)	drawImageSegment(x, y, w, h, image, imageWidth, xOffset, yOffset, top);
 	else {
-		Image buffer = {{}, image.palette};
+		Image buffer = {(u16)w, (u16)h, {}, image.palette};
 		for(int i=0;i<h;i++) {
 			for(int j=0;j<w;j++) {
 				buffer.bitmap.push_back(image.bitmap[((i+yOffset)*imageWidth)+j+xOffset]);
@@ -369,7 +370,7 @@ void fillSpriteText(int id, bool top, std::string text, u16 color, int xPos, int
 void fillSpriteText(int id, bool top, std::u16string text, u16 color, int xPos, int yPos, bool invert) {
 	for(unsigned c=0;c<text.size();c++) {
 		int t = getCharIndex(text[c]);
-		Image image = {{}, {0x7C1F, (u16)(color & (invert ? 0xBDEF : 0xFBDE)), (u16)(color & (invert ? 0xFBDE : 0xBDEF)), 0x7C1F}};
+		Image image = {tileWidth, tileHeight, {}, {0x7C1F, (u16)(color & (invert ? 0xBDEF : 0xFBDE)), (u16)(color & (invert ? 0xFBDE : 0xBDEF)), 0x7C1F}};
 		for(int i=0;i<tileSize;i++) {
 			image.bitmap.push_back(fontTiles[i+(t*tileSize)]>>6 & 3);
 			image.bitmap.push_back(fontTiles[i+(t*tileSize)]>>4 & 3);
@@ -450,7 +451,7 @@ void printTextTinted(std::u16string text, u16 color, int xPos, int yPos, bool to
 		}
 
 		int t = getCharIndex(text[c]);
-		Image image = {{}, {0x7C1F, (u16)(color & (invert ? 0xBDEF : 0xFBDE)), (u16)(color & (invert ? 0xFBDE : 0xBDEF)), 0x7C1F}};
+		Image image = {tileWidth, tileHeight, {}, {0x7C1F, (u16)(color & (invert ? 0xBDEF : 0xFBDE)), (u16)(color & (invert ? 0xFBDE : 0xBDEF)), 0x7C1F}};
 		for(int i=0;i<tileSize;i++) {
 			image.bitmap.push_back(fontTiles[i+(t*tileSize)]>>6 & 3);
 			image.bitmap.push_back(fontTiles[i+(t*tileSize)]>>4 & 3);
@@ -514,7 +515,7 @@ void printTextTintedScaled(std::u16string text, double scaleX, double scaleY, u1
 		}
 
 		int t = getCharIndex(text[c]);
-		Image image = {{}, {0x7C1F, (u16)(color & (invert ? 0xBDEF : 0xFBDE)), (u16)(color & (invert ? 0xFBDE : 0xBDEF)), 0x7C1F}};
+		Image image = {tileWidth, tileHeight, {}, {0x7C1F, (u16)(color & (invert ? 0xBDEF : 0xFBDE)), (u16)(color & (invert ? 0xFBDE : 0xBDEF)), 0x7C1F}};
 		for(int i=0;i<tileSize;i++) {
 			image.bitmap.push_back(fontTiles[i+(t*tileSize)]>>6 & 3);
 			image.bitmap.push_back(fontTiles[i+(t*tileSize)]>>4 & 3);

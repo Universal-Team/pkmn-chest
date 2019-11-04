@@ -13,16 +13,18 @@ GRAPHICS	:=	graphics graphics/box \
 
 OUT			:=	../nitrofiles
 
-INPUTS		:= $(foreach dir,$(GRAPHICS),$(addprefix $(dir)/,$(notdir $(wildcard $(dir)/*.png))))
-TARGETS		:= $(INPUTS:.png=.grf)
+INPUTS		:= $(foreach dir,$(GRAPHICS),$(addprefix $(dir)/,$(notdir $(wildcard $(dir)/*.bmp))))
+TARGETS		:= $(INPUTS:.bmp=.gfx)
+
+BMP2DS		:= ../resources/bmp2ds
 
 .PHONY: clean all directories
 
-%.grf	:	%.png %.grit
+%.gfx	:	%.bmp
 	@mkdir -p $(OUT)/$(@D)
-	@grit $< -ftr -fh! -o $(OUT)/$@
+	@$(BMP2DS) $< $(OUT)/$@
 
-all	:	$(GRAPHICS) $(TARGETS)
+all	:	$(TARGETS)
 	@echo GRIT files ...
 
 clean:

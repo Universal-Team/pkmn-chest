@@ -157,21 +157,21 @@ void fillArrow(int arrowMode) {
 
 void loadGraphics(void) {
 	// Load images into RAM
-	arrowBlue = loadImage("nitro:/graphics/arrowBlue.grf");
-	arrowRed = loadImage("nitro:/graphics/arrowRed.grf");
-	arrowYellow = loadImage("nitro:/graphics/arrowYellow.grf");
-	ballSheet = loadImage("nitro:/graphics/ballSheet.grf");
-	boxBgTop = loadImage("nitro:/graphics/boxBgTop.grf");
-	boxButton = loadImage("nitro:/graphics/boxButton.grf");
-	infoBox = loadImage("nitro:/graphics/infoBox.grf");
-	keyboardKey = loadImage("nitro:/graphics/keyboardKey.grf");
-	listBg = loadImage("nitro:/graphics/listBg.grf");
-	menuBg = loadImage("nitro:/graphics/menuBg.grf");
-	menuButton = loadImage("nitro:/graphics/menuButton.grf");
-	menuButtonBlue = loadImage("nitro:/graphics/menuButtonBlue.grf");
-	menuIconSheet = loadImage("nitro:/graphics/menuIconSheet.grf");
-	search = loadImage("nitro:/graphics/search.grf");
-	shiny = loadImage("nitro:/graphics/shiny.grf");
+	arrowBlue = loadImage("nitro:/graphics/arrowBlue.gfx");
+	arrowRed = loadImage("nitro:/graphics/arrowRed.gfx");
+	arrowYellow = loadImage("nitro:/graphics/arrowYellow.gfx");
+	ballSheet = loadImage("nitro:/graphics/ballSheet.gfx");
+	boxBgTop = loadImage("nitro:/graphics/boxBgTop.gfx");
+	boxButton = loadImage("nitro:/graphics/boxButton.gfx");
+	infoBox = loadImage("nitro:/graphics/infoBox.gfx");
+	keyboardKey = loadImage("nitro:/graphics/keyboardKey.gfx");
+	listBg = loadImage("nitro:/graphics/listBg.gfx");
+	menuBg = loadImage("nitro:/graphics/menuBg.gfx");
+	menuButton = loadImage("nitro:/graphics/menuButton.gfx");
+	menuButtonBlue = loadImage("nitro:/graphics/menuButtonBlue.gfx");
+	menuIconSheet = loadImage("nitro:/graphics/menuIconSheet.gfx");
+	search = loadImage("nitro:/graphics/search.gfx");
+	shiny = loadImage("nitro:/graphics/shiny.gfx");
 
 	pokemonGRF = fopen("nitro:/graphics/pokemon.combo.grf", "rb");
 
@@ -255,7 +255,7 @@ void drawBoxScreen(void) {
 }
 
 std::string boxBgPath(bool top, int box) {
-	if(top)	return "nitro:/graphics/box/chest.grf";
+	if(top)	return "nitro:/graphics/box/chest.gfx";
 	std::string game;
 	switch(save->game) {
 		default:
@@ -275,7 +275,7 @@ std::string boxBgPath(bool top, int box) {
 			game = box < 16 ? "bw" : "b2w2";
 			break;
 	}
-	return "nitro:/graphics/box/"+game+"/"+std::to_string(box)+".grf";
+	return "nitro:/graphics/box/"+game+"/"+std::to_string(box)+".gfx";
 }
 
 void drawBox(bool top) {
