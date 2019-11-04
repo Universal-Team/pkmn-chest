@@ -18,10 +18,9 @@ TARGETS		:= $(INPUTS:.png=.grf)
 
 .PHONY: clean all directories
 
-%.grf	:	%.png
+%.grf	:	%.png %.grit
 	@mkdir -p $(OUT)/$(@D)
-	# @grit $< -gu8 -gb -gB8 -ftr -fh! -Zl -o $(OUT)/$@
-	@grit $< -gu8 -gb -gB8 -gT7C1F -ftr -fh! -o $(OUT)/$@
+	@grit $< -ftr -fh! -o $(OUT)/$@
 
 all	:	$(GRAPHICS) $(TARGETS)
 	@echo GRIT files ...
