@@ -42,7 +42,7 @@ std::string langNames[] = { "Deutsche", "English", "Español", "Français", "Ita
 
 void drawChestFileMenu(void) {
 	// Draw background
-	drawImageDMA(0, 0, listBgData.width, listBgData.height, listBg, false);
+	; // drawImageDMA(0, 0, listBgData.width, listBgData.height, listBg, false);
 	printText(Lang::get("options"), 4, 0, false);
 
 	// Print text
@@ -157,7 +157,7 @@ void chestFileMenu(void) {
 
 void drawConfigMenu(void) {
 	// Draw background
-	drawImageDMA(0, 0, listBgData.width, listBgData.height, listBg, false);
+	; // drawImageDMA(0, 0, listBgData.width, listBgData.height, listBg, false);
 	printText(Lang::get("options"), 4, 0, false);
 
 	if(optionsText.size() < textCP1Labels.size()) {

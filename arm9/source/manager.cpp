@@ -21,7 +21,7 @@ std::vector<int> menuIconID, partyIconID;
 std::string savePath;
 std::vector<u16> arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, boxBgTop, boxButton, infoBox, keyboardKey, menuBg, menuButton, menuButtonBlue, menuIconSheet, search, shiny, listBg, types;
 ImageData ballSheetData, bankBoxData, boxBgTopData, boxButtonData, infoBoxData, keyboardKeyData, menuBgData, menuButtonData, menuButtonBlueData, menuIconSheetData, searchData, shinyData, listBgData, typesData;
-FILE* pokemonSheet;
+FILE* pokemonGRF;
 std::shared_ptr<PKFilter> filter = std::make_shared<PKFilter>();
 
 struct HeldPkm {
@@ -120,52 +120,25 @@ int getPokemonIndex(int species, int alternativeForm, int gender, bool egg) {
 	return species;
 }
 
-ImageData loadPokemonSprite(int dexNo, std::vector<u16> &imageBuffer) {
-	dexNo *= 714;
-	ImageData imageData = {0, 0};
+Image loadPokemonSprite(int dexNo) {
+	dexNo *= 0x45C;
+	Image image;
 
-	if(pokemonSheet) {
-		// Get width and height on image
-		char buffer[4];
-		fseek(pokemonSheet, dexNo+0x12, SEEK_SET); // Width
-		fread(buffer, 4, 1, pokemonSheet);
-		imageData.width = *(int*)&buffer[0];
-		fseek(pokemonSheet, dexNo+0x16, SEEK_SET); // Height
-		fread(buffer, 4, 1, pokemonSheet);
-		imageData.height = *(int*)&buffer[0];
+	// if(pokemonGRF) {
+	// 	// GFX
+	// 	fseek(pokemonGRF, dexNo+0x28, SEEK_SET);
+	// 	u32 size;
+	// 	fread(&size, 1, 4, pokemonGRF);
+	// 	image.bitmap = std::vector<u8>(size);
+	// 	fread(image.bitmap.data(), 1, size, pokemonGRF);
 
-		// Load palette
-		u32 palTemp[16];
-		u16 pal[16];
-		fseek(pokemonSheet, dexNo+0x89, SEEK_SET);
-		fread(palTemp, 4, 16, pokemonSheet);
-		for(int i=0;i<16;i++) {
-			pal[i] = ((palTemp[i]>>27)&31) | ((palTemp[i]>>19)&31)<<5 | ((palTemp[i]>>11)&31)<<10 | 1<<15;
-		}
-
-		// Load pixels
-		fseek(pokemonSheet, dexNo+0xA, SEEK_SET); // Get pixel start location
-		fseek(pokemonSheet, dexNo+(u8)fgetc(pokemonSheet), SEEK_SET); // Seek to pixel start location
-		u8 bmpImageBuffer[(imageData.width*imageData.height)/2];
-		fread(bmpImageBuffer, 1, sizeof(bmpImageBuffer), pokemonSheet);
-		for(int y=imageData.height-1; y>=0; y--) {
-			u8* src = bmpImageBuffer+y*(imageData.width/2);
-			for(unsigned x=0;x<imageData.width;x+=2) {
-				u8 val = *(src++);
-				if(pal[val>>4] == 0xfc1f) { // First nibble
-					imageBuffer.push_back(0<<15);
-				} else {
-					imageBuffer.push_back(pal[val>>4]);
-				}
-				if(pal[val&0xF] == 0xfc1f) { // Second nibble
-					imageBuffer.push_back(0<<15);
-				} else {
-					imageBuffer.push_back(pal[val&0xF]);
-				}
-			}
-		}
-	}
-	return imageData;
+	// 	// PAL
+	// 	fseek(pokemonGRF, 4, SEEK_CUR);
+	// 	fread(&size, 1, 4, pokemonGRF);
+	// 	image.palette = std::vector<u16>(size/2);
+	// 	fread(image.palette.data(), 1, size, pokemonGRF);
+	// }
+	return image;
 }
 
 void loadGraphics(void) {
@@ -187,7 +160,7 @@ void loadGraphics(void) {
 	if(sdFound()) {
 		menuBgData = loadPng("nitro:/graphics/menuBg.png", menuBg);
 	}
-	pokemonSheet = fopen("nitro:/graphics/pokemonSheet.bmps", "rb");
+	pokemonGRF = fopen("nitro:/graphics/pokemon.combo.grf", "rb");
 
 	// Init Pokémon Sprites
 	for(int i=0;i<30;i++) {
@@ -221,13 +194,13 @@ void loadGraphics(void) {
 
 	// Prepare bottom arrow sprite
 	initSprite(false, SpriteSize_16x16, arrowID);
-	fillSpriteImage(arrowID, false, arrowRed, 16*16);
+	// fillSpriteImage(arrowID, false, arrowRed, 16*16);
 	prepareSprite(arrowID, false, 24, 36, 0);
 	setSpriteVisibility(arrowID, false, false);
 
 	// Prepare top arrow sprite
 	initSprite(true, SpriteSize_16x16, arrowID);
-	fillSpriteImage(arrowID, true, arrowRed, 16*16);
+	// fillSpriteImage(arrowID, true, arrowRed, 16*16);
 	prepareSprite(arrowID, true, 24, 36, 0);
 	setSpriteVisibility(arrowID, true, false);
 
@@ -249,8 +222,8 @@ void loadGraphics(void) {
 
 void drawBoxScreen(void) {
 	// Draws backgrounds
-	drawImageDMA(0, 0, boxBgTopData.width, boxBgTopData.height, boxBgTop, true);
-	drawImage(164, 2, infoBoxData.width, infoBoxData.height-16, infoBox, true);
+	; // drawImageDMA(0, 0, boxBgTopData.width, boxBgTopData.height, boxBgTop, true);
+	; // drawImage(164, 2, infoBoxData.width, infoBoxData.height-16, infoBox, true);
 	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
 	
 
@@ -306,9 +279,8 @@ void drawBox(bool top) {
 		// Fill Pokémon Sprites
 		std::shared_ptr<PKX> tempPkm = (top ? Banks::bank->pkm(currentBankBox, i) : save->pkm(currentSaveBox, i));
 		if(tempPkm->species() != 0) {
-			std::vector<u16> bmp;
-			loadPokemonSprite(getPokemonIndex(tempPkm), bmp);
-			fillSpriteImage(i, top, bmp);
+			Image image = loadPokemonSprite(getPokemonIndex(tempPkm));
+			fillSpriteImage(i, top, 0, 0, 32, 32, image);
 			setSpriteVisibility(i, top, true);
 			setSpriteAlpha(i, top, (*tempPkm == *filter) ? 15 : 8);
 		}
@@ -316,23 +288,23 @@ void drawBox(bool top) {
 	updateOam();
 
 	// Draw box image
-	drawImage(5, 15, bankBoxData.width, bankBoxData.height, bankBox, top);
+	; // drawImage(5, 15, bankBoxData.width, bankBoxData.height, bankBox, top);
 
 	// Print box name
 	printTextCenteredTintedMaxW((top ? Banks::bank->boxName(currentBankBox) : save->boxName(currentSaveBox)), 110, 1, GRAY, -44, 20, top, true);
 
 	if(!top) {
-		drawImage(0, 192-searchData.height, searchData.width, searchData.height, search, false);
+		; // drawImage(0, 192-searchData.height, searchData.width, searchData.height, search, false);
 	}
 }
 
 void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 	// Clear previous draw
-	drawImage(164, 2, infoBoxData.width, infoBoxData.height-16, infoBox, true);
+	; // drawImage(164, 2, infoBoxData.width, infoBoxData.height-16, infoBox, true);
 
 	if(pkm->species() > 0 && pkm->species() < 650) {
 		// Show shiny star if applicable
-		if(pkm->shiny())	drawImage(239, 45, shinyData.width, shinyData.height, shiny, true);
+		if(pkm->shiny())	; // drawImage(239, 45, shinyData.width, shinyData.height, shiny, true);
 
 		// Print Pokédex number
 		char str[9];
@@ -344,9 +316,9 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 		else	printTextTintedMaxW(Lang::species[pkm->species()], 80, 1, (pkm->gender() ? (pkm->gender() == 1 ? RGB::RED : GRAY) : RGB::BLUE), 170, 25, true, pkm->gender() > 1);
 
 		// Draw types
-		drawImageSegment(170, 43-(((typesData.height/17)-12)/2), typesData.width, typesData.height/17, types, typesData.width, 0, (((pkm->generation() == Generation::FOUR && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1())*(typesData.height/17)), true);
+		; // drawImageSegment(170, 43-(((typesData.height/17)-12)/2), typesData.width, typesData.height/17, types, typesData.width, 0, (((pkm->generation() == Generation::FOUR && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1())*(typesData.height/17)), true);
 		if(pkm->type1() != pkm->type2())
-			drawImageSegment(205, 43-(((typesData.height/17)-12)/2), typesData.width, typesData.height/17, types, typesData.width, 0, (((pkm->generation() == Generation::FOUR && pkm->type2() > 8) ? pkm->type2()-1 : pkm->type2())*(typesData.height/17)), true);
+			; // drawImageSegment(205, 43-(((typesData.height/17)-12)/2), typesData.width, typesData.height/17, types, typesData.width, 0, (((pkm->generation() == Generation::FOUR && pkm->type2() > 8) ? pkm->type2()-1 : pkm->type2())*(typesData.height/17)), true);
 
 		// Print Level
 		printTextTinted(Lang::get("lv")+std::to_string(pkm->level()), GRAY, 170, 57, true, true);
@@ -358,10 +330,9 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 
 void setHeldPokemon(std::shared_ptr<PKX> pkm) {
 	if(pkm->species() != 0) {
-		std::vector<u16> bmp;
-		loadPokemonSprite(getPokemonIndex(pkm), bmp);
-		fillSpriteImage(heldPokemonID, false, bmp);
-		fillSpriteImage(heldPokemonID, true, bmp);
+		Image image = loadPokemonSprite(getPokemonIndex(pkm));
+		fillSpriteImage(heldPokemonID, false, 0, 0, 32, 32, image);
+		fillSpriteImage(heldPokemonID, true, 0, 0, 32, 32, image);
 	}
 }
 
@@ -506,7 +477,7 @@ void manageBoxes(void) {
 						else if(held & KEY_RIGHT && arrowX < 5)	arrowX++;
 						if(pressed & KEY_A) {
 							yellowSelection:
-							drawImage(5, 15, bankBoxData.width, bankBoxData.height, bankBox, topScreen);
+							; // drawImage(5, 15, bankBoxData.width, bankBoxData.height, bankBox, topScreen);
 							printTextCenteredTinted((topScreen ? Banks::bank->boxName(currentBankBox) : save->boxName(currentSaveBox)), GRAY, -44, 20, topScreen, true);
 							for(int y=std::min(startY, arrowY);y<std::max(startY,arrowY)+1;y++) {
 								for(int x=std::min(startX, arrowX);x<std::max(startX,arrowX)+1;x++) {
@@ -527,7 +498,7 @@ void manageBoxes(void) {
 							updateOam();
 							break;
 						} else if(pressed & KEY_B) {
-							drawImage(5, 15, bankBoxData.width, bankBoxData.height, bankBox, topScreen);
+							; // drawImage(5, 15, bankBoxData.width, bankBoxData.height, bankBox, topScreen);
 							printTextCenteredTinted((topScreen ? Banks::bank->boxName(currentBankBox) : save->boxName(currentSaveBox)), GRAY, -44, 20, topScreen, true);
 							drawPokemonInfo(currentPokemon((arrowY*6)+arrowX));
 							break;
@@ -553,7 +524,7 @@ void manageBoxes(void) {
 							}
 						}
 
-						drawImage(5, 15, bankBoxData.width, bankBoxData.height, bankBox, topScreen);
+						; // drawImage(5, 15, bankBoxData.width, bankBoxData.height, bankBox, topScreen);
 						printTextCenteredTinted((topScreen ? Banks::bank->boxName(currentBankBox) : save->boxName(currentSaveBox)), GRAY, -44, 20, topScreen, true);
 						drawOutline(8+(std::min(startX, arrowX)*24), 40+(std::min(startY, arrowY)*24), ((std::max(arrowX-startX, startX-arrowX)+1)*24)+8, ((std::max(arrowY-startY, startY-arrowY)+1)*24), WHITE, topScreen);
 						setSpritePosition((topScreen ? arrowID : arrowID), topScreen, (arrowX*24)+24, (arrowY*24)+36);
@@ -656,14 +627,14 @@ void manageBoxes(void) {
 			else	arrowMode = 0;
 
 			if(arrowMode == 0) {
-				fillSpriteImage(arrowID, false, arrowRed, 16*16);
-				fillSpriteImage(arrowID, true, arrowRed, 16*16);
+				// fillSpriteImage(arrowID, false, arrowRed, 16*16);
+				// fillSpriteImage(arrowID, true, arrowRed, 16*16);
 			} else if(arrowMode == 1) {
-				fillSpriteImage(arrowID, false, arrowBlue, 16*16);
-				fillSpriteImage(arrowID, true, arrowBlue, 16*16);
+				// fillSpriteImage(arrowID, false, arrowBlue, 16*16);
+				// fillSpriteImage(arrowID, true, arrowBlue, 16*16);
 			} else {
-				fillSpriteImage(arrowID, false, arrowYellow, 16*16);
-				fillSpriteImage(arrowID, true, arrowYellow, 16*16);
+				// fillSpriteImage(arrowID, false, arrowYellow, 16*16);
+				// fillSpriteImage(arrowID, true, arrowYellow, 16*16);
 			}
 		}
 

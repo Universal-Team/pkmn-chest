@@ -216,7 +216,7 @@ void sortPokemon(bool top) {
 }
 void drawSortMenu(void) {
 	// Clear screen
-	drawImageSegmentDMA(0, 0, listBgData.width, listBgData.height, listBg, listBgData.width, false);
+	; // drawImageSegmentDMA(0, 0, listBgData.width, listBgData.height, listBg, listBgData.width, false);
 	printText(Lang::get("sort"), 4, 0, false);
 
 	// Print items
@@ -224,7 +224,7 @@ void drawSortMenu(void) {
 		printText(Lang::get("filter")+" "+std::to_string(i+1)+": "+Lang::get(sortText[int(sortTypes[i])]), 4, 16+(i*16), false);
 	}
 
-	drawImage(253-boxButtonData.width, 189-boxButtonData.height, boxButtonData.width, boxButtonData.height, boxButton, false);
+	; // drawImage(253-boxButtonData.width, 189-boxButtonData.height, boxButtonData.width, boxButtonData.height, boxButton, false);
 	printTextMaxW(Lang::get("sort"), boxButtonData.width-8, 1, 260-boxButtonData.width, 193-boxButtonData.height, false);
 }
 

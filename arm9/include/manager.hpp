@@ -40,12 +40,10 @@ int getPokemonIndex(std::shared_ptr<PKX> pkm);
 int getPokemonIndex(int species, int alternativeForm = 0, int gender = 0, bool egg = false);
 
 /*
- * Loads a Pokémon sprite into a vector of raw 16 bit pixel data
+ * Loads a Pokémon sprite into an Image struct
  * int dexNo is the Pokémon dex number
- * std::vector<u16> &imageBuffer is the vector to load the raw pixel data into
- * Returns an ImageData with the Width and Height of the image
  */
-ImageData loadPokemonSprite(int dexNo, std::vector<u16> &imageBuffer);
+Image loadPokemonSprite(int dexNo);
 
 // Loads the images into RAM and creates the sprites
 void loadGraphics(void);

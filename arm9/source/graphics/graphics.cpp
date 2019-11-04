@@ -1,5 +1,6 @@
 #include "graphics.hpp"
 #include "lodepng.hpp"
+#include "lzss.h"
 #include "tonccpy.h"
 
 #define WHITE 0xFFFF
@@ -263,73 +264,90 @@ ImageData loadPng(std::string path, std::vector<u16> &imageBuffer) {
 	return imageData;
 }
 
-void drawImage(int x, int y, int w, int h, std::vector<u16> &imageBuffer, bool top) {
+Image loadImage(std::string path) {
+	Image image;
+
+	FILE *file = fopen(path.c_str(), "rb");
+	if(file) {
+		// GFX
+		fseek(file, 0x28, SEEK_SET);
+		u32 size;
+		fread(&size, 1, 4, file);
+		image.bitmap = std::vector<u8>(size);
+		fread(image.bitmap.data(), 1, size, file);
+
+		// PAL
+		fseek(file, 4, SEEK_CUR);
+		fread(&size, 1, 4, file);
+		image.palette = std::vector<u16>(size);
+		fread(image.palette.data(), 1, size, file);
+	}
+
+	return image;
+}
+
+void drawImageDMA(int x, int y, int w, int h, Image &image, bool top) {
+	// for(int i=0;i<h;i++) {
+	// 	dmaCopyHalfWords(0, imageBuffer.data()+(i*w), (top ? BG_GFX : BG_GFX_SUB)+((y+i)*256)+x, w*2);
+	// }
+	// Use ↑ with 8bpp backgrounds
+	u16 *dst = (top ? BG_GFX : BG_GFX_SUB);
 	for(int i=0;i<h;i++) {
 		for(int j=0;j<w;j++) {
-			if(imageBuffer[(i*w)+j]>>15 != 0) { // Do not render transparent pixel
-				(top ? BG_GFX : BG_GFX_SUB)[(y+i)*256+j+x] = imageBuffer[(i*w)+j];
+			dst[(y+i)*256+j+x] = image.palette[image.bitmap[(i*w)+j]] | BIT(15);
+		}
+	}
+}
+
+void drawImage(int x, int y, int w, int h, Image &image, bool top) {
+	u16 *dst = (top ? BG_GFX : BG_GFX_SUB);
+	for(int i=0;i<h;i++) {
+		for(int j=0;j<w;j++) {
+			if(image.palette[image.bitmap[(i*w)+j]] != 0x7C1F) { // Do not render transparent pixel
+				dst[(y+i)*256+j+x] = image.palette[image.bitmap[(i*w)+j]] | BIT(15);
 			}
 		}
 	}
 }
 
-void drawImageDMA(int x, int y, int w, int h, std::vector<u16> &imageBuffer, bool top) {
-	if(w == 256) {
-		dmaCopyHalfWords(0, imageBuffer.data(), (top ? BG_GFX : BG_GFX_SUB)+(y*256), h*w*2);
-	} else {
-		for(int i=0;i<h;i++) {
-			dmaCopyHalfWords(0, imageBuffer.data()+(i*w), (top ? BG_GFX : BG_GFX_SUB)+((y+i)*256)+x, w*2);
-		}
-	}
-}
-
-void drawImageSegmentDMA(int x, int y, int w, int h, std::vector<u16> &imageBuffer, int imageWidth, bool top) {
+void drawImageSegmentDMA(int x, int y, int w, int h, Image &image, int imageWidth, bool top) {
 	for(int i=0;i<h;i++) {
-		dmaCopyHalfWords(0, imageBuffer.data()+(i*imageWidth), (top ? BG_GFX : BG_GFX_SUB)+((y+i)*256)+x, w*2);
+		dmaCopyHalfWords(0, image.bitmap.data()+(i*imageWidth), (top ? BG_GFX : BG_GFX_SUB)+((y+i)*256)+x, w*2);
 	}
 }
 
-void drawImageSegment(int x, int y, int w, int h, std::vector<u16> &imageBuffer, int imageWidth, int xOffset, int yOffset, bool top) {
+void drawImageSegment(int x, int y, int w, int h, Image &image, int imageWidth, int xOffset, int yOffset, bool top) {
+	u16 *dst = (top ? BG_GFX : BG_GFX_SUB);
 	for(int i=0;i<h;i++) {
 		for(int j=0;j<w;j++) {
-			if(imageBuffer[((i+yOffset)*imageWidth)+j+xOffset]>>15 != 0) { // Do not render transparent pixel
-				(top ? BG_GFX : BG_GFX_SUB)[((y+i)*256)+j+x] = imageBuffer[((i+yOffset)*imageWidth)+j+xOffset];
+			if(image.palette[image.bitmap[((i+yOffset)*imageWidth)+j+xOffset]] != 0x7C1F) { // Do not render transparent pixel
+				dst[((y+i)*256)+j+x] = image.palette[image.bitmap[((i+yOffset)*imageWidth)+j+xOffset]] | BIT(15);
 			}
 		}
 	}
 }
 
-void drawImageSegmentScaled(int x, int y, int w, int h, double scaleX, double scaleY, std::vector<u16> &imageBuffer, int imageWidth, int xOffset, int yOffset, bool top) {
-	if(scaleX == 1 && scaleY == 1)	drawImageSegment(x, y, w, h, imageBuffer, imageWidth, xOffset, yOffset, top);
+void drawImageSegmentScaled(int x, int y, int w, int h, double scaleX, double scaleY, Image &image, int imageWidth, int xOffset, int yOffset, bool top) {
+	if(scaleX == 1 && scaleY == 1)	drawImageSegment(x, y, w, h, image, imageWidth, xOffset, yOffset, top);
 	else {
-		std::vector<u16> buffer;
+		Image buffer = {{}, image.palette};
 		for(int i=0;i<h;i++) {
 			for(int j=0;j<w;j++) {
-				buffer.push_back(imageBuffer[((i+yOffset)*imageWidth)+j+xOffset]);
+				buffer.bitmap.push_back(image.bitmap[((i+yOffset)*imageWidth)+j+xOffset]);
 			}
 		}
 		drawImageScaled(x, y, w, h, scaleX, scaleY, buffer, top);
 	}
 }
 
-void drawImageScaled(int x, int y, int w, int h, double scaleX, double scaleY, std::vector<u16> &imageBuffer, bool top) {
-	if(scaleX == 1 && scaleY == 1)	drawImage(x, y, w, h, imageBuffer, top);
+void drawImageScaled(int x, int y, int w, int h, double scaleX, double scaleY, Image &image, bool top) {
+	if(scaleX == 1 && scaleY == 1)	drawImage(x, y, w, h, image, top);
 	else {
 		for(int i=0;i<(h*scaleY);i++) {
 			for(int j=0;j<(w*scaleX);j++) {
-				if(imageBuffer[(((int)(i/scaleY))*w)+(j/scaleX)]>>15 != 0) { // Do not render transparent pixel
-					(top ? BG_GFX : BG_GFX_SUB)[(y+i)*256+x+j] = imageBuffer[(((int)(i/scaleY))*w)+(j/scaleX)];
+				if(image.palette[image.bitmap[(((int)(i/scaleY))*w)+(j/scaleX)]] != 0x7C1F) { // Do not render transparent pixel
+					(top ? BG_GFX : BG_GFX_SUB)[(y+i)*256+x+j] = image.palette[image.bitmap[(((int)(i/scaleY))*w)+(j/scaleX)]] | BIT(15);
 				}
-			}
-		}
-	}
-}
-
-void drawImageTinted(int x, int y, int w, int h, u16 color, std::vector<u16> &imageBuffer, bool top) {
-	for(int i=0;i<h;i++) {
-		for(int j=0;j<w;j++) {
-			if(imageBuffer[(i*w)+j]>>15 != 0) { // Do not render transparent pixel
-				(top ? BG_GFX : BG_GFX_SUB)[(y+i)*256+j+x] = color & imageBuffer[(i*w)+j];
 			}
 		}
 	}
@@ -381,25 +399,21 @@ void fillSpriteColor(int id, bool top, u16 color) {
 	toncset16(sprites(top)[id].gfx, color, size);
 }
 
-void fillSpriteImage(int id, bool top, std::vector<u16> &imageBuffer, int size) {
-	tonccpy(sprites(top)[id].gfx, imageBuffer.data(), size*2);
-}
-
-void fillSpriteImage(int id, bool top, int x, int y, int w, int h, std::vector<u16> &imageBuffer) {
+void fillSpriteImage(int id, bool top, int x, int y, int w, int h, Image &image) {
 	for(int i=0;i<h;i++) {
 		for(int j=0;j<w;j++) {
-			sprites(top)[id].gfx[((y+i)*32)+(x+j)] = imageBuffer[((i)*w)+j];
+			sprites(top)[id].gfx[((y+i)*32)+(x+j)] = image.palette[image.bitmap[((i)*w)+j]] | BIT(15);
 		}
 	}
 }
 
-void fillSpriteImageScaled(int id, bool top, int x, int y, int w, int h, double scale, std::vector<u16> &imageBuffer) {
-	if(scale == 1 && scale == 1)	fillSpriteImage(id, top, x, y, w, h, imageBuffer);
+void fillSpriteImageScaled(int id, bool top, int x, int y, int w, int h, double scale, Image &image) {
+	if(scale == 1 && scale == 1)	fillSpriteImage(id, top, x, y, w, h, image);
 	else {
 		for(int i=0;i<(h*scale);i++) {
 			for(int j=0;j<(w*scale);j++) {
-				if(imageBuffer[(((int)(i/scale))*w)+(j/scale)]>>15 != 0) { // Do not render transparent pixel
-					sprites(top)[id].gfx[(y+i)*32+x+j] = imageBuffer[(((int)(i/scale))*w)+(j/scale)];
+				if(image.palette[image.bitmap[(((int)(i/scale))*w)+(j/scale)]] != 0x7C1F) { // Do not render transparent pixel
+					sprites(top)[id].gfx[(y+i)*32+x+j] = image.palette[image.bitmap[(((int)(i/scale))*w)+(j/scale)]] | BIT(15);
 				}
 			}
 		}
@@ -525,26 +539,19 @@ void printTextTinted(std::string text, u16 color, int xPos, int yPos, bool top, 
 
 void printTextTinted(std::u16string text, u16 color, int xPos, int yPos, bool top, bool invert) {
 	int x=xPos;
-	u16 pallet[4] = {
-		0,
-		(u16)(color & (invert ? 0xBDEF : 0xFBDE)),
-		(u16)(color & (invert ? 0xFBDE : 0xBDEF)),
-		0
-	};
 	for(unsigned c=0;c<text.size();c++) {
 		if(text[c] == 0xA) {
-			x = xPos;
 			yPos += tileHeight;
 			continue;
 		}
 
 		int t = getCharIndex(text[c]);
-		std::vector<u16> image;
+		Image image = {{}, {0x7C1F, (u16)(color & (invert ? 0xBDEF : 0xFBDE)), (u16)(color & (invert ? 0xFBDE : 0xBDEF)), 0x7C1F}};
 		for(int i=0;i<tileSize;i++) {
-			image.push_back(pallet[fontTiles[i+(t*tileSize)]>>6 & 3]);
-			image.push_back(pallet[fontTiles[i+(t*tileSize)]>>4 & 3]);
-			image.push_back(pallet[fontTiles[i+(t*tileSize)]>>2 & 3]);
-			image.push_back(pallet[fontTiles[i+(t*tileSize)] & 3]);
+			image.bitmap.push_back(fontTiles[i+(t*tileSize)]>>6 & 3);
+			image.bitmap.push_back(fontTiles[i+(t*tileSize)]>>4 & 3);
+			image.bitmap.push_back(fontTiles[i+(t*tileSize)]>>2 & 3);
+			image.bitmap.push_back(fontTiles[i+(t*tileSize)] & 3);
 		}
 
 		x += fontWidths[t*3];
@@ -595,12 +602,6 @@ void printTextTintedScaled(std::u16string text, double scaleX, double scaleY, u1
 	}
 
 	int x=xPos;
-	u16 pallet[4] = {
-		0,
-		(u16)(color & (invert ? 0xBDEF : 0xFBDE)),
-		(u16)(color & (invert ? 0xFBDE : 0xBDEF)),
-		0
-	};
 	for(unsigned c=0;c<text.size();c++) {
 		if(text[c] == 0xA) {
 			x = xPos;
@@ -609,12 +610,12 @@ void printTextTintedScaled(std::u16string text, double scaleX, double scaleY, u1
 		}
 
 		int t = getCharIndex(text[c]);
-		std::vector<u16> image;
+		Image image = {{}, {0x7C1F, (u16)(color & (invert ? 0xBDEF : 0xFBDE)), (u16)(color & (invert ? 0xFBDE : 0xBDEF)), 0x7C1F}};
 		for(int i=0;i<tileSize;i++) {
-			image.push_back(pallet[fontTiles[i+(t*tileSize)]>>6 & 3]);
-			image.push_back(pallet[fontTiles[i+(t*tileSize)]>>4 & 3]);
-			image.push_back(pallet[fontTiles[i+(t*tileSize)]>>2 & 3]);
-			image.push_back(pallet[fontTiles[i+(t*tileSize)] & 3]);
+			image.bitmap.push_back(fontTiles[i+(t*tileSize)]>>6 & 3);
+			image.bitmap.push_back(fontTiles[i+(t*tileSize)]>>4 & 3);
+			image.bitmap.push_back(fontTiles[i+(t*tileSize)]>>2 & 3);
+			image.bitmap.push_back(fontTiles[i+(t*tileSize)] & 3);
 		}
 
 		x += fontWidths[t*3];

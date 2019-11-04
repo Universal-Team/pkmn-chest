@@ -14,6 +14,11 @@ struct ImageData {
 	unsigned height;
 };
 
+struct Image {
+	std::vector<u8> bitmap;
+	std::vector<u16> palette;
+};
+
 struct Sprite {
 	u16* gfx;
 	SpriteSize size;
@@ -62,10 +67,10 @@ ImageData loadPng(std::string path, std::vector<u16> &imageBuffer);
  * int y is the Y position
  * int w is the Width
  * int h is the Height
- * std::vector<u16> &imageBuffer is the raw pixel data
+ * Image &image is the raw pixel data
  * bool top is whether to draw on the top or bottom screen
  */
-void drawImage(int x, int y, int w, int h, std::vector<u16> &imageBuffer, bool top);
+void drawImage(int x, int y, int w, int h, Image &image, bool top);
 
 /*
  * Faster image draw that doesn't skip transparency
@@ -73,10 +78,10 @@ void drawImage(int x, int y, int w, int h, std::vector<u16> &imageBuffer, bool t
  * int y is the Y position
  * int w is the Width
  * int h is the Height
- * std::vector<u16> &imageBuffer is the raw pixel data
+ * Image &image is the raw pixel data
  * bool top is whether to draw on the top or bottom screen
  */
-void drawImageDMA(int x, int y, int w, int h, std::vector<u16> &imageBuffer, bool top);
+void drawImageDMA(int x, int y, int w, int h, Image &image, bool top);
 
 /*
  * Faster image draw that doesn't skip transparency
@@ -84,10 +89,10 @@ void drawImageDMA(int x, int y, int w, int h, std::vector<u16> &imageBuffer, boo
  * int y is the Y position
  * int w is the Width
  * int h is the Height
- * std::vector<u16> &imageBuffer is the raw pixel data
+ * Image &image is the raw pixel data
  * bool top is whether to draw on the top or bottom screen
  */
-void drawImageSegmentDMA(int x, int y, int w, int h, std::vector<u16> &imageBuffer, int imageWidth, bool top);
+void drawImageSegmentDMA(int x, int y, int w, int h, Image &image, int imageWidth, bool top);
 
 /*
  * Draws an image to the screen from a portion of a vector of raw pixel data
@@ -95,13 +100,13 @@ void drawImageSegmentDMA(int x, int y, int w, int h, std::vector<u16> &imageBuff
  * int y is the Y position
  * int w is the Width
  * int h is the Height
- * std::vector<u16> &imageBuffer is the raw pixel data
+ * Image &image is the raw pixel data
  * int imageWidth is the width of the spritesheet
  * int xOffset is the X position in the sheet to start at
  * int yOffset is the Y position in the sheet to start at
  * bool top is whether to draw on the top or bottom screen
  */
-void drawImageSegment(int x, int y, int w, int h, std::vector<u16> &imageBuffer, int imageWidth, int xOffset, int yOffset, bool top);
+void drawImageSegment(int x, int y, int w, int h, Image &image, int imageWidth, int xOffset, int yOffset, bool top);
 
 /*
  * Draws a scaled image to the screen from a portion of a vector of raw pixel data
@@ -111,13 +116,13 @@ void drawImageSegment(int x, int y, int w, int h, std::vector<u16> &imageBuffer,
  * int h is the Height
  * double scale is the Scale to draw the X at
  * double scale is the Scale to draw the Y at
- * std::vector<u16> &imageBuffer is the raw pixel data
+ * Image &image is the raw pixel data
  * int imageWidth is the width of the spritesheet
  * int xOffset is the X position in the sheet to start at
  * int yOffset is the Y position in the sheet to start at
  * bool top is whether to draw on the top or bottom screen
  */
-void drawImageSegmentScaled(int x, int y, int w, int h, double scaleX, double scaleY, std::vector<u16> &imageBuffer, int imageWidth, int xOffset, int yOffset, bool top);
+void drawImageSegmentScaled(int x, int y, int w, int h, double scaleX, double scaleY, Image &image, int imageWidth, int xOffset, int yOffset, bool top);
 
 /*
  * Draws a scaled image to the screen from a vector of raw pixel data
@@ -127,10 +132,10 @@ void drawImageSegmentScaled(int x, int y, int w, int h, double scaleX, double sc
  * int h is the Height
  * double scaleX is the Scale to draw the X at
  * double scaleY is the Scale to draw the Y at
- * std::vector<u16> &imageBuffer is the raw pixel data
+ * Image &image is the raw pixel data
  * bool top is whether to draw on the top or bottom screen
  */
-void drawImageScaled(int x, int y, int w, int h, double scaleX, double scaleY, std::vector<u16> &imageBuffer, bool top);
+void drawImageScaled(int x, int y, int w, int h, double scaleX, double scaleY, Image &image, bool top);
 
 /*
  * Draws a scaled image to the screen from a vector of raw pixel data
@@ -139,10 +144,10 @@ void drawImageScaled(int x, int y, int w, int h, double scaleX, double scaleY, s
  * int w is the Width
  * int h is the Height
  * u16 color is the color to tint the image
- * std::vector<u16> &imageBuffer is the raw pixel data
+ * Image &image is the raw pixel data
  * bool top is whether to draw on the top or bottom screen
  */
-void drawImageTinted(int x, int y, int w, int h, u16 color, std::vector<u16> &imageBuffer, bool top);
+void drawImageTinted(int x, int y, int w, int h, u16 color, Image &image, bool top);
 
 /*
  * Draws a rectangle outline of a given size at a given position
@@ -197,21 +202,13 @@ void fillSpriteColor(int id, bool top, u16 color);
 /*
  * Fills a sprite with raw pixel data from a vector
  * int id is the id of the sprite
- * size is the width * height of the image
- * std::vector<u16> &imageBuffer is the raw pixel data
- */
-void fillSpriteImage(int id, bool top, std::vector<u16> &imageBuffer, int size = 32*32);
-
-/*
- * Fills a sprite with raw pixel data from a vector
- * int id is the id of the sprite
  * int x is the x position to draw at
  * int y is the y positoin to draw at
  * int w is the width of the image
  * int h is the height of the image
  * std::vector<u16> &imageBuffer is the raw pixel data
  */
-void fillSpriteImage(int id, int x, int y, int w, int h, std::vector<u16> &imageBuffer);
+void fillSpriteImage(int id, bool top, int x, int y, int w, int h, Image &image);
 
 /*
  * Fills a sprite with scaled raw pixel data from a vector
@@ -224,7 +221,7 @@ void fillSpriteImage(int id, int x, int y, int w, int h, std::vector<u16> &image
  * size is the width * height of the image
  * std::vector<u16> &imageBuffer is the raw pixel data
  */
-void fillSpriteImageScaled(int id, bool top, int x, int y, int w, int h, double scale, std::vector<u16> &imageBuffer);
+void fillSpriteImageScaled(int id, bool top, int x, int y, int w, int h, double scale, Image &image);
 
 /*
  * Fills a sprite with raw pixel data from a vector of a spritesheet

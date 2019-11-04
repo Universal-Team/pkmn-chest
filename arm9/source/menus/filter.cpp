@@ -17,7 +17,7 @@ std::vector<std::string> genders = {"male", "female", "unknown"}, filterLabels =
 
 void selectMoves(std::shared_ptr<PKFilter> &filter) {
 	// Clear screen
-	drawImageSegmentDMA(0, 0, listBgData.width, listBgData.height, listBg, listBgData.width, false);
+	; // drawImageSegmentDMA(0, 0, listBgData.width, listBgData.height, listBg, listBgData.width, false);
 	printText(Lang::get("moves"), 4, 0, false);
 
 	// Print moves
@@ -92,7 +92,7 @@ void selectMoves(std::shared_ptr<PKFilter> &filter) {
 			}
 
 			// Clear screen
-			drawImageSegmentDMA(0, 0, listBgData.width, listBgData.height, listBg, listBgData.width, false);
+			; // drawImageSegmentDMA(0, 0, listBgData.width, listBgData.height, listBg, listBgData.width, false);
 			printText(Lang::get("moves"), 4, 0, false);
 
 			// Print moves
@@ -113,7 +113,7 @@ void selectMoves(std::shared_ptr<PKFilter> &filter) {
 
 void drawFilterMenu(std::shared_ptr<PKFilter> &filter) {
 	// Clear screen
-	drawImageSegmentDMA(0, 0, listBgData.width, listBgData.height, listBg, listBgData.width, false);
+	; // drawImageSegmentDMA(0, 0, listBgData.width, listBgData.height, listBg, listBgData.width, false);
 	printText(Lang::get("filter"), 4, 0, false);
 
 	// Fill filterValues

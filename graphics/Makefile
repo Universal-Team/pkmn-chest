@@ -18,7 +18,8 @@ TARGETS		:= $(INPUTS:.png=.grf)
 
 %.grf	:	%.png
 	@mkdir -p $(OUT)/$(@D)
-	@grit $< -gu8 -gb -gB8 -ftr -fh! -Zl -o $(OUT)/$@
+	# @grit $< -gu8 -gb -gB8 -ftr -fh! -Zl -o $(OUT)/$@
+	@grit $< -gu8 -gb -gB8 -ftr -fh! -o $(OUT)/$@
 
 all	:	$(GRAPHICS) $(TARGETS)
 	@echo GRIT files ...
