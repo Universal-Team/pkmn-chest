@@ -1,5 +1,6 @@
 #include "summary.hpp"
 #include "colors.hpp"
+#include "config.hpp"
 #include "flashcard.hpp"
 #include "lang.hpp"
 #include "loader.hpp"
@@ -101,8 +102,8 @@ void changeAbility(std::shared_ptr<PKX> &pkm) {
 
 void drawSummaryPage(std::shared_ptr<PKX> pkm) {
 	// Draw background
-	; // drawImageDMA(0, 0, listBgData.width, listBgData.height, listBg, false);
-	; // drawImageScaled(145, 1, infoBoxData.width, infoBoxData.height, 1.2, 1, infoBox, false);
+	drawImageDMA(0, 0, 256, 192, listBg, false);
+	drawImageScaled(145, 1, 92, 86, 1.2, 1, infoBox, false);
 	// Draw lines
 	drawOutline(0, 128, 160, 65, LIGHT_GRAY, false);
 
@@ -117,16 +118,16 @@ void drawSummaryPage(std::shared_ptr<PKX> pkm) {
 
 	// Draw Pokémon, Pokéball, types, and shiny star (if shiny)
 	std::pair<int, int> xy = getPokeballPosition(pkm->ball());
-	; // drawImageSegment(148, 8, 15, 15, ballSheet, ballSheetData.width, xy.first, xy.second, false);
+	drawImageSegment(148, 8, 15, 15, ballSheet, 136, xy.first, xy.second, false);
 
 	std::vector<u16> bmp;
 	Image image = loadPokemonSprite(getPokemonIndex(pkm));
 	drawImageScaled(169, 22, 32, 32, 2, 2, image, false);
 
-	; // drawImageSegment(150, 26-(((typesData.height/17)-12)/2), typesData.width, typesData.height/17, types, typesData.width, 0, (((pkm->generation() == Generation::FOUR && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1())*(typesData.height/17)), false);
+	drawImageSegment(150, 26-(((typesHeight()/17)-12)/2), typesWidth(), typesHeight()/17, types, typesWidth(), 0, (((pkm->generation() == Generation::FOUR && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1())*(typesHeight()/17)), false);
 	if(pkm->type1() != pkm->type2())
-		; // drawImageSegment(185, 26-(((typesData.height/17)-12)/2), typesData.width, typesData.height/17, types, typesData.width, 0, (((pkm->generation() == Generation::FOUR && pkm->type2() > 8) ? pkm->type2()-1 : pkm->type2())*(typesData.height/17)), false);
-	if(pkm->shiny())	; // drawImage(150, 45, shinyData.width, shinyData.height, shiny, false);
+		drawImageSegment(185, 26-(((typesHeight()/17)-12)/2), typesWidth(), typesHeight()/17, types, typesWidth(), 0, (((pkm->generation() == Generation::FOUR && pkm->type2() > 8) ? pkm->type2()-1 : pkm->type2())*(typesHeight()/17)), false);
+	if(pkm->shiny())	drawImage(150, 45, 8, 8, shiny, false);
 
 	// Print Pokémon and trainer info labels
 	for(unsigned i=0;i<summaryLabels.size();i++) {
@@ -157,7 +158,7 @@ void drawSummaryPage(std::shared_ptr<PKX> pkm) {
 
 	// Draw buttons // The first 2 don't have buttons
 	for(unsigned i=2;i<sizeof(textC2)/sizeof(textC2[0]);i++) {
-		; // drawImage(textC2[i].x-4, textC2[i].y-4, boxButtonData.width, boxButtonData.height, boxButton, false);
+		drawImage(textC2[i].x-4, textC2[i].y-4, 84, 26, boxButton, false);
 	}
 	snprintf(textC2[2].text, sizeof(textC2[2].text),"%s", Lang::get("moves").c_str());
 	snprintf(textC2[3].text, sizeof(textC2[3].text),"%s", Lang::get("stats").c_str());
@@ -223,7 +224,7 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 				optionSelected = true;
 			}
 			for(unsigned i=2;i<(sizeof(textC2)/sizeof(textC2[0]));i++) { // Buttons
-				if(touch.px >= textC2[i].x-4 && touch.px <= textC2[i].x-4+83 && touch.py >= textC2[i].y-4 && touch.py <= textC2[i].y-4+26) {
+				if(touch.px >= textC2[i].x-4 && touch.px <= textC2[i].x-4+84 && touch.py >= textC2[i].y-4 && touch.py <= textC2[i].y-4+26) {
 					column = 1;
 					selection = i;
 					optionSelected = true;

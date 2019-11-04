@@ -216,7 +216,7 @@ void sortPokemon(bool top) {
 }
 void drawSortMenu(void) {
 	// Clear screen
-	; // drawImageSegmentDMA(0, 0, listBgData.width, listBgData.height, listBg, listBgData.width, false);
+	drawImageSegmentDMA(0, 0, 256, 192, listBg, 256, false);
 	printText(Lang::get("sort"), 4, 0, false);
 
 	// Print items
@@ -224,8 +224,8 @@ void drawSortMenu(void) {
 		printText(Lang::get("filter")+" "+std::to_string(i+1)+": "+Lang::get(sortText[int(sortTypes[i])]), 4, 16+(i*16), false);
 	}
 
-	; // drawImage(253-boxButtonData.width, 189-boxButtonData.height, boxButtonData.width, boxButtonData.height, boxButton, false);
-	printTextMaxW(Lang::get("sort"), 83-8, 1, 260-83, 193-26, false);
+	drawImage(253-84, 189-26, 84, 26, boxButton, false);
+	printTextMaxW(Lang::get("sort"), 84-8, 1, 260-84, 193-26, false);
 }
 
 void sortMenu(bool top) {
@@ -271,7 +271,7 @@ void sortMenu(bool top) {
 					break;
 				}
 			}
-			if(touch.px >= 253-83 && touch.py >= 189-26) {
+			if(touch.px >= 253-84 && touch.py >= 189-26) {
 				selection = sortTypes.size();
 				optionSelected = true;
 			}
@@ -295,7 +295,7 @@ void sortMenu(bool top) {
 
 		// Move cursor
 		if(selection < (int)sortTypes.size())	setSpritePosition(arrowID, false, 4+getTextWidth(Lang::get("filter")+" "+std::to_string(selection+1)+": "+Lang::get(sortText[int(sortTypes[selection])]))+2, (16*(selection)+15));
-		else	setSpritePosition(arrowID, false, 260-83+getTextWidth(Lang::get("sort"))+2, 191-26);
+		else	setSpritePosition(arrowID, false, 260-84+getTextWidth(Lang::get("sort"))+2, 191-26);
 		updateOam();
 	}
 }

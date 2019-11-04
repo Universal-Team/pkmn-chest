@@ -28,7 +28,7 @@ std::vector<std::string> trainerText = {"name", "trainerID", "secretID", "money"
 
 void drawTrainerCard(void) {
 	// Draw background
-	; // drawImageDMA(0, 0, listBgData.width, listBgData.height, listBg, false);
+	drawImageDMA(0, 0, 256, 192, listBg, false);
 	printText(Lang::get("trainerInfo"), 4, 0, false);
 
 	// Print labels

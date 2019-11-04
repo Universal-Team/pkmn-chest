@@ -24,18 +24,18 @@ int getMaxItem(int pouchIndex) {
 
 void drawBag(Pouch pouch, int maxItem, int screenPos, bool rightSide) {
 	// Clear screen
-	; // drawImageSegmentDMA(0, 0, rightSide ? listBgData.width : 169, listBgData.height, listBg, listBgData.width, false);
+	drawImageSegmentDMA(0, 0, rightSide ? 256 : 169, 192, listBg, 256, false);
 
 	printText(save->pouchName(pouch), 4, 0, false);
 
 	if(rightSide) {
 		// Draw search icon
-		; // drawImage(256-searchData.width, 0, searchData.width, searchData.height, search, false);
+		drawImage(256-20, 0, 20, 20, search, false);
 
 		// Draw pouch buttons
 		for(unsigned i=0;i<save->pouches().size();i++) {
-			; // drawImageScaled(170, (104-(10*save->pouches().size()))+i*(20), boxButtonData.width, boxButtonData.height, 1, (float)20/boxButtonData.height, boxButton, false);
-			printTextMaxW(save->pouchName(save->pouches()[i].first), 83-8, 1, 174, (104-(10*save->pouches().size()))+i*(20)+2, false);
+			drawImageScaled(170, (104-(10*save->pouches().size()))+i*(20), 84, 26, 1, (float)20/26, boxButton, false);
+			printTextMaxW(save->pouchName(save->pouches()[i].first), 84-8, 1, 174, (104-(10*save->pouches().size()))+i*(20)+2, false);
 		}
 	}
 

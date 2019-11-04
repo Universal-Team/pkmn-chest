@@ -13,7 +13,7 @@ extern std::string savePath;
 extern Image arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, boxBgTop, boxButton, fileBrowseBg, infoBox, keyboardKey, menuBg, menuButton, menuButtonBlue, menuIconSheet, optionsBg, search, shiny, listBg, types;
 
 #define boxHeight() (save->generation() == Generation::FOUR ? 148 : 151)
-#define boxWidth() (save->generation() == Generation::FOUR ? 162 : 158)
+#define boxWidth() (save->generation() == Generation::FOUR ? 164 : 160)
 #define typesHeight() ((Config::getLang("lang") == Lang::en || Config::getLang("lang") == Lang::it || Config::getLang("lang") == Lang::jp) ? 12 : 14)
 #define typesWidth() (Config::getLang("lang") == Lang::jp ? 30 : 32)
 
@@ -48,6 +48,12 @@ int getPokemonIndex(int species, int alternativeForm = 0, int gender = 0, bool e
  * int dexNo is the Pokémon dex number
  */
 Image loadPokemonSprite(int dexNo);
+
+/*
+ * Fills the arrow sprite with the desired color
+ * int arrowMode is the desired color, 0 = red, 1 = blue, 2 = yellow
+ */
+void fillArrow(int arrowMode);
 
 // Loads the images into RAM and creates the sprites
 void loadGraphics(void);

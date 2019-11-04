@@ -185,7 +185,7 @@ void fillSpriteColor(int id, bool top, u16 color);
  * int h is the height of the image
  * Image &image is the raw pixel data
  */
-void fillSpriteImage(int id, bool top, int x, int y, int w, int h, Image &image);
+void fillSpriteImage(int id, bool top, int x, int y, int w, int h, Image &image, int spriteW = 32);
 
 /*
  * Fills a sprite with scaled raw pixel data from a vector

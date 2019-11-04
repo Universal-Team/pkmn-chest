@@ -213,8 +213,16 @@ void drawImage(int x, int y, int w, int h, Image &image, bool top) {
 }
 
 void drawImageSegmentDMA(int x, int y, int w, int h, Image &image, int imageWidth, bool top) {
+	// for(int i=0;i<h;i++) {
+	// 	dmaCopyHalfWords(0, image.bitmap.data()+(i*imageWidth), (top ? BG_GFX : BG_GFX_SUB)+((y+i)*256)+x, w*2);
+	// }
+	u16 *dst = (top ? BG_GFX : BG_GFX_SUB);
 	for(int i=0;i<h;i++) {
-		dmaCopyHalfWords(0, image.bitmap.data()+(i*imageWidth), (top ? BG_GFX : BG_GFX_SUB)+((y+i)*256)+x, w*2);
+		for(int j=0;j<w;j++) {
+			if(image.palette[image.bitmap[((i)*imageWidth)+j]] != 0x7C1F) { // Do not render transparent pixel
+				dst[((y+i)*256)+j+x] = image.palette[image.bitmap[((i)*imageWidth)+j]] | BIT(15);
+			}
+		}
 	}
 }
 
@@ -301,10 +309,10 @@ void fillSpriteColor(int id, bool top, u16 color) {
 	toncset16(sprites(top)[id].gfx, color, size);
 }
 
-void fillSpriteImage(int id, bool top, int x, int y, int w, int h, Image &image) {
+void fillSpriteImage(int id, bool top, int x, int y, int w, int h, Image &image, int spriteW) {
 	for(int i=0;i<h;i++) {
 		for(int j=0;j<w;j++) {
-			sprites(top)[id].gfx[((y+i)*32)+(x+j)] = image.palette[image.bitmap[((i)*w)+j]] | BIT(15);
+			sprites(top)[id].gfx[((y+i)*spriteW)+(x+j)] = image.palette[image.bitmap[((i)*w)+j]] | BIT(15);
 		}
 	}
 }
