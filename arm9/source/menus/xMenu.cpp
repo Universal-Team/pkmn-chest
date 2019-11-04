@@ -166,7 +166,7 @@ bool xMenu(void) {
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
 			for(unsigned i=0; i<xMenuButtons.size();i++) {
-				if(touch.px >= xMenuButtons[i].x && touch.px <= xMenuButtons[i].x+menuButtonData.width && touch.py >= xMenuButtons[i].y && touch.py <= xMenuButtons[i].y+menuButtonData.height) {
+				if(touch.px >= xMenuButtons[i].x && touch.px <= xMenuButtons[i].x+125 && touch.py >= xMenuButtons[i].y && touch.py <= xMenuButtons[i].y+41) {
 					selectedOption = i;
 				}
 			}

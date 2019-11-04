@@ -122,13 +122,13 @@ int aMenu(int pkmPos, std::vector<Label>& buttons, int buttonMode) {
 					else	save->pkm(save->emptyPkm(), currentSaveBox, pkmPos, false);
 					drawBox(false);
 					if(topScreen)	drawBox(topScreen);
-					drawRectangle(5+bankBoxData.width, 0, 256-(5+bankBoxData.width), 192, DARKERER_GRAY, DARKER_GRAY, false);
+					drawRectangle(5+boxWidth(), 0, 256-(5+boxWidth()), 192, DARKERER_GRAY, DARKER_GRAY, false);
 					drawPokemonInfo(save->emptyPkm());
 					goto back;
 				}
 				drawBox(false);
 				if(topScreen)	drawBox(topScreen);
-				drawRectangle(5+bankBoxData.width, 0, 256-(5+bankBoxData.width), 192, DARKERER_GRAY, DARKER_GRAY, false);
+				drawRectangle(5+boxWidth(), 0, 256-(5+boxWidth()), 192, DARKERER_GRAY, DARKER_GRAY, false);
 				drawAMenuButtons(buttons, buttonMode);
 			} else if(menuSelection == 4) { // Dump
 				char path[256];

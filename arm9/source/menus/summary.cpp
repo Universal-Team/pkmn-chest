@@ -223,7 +223,7 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 				optionSelected = true;
 			}
 			for(unsigned i=2;i<(sizeof(textC2)/sizeof(textC2[0]));i++) { // Buttons
-				if(touch.px >= textC2[i].x-4 && touch.px <= textC2[i].x-4+boxButtonData.width && touch.py >= textC2[i].y-4 && touch.py <= textC2[i].y-4+boxButtonData.height) {
+				if(touch.px >= textC2[i].x-4 && touch.px <= textC2[i].x-4+83 && touch.py >= textC2[i].y-4 && touch.py <= textC2[i].y-4+26) {
 					column = 1;
 					selection = i;
 					optionSelected = true;

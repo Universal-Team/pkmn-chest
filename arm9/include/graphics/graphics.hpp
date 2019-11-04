@@ -9,11 +9,6 @@
 // Converts 3 0-255 (0x0-0xff) values to a BGR15 value
 #define BGR15(b, g, r)   ((b)|((g)<<5)|((r)<<10))
 
-struct ImageData {
-	unsigned width;
-	unsigned height;
-};
-
 struct Image {
 	std::vector<u8> bitmap;
 	std::vector<u16> palette;
@@ -38,28 +33,10 @@ void initGraphics(void);
 void loadFont(void);
 
 /*
- * Loads a .bmp image into a vector of raw pixel data
- * std::string path is the path of the .bmp file
- * std::vector<u16> &imageBuffer is the vector to load the raw pixel data into
- * Returns an ImageData with the Width and Height of the image
+ * Loads a .grf image into an Image struct
+ * std::string path is the path to the .grf file
  */
-ImageData loadBmp(std::string path, std::vector<u16> &imageBuffer);
-
-/*
- * Loads a 16 color .bmp image into a vector of raw 16 bit pixel data
- * std::string path is the path of the .bmp file
- * std::vector<u16> &imageBuffer is the vector to load the raw pixel data into
- * Returns an ImageData with the Width and Height of the image
- */
-ImageData loadBmp16(std::string path, std::vector<u16> &imageBuffer);
-
-/*
- * Loads a .png image into a vector of raw pixel data
- * std::string path is the path of the .png file
- * std::vector<u16> &imageBuffer is the vector to load the raw pixel data into
- * Returns an ImageData with the Width and Height of the image
- */
-ImageData loadPng(std::string path, std::vector<u16> &imageBuffer);
+Image loadImage(std::string path);
 
 /*
  * Draws an image to the screen from a vector of raw pixel data
@@ -206,7 +183,7 @@ void fillSpriteColor(int id, bool top, u16 color);
  * int y is the y positoin to draw at
  * int w is the width of the image
  * int h is the height of the image
- * std::vector<u16> &imageBuffer is the raw pixel data
+ * Image &image is the raw pixel data
  */
 void fillSpriteImage(int id, bool top, int x, int y, int w, int h, Image &image);
 
@@ -219,39 +196,39 @@ void fillSpriteImage(int id, bool top, int x, int y, int w, int h, Image &image)
  * int w is the width of the image
  * int h is the height of the image
  * size is the width * height of the image
- * std::vector<u16> &imageBuffer is the raw pixel data
+ * Image &image is the raw pixel data
  */
 void fillSpriteImageScaled(int id, bool top, int x, int y, int w, int h, double scale, Image &image);
 
 /*
  * Fills a sprite with raw pixel data from a vector of a spritesheet
  * int id is the id of the sprite
- * std::vector<u16> &imageBuffer is the raw pixel data
+ * Image &image is the raw pixel data
  * int w is the width of the portion to put in the sprite
  * int h is the height of the portion to put in the sprite
  * int imageWidth is the width of the spritesheet
  * int xOffset is the X position in the sheet to start at
  * int yOffset is the Y position in the sheet to start at
  */
-void fillSpriteSegment(int id, bool top, std::vector<u16> &imageBuffer, int w, int h, int imageWidth, int xOffset, int yOffset);
+void fillSpriteSegment(int id, bool top, Image &image, int w, int h, int imageWidth, int xOffset, int yOffset);
 
 /*
  * Fills a sprite with scaled raw pixel data from a vector of a spritesheet
  * int id is the id of the sprite
  * double scale is the Scale to draw the image at
- * std::vector<u16> &imageBuffer is the raw pixel data
+ * Image &image is the raw pixel data
  * int w is the width of the portion to put in the sprite
  * int h is the height of the portion to put in the sprite
  * int imageWidth is the width of the spritesheet
  * int xOffset is the X position in the sheet to start at
  * int yOffset is the Y position in the sheet to start at
  */
-void fillSpriteSegmentScaled(int id, bool top, double scale, std::vector<u16> &imageBuffer, int w, int h, int imageWidth, int xOffset, int yOffset);
+void fillSpriteSegmentScaled(int id, bool top, double scale, Image &image, int w, int h, int imageWidth, int xOffset, int yOffset);
 
 /*
  * Fills a sprite with tinted raw pixel data from a vector of a spritesheet
  * int id is the id of the sprite
- * std::vector<u16> &imageBuffer is the raw pixel data
+ * Image &image is the raw pixel data
  * u16 color is the color to tint the pixels
  * int w is the width of the portion to put in the sprite
  * int h is the height of the portion to put in the sprite
@@ -259,7 +236,7 @@ void fillSpriteSegmentScaled(int id, bool top, double scale, std::vector<u16> &i
  * int xOffset is the X position in the sheet to start at
  * int yOffset is the Y position in the sheet to start at
  */
-void fillSpriteSegmentTinted(int id, bool top, std::vector<u16> &imageBuffer, u16 color, int w, int h, int imageWidth, int xOffset, int yOffset);
+void fillSpriteSegmentTinted(int id, bool top, Image &image, u16 color, int w, int h, int imageWidth, int xOffset, int yOffset);
 
 /**
  * Fills a sprite with text

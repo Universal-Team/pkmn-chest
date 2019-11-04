@@ -89,12 +89,12 @@ void drawMiniBoxes(int currentBox) {
 				// Type 1
 				int type = topScreen ? Banks::bank->pkm(currentBox, j)->type1() : save->pkm(currentBox, j)->type1();
 				if(((topScreen ? Banks::bank->pkm(currentBox, j)->generation() : save->pkm(currentBox, j)->generation()) == Generation::FOUR) && type > 8)	type--;
-				drawRectangle(173+((j-((j/6)*6))*5), 13+((j/6)*5)+(i*33), 2, 4, types[(type*(typesData.width*(typesData.height/17)))+typesData.width+1], false);
+				drawRectangle(173+((j-((j/6)*6))*5), 13+((j/6)*5)+(i*33), 2, 4, types.palette[types.bitmap[(type*(typesWidth()*typesHeight()))+typesWidth()+1]], false);
 
 				// Type 2
 				type = topScreen ? Banks::bank->pkm(currentBox, j)->type2() : save->pkm(currentBox, j)->type2();
 				if(((topScreen ? Banks::bank->pkm(currentBox, j)->generation() : save->pkm(currentBox, j)->generation()) == Generation::FOUR) && type > 8)	type--;
-				drawRectangle(175+((j-((j/6)*6))*5), 13+((j/6)*5)+(i*33), 2, 4, types[(type*(typesData.width*(typesData.height/17)))+typesData.width+1], false);
+				drawRectangle(175+((j-((j/6)*6))*5), 13+((j/6)*5)+(i*33), 2, 4, types.palette[types.bitmap[(type*(typesWidth()*typesHeight()))+typesWidth()+1]], false);
 			}
 		}
 		// Print box number
@@ -281,7 +281,7 @@ int selectItem(int current, int start, int max, std::vector<std::string> &items)
 			return current;
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
-			if(touch.px >= 256-searchData.width && touch.py <= searchData.height) {
+			if(touch.px >= 256-20 && touch.py <= 20) {
 				goto search;
 			}
 			for(int i=0;i<entriesPerScreen;i++) {
@@ -486,7 +486,7 @@ int selectPokeball(int currentBall) {
 		for(int x=0;x<5;x++) {
 			if(!(save->generation() != Generation::FIVE && (y*5)+x == 24)) {
 				std::pair<int, int> xy = getPokeballPosition((y*5)+x+1);
-				; // drawImageSegment((x*48)+24, (y*32)+24, 15, 15, ballSheet, ballSheetData.width, xy.first, xy.second, false);
+				drawImageSegment((x*48)+24, (y*32)+24, 15, 15, ballSheet, 135, xy.first, xy.second, false);
 			}
 		}
 	}
@@ -556,8 +556,8 @@ int selectWallpaper(int currentWallpaper) {
 		for(int x=0;x<6;x++) {
 			std::string path = boxBgPath(false, (y*6)+x);
 			std::vector<u16> img;
-			ImageData imgData = loadPng(path, img);
-			; // drawImageScaled((x*36)+28, (y*36)+28, imgData.width, imgData.height, 0.125, 0.125, img, false);
+			Image image = loadImage(path);
+			drawImageScaled((x*36)+28, (y*36)+28, boxWidth(), boxHeight(), 0.125, 0.125, image, false);
 		}
 	}
 
@@ -841,7 +841,7 @@ std::shared_ptr<PKX> selectStats(std::shared_ptr<PKX> pkm) {
 					break;
 				}
 			}
-			if(touch.px > 24+getTextWidth(Lang::get("hpType")+":") && touch.px < 24+getTextWidth(Lang::get("hpType")+":")+typesData.width && touch.py > 120 && touch.py < 132) {
+			if(touch.px > 24+getTextWidth(Lang::get("hpType")+":") && touch.px < 24+getTextWidth(Lang::get("hpType")+":")+typesWidth() && touch.py > 120 && touch.py < 132) {
 				selection = 6;
 				optionSelected = true;
 			}
@@ -871,7 +871,7 @@ std::shared_ptr<PKX> selectStats(std::shared_ptr<PKX> pkm) {
 		}
 
 		if(selection == 6) { // Hidden Power type
-			setSpritePosition(arrowID, false, 25+getTextWidth(Lang::get("hpType")+":")+typesData.width+2, 112);
+			setSpritePosition(arrowID, false, 25+getTextWidth(Lang::get("hpType")+":")+typesWidth()+2, 112);
 		} else if(column == 0) {
 			setSpritePosition(arrowID, false, 128+(textStatsC2[selection].x+(getTextWidth(textStatsC2[selection].text)/2))+2, textStatsC2[selection].y-6);
 		} else {

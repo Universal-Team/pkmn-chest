@@ -19,8 +19,7 @@ bool topScreen;
 int arrowID = 126, shinyID, currentSaveBox, currentBankBox, heldPokemonID = 125, keyboardSpriteID = 124, arrowMode = 0;
 std::vector<int> menuIconID, partyIconID;
 std::string savePath;
-std::vector<u16> arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, boxBgTop, boxButton, infoBox, keyboardKey, menuBg, menuButton, menuButtonBlue, menuIconSheet, search, shiny, listBg, types;
-ImageData ballSheetData, bankBoxData, boxBgTopData, boxButtonData, infoBoxData, keyboardKeyData, menuBgData, menuButtonData, menuButtonBlueData, menuIconSheetData, searchData, shinyData, listBgData, typesData;
+Image arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, boxBgTop, boxButton, infoBox, keyboardKey, menuBg, menuButton, menuButtonBlue, menuIconSheet, search, shiny, listBg, types;
 FILE* pokemonGRF;
 std::shared_ptr<PKFilter> filter = std::make_shared<PKFilter>();
 
@@ -144,23 +143,22 @@ Image loadPokemonSprite(int dexNo) {
 
 void loadGraphics(void) {
 	// Load images into RAM
-	ballSheetData = loadPng("nitro:/graphics/ballSheet.png", ballSheet);
-	boxBgTopData = loadPng("nitro:/graphics/boxBgTop.png", boxBgTop);
-	boxButtonData = loadPng("nitro:/graphics/boxButton.png", boxButton);
-	infoBoxData = loadPng("nitro:/graphics/infoBox.png", infoBox);
-	keyboardKeyData = loadPng("nitro:/graphics/keyboardKey.png", keyboardKey);
-	menuButtonData = loadPng("nitro:/graphics/menuButton.png", menuButton);
-	menuButtonBlueData = loadPng("nitro:/graphics/menuButtonBlue.png", menuButtonBlue);
-	menuIconSheetData = loadPng("nitro:/graphics/menuIconSheet.png", menuIconSheet);
-	searchData = loadPng("nitro:/graphics/search.png", search);
-	shinyData = loadPng("nitro:/graphics/shiny.png", shiny);
-	listBgData = loadPng("nitro:/graphics/listBg.png", listBg);
-	loadPng("nitro:/graphics/arrowBlue.png", arrowBlue);
-	loadPng("nitro:/graphics/arrowRed.png", arrowRed);
-	loadPng("nitro:/graphics/arrowYellow.png", arrowYellow);
-	if(sdFound()) {
-		menuBgData = loadPng("nitro:/graphics/menuBg.png", menuBg);
-	}
+	arrowBlue = loadImage("nitro:/graphics/arrowBlue.grf");
+	arrowRed = loadImage("nitro:/graphics/arrowRed.grf");
+	arrowYellow = loadImage("nitro:/graphics/arrowYellow.grf");
+	ballSheet = loadImage("nitro:/graphics/ballSheet.grf");
+	boxBgTop = loadImage("nitro:/graphics/boxBgTop.grf");
+	boxButton = loadImage("nitro:/graphics/boxButton.grf");
+	infoBox = loadImage("nitro:/graphics/infoBox.grf");
+	keyboardKey = loadImage("nitro:/graphics/keyboardKey.grf");
+	listBg = loadImage("nitro:/graphics/listBg.grf");
+	menuBg = loadImage("nitro:/graphics/menuBg.grf");
+	menuButton = loadImage("nitro:/graphics/menuButton.grf");
+	menuButtonBlue = loadImage("nitro:/graphics/menuButtonBlue.grf");
+	menuIconSheet = loadImage("nitro:/graphics/menuIconSheet.grf");
+	search = loadImage("nitro:/graphics/search.grf");
+	shiny = loadImage("nitro:/graphics/shiny.grf");
+
 	pokemonGRF = fopen("nitro:/graphics/pokemon.combo.grf", "rb");
 
 	// Init Pokémon Sprites
@@ -179,7 +177,7 @@ void loadGraphics(void) {
 	// Prepare menu icon sprites
 	for(int i=0;i<6;i++) {
 		int id = initSprite(false, SpriteSize_32x32);
-		fillSpriteSegment(id, false, menuIconSheet, 32, 32, menuIconSheetData.width, 0, i*32);
+		fillSpriteSegment(id, false, menuIconSheet, 32, 32, 32, 0, i*32);
 		prepareSprite(id, false, 0, 0, 0);
 		setSpriteVisibility(id, false, false);
 		menuIconID.push_back(id);
@@ -243,7 +241,7 @@ void drawBoxScreen(void) {
 }
 
 std::string boxBgPath(bool top, int box) {
-	if(top)	return "nitro:/graphics/box/chest.png";
+	if(top)	return "nitro:/graphics/box/chest.grf";
 	std::string game;
 	switch(save->game) {
 		default:
@@ -263,13 +261,12 @@ std::string boxBgPath(bool top, int box) {
 			game = box < 16 ? "bw" : "b2w2";
 			break;
 	}
-	return "nitro:/graphics/box/"+game+"/"+std::to_string(box)+".png";
+	return "nitro:/graphics/box/"+game+"/"+std::to_string(box)+".grf";
 }
 
 void drawBox(bool top) {
 	// Load box image
-	bankBox.clear();
-	bankBoxData = loadPng(boxBgPath(top), bankBox);
+	bankBox = loadImage(boxBgPath(top));
 
 	// Hide all Pokémon sprites for bank box
 	for(int i=0;i<30;i++) {
@@ -590,7 +587,7 @@ void manageBoxes(void) {
 			if((touch.px > 26 && touch.px < 141 && touch.py > 19 && touch.py < 37)) {
 				arrowY = -1;
 				goto selection;
-			} else if(touch.px <= searchData.width && touch.py >= 192-searchData.height) {
+			} else if(touch.px <= 20 && touch.py >= 192-20) {
 				goto filter;
 			}
 		}

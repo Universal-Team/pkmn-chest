@@ -20,14 +20,18 @@ void loadingAnimation(void) {
 void loadLoadingLogo(void) {
 	logoGfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_Bmp);
 	
-	std::vector<u16> logo;
-	loadPng("nitro:/graphics/icon.png", logo);
+	Image logo;
+	logo = loadImage("nitro:/graphics/icon.grf");
 	if(!(rand() % 8192)) { // Full odds shiny chest ;P
-		for(unsigned i=0;i<logo.size();i++) {
-			if(logo[i] == 0x801F || logo[i] == 0x8C9F || logo[i] == 0x8018)	logo[i] |= RGB::BLUE & GRAY;
+		for(unsigned i=0;i<logo.palette.size();i++) {
+			if(logo.palette[i] == 0x801F || logo.palette[i] == 0x8C9F || logo.palette[i] == 0x8018)	logo.palette[i] |= RGB::BLUE & GRAY;
 		}
 	}
-	tonccpy(logoGfx, logo.data(), 32*32*2);
+	for(int i=0;i<32;i++) {
+		for(int j=0;j<32;j++) {
+			logoGfx[(i*32)+j] = logo.palette[logo.bitmap[((i)*32)+j]] | BIT(15);
+		}
+	}
 }
 
 void showLoadingLogo(void) {

@@ -10,8 +10,12 @@ extern bool topScreen;
 extern int arrowID, shinyID, currentSaveBox, currentBankBox, heldPokemonID, keyboardSpriteID, arrowMode;
 extern std::vector<int> menuIconID, partyIconID;
 extern std::string savePath;
-extern std::vector<u16> arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, boxBgTop, boxButton, fileBrowseBg, infoBox, keyboardKey, menuBg, menuButton, menuButtonBlue, menuIconSheet, optionsBg, search, shiny, listBg, types;
-extern ImageData ballSheetData, bankBoxData, boxBgTopData, boxButtonData, fileBrowseBgData, infoBoxData, keyboardKeyData, menuBgData, menuButtonData, menuButtonBlueData, menuIconSheetData, optionsBgData, searchData, shinyData, listBgData, typesData;
+extern Image arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, boxBgTop, boxButton, fileBrowseBg, infoBox, keyboardKey, menuBg, menuButton, menuButtonBlue, menuIconSheet, optionsBg, search, shiny, listBg, types;
+
+#define boxHeight() (save->generation() == Generation::FOUR ? 148 : 151)
+#define boxWidth() (save->generation() == Generation::FOUR ? 162 : 158)
+#define typesHeight() ((Config::getLang("lang") == Lang::en || Config::getLang("lang") == Lang::it || Config::getLang("lang") == Lang::jp) ? 12 : 14)
+#define typesWidth() (Config::getLang("lang") == Lang::jp ? 30 : 32)
 
 // Returns the current box for the cursor's current screen
 int currentBox(void);
