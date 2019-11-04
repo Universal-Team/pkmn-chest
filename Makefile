@@ -18,7 +18,7 @@ GAME_SUBTITLE1	:= Universal-Team
 
 include $(DEVKITARM)/ds_rules
 
-.PHONY: checkarm9 clean
+.PHONY: checkarm9 graphics clean
 
 #---------------------------------------------------------------------------------
 # main targets
@@ -30,7 +30,11 @@ checkarm9:
 	$(MAKE) -C arm9
 
 #---------------------------------------------------------------------------------
-$(TARGET).nds	: $(NITRO_FILES) arm9/$(TARGET).elf
+graphics:
+	$(MAKE) -C graphics
+
+#---------------------------------------------------------------------------------
+$(TARGET).nds	: graphics $(NITRO_FILES) arm9/$(TARGET).elf
 	ndstool	-c $(TARGET).nds -9 arm9/$(TARGET).elf \
 	-b1 icon.bmp "$(GAME_TITLE);$(GAME_SUBTITLE1)" $(_ADDFILES) \
 	-z 80040000 -u 00030004 -a 00000138
@@ -42,4 +46,5 @@ arm9/$(TARGET).elf:
 #---------------------------------------------------------------------------------
 clean:
 	$(MAKE) -C arm9 clean
+	$(MAKE) -C graphics clean
 	rm -f $(TARGET).nds $(TARGET).arm9
