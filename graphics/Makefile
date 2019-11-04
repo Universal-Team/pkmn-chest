@@ -7,9 +7,11 @@ endif
 include $(DEVKITARM)/ds_rules
 
 
-GRAPHICS	:=	. box box/b2w2 box/bw box/dp box/hgss box/pt
+GRAPHICS	:=	graphics graphics/box \
+				graphics/box/b2w2 graphics/box/bw graphics/box/dp graphics/box/hgss graphics/box/pt \
+				lang/de lang/en lang/es lang/fr lang/it lang/jp lang/ko
 
-OUT			:=	../nitrofiles/graphics/grit
+OUT			:=	../nitrofiles
 
 INPUTS		:= $(foreach dir,$(GRAPHICS),$(addprefix $(dir)/,$(notdir $(wildcard $(dir)/*.png))))
 TARGETS		:= $(INPUTS:.png=.grf)
