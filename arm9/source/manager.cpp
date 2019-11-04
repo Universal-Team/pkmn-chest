@@ -121,23 +121,24 @@ int getPokemonIndex(int species, int alternativeForm, int gender, bool egg) {
 }
 
 Image loadPokemonSprite(int dexNo) {
-	dexNo *= 0x45C;
 	Image image;
 
-	// if(pokemonGRF) {
-	// 	// GFX
-	// 	fseek(pokemonGRF, dexNo+0x28, SEEK_SET);
-	// 	u32 size;
-	// 	fread(&size, 1, 4, pokemonGRF);
-	// 	image.bitmap = std::vector<u8>(size);
-	// 	fread(image.bitmap.data(), 1, size, pokemonGRF);
+	if(pokemonGRF) {
+		// GFX
+		fseek(pokemonGRF, (dexNo*0x45C)+0x28, SEEK_SET);
+		u32 size;
+		fread(&size, 1, 4, pokemonGRF);
+		fseek(pokemonGRF, 4, SEEK_CUR);
+		image.bitmap = std::vector<u8>(size);
+		fread(image.bitmap.data(), 1, size-4, pokemonGRF);
 
-	// 	// PAL
-	// 	fseek(pokemonGRF, 4, SEEK_CUR);
-	// 	fread(&size, 1, 4, pokemonGRF);
-	// 	image.palette = std::vector<u16>(size/2);
-	// 	fread(image.palette.data(), 1, size, pokemonGRF);
-	// }
+		// PAL
+		fseek(pokemonGRF, 4, SEEK_CUR);
+		fread(&size, 1, 4, pokemonGRF);
+		fseek(pokemonGRF, 4, SEEK_CUR);
+		image.palette = std::vector<u16>(size/2);
+		fread(image.palette.data(), 1, size-4 , pokemonGRF);
+	}
 	return image;
 }
 

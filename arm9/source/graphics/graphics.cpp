@@ -269,18 +269,19 @@ Image loadImage(std::string path) {
 
 	FILE *file = fopen(path.c_str(), "rb");
 	if(file) {
-		// GFX
 		fseek(file, 0x28, SEEK_SET);
 		u32 size;
 		fread(&size, 1, 4, file);
+		fseek(file, 4, SEEK_CUR);
 		image.bitmap = std::vector<u8>(size);
-		fread(image.bitmap.data(), 1, size, file);
+		fread(image.bitmap.data(), 1, size-4, file);
 
 		// PAL
 		fseek(file, 4, SEEK_CUR);
 		fread(&size, 1, 4, file);
-		image.palette = std::vector<u16>(size);
-		fread(image.palette.data(), 1, size, file);
+		fseek(file, 4, SEEK_CUR);
+		image.palette = std::vector<u16>(size/2);
+		fread(image.palette.data(), 1, size-4 , file);
 	}
 
 	return image;
