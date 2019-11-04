@@ -23,17 +23,11 @@ std::vector<Label> xMenuButtons = {
 
 void savePrompt(void) {
 	// Draw background
-	if(sdFound()) {
-		drawImageDMA(0, 0, 256, 192, menuBg, false);
-		drawRectangle(0, 0, 256, 33, LIGHT_GRAY, false);
-		drawRectangle(0, 33, 256, 1, BLACK, false);
-		drawRectangle(0, 34, 256, 2, DARK_GRAY, false);
-		drawRectangle(0, 36, 256, 1, DARKERER_GRAY, false);
-	} else {
-		drawRectangle(0, 0, 256, 33, LIGHT_GRAY, false);
-		drawRectangle(0, 33, 256, 143, DARKER_GRAY, DARKERER_GRAY, false);
-		drawRectangle(0, 176, 256, 16, BLACK, false);
-	}
+	drawImageDMA(0, 0, 256, 192, menuBg, false);
+	drawRectangle(0, 0, 256, 33, LIGHT_GRAY, false);
+	drawRectangle(0, 33, 256, 1, BLACK, false);
+	drawRectangle(0, 34, 256, 2, DARK_GRAY, false);
+	drawRectangle(0, 36, 256, 1, DARKERER_GRAY, false);
 
 	printTextTinted(Lang::get("saveMsgChest"), GRAY, 5, 0, false, true);
 	if(Input::getBool(Lang::get("save"), Lang::get("discard"))) {
@@ -41,8 +35,7 @@ void savePrompt(void) {
 		Banks::bank->save();
 	}
 
-	if(sdFound())	drawImageSegment(4, 39, 248, 18, menuBg, 256, 4, 39, false);
-	else	drawRectangle(4, 39, 248, 18, DARKERER_GRAY, DARK_GRAY, false);
+	drawImageSegment(4, 39, 248, 18, menuBg, 256, 4, 39, false);
 	drawRectangle(0, 0, 256, 32, LIGHT_GRAY, false);
 	if(savePath == cardSave)	printTextTinted(Lang::get("saveMsgCard"), GRAY, 5, 0, false, true);
 	else	printTextTinted(Lang::get("saveMsgSave"), GRAY, 5, 0, false, true);
@@ -89,12 +82,7 @@ bool xMenu(void) {
 	fillArrow(0);
 
 	// Draw background
-	if(sdFound())	drawImageDMA(0, 0, 256, 192, menuBg, false);
-	else {
-		drawRectangle(0, 0, 256, 16, BLACK, false);
-		drawRectangle(0, 16, 256, 160, DARK_GRAY, false);
-		drawRectangle(0, 176, 256, 16, BLACK, false);
-	}
+	drawImageDMA(0, 0, 256, 192, menuBg, false);
 
 	// Enable sprites and set positions
 	for(unsigned i=0;i<menuIconID.size();i++) {
@@ -239,12 +227,7 @@ bool xMenu(void) {
 			}
 
 			// Redraw menu
-			if(sdFound())	drawImage(0, 0, 256, 192, menuBg, false);
-			else {
-				drawRectangle(0, 0, 256, 16, BLACK, false);
-				drawRectangle(0, 16, 256, 160, DARK_GRAY, false);
-				drawRectangle(0, 176, 256, 16, BLACK, false);
-			}
+			drawImage(0, 0, 256, 192, menuBg, false);
 			for(unsigned i=0;i<menuIconID.size();i++) {
 				setSpritePosition(menuIconID[i], false, xMenuButtons[i].x+3, xMenuButtons[i].y+6);
 				setSpriteVisibility(menuIconID[i], false, true);
