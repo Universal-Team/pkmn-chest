@@ -36,8 +36,8 @@ void Lang::load(int lang) {
 	loadToVector("nitro:/lang/"+langs[tempLang]+"/species.txt", Lang::species);
 
 	// Load types picture
-	tempLang = (access(("nitro:/lang/"+langs[lang]+"/types.png").c_str(), F_OK) == 0) ? lang : 1;
-	types = loadImage("nitro:/lang/"+langs[tempLang]+"/types.grf");
+	tempLang = (access(("nitro:/lang/"+langs[lang]+"/types.gfx").c_str(), F_OK) == 0) ? lang : 1;
+	types = loadImage("nitro:/lang/"+langs[tempLang]+"/types.gfx");
 
 	// Load app strings
 	FILE* file = fopen(("nitro:/lang/"+langs[lang]+"/app.json").c_str(), "rt");

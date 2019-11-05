@@ -20,7 +20,7 @@ struct button {
 
 void showParty(int selection) {
 	for(int i=0;i<6;i++) {
-		drawImage(partyButtons[i].x, partyButtons[i].y, 128, 41, selection == i ? menuButtonBlue : menuButton, false);
+		drawImage(partyButtons[i].x, partyButtons[i].y, menuButton.width, menuButton.height, selection == i ? menuButtonBlue : menuButton, false);
 		if(save->pkm(i)->species() != 0) {
 			if(save->pkm(i)->nicknamed())	printText(save->pkm(i)->nickname(), partyButtons[i].x+47, partyButtons[i].y+14, false);
 			else	printText(Lang::species[save->pkm(i)->species()], partyButtons[i].x+47, partyButtons[i].y+14, false);
@@ -73,7 +73,7 @@ void manageParty(void) {
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
 			for(unsigned i=0; i<(sizeof(partyButtons)/sizeof(partyButtons[0]));i++) {
-				if(touch.px >= partyButtons[i].x && touch.px <= partyButtons[i].x+128 && touch.py >= partyButtons[i].y && touch.py <= partyButtons[i].y+41) {
+				if(touch.px >= partyButtons[i].x && touch.px <= partyButtons[i].x+menuButton.width && touch.py >= partyButtons[i].y && touch.py <= partyButtons[i].y+menuButton.height) {
 					selectedOption = i;
 				}
 			}

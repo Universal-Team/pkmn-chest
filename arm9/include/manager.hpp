@@ -10,12 +10,7 @@ extern bool topScreen;
 extern int arrowID, shinyID, currentSaveBox, currentBankBox, heldPokemonID, keyboardSpriteID, arrowMode;
 extern std::vector<int> menuIconID, partyIconID;
 extern std::string savePath;
-extern Image arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, boxBgTop, boxButton, fileBrowseBg, infoBox, keyboardKey, menuBg, menuButton, menuButtonBlue, menuIconSheet, optionsBg, search, shiny, listBg, types;
-
-#define boxHeight() (save->generation() == Generation::FOUR ? 148 : 151)
-#define boxWidth() (save->generation() == Generation::FOUR ? 164 : 160)
-#define typesHeight() ((Config::getLang("lang") == Lang::en || Config::getLang("lang") == Lang::it || Config::getLang("lang") == Lang::jp) ? 12 : 14)
-#define typesWidth() (Config::getLang("lang") == Lang::jp ? 30 : 32)
+extern Image arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, boxBgTop, boxButton, infoBox, keyboardKey, menuBg, menuButton, menuButtonBlue, menuIconSheet, optionsBg, search, shiny, listBg, types;
 
 // Returns the current box for the cursor's current screen
 int currentBox(void);
@@ -27,19 +22,19 @@ int currentBox(void);
 std::shared_ptr<PKX> currentPokemon(int slot);
 
 /*
- * Gets the bmp number for a Pokémon
- * std::shared_ptr<PKX> pkm is the Pokémon to get the bmp for
- * Returns an int of the bmp to use
+ * Gets the image offset for a Pokémon
+ * std::shared_ptr<PKX> pkm is the Pokémon to get the offset for
+ * Returns an int of the offset to use
  */
 int getPokemonIndex(std::shared_ptr<PKX> pkm);
 
 /*
- * Gets the bmp number for a Pokémon
+ * Gets the image offset for a Pokémon
  * int species is the National dex number of the Pokémon
  * int alternativeForm is the alternative form of the Pokémon
  * int gender is the gender of the Pokémon
  * bool egg is wheher the Pokémon is in an egg
- * Returns an int of the bmp to use
+ * Returns an int of the offset to use
  */
 int getPokemonIndex(int species, int alternativeForm = 0, int gender = 0, bool egg = false);
 

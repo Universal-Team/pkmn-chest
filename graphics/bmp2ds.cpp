@@ -33,18 +33,28 @@ Image loadBmp16(std::string path, int paletteOffset) {
 			if(image.palette[i] == 0xfc1f)	image.palette[i] = 0;
 		}
 
+		int rowWidth = image.width;
+		while(rowWidth%8)	rowWidth++;
+
 		// Load pixels
 		fseek(file, 0xA, SEEK_SET); // Get pixel start location
-		fseek(file, (uint8_t)fgetc(file), SEEK_SET); // Seek to pixel start location
-		uint8_t bmpImageBuffer[image.width*image.height];
-		fread(bmpImageBuffer, 1, image.width*image.height, file);
+		int pixelStart = (uint8_t)fgetc(file);
+		// printf("W: %d, rW: %d, H: %d, P: 0x%x\n", image.width, rowWidth, image.height, pixelStart);
+		fseek(file, pixelStart, SEEK_SET); // Seek to pixel start location
+		uint8_t bmpImageBuffer[(image.width*rowWidth)];
+		fread(bmpImageBuffer, 1, (image.width*rowWidth), file);
 		for(int y=image.height-1; y>=0; y--) {
-			uint8_t* src = bmpImageBuffer+y*(image.width/2);
+			uint8_t* src = bmpImageBuffer+(y*(rowWidth/2));
 			for(unsigned x=0;x<image.width;x+=2) {
 				uint8_t val = *(src++);
-				image.bitmap.push_back(val>>4);  // First nibble
-				image.bitmap.push_back(val&0xF); // Second nibble
+					image.bitmap.push_back(val>>4);  // First nibble
+					// printf("%x", val>>4);
+					if(!(image.width%2 && x == image.width-1)) {
+						image.bitmap.push_back(val&0xF); // Second nibble
+						// printf("%x", val&0xF);
+					}
 			}
+			// printf("|\n");
 		}
 	}
 	fclose(file);

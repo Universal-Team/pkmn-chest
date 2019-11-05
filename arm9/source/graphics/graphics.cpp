@@ -1,6 +1,4 @@
 #include "graphics.hpp"
-#include "lodepng.hpp"
-#include "lzss.h"
 #include "tonccpy.h"
 
 #define WHITE 0xFFFF
@@ -166,18 +164,10 @@ void loadFont(void) {
 }
 
 Image loadImage(std::string path) {
-	Image image;
-	drawRectangle(0, 0, 256, 20, 0x8000, true);
-	printText(path, 0, 0, true);
-
+	Image image = {0, 0};
 	FILE *file = fopen(path.c_str(), "rb");
 	if(file) {
-		drawRectangle(0, 0, 30, 20, 0x8000, true);
-		printText("yes", 0, 0, true);
-		char formatCheck[4];
-		fread(formatCheck, 1, sizeof(formatCheck), file);
-		if(strcmp(formatCheck, ".GFX") == 0)	return image; // Invlaid file
-
+		fseek(file, 4, SEEK_SET);
 		fread(&image.width, 1, 2, file);
 		fread(&image.height, 1, 2, file);
 		image.bitmap = std::vector<u8>(image.width*image.height);
@@ -197,7 +187,7 @@ void drawImageDMA(int x, int y, int w, int h, Image &image, bool top) {
 	u16 *dst = (top ? BG_GFX : BG_GFX_SUB);
 	for(int i=0;i<h;i++) {
 		for(int j=0;j<w;j++) {
-			dst[(y+i)*256+j+x] = image.palette[image.bitmap[(i*w)+j]] | BIT(15);
+			dst[(y+i)*256+j+x] = image.palette[image.bitmap[(i*w)+j]];
 		}
 	}
 }
@@ -206,8 +196,8 @@ void drawImage(int x, int y, int w, int h, Image &image, bool top) {
 	u16 *dst = (top ? BG_GFX : BG_GFX_SUB);
 	for(int i=0;i<h;i++) {
 		for(int j=0;j<w;j++) {
-			if(image.palette[image.bitmap[(i*w)+j]] != 0x7C1F) { // Do not render transparent pixel
-				dst[(y+i)*256+j+x] = image.palette[image.bitmap[(i*w)+j]] | BIT(15);
+			if(image.palette[image.bitmap[(i*w)+j]]>>15 != 0) { // Do not render transparent pixel
+				dst[(y+i)*256+j+x] = image.palette[image.bitmap[(i*w)+j]];
 			}
 		}
 	}
@@ -220,8 +210,8 @@ void drawImageSegmentDMA(int x, int y, int w, int h, Image &image, int imageWidt
 	u16 *dst = (top ? BG_GFX : BG_GFX_SUB);
 	for(int i=0;i<h;i++) {
 		for(int j=0;j<w;j++) {
-			if(image.palette[image.bitmap[((i)*imageWidth)+j]] != 0x7C1F) { // Do not render transparent pixel
-				dst[((y+i)*256)+j+x] = image.palette[image.bitmap[((i)*imageWidth)+j]] | BIT(15);
+			if(image.palette[image.bitmap[((i)*imageWidth)+j]]>>15 != 0) { // Do not render transparent pixel
+				dst[((y+i)*256)+j+x] = image.palette[image.bitmap[((i)*imageWidth)+j]];
 			}
 		}
 	}
@@ -231,8 +221,8 @@ void drawImageSegment(int x, int y, int w, int h, Image &image, int imageWidth, 
 	u16 *dst = (top ? BG_GFX : BG_GFX_SUB);
 	for(int i=0;i<h;i++) {
 		for(int j=0;j<w;j++) {
-			if(image.palette[image.bitmap[((i+yOffset)*imageWidth)+j+xOffset]] != 0x7C1F) { // Do not render transparent pixel
-				dst[((y+i)*256)+j+x] = image.palette[image.bitmap[((i+yOffset)*imageWidth)+j+xOffset]] | BIT(15);
+			if(image.palette[image.bitmap[((i+yOffset)*imageWidth)+j+xOffset]]>>15 != 0) { // Do not render transparent pixel
+				dst[((y+i)*256)+j+x] = image.palette[image.bitmap[((i+yOffset)*imageWidth)+j+xOffset]];
 			}
 		}
 	}
@@ -256,8 +246,8 @@ void drawImageScaled(int x, int y, int w, int h, double scaleX, double scaleY, I
 	else {
 		for(int i=0;i<(h*scaleY);i++) {
 			for(int j=0;j<(w*scaleX);j++) {
-				if(image.palette[image.bitmap[(((int)(i/scaleY))*w)+(j/scaleX)]] != 0x7C1F) { // Do not render transparent pixel
-					(top ? BG_GFX : BG_GFX_SUB)[(y+i)*256+x+j] = image.palette[image.bitmap[(((int)(i/scaleY))*w)+(j/scaleX)]] | BIT(15);
+				if(image.palette[image.bitmap[(((int)(i/scaleY))*w)+(j/scaleX)]]>>15 != 0) { // Do not render transparent pixel
+					(top ? BG_GFX : BG_GFX_SUB)[(y+i)*256+x+j] = image.palette[image.bitmap[(((int)(i/scaleY))*w)+(j/scaleX)]];
 				}
 			}
 		}
@@ -313,7 +303,7 @@ void fillSpriteColor(int id, bool top, u16 color) {
 void fillSpriteImage(int id, bool top, int x, int y, int w, int h, Image &image, int spriteW) {
 	for(int i=0;i<h;i++) {
 		for(int j=0;j<w;j++) {
-			sprites(top)[id].gfx[((y+i)*spriteW)+(x+j)] = image.palette[image.bitmap[((i)*w)+j]] | BIT(15);
+			sprites(top)[id].gfx[((y+i)*spriteW)+(x+j)] = image.palette[image.bitmap[((i)*w)+j]];
 		}
 	}
 }
@@ -323,9 +313,9 @@ void fillSpriteImageScaled(int id, bool top, int x, int y, int w, int h, double 
 	else {
 		for(int i=0;i<(h*scale);i++) {
 			for(int j=0;j<(w*scale);j++) {
-				if(image.palette[image.bitmap[(((int)(i/scale))*w)+(j/scale)]] != 0x7C1F) { // Do not render transparent pixel
-					sprites(top)[id].gfx[(y+i)*32+x+j] = image.palette[image.bitmap[(((int)(i/scale))*w)+(j/scale)]] | BIT(15);
-				}
+				// if(image.palette[image.bitmap[(((int)(i/scale))*w)+(j/scale)]]>>15 != 0) { // Do not render transparent pixel
+					sprites(top)[id].gfx[(y+i)*32+x+j] = image.palette[image.bitmap[(((int)(i/scale))*w)+(j/scale)]];
+				// }
 			}
 		}
 	}
@@ -334,7 +324,7 @@ void fillSpriteImageScaled(int id, bool top, int x, int y, int w, int h, double 
 void fillSpriteSegment(int id, bool top, Image &image, int w, int h, int imageWidth, int xOffset, int yOffset) {
 	for(int i=0;i<h;i++) {
 		for(int j=0;j<w;j++) {
-			sprites(top)[id].gfx[(i*w)+j] = image.palette[image.bitmap[((i+yOffset)*imageWidth)+j+xOffset]] | BIT(15);
+			sprites(top)[id].gfx[(i*w)+j] = image.palette[image.bitmap[((i+yOffset)*imageWidth)+j+xOffset]];
 		}
 	}
 }
@@ -351,7 +341,7 @@ void fillSpriteSegmentScaled(int id, bool top, double scale, Image &image, int w
 			for(double j=0;j<w;j+=scale) {
 				u16 jj=j;
 				u16 js=j/scale;
-				sprites(top)[id].gfx[(is*ws)+js] = image.palette[image.bitmap[((ii+yOffset)*imageWidth)+jj+xOffset]] | BIT(15);
+				sprites(top)[id].gfx[(is*ws)+js] = image.palette[image.bitmap[((ii+yOffset)*imageWidth)+jj+xOffset]];
 			}
 		}
 	}
@@ -360,7 +350,7 @@ void fillSpriteSegmentScaled(int id, bool top, double scale, Image &image, int w
 void fillSpriteSegmentTinted(int id, bool top, Image &image, u16 color, int w, int h, int imageWidth, int xOffset, int yOffset) {
 	for(int i=0;i<h;i++) {
 		for(int j=0;j<w;j++) {
-			sprites(top)[id].gfx[(i*w)+j] = (color & image.palette[image.bitmap[((i+yOffset)*imageWidth)+j+xOffset]]) | BIT(15);
+			sprites(top)[id].gfx[(i*w)+j] = (color & image.palette[image.bitmap[((i+yOffset)*imageWidth)+j+xOffset]]);
 		}
 	}
 }
@@ -381,8 +371,8 @@ void fillSpriteText(int id, bool top, std::u16string text, u16 color, int xPos, 
 		xPos += fontWidths[t*3];
 		for(int i=0;i<tileHeight;i++) {
 			for(int j=0;j<tileWidth;j++) {
-				if(image.palette[image.bitmap[((i)*tileWidth)+j]] != 0x7C1F) { // Do not render transparent pixel
-					sprites(top)[id].gfx[((yPos+i)*32)+(xPos+j)] = image.palette[image.bitmap[((i)*tileWidth)+j]] | BIT(15);
+				if(image.palette[image.bitmap[((i)*tileWidth)+j]]>>15 != 0) { // Do not render transparent pixel
+					sprites(top)[id].gfx[((yPos+i)*32)+(xPos+j)] = image.palette[image.bitmap[((i)*tileWidth)+j]];
 				}
 			}
 		}

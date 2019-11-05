@@ -30,12 +30,12 @@ void drawBag(Pouch pouch, int maxItem, int screenPos, bool rightSide) {
 
 	if(rightSide) {
 		// Draw search icon
-		drawImage(256-20, 0, 20, 20, search, false);
+		drawImage(256-20, 0, search.width, search.height, search, false);
 
 		// Draw pouch buttons
 		for(unsigned i=0;i<save->pouches().size();i++) {
-			drawImageScaled(170, (104-(10*save->pouches().size()))+i*(20), 84, 26, 1, (float)20/26, boxButton, false);
-			printTextMaxW(save->pouchName(save->pouches()[i].first), 84-8, 1, 174, (104-(10*save->pouches().size()))+i*(20)+2, false);
+			drawImageScaled(170, (104-(10*save->pouches().size()))+i*(20), boxButton.width, boxButton.height, 1, (float)20/boxButton.height, boxButton, false);
+			printTextMaxW(save->pouchName(save->pouches()[i].first), boxButton.width-8, 1, 174, (104-(10*save->pouches().size()))+i*(20)+2, false);
 		}
 	}
 
@@ -122,7 +122,7 @@ void editBag(void) {
 			goto changePouch;
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
-			if(touch.px >= 256-20 && touch.py <= 20) {
+			if(touch.px >= 256-search.width && touch.py <= search.height) {
 				goto search;
 			}
 			for(int i=0;i<entriesPerScreen;i++) {

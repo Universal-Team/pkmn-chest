@@ -63,7 +63,7 @@ void drawXMenuButtons(unsigned menuSelection) {
 	xMenuButtons[3].label = save->otName();
 
 	for(unsigned i=0;i<xMenuButtons.size();i++) {
-		drawImage(xMenuButtons[i].x, xMenuButtons[i].y, 128, 41, menuSelection == i ? menuButtonBlue : menuButton, false);
+		drawImage(xMenuButtons[i].x, xMenuButtons[i].y, menuButton.width, menuButton.height, menuSelection == i ? menuButtonBlue : menuButton, false);
 		printText((i==3) ? xMenuButtons[i].label : Lang::get(xMenuButtons[i].label), xMenuButtons[i].x+47, xMenuButtons[i].y+14, false);
 		setSpriteAlpha(menuIconID[i], false, menuSelection == i ? 8 : 15);
 		updateOam();
@@ -154,7 +154,7 @@ bool xMenu(void) {
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
 			for(unsigned i=0; i<xMenuButtons.size();i++) {
-				if(touch.px >= xMenuButtons[i].x && touch.px <= xMenuButtons[i].x+128 && touch.py >= xMenuButtons[i].y && touch.py <= xMenuButtons[i].y+41) {
+				if(touch.px >= xMenuButtons[i].x && touch.px <= xMenuButtons[i].x+menuButton.width && touch.py >= xMenuButtons[i].y && touch.py <= xMenuButtons[i].y+menuButton.height) {
 					selectedOption = i;
 				}
 			}

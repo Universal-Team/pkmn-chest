@@ -89,12 +89,12 @@ void drawMiniBoxes(int currentBox) {
 				// Type 1
 				int type = topScreen ? Banks::bank->pkm(currentBox, j)->type1() : save->pkm(currentBox, j)->type1();
 				if(((topScreen ? Banks::bank->pkm(currentBox, j)->generation() : save->pkm(currentBox, j)->generation()) == Generation::FOUR) && type > 8)	type--;
-				drawRectangle(173+((j-((j/6)*6))*5), 13+((j/6)*5)+(i*33), 2, 4, types.palette[types.bitmap[(type*(typesWidth()*typesHeight()))+typesWidth()+1]], false);
+				drawRectangle(173+((j-((j/6)*6))*5), 13+((j/6)*5)+(i*33), 2, 4, types.palette[types.bitmap[(type*(types.width*(types.height/17)))+types.width+1]], false);
 
 				// Type 2
 				type = topScreen ? Banks::bank->pkm(currentBox, j)->type2() : save->pkm(currentBox, j)->type2();
 				if(((topScreen ? Banks::bank->pkm(currentBox, j)->generation() : save->pkm(currentBox, j)->generation()) == Generation::FOUR) && type > 8)	type--;
-				drawRectangle(175+((j-((j/6)*6))*5), 13+((j/6)*5)+(i*33), 2, 4, types.palette[types.bitmap[(type*(typesWidth()*typesHeight()))+typesWidth()+1]], false);
+				drawRectangle(175+((j-((j/6)*6))*5), 13+((j/6)*5)+(i*33), 2, 4, types.palette[types.bitmap[(type*(types.width*(types.height/17)))+types.width+1]], false);
 			}
 		}
 		// Print box number
@@ -175,7 +175,6 @@ int selectForm(int dexNo, int currentForm) {
 
 	// Draw forms
 	for(int i=0;i<formCounts[altIndex].noForms;i++) {
-		std::vector<u16> bmp;
 		Image image = loadPokemonSprite(getPokemonIndex(dexNo, i));
 		drawImage((i*32)+(128-((32*formCounts[altIndex].noForms)/2)), 80, 32, 32, image, false);
 	}
@@ -228,7 +227,7 @@ void drawItemList(int screenPos, std::vector<std::string> itemList) {
 	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
 
 	// Draw search icon
-	drawImage(256-20, 0, 20, 20, search, false);
+	drawImage(256-20, 0, search.width, search.height, search, false);
 
 	// Print items
 	for(unsigned i=0;i<std::min(9u, itemList.size()-screenPos);i++) {
@@ -281,7 +280,7 @@ int selectItem(int current, int start, int max, std::vector<std::string> &items)
 			return current;
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
-			if(touch.px >= 256-20 && touch.py <= 20) {
+			if(touch.px >= 256-search.width && touch.py <= search.height) {
 				goto search;
 			}
 			for(int i=0;i<entriesPerScreen;i++) {
@@ -486,7 +485,7 @@ int selectPokeball(int currentBall) {
 		for(int x=0;x<5;x++) {
 			if(!(save->generation() != Generation::FIVE && (y*5)+x == 24)) {
 				std::pair<int, int> xy = getPokeballPosition((y*5)+x+1);
-				drawImageSegment((x*48)+24, (y*32)+24, 15, 15, ballSheet, 136, xy.first, xy.second, false);
+				drawImageSegment((x*48)+24, (y*32)+24, 15, 15, ballSheet, ballSheet.width, xy.first, xy.second, false);
 			}
 		}
 	}
@@ -555,9 +554,8 @@ int selectWallpaper(int currentWallpaper) {
 	for(int y=0;y<4;y++) {
 		for(int x=0;x<6;x++) {
 			std::string path = boxBgPath(false, (y*6)+x);
-			std::vector<u16> img;
 			Image image = loadImage(path);
-			drawImageScaled((x*36)+28, (y*36)+28, boxWidth(), boxHeight(), 0.125, 0.125, image, false);
+			drawImageScaled((x*36)+28, (y*36)+28, image.width, image.height, 0.125, 0.125, image, false);
 		}
 	}
 
@@ -789,7 +787,7 @@ void drawStatsPage(std::shared_ptr<PKX> pkm) {
 
 	// Draw Hidden Power type
 	printText(Lang::get("hpType")+":", 20, 118, false);
-	drawImageSegment(24+getTextWidth(Lang::get("hpType")+":"), 120, typesWidth(), typesHeight()/17, types, typesWidth(), 0, (pkm->hpType()+1)*(typesHeight()/17), false);
+	drawImageSegment(24+getTextWidth(Lang::get("hpType")+":"), 120, types.width, types.height/17, types, types.width, 0, (pkm->hpType()+1)*(types.height/17), false);
 
 }
 
@@ -841,7 +839,7 @@ std::shared_ptr<PKX> selectStats(std::shared_ptr<PKX> pkm) {
 					break;
 				}
 			}
-			if(touch.px > 24+getTextWidth(Lang::get("hpType")+":") && touch.px < 24+getTextWidth(Lang::get("hpType")+":")+typesWidth() && touch.py > 120 && touch.py < 132) {
+			if(touch.px > 24+getTextWidth(Lang::get("hpType")+":") && touch.px < 24+getTextWidth(Lang::get("hpType")+":")+types.width && touch.py > 120 && touch.py < 132) {
 				selection = 6;
 				optionSelected = true;
 			}
@@ -871,7 +869,7 @@ std::shared_ptr<PKX> selectStats(std::shared_ptr<PKX> pkm) {
 		}
 
 		if(selection == 6) { // Hidden Power type
-			setSpritePosition(arrowID, false, 25+getTextWidth(Lang::get("hpType")+":")+typesWidth()+2, 112);
+			setSpritePosition(arrowID, false, 25+getTextWidth(Lang::get("hpType")+":")+types.width+2, 112);
 		} else if(column == 0) {
 			setSpritePosition(arrowID, false, 128+(textStatsC2[selection].x+(getTextWidth(textStatsC2[selection].text)/2))+2, textStatsC2[selection].y-6);
 		} else {

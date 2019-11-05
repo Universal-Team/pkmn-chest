@@ -38,7 +38,7 @@ std::vector<Label> aMenuTopBarButtons = {
 
 void drawAMenuButtons(std::vector<Label>& buttons, int buttonMode) {
 	for(unsigned i=0;i<buttons.size();i++) {
-		drawImage(buttons[i].x, buttons[i].y, 84, 26, boxButton, false);
+		drawImage(buttons[i].x, buttons[i].y, boxButton.width, boxButton.height, boxButton, false);
 		printTextMaxW(Lang::get(buttons[i].label), 80, 1, buttons[i].x+4, buttons[i].y+4, false);
 	}
 }
@@ -122,13 +122,13 @@ int aMenu(int pkmPos, std::vector<Label>& buttons, int buttonMode) {
 					else	save->pkm(save->emptyPkm(), currentSaveBox, pkmPos, false);
 					drawBox(false);
 					if(topScreen)	drawBox(topScreen);
-					drawRectangle(5+boxWidth(), 0, 256-(5+boxWidth()), 192, DARKERER_GRAY, DARKER_GRAY, false);
+					drawRectangle(5+bankBox.width, 0, 256-(5+bankBox.width), 192, DARKERER_GRAY, DARKER_GRAY, false);
 					drawPokemonInfo(save->emptyPkm());
 					goto back;
 				}
 				drawBox(false);
 				if(topScreen)	drawBox(topScreen);
-				drawRectangle(5+boxWidth(), 0, 256-(5+boxWidth()), 192, DARKERER_GRAY, DARKER_GRAY, false);
+				drawRectangle(5+bankBox.width, 0, 256-(5+bankBox.width), 192, DARKERER_GRAY, DARKER_GRAY, false);
 				drawAMenuButtons(buttons, buttonMode);
 			} else if(menuSelection == 4) { // Dump
 				char path[256];

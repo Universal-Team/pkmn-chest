@@ -16,17 +16,19 @@ OUT			:=	../nitrofiles
 INPUTS		:= $(foreach dir,$(GRAPHICS),$(addprefix $(dir)/,$(notdir $(wildcard $(dir)/*.bmp))))
 TARGETS		:= $(INPUTS:.bmp=.gfx)
 
-BMP2DS		:= ../resources/bmp2ds
+.PHONY	:	bmp2ds clean all directories
 
-.PHONY: clean all directories
+all	:	bmp2ds $(TARGETS)
+	@echo graphics ...
+
+bmp2ds	:
+	@g++ bmp2ds.cpp -o bmp2ds
 
 %.gfx	:	%.bmp
 	@mkdir -p $(OUT)/$(@D)
-	@$(BMP2DS) $< $(OUT)/$@
+	@./bmp2ds $< $(OUT)/$@
 
-all	:	$(TARGETS)
-	@echo GRIT files ...
-
-clean:
+clean	:
 	@echo clean ...
+	@rm bmp2ds
 	@rm -rf $(addprefix $(OUT)/,$(TARGETS))

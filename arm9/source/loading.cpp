@@ -27,10 +27,8 @@ void loadLoadingLogo(void) {
 			if(logo.palette[i] == 0x801F || logo.palette[i] == 0x8C9F || logo.palette[i] == 0x8018)	logo.palette[i] |= RGB::BLUE & GRAY;
 		}
 	}
-	for(int i=0;i<32;i++) {
-		for(int j=0;j<32;j++) {
-			logoGfx[(i*32)+j] = logo.palette[logo.bitmap[((i)*32)+j]] | BIT(15);
-		}
+	for(unsigned int i=0;i<logo.bitmap.size();i++) {
+		logoGfx[i] = logo.palette[logo.bitmap[i]];
 	}
 }
 
