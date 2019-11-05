@@ -52,7 +52,7 @@ struct topMenuItem {
 	bool valid;
 };
 
-bool nameEndsWith(const std::string& name, const std::vector<std::string> extensionList) {
+bool nameEndsWith(const std::string &name, const std::vector<std::string> &extensionList) {
 	if(name.substr(0, 2) == "._") return false;
 
 	if(name.size() == 0) return false;
@@ -76,7 +76,7 @@ bool dirEntryPredicate(const DirEntry& lhs, const DirEntry& rhs) {
 	return strcasecmp(lhs.name.c_str(), rhs.name.c_str()) < 0;
 }
 
-void getDirectoryContents(std::vector<DirEntry>& dirContents, const std::vector<std::string> extensionList) {
+void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<std::string> &extensionList) {
 	struct stat st;
 
 	dirContents.clear();
@@ -249,7 +249,7 @@ std::string topMenuSelect(void) {
 	// Print version number
 	printText(VER_NUMBER, 256-getTextWidth(VER_NUMBER)-1, 176, true);
 
-	updateCardInfo();
+	if(!flashcardFound())	updateCardInfo();
 
 	std::vector<topMenuItem> topMenuContents;
 
