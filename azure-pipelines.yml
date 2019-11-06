@@ -31,12 +31,15 @@ steps:
     export DEVKITPRO="/opt/devkitpro"
     export DEVKITARM="/opt/devkitpro/devkitARM"
     make
+  displayName: 'Build Pokémon Chest'
+
+- script: |
     tools-osx/make_cia --srl="pkmn-chest.nds"
     cp pkmn-chest.nds $(Build.ArtifactStagingDirectory)
     cp pkmn-chest.cia $(Build.ArtifactStagingDirectory)
     echo '##vso[task.setvariable variable=COMMIT_TAG]'$(git log --format=%h -1)
     echo '##vso[task.setvariable variable=COMMIT_MESSAGE]'$(git log --pretty=format:"%an - %s" -1)
-  displayName: 'Build Pokémon Chest'
+  displayName: 'Post-build steps'
 
 - script: |    
     git config --global user.email "flamekat54@aol.com"
