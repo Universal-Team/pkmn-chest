@@ -51,7 +51,7 @@ std::pair<int, int> getPokeballPosition(u8 ball) {
 }
 
 void changeAbility(std::shared_ptr<PKX> &pkm) {
-	if(pkm->gen4()) {
+	if(pkm->generation() == Generation::FOUR) {
 		u8 setAbility = pkm->ability();
 		if(pkm->abilities(0) != setAbility && pkm->abilities(0) != 0) {
 			pkm->setAbility(0);
@@ -123,9 +123,12 @@ void drawSummaryPage(std::shared_ptr<PKX> pkm) {
 	Image image = loadPokemonSprite(getPokemonIndex(pkm));
 	drawImageScaled(169, 22, 32, 32, 2, 2, image, false);
 
-	drawImageSegment(150, 26-(((types.height/17)-12)/2), types.width, types.height/17, types, types.width, 0, (((pkm->generation() == Generation::FOUR && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1())*(types.height/17)), false);
-	if(pkm->type1() != pkm->type2())
-		drawImageSegment(185, 26-(((types.height/17)-12)/2), types.width, types.height/17, types, types.width, 0, (((pkm->generation() == Generation::FOUR && pkm->type2() > 8) ? pkm->type2()-1 : pkm->type2())*(types.height/17)), false);
+	int type = (pkm->generation() == Generation::FOUR && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1();
+	drawImage(150, 43-((types[type].height-12)/2), types[type].width, types[type].height, types[type], true);
+	if(pkm->type1() != pkm->type2()) {
+		type = (pkm->generation() == Generation::FOUR && pkm->type2() > 8) ? pkm->type2()-1 : pkm->type2();
+		drawImage(186, 43-((types[type].height-12)/2), types[type].width, types[type].height, types[type], true);
+	}
 	if(pkm->shiny())	drawImage(150, 45, 8, 8, shiny, false);
 
 	// Print Pokémon and trainer info labels

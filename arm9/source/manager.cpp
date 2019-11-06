@@ -20,7 +20,8 @@ bool topScreen;
 int arrowID = 126, shinyID, currentSaveBox, currentBankBox, heldPokemonID = 125, keyboardSpriteID = 124, arrowMode = 0;
 std::vector<int> menuIconID, partyIconID;
 std::string savePath;
-Image arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, boxBgTop, boxButton, infoBox, keyboardKey, menuBg, menuButton, menuButtonBlue, menuIconSheet, search, shiny, listBg, types;
+Image arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, boxBgTop, boxButton, infoBox, keyboardKey, menuBg, menuButton, menuButtonBlue, menuIconSheet, search, shiny, listBg;
+std::vector<Image> types;
 FILE* pokemonGFX;
 std::shared_ptr<PKFilter> filter = std::make_shared<PKFilter>();
 
@@ -321,9 +322,12 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 		else	printTextTintedMaxW(Lang::species[pkm->species()], 80, 1, (pkm->gender() ? (pkm->gender() == 1 ? RGB::RED : GRAY) : RGB::BLUE), 170, 25, true, pkm->gender() > 1);
 
 		// Draw types
-		drawImageSegment(170, 43-(((types.height/17)-12)/2), types.width, types.height/17, types, types.width, 0, (((pkm->generation() == Generation::FOUR && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1())*(types.height/17)), true);
-		if(pkm->type1() != pkm->type2())
-			drawImageSegment(205, 43-(((types.height/17)-12)/2), types.width, types.height/17, types, types.width, 0, (((pkm->generation() == Generation::FOUR && pkm->type2() > 8) ? pkm->type2()-1 : pkm->type2())*(types.height/17)), true);
+		int type = (pkm->generation() == Generation::FOUR && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1();
+		drawImage(170, 43-((types[type].height-12)/2), types[type].width, types[type].height, types[type], true);
+		if(pkm->type1() != pkm->type2()) {
+			type = (pkm->generation() == Generation::FOUR && pkm->type2() > 8) ? pkm->type2()-1 : pkm->type2();
+			drawImage(205, 43-((types[type].height-12)/2), types[type].width, types[type].height, types[type], true);
+		}
 
 		// Print Level
 		printTextTinted(Lang::get("lv")+std::to_string(pkm->level()), GRAY, 170, 57, true, true);
