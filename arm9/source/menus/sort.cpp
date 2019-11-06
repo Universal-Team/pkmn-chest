@@ -296,5 +296,6 @@ void sortMenu(bool top) {
 		// Move cursor
 		if(selection < (int)sortTypes.size())	setSpritePosition(arrowID, false, 4+getTextWidth(Lang::get("filter")+" "+std::to_string(selection+1)+": "+Lang::get(sortText[int(sortTypes[selection])]))+2, (16*(selection)+15));
 		else	setSpritePosition(arrowID, false, 260-boxButton.width+getTextWidth(Lang::get("sort"))+2, 191-boxButton.height);
+		updateOam();
 	}
 }
