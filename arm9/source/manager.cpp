@@ -20,7 +20,7 @@ bool topScreen;
 int arrowID = 126, shinyID, currentSaveBox, currentBankBox, heldPokemonID = 125, keyboardSpriteID = 124, arrowMode = 0;
 std::vector<int> menuIconID, partyIconID;
 std::string savePath;
-Image arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, boxBgTop, boxButton, infoBox, keyboardKey, menuBg, menuButton, menuButtonBlue, menuIconSheet, search, shiny, listBg;
+Image arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, boxBgTop, boxButton, infoBox, keyboardKey, menuBg, menuButton, menuButtonBlue, search, shiny, listBg;
 std::vector<Image> types;
 FILE* pokemonGFX;
 std::shared_ptr<PKFilter> filter = std::make_shared<PKFilter>();
@@ -163,7 +163,7 @@ void loadGraphics(void) {
 	menuBg = loadImage("nitro:/graphics/menuBg.gfx");
 	menuButton = loadImage("nitro:/graphics/menuButton.gfx");
 	menuButtonBlue = loadImage("nitro:/graphics/menuButtonBlue.gfx");
-	menuIconSheet = loadImage("nitro:/graphics/menuIconSheet.gfx");
+	Image menuIconSheet = loadImage("nitro:/graphics/menuIconSheet.gfx");
 	search = loadImage("nitro:/graphics/search.gfx");
 	shiny = loadImage("nitro:/graphics/shiny.gfx");
 
