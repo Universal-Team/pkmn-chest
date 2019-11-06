@@ -1,3 +1,4 @@
+#include <math.h>
 #include <string>
 #include <vector>
 
@@ -29,7 +30,10 @@ Image loadBmp16(std::string path, int paletteOffset) {
 		fseek(file, (uint8_t)fgetc(file)-2, SEEK_CUR); // Seek to palette start location
 		fread(palTemp, 4, 16, file);
 		for(int i=0;i<16;i++) {
-			image.palette[i] = ((palTemp[i]>>27)&31) | ((palTemp[i]>>19)&31)<<5 | ((palTemp[i]>>11)&31)<<10 | 1<<15;
+			int r = round((((palTemp[i]>>24)&0xff)*31)/255.0);
+			int g = round((((palTemp[i]>>16)&0xff)*31)/255.0);
+			int b = round((((palTemp[i]>>8)&0xff)*31)/255.0);
+			image.palette[i] = r | g<<5 | b<<10 | 1<<15;
 			if(image.palette[i] == 0xfc1f)	image.palette[i] = 0;
 		}
 
