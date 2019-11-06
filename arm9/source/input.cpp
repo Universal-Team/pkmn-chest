@@ -229,17 +229,24 @@ void whileHeld(void) {
 
 void drawKeyboard(int layout) {
 	if(loadedLayout != layout) {
-		std::pair<int, int> prevData = {keyboard.width, keyboard.height};
-		int prevLayout = loadedLayout;
+		int prevHeight = keyboard.height, prevLayout = loadedLayout;
 		loadedLayout = layout;
 		if(layout < 3) {
 			keyboard = loadImage("nitro:/graphics/keyboardKana.gfx");
 		} else {
 			keyboard = loadImage("nitro:/graphics/keyboardQWE.gfx");
+			xPos = 0;
 		}
-		if(prevLayout != -1)	drawRectangle(0, 192-prevData.first-16, 256, prevData.second+16, BLACK, false);
+		if(prevLayout != -1) {
+			drawRectangle(0, 192-prevHeight-16, 256, prevHeight+16, BLACK, false);
+
+		}
 	}
+	drawRectangle(0, 192-keyboard.height, 256, keyboard.height, DARKERER_GRAY, DARKER_GRAY, false);
 	drawImage(xPos, 192-keyboard.height, keyboard.width, keyboard.height, keyboard, false);
+
+	drawRectangle(0, 192-keyboard.height-16, 256, 16, BLACK, false);
+	printText(string, 0, 192-keyboard.height-16, false);
 
 	if(layout == 0) {
 		for(unsigned i=0;i<(sizeof(keys123)/sizeof(keys123[0]));i++) {
@@ -754,7 +761,7 @@ void processTouchQWE(touchPosition touch, unsigned maxLength) {
 			} else if(keysSpecialQWE[i].character == "mode") {
 				drawRectangle(keysSpecialQWE[i].x, keysSpecialQWE[i].y+(192-keyboard.height), 16, 16, GRAY, false);
 				whileHeld();
-				changeLayout = 1;
+				changeLayout = 4;
 			}
 			break;
 		}
