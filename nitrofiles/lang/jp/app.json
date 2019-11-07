@@ -97,6 +97,7 @@
 	"spDef": "とくぼう",
 	"spDefIV": "とくぼう個体値",
 	"species": "種",
+	"speciesName": "種名",
 	"speed": "すばやし",
 	"speedIV": "すばやし個体値",
 	"stats": "能力",
@@ -104,11 +105,13 @@
 	"tmHm": "わざマシン",
 	"total": "合計",
 	"trainerID": "トレーナーID",
+	"trainerInfo": "トレーナーについて",
 	"twinleafTown": "フタバタウン",
 	"type1": "タイプ1",
 	"type2": "タイプ2",
 	"unknown": "不明",
 	"unlimited": "無制限",
 	"wallpaper": "壁紙",
+	"wrongSaveSize": "警告：セーブのサイズは\n現在のゲームカードのサイズと\n一致しません！\n書き込みが停止しました。",
 	"yes": "はい"
 }

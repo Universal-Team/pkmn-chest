@@ -97,6 +97,7 @@
 	"spDef": "Sp. Vert.",
 	"spDefIV": "Sp-Verteidigung DV",
 	"species": "Spezies",
+	"speciesName": "Spezies name",
 	"speed": "Initiative",
 	"speedIV": "Initiative DV",
 	"stats": "Status",
@@ -104,11 +105,13 @@
 	"tmHm": "TMs & VMs",
 	"total": "Gesamt",
 	"trainerID": "Trainer ID",
+	"trainerInfo": "Trainer Info",
 	"twinleafTown": "Zweiblattdorf",
 	"type1": "Typ 1",
 	"type2": "Typ 2",
 	"unknown": "Unbekannt",
 	"unlimited": "Unlimitiert",
 	"wallpaper": "Hintergrund",
+	"wrongSaveSize": "Warning: The size of the save\ndoesn't match the size of the\ncurrent gamecard! Write stopped.",
 	"yes": "Ja"
 }

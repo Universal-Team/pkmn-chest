@@ -97,6 +97,7 @@
 	"spDef": "Dif sp.",
 	"spDefIV": "Sp. Def IV",
 	"species": "Specie",
+	"speciesName": "Species Name",
 	"speed": "Velocità",
 	"speedIV": "Speed IV",
 	"stats": "Statistiche",
@@ -104,11 +105,13 @@
 	"tmHm": "TMs & HMs",
 	"total": "Totale",
 	"trainerID": "ID allenatore",
+	"trainerInfo": "Trainer Info",
 	"twinleafTown": "Duefoglie",
 	"type1": "Type 1",
 	"type2": "Type 2",
 	"unknown": "Unknown",
 	"unlimited": "Ilimitato",
 	"wallpaper": "Sfondo",
+	"wrongSaveSize": "Warning: The size of the save\ndoesn't match the size of the\ncurrent gamecard! Write stopped.",
 	"yes": "Si"
 }

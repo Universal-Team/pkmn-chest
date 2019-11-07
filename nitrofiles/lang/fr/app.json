@@ -97,6 +97,7 @@
 	"spDef": "Def Sp.",
 	"spDefIV": "Sp. Def IV",
 	"species": "Espèce",
+	"speciesName": "Species Name",
 	"speed": "Vitesse",
 	"speedIV": "Speed IV",
 	"stats": "Stat",
@@ -104,11 +105,13 @@
 	"tmHm": "TMs & HMs",
 	"total": "Total",
 	"trainerID": "ID du dresseur",
+	"trainerInfo": "Trainer Info",
 	"twinleafTown": "Bonaugure",
 	"type1": "Type 1",
 	"type2": "Type 2",
 	"unknown": "Unknown",
 	"unlimited": "Illimité",
 	"wallpaper": "Fond d’écran",
+	"wrongSaveSize": "Warning: The size of the save\ndoesn't match the size of the\ncurrent gamecard! Write stopped.",
 	"yes": "Oui"
 }
