@@ -112,6 +112,6 @@
 	"unknown": "Unbekannt",
 	"unlimited": "Unlimitiert",
 	"wallpaper": "Hintergrund",
-	"wrongSaveSize": "Warning: The size of the save\ndoesn't match the size of the\ncurrent gamecard! Write stopped.",
+	"wrongSaveSize": "Warnung: Die Größe des Speichers\nentspricht nicht der Größe der\naktuellen Spielkarte! Schreiben gestoppt.",
 	"yes": "Ja"
 }
