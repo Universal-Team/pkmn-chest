@@ -20,7 +20,7 @@ struct button {
 
 void showParty(int selection) {
 	for(int i=0;i<6;i++) {
-		drawImage(partyButtons[i].x, partyButtons[i].y, menuButtonData.width, menuButtonData.height, selection == i ? menuButtonBlue : menuButton, false);
+		drawImage(partyButtons[i].x, partyButtons[i].y, menuButton.width, menuButton.height, selection == i ? menuButtonBlue : menuButton, false);
 		if(save->pkm(i)->species() != 0) {
 			if(save->pkm(i)->nicknamed())	printText(save->pkm(i)->nickname(), partyButtons[i].x+47, partyButtons[i].y+14, false);
 			else	printText(Lang::species[save->pkm(i)->species()], partyButtons[i].x+47, partyButtons[i].y+14, false);
@@ -34,9 +34,8 @@ void fillPartySprites(void) {
 		if(save->pkm(i)->species() == 0) {
 			setSpriteVisibility(partyIconID[i], false, false);
 		} else {
-			std::vector<u16> bmp;
-			loadPokemonSprite(getPokemonIndex(save->pkm(i)), bmp);
-			fillSpriteImage(partyIconID[i], false, bmp);
+			Image image = loadPokemonSprite(getPokemonIndex(save->pkm(i)));
+			fillSpriteImage(partyIconID[i], false, 0, 0, 32, 32, image);
 			setSpritePosition(partyIconID[i], false, partyButtons[i].x+8, partyButtons[i].y);
 			setSpriteVisibility(partyIconID[i], false, true);
 			updateOam();
@@ -46,12 +45,7 @@ void fillPartySprites(void) {
 
 void manageParty(void) {
 	// Draw background
-	if(sdFound())	drawImageDMA(0, 0, menuBgData.width, menuBgData.height, menuBg, false);
-	else {
-		drawRectangle(0, 0, 256, 16, BLACK, false);
-		drawRectangle(0, 16, 256, 160, DARK_GRAY, false);
-		drawRectangle(0, 176, 256, 16, BLACK, false);
-	}
+	drawImageDMA(0, 0, 256, 192, menuBg, false);
 
 	showParty(-1);
 	fillPartySprites();
@@ -79,7 +73,7 @@ void manageParty(void) {
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
 			for(unsigned i=0; i<(sizeof(partyButtons)/sizeof(partyButtons[0]));i++) {
-				if(touch.px >= partyButtons[i].x && touch.px <= partyButtons[i].x+menuButtonData.width && touch.py >= partyButtons[i].y && touch.py <= partyButtons[i].y+menuButtonData.height) {
+				if(touch.px >= partyButtons[i].x && touch.px <= partyButtons[i].x+menuButton.width && touch.py >= partyButtons[i].y && touch.py <= partyButtons[i].y+menuButton.height) {
 					selectedOption = i;
 				}
 			}
@@ -107,12 +101,7 @@ void manageParty(void) {
 				save->pkm(showPokemonSummary(save->pkm(selectedOption)), selectedOption);
 
 				// Redraw background
-				if(sdFound())	drawImageDMA(0, 0, menuBgData.width, menuBgData.height, menuBg, false);
-				else	{
-					drawRectangle(0, 0, 256, 16, BLACK, false);
-					drawRectangle(0, 16, 256, 160, DARK_GRAY, false);
-					drawRectangle(0, 176, 256, 16, BLACK, false);
-				}
+				drawImageDMA(0, 0, 256, 192, menuBg, false);
 
 				// Show sprites
 				showParty(menuSelection);

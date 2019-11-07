@@ -11,7 +11,7 @@ struct Label {
 };
 
 namespace Lang {
-	enum Language : int {de, en, es, fr, it, lt, pt, ru, jp, ko};
+	enum Language : int {de, en, es, fr, it, lt, pt, ru, jp, ko, br};
 	// In game text strings
 	extern std::vector<std::string> abilities, games, items, locations4, locations5, moves, natures, species;
 

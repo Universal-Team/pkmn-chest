@@ -34,7 +34,7 @@ struct DirEntry {
  * std::vector<DirEntry>& dirContents is where the contents will be stored
  * const std::vector<std::string> extensionList is the extensions to include
  */
-void getDirectoryContents(std::vector<DirEntry>& dirContents, const std::vector<std::string> extensionList);
+void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<std::string> &extensionList);
 
 /*
  * Browse for a file
@@ -42,7 +42,7 @@ void getDirectoryContents(std::vector<DirEntry>& dirContents, const std::vector<
  * bool directoryNavigation is whether to allow changing folders
  * Returns the selected file
  */
-std::string browseForFile(const std::vector<std::string>& extensionList, bool directoryNavigation);
+std::string browseForFile(const std::vector<std::string> &extensionList, bool directoryNavigation);
 
 /*
  * Browse for a save file

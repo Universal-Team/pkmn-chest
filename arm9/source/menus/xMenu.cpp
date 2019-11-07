@@ -23,17 +23,11 @@ std::vector<Label> xMenuButtons = {
 
 void savePrompt(void) {
 	// Draw background
-	if(sdFound()) {
-		drawImageDMA(0, 0, menuBgData.width, menuBgData.height, menuBg, false);
-		drawRectangle(0, 0, 256, 33, LIGHT_GRAY, false);
-		drawRectangle(0, 33, 256, 1, BLACK, false);
-		drawRectangle(0, 34, 256, 2, DARK_GRAY, false);
-		drawRectangle(0, 36, 256, 1, DARKERER_GRAY, false);
-	} else {
-		drawRectangle(0, 0, 256, 33, LIGHT_GRAY, false);
-		drawRectangle(0, 33, 256, 143, DARKER_GRAY, DARKERER_GRAY, false);
-		drawRectangle(0, 176, 256, 16, BLACK, false);
-	}
+	drawImageDMA(0, 0, 256, 192, menuBg, false);
+	drawRectangle(0, 0, 256, 33, LIGHT_GRAY, false);
+	drawRectangle(0, 33, 256, 1, BLACK, false);
+	drawRectangle(0, 34, 256, 2, DARK_GRAY, false);
+	drawRectangle(0, 36, 256, 1, DARKERER_GRAY, false);
 
 	printTextTinted(Lang::get("saveMsgChest"), GRAY, 5, 0, false, true);
 	if(Input::getBool(Lang::get("save"), Lang::get("discard"))) {
@@ -41,8 +35,7 @@ void savePrompt(void) {
 		Banks::bank->save();
 	}
 
-	if(sdFound())	drawImageSegment(4, 39, 248, 18, menuBg, menuBgData.width, 4, 39, false);
-	else	drawRectangle(4, 39, 248, 18, DARKERER_GRAY, DARK_GRAY, false);
+	drawImageSegment(4, 39, 248, 18, menuBg, 256, 4, 39, false);
 	drawRectangle(0, 0, 256, 32, LIGHT_GRAY, false);
 	if(savePath == cardSave)	printTextTinted(Lang::get("saveMsgCard"), GRAY, 5, 0, false, true);
 	else	printTextTinted(Lang::get("saveMsgSave"), GRAY, 5, 0, false, true);
@@ -56,10 +49,10 @@ void savePrompt(void) {
 		loadSave(savePath);
 		save->cryptBoxData(true);
 		if(savePath == cardSave) {
-			drawImageSegment(4, 39, 248, 18, menuBg, menuBgData.width, 4, 39, false);
+			drawImageSegment(4, 39, 248, 18, menuBg, 256, 4, 39, false);
 			updateCardInfo();
 			if(!restoreSave()) {
-				drawImageDMA(0, 0, boxBgTopData.width, boxBgTopData.height, boxBgTop, true);
+				drawImageDMA(0, 0, 256, 192, boxBgTop, true);
 				drawBox(true);
 			}
 		}
@@ -70,7 +63,7 @@ void drawXMenuButtons(unsigned menuSelection) {
 	xMenuButtons[3].label = save->otName();
 
 	for(unsigned i=0;i<xMenuButtons.size();i++) {
-		drawImage(xMenuButtons[i].x, xMenuButtons[i].y, menuButtonData.width, menuButtonData.height, menuSelection == i ? menuButtonBlue : menuButton, false);
+		drawImage(xMenuButtons[i].x, xMenuButtons[i].y, menuButton.width, menuButton.height, menuSelection == i ? menuButtonBlue : menuButton, false);
 		printText((i==3) ? xMenuButtons[i].label : Lang::get(xMenuButtons[i].label), xMenuButtons[i].x+47, xMenuButtons[i].y+14, false);
 		setSpriteAlpha(menuIconID[i], false, menuSelection == i ? 8 : 15);
 		updateOam();
@@ -86,15 +79,10 @@ bool xMenu(void) {
 	updateOam();
 
 	// Make bottom arrow red
-	fillSpriteImage(arrowID, false, arrowRed);
+	fillArrow(0);
 
 	// Draw background
-	if(sdFound())	drawImageDMA(0, 0, menuBgData.width, menuBgData.height, menuBg, false);
-	else {
-		drawRectangle(0, 0, 256, 16, BLACK, false);
-		drawRectangle(0, 16, 256, 160, DARK_GRAY, false);
-		drawRectangle(0, 176, 256, 16, BLACK, false);
-	}
+	drawImageDMA(0, 0, 256, 192, menuBg, false);
 
 	// Enable sprites and set positions
 	for(unsigned i=0;i<menuIconID.size();i++) {
@@ -166,7 +154,7 @@ bool xMenu(void) {
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
 			for(unsigned i=0; i<xMenuButtons.size();i++) {
-				if(touch.px >= xMenuButtons[i].x && touch.px <= xMenuButtons[i].x+menuButtonData.width && touch.py >= xMenuButtons[i].y && touch.py <= xMenuButtons[i].y+menuButtonData.height) {
+				if(touch.px >= xMenuButtons[i].x && touch.px <= xMenuButtons[i].x+menuButton.width && touch.py >= xMenuButtons[i].y && touch.py <= xMenuButtons[i].y+menuButton.height) {
 					selectedOption = i;
 				}
 			}
@@ -184,7 +172,7 @@ bool xMenu(void) {
 		if(pressed & KEY_B || pressed & KEY_X) {
 			Sound::play(Sound::back);
 			// Reset arrow color
-			fillSpriteImage(arrowID, false, arrowMode ? arrowBlue : arrowRed);
+			fillArrow(arrowMode);
 			setSpriteVisibility(topScreen ? arrowID : arrowID, topScreen, true);
 			// Hide menu icons
 			for(int i=0;i<6;i++) {
@@ -239,12 +227,7 @@ bool xMenu(void) {
 			}
 
 			// Redraw menu
-			if(sdFound())	drawImage(0, 0, menuBgData.width, menuBgData.height, menuBg, false);
-			else {
-				drawRectangle(0, 0, 256, 16, BLACK, false);
-				drawRectangle(0, 16, 256, 160, DARK_GRAY, false);
-				drawRectangle(0, 176, 256, 16, BLACK, false);
-			}
+			drawImage(0, 0, 256, 192, menuBg, false);
 			for(unsigned i=0;i<menuIconID.size();i++) {
 				setSpritePosition(menuIconID[i], false, xMenuButtons[i].x+3, xMenuButtons[i].y+6);
 				setSpriteVisibility(menuIconID[i], false, true);

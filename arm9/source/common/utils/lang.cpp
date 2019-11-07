@@ -5,7 +5,7 @@
 #include "json.hpp"
 
 std::vector<std::string> Lang::abilities, Lang::games, Lang::items, Lang::locations4, Lang::locations5, Lang::moves, Lang::natures, Lang::species;
-std::string langs[] = {"de", "en", "es", "fr", "it", "lt", "pt", "ru", "jp", "ko"};
+std::string langs[] = {"de", "en", "es", "fr", "it", "lt", "pt", "ru", "jp", "ko", "br"};
 nlohmann::json langJson;
 
 void loadToVector(std::string path, std::vector<std::string> &vec) {
@@ -36,9 +36,11 @@ void Lang::load(int lang) {
 	loadToVector("nitro:/lang/"+langs[tempLang]+"/species.txt", Lang::species);
 
 	// Load types picture
+	tempLang = (access(("nitro:/lang/"+langs[lang]+"/types/0.gfx").c_str(), F_OK) == 0) ? lang : 1;
 	types.clear();
-	tempLang = (access(("nitro:/lang/"+langs[lang]+"/types.png").c_str(), F_OK) == 0) ? lang : 1;
-	typesData = loadPng("nitro:/lang/"+langs[tempLang]+"/types.png", types);
+	for(int i=0;i<17;i++) {
+		types.push_back(loadImage("nitro:/lang/"+langs[tempLang]+"/types/"+std::to_string(i)+".gfx"));
+	}
 
 	// Load app strings
 	FILE* file = fopen(("nitro:/lang/"+langs[lang]+"/app.json").c_str(), "rt");

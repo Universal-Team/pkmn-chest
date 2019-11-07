@@ -38,11 +38,11 @@ std::vector<std::string> songs = {"off", "center1", "center4", "center5", "twinl
 
 std::vector<std::string> optionsText;
 
-std::string langNames[] = { "Deutsche", "English", "Español", "Français", "Italiano", "Lietuvių", "Português", "русский", "日本語", "한국"};
+std::string langNames[] = { "Deutsche", "English", "Español", "Français", "Italiano", "Lietuvių", "Português", "русский", "日本語", "한국", "Bruh"};
 
 void drawChestFileMenu(void) {
 	// Draw background
-	drawImageDMA(0, 0, listBgData.width, listBgData.height, listBg, false);
+	drawImageDMA(0, 0, 256, 192, listBg, false);
 	printText(Lang::get("options"), 4, 0, false);
 
 	// Print text
@@ -157,7 +157,7 @@ void chestFileMenu(void) {
 
 void drawConfigMenu(void) {
 	// Draw background
-	drawImageDMA(0, 0, listBgData.width, listBgData.height, listBg, false);
+	drawImageDMA(0, 0, 256, 192, listBg, false);
 	printText(Lang::get("options"), 4, 0, false);
 
 	if(optionsText.size() < textCP1Labels.size()) {

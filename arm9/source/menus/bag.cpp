@@ -24,18 +24,18 @@ int getMaxItem(int pouchIndex) {
 
 void drawBag(Pouch pouch, int maxItem, int screenPos, bool rightSide) {
 	// Clear screen
-	drawImageSegmentDMA(0, 0, rightSide ? listBgData.width : 169, listBgData.height, listBg, listBgData.width, false);
+	drawImageSegmentDMA(0, 0, rightSide ? 256 : 169, 192, listBg, 256, false);
 
 	printText(save->pouchName(pouch), 4, 0, false);
 
 	if(rightSide) {
 		// Draw search icon
-		drawImage(256-searchData.width, 0, searchData.width, searchData.height, search, false);
+		drawImage(256-20, 0, search.width, search.height, search, false);
 
 		// Draw pouch buttons
 		for(unsigned i=0;i<save->pouches().size();i++) {
-			drawImageScaled(170, (104-(10*save->pouches().size()))+i*(20), boxButtonData.width, boxButtonData.height, 1, (float)20/boxButtonData.height, boxButton, false);
-			printTextMaxW(save->pouchName(save->pouches()[i].first), boxButtonData.width-8, 1, 174, (104-(10*save->pouches().size()))+i*(20)+2, false);
+			drawImageScaled(170, (104-(10*save->pouches().size()))+i*(20), boxButton.width, boxButton.height, 1, (float)20/boxButton.height, boxButton, false);
+			printTextMaxW(save->pouchName(save->pouches()[i].first), boxButton.width-8, 1, 174, (104-(10*save->pouches().size()))+i*(20)+2, false);
 		}
 	}
 
@@ -122,7 +122,7 @@ void editBag(void) {
 			goto changePouch;
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
-			if(touch.px >= 256-searchData.width && touch.py <= searchData.height) {
+			if(touch.px >= 256-search.width && touch.py <= search.height) {
 				goto search;
 			}
 			for(int i=0;i<entriesPerScreen;i++) {

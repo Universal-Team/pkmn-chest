@@ -1,6 +1,10 @@
+/nitrofiles/graphics/grit
+
 */build
 *.nds
 *.elf
+*.gfx
+graphics/bmp2ds
 
 *.DS_Store
 .vscode/ipch
