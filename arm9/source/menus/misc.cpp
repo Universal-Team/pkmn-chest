@@ -175,8 +175,9 @@ int selectForm(int dexNo, int currentForm) {
 
 	// Draw forms
 	for(int i=0;i<formCounts[altIndex].noForms;i++) {
+		// TODO: Steal the party sprites or something
 		Image image = loadPokemonSprite(getPokemonIndex(dexNo, i));
-		drawImage((i*32)+(128-((32*formCounts[altIndex].noForms)/2)), 80, 32, 32, image, false);
+		drawImage((i*32)+(128-((32*formCounts[altIndex].noForms)/2)), 80, 32, 32, image, false, 0xC0);
 	}
 
 	// Move arrow to current form
