@@ -12,6 +12,7 @@ GRAPHICS	:=	graphics graphics/box graphics/box/b2w2 graphics/box/bw graphics/box
 OUT			:=	../nitrofiles
 
 INPUTS		:= $(foreach dir,$(GRAPHICS),$(addprefix $(dir)/,$(notdir $(wildcard $(dir)/*.bmp))))
+
 TARGETS		:= $(INPUTS:.bmp=.gfx)
 
 .PHONY	:	bmp2ds clean all directories pokemon
@@ -21,6 +22,11 @@ all	:	bmp2ds $(TARGETS) pokemon
 
 bmp2ds	:
 	@g++ bmp2ds.cpp -o bmp2ds
+
+
+%.gfx	:	%.bmp %.txt
+	@mkdir -p $(OUT)/$(@D)
+	@./bmp2ds $< $(OUT)/$@ $(shell cat $(word 2,$^))
 
 %.gfx	:	%.bmp
 	@mkdir -p $(OUT)/$(@D)

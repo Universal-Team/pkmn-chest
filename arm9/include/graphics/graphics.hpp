@@ -14,6 +14,7 @@ struct Image {
 	u16 height;
 	std::vector<u8> bitmap;
 	std::vector<u16> palette;
+	u16 palOfs;
 };
 
 struct Sprite {
@@ -48,8 +49,9 @@ Image loadImage(std::string path);
  * int h is the Height
  * const Image &image is the raw pixel data
  * bool top is whether to draw on the top or bottom screen
+ * int paletteOffset is how much to offset the palette by (default 0)
  */
-void drawImage(int x, int y, int w, int h, const Image &image, bool top);
+void drawImage(int x, int y, int w, int h, const Image &image, bool top, int paletteOffset = 0);
 
 /*
  * Faster image draw that doesn't skip transparency
@@ -122,11 +124,11 @@ void drawImageScaled(int x, int y, int w, int h, double scaleX, double scaleY, c
  * int y is the Y position
  * int w is the Width
  * int h is the Height
- * u16 color is the color to tint the image
+ * int palette is the color to tint the image
  * const Image &image is the raw pixel data
  * bool top is whether to draw on the top or bottom screen
  */
-void drawImageTinted(int x, int y, int w, int h, u16 color, const Image &image, bool top);
+void drawImageTinted(int x, int y, int w, int h, int palette, const Image &image, bool top);
 
 /*
  * Draws a rectangle outline of a given size at a given position
@@ -174,9 +176,9 @@ int initSprite(bool top, SpriteSize spriteSize, int id = -1, int rotationIndex =
 /*
  * Fills a sprite with a solid color
  * int id is the id of the sprite
- * u16 color is the BGR15 color to fill with
+ * u8 color is the BGR15 color to fill with
  */
-void fillSpriteColor(int id, bool top, u16 color);
+void fillSpriteColor(int id, bool top, u8 color);
 
 /*
  * Fills a sprite with raw pixel data from a vector
@@ -231,36 +233,36 @@ void fillSpriteSegmentScaled(int id, bool top, double scale, const Image &image,
  * Fills a sprite with tinted raw pixel data from a vector of a spritesheet
  * int id is the id of the sprite
  * const Image &image is the raw pixel data
- * u16 color is the color to tint the pixels
+ * int palette is the color to tint the pixels
  * int w is the width of the portion to put in the sprite
  * int h is the height of the portion to put in the sprite
  * int imageWidth is the width of the spritesheet
  * int xOffset is the X position in the sheet to start at
  * int yOffset is the Y position in the sheet to start at
  */
-void fillSpriteSegmentTinted(int id, bool top, const Image &image, u16 color, int w, int h, int imageWidth, int xOffset, int yOffset);
+void fillSpriteSegmentTinted(int id, bool top, const Image &image, int palette, int w, int h, int imageWidth, int xOffset, int yOffset);
 
 /**
  * Fills a sprite with text
  * int id is the sprite to print to
  * std::string text is the text that will be printed
- * u16 color is the color to tint the text
+ * int palette is the color to tint the text
  * int xPos is the X position to print at
  * int yPos is the Y position to print at
  * bool invert is whether to swap the colors
  */
-void fillSpriteText(int id, bool top, const std::string &text, u16 color, int xPos, int yPos, bool invert = false);
+void fillSpriteText(int id, bool top, const std::string &text, int palette, int xPos, int yPos, bool invert = false);
 
 /**
  * Fills a sprite with text
  * int id is the sprite to print to
  * std::u16string text is the text that will be printed
- * u16 color is the color to tint the text
+ * int palette is the color to tint the text
  * int xPos is the X position to print at
  * int yPos is the Y position to print at
  * bool invert is whether to swap the colors
  */
-void fillSpriteText(int id, bool top, const std::u16string &text, u16 color, int xPos, int yPos, bool invert = false);
+void fillSpriteText(int id, bool top, const std::u16string &text, int palette, int xPos, int yPos, bool invert = false);
 
 /*
  * Sets the sprite to be drawn
@@ -361,46 +363,46 @@ void printTextCentered(const std::u16string &text, int xOffset, int yPos, bool t
 
 /**
  * Prints colored text centered on a screen
- * u16 color is the color to tint the text
+ * int palette is the color to tint the text
  * std::string text is the text that will be printed
  * int xOffset is the X offset from the center to center on
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
  * bool invert is whether to swap the colors
  */
-void printTextCenteredTinted(const std::string &text, u16 color, int xOffset, int yPos, bool top, bool invert = false);
+void printTextCenteredTinted(const std::string &text, int palette, int xOffset, int yPos, bool top, bool invert = false);
 /**
  * Prints colored text centered on a screen
- * u16 color is the color to tint the text
+ * int palette is the color to tint the text
  * std::string text is the text that will be printed
  * int xOffset is the X offset from the center to center on
  * int y is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
  * bool invert is whether to swap the colors
  */
-void printTextCenteredTinted(std::u16string text, u16 color, int xOffset, int yPos, bool top, bool invert = false);
+void printTextCenteredTinted(std::u16string text, int palette, int xOffset, int yPos, bool top, bool invert = false);
 
 /**
  * Prints colored text to the a screen
- * u16 color is the color to tint the text
+ * int palette is the color to tint the text
  * std::string text is the text that will be printed
  * int xPos is the X position to print at
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
  * bool invert is whether to swap the colors
  */
-void printTextTinted(const std::string &text, u16 color, int xPos, int yPos, bool top, bool invert = false);
+void printTextTinted(const std::string &text, int palette, int xPos, int yPos, bool top, bool invert = false);
 
 /**
  * Prints colored text to the a screen
- * u16 color is the color to tint the text
+ * int palette is the color to tint the text
  * std::u16string text is the text that will be printed
  * int xPos is the X position to print at
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
  * bool invert is whether to swap the colors
  */
-void printTextTinted(const std::u16string &text, u16 color, int xPos, int yPos, bool top, bool invert = false);
+void printTextTinted(const std::u16string &text, int palette, int xPos, int yPos, bool top, bool invert = false);
 
 /**
  * Prints text to the a screen with a max width
@@ -503,104 +505,104 @@ void printTextCenteredScaled(const std::u16string &text, double scaleX, double s
  * std::string text is the text that will be printed
  * double w is the max width the text should be drawn at
  * double scaleY is the height scale the text should be draw at
- * u16 color is the color to tint the text
+ * int palette is the color to tint the text
  * int xOffset is the X offset from the center to center on
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
  * bool invert is whether to swap the colors
  */
-void printTextCenteredTintedMaxW(const std::string &text, double w, double scaleY, u16 color, int xOffset, int yPos, bool top, bool invert = false);
+void printTextCenteredTintedMaxW(const std::string &text, double w, double scaleY, int palette, int xOffset, int yPos, bool top, bool invert = false);
 
 /**
  * Prints centered colored text to the a screen with a max width
  * std::u16string text is the text that will be printed
  * double w is the max width the text should be drawn at
  * double scaleY is the height scale the text should be draw at
- * u16 color is the color to tint the text
+ * int palette is the color to tint the text
  * int xOffset is the X offset from the center to center on
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
  * bool invert is whether to swap the colors
  */
-void printTextCenteredTintedMaxW(std::u16string text, double w, double scaleY, u16 color, int xOffset, int yPos, bool top, bool invert = false);
+void printTextCenteredTintedMaxW(std::u16string text, double w, double scaleY, int palette, int xOffset, int yPos, bool top, bool invert = false);
 
 /**
  * Prints centered colored text to the a screen at a scaled size
  * std::string text is the text that will be printed
  * double scaleX is the width scale the text should be draw at
  * double scaleY is the height scale the text should be draw at
- * u16 color is the color to tint the text
+ * int palette is the color to tint the text
  * int xOffset is the X offset from the center to center on
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
  * bool invert is whether to swap the colors
  */
-void printTextCenteredTintedScaled(const std::string &text, double scaleX, double scaleY, u16 color, int xOffset, int yPos, bool top, bool invert = false);
+void printTextCenteredTintedScaled(const std::string &text, double scaleX, double scaleY, int palette, int xOffset, int yPos, bool top, bool invert = false);
 
 /**
  * Prints centered colored text to the a screen at a scaled size
  * std::u16string text is the text that will be printed
  * double scaleX is the width scale the text should be draw at
  * double scaleY is the height scale the text should be draw at
- * u16 color is the color to tint the text
+ * int palette is the color to tint the text
  * int xOffset is the X offset from the center to center on
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
  * bool invert is whether to swap the colors
  */
-void printTextCenteredTintedScaled(std::u16string text, double scaleX, double scaleY, u16 color, int xOffset, int yPos, bool top, bool invert = false);
+void printTextCenteredTintedScaled(std::u16string text, double scaleX, double scaleY, int palette, int xOffset, int yPos, bool top, bool invert = false);
 
 /**
  * Prints colored text to the a screen with a max width
  * std::string text is the text that will be printed
  * double w is the max width the text should be drawn at
  * double scaleY is the height scale the text should be draw at
- * u16 color is the color to tint the text
+ * int palette is the color to tint the text
  * int xPos is the X position to print at
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
  * bool invert is whether to swap the colors
  */
-void printTextTintedMaxW(const std::string &text, double w, double scaleY, u16 color, int xPos, int yPos, bool top, bool invert = false);
+void printTextTintedMaxW(const std::string &text, double w, double scaleY, int palette, int xPos, int yPos, bool top, bool invert = false);
 
 /**
  * Prints colored text to the a screen with a max width
  * std::u16string text is the text that will be printed
  * double w is the max width the text should be drawn at
  * double scaleY is the height scale the text should be draw at
- * u16 color is the color to tint the text
+ * int palette is the color to tint the text
  * int xPos is the X position to print at
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
  * bool invert is whether to swap the colors
  */
-void printTextTintedMaxW(const std::u16string &text, double w,  double scaleY, u16 color, int xPos, int yPos, bool top, bool invert = false);
+void printTextTintedMaxW(const std::u16string &text, double w,  double scaleY, int palette, int xPos, int yPos, bool top, bool invert = false);
 
 /**
  * Prints colored text to the a screen at a scaled size
  * std::string text is the text that will be printed
  * double w is the width the text should be drawn at
  * double scaleY is the height scale the text should be draw at
- * u16 color is the color to tint the text
+ * int palette is the color to tint the text
  * int xPos is the X position to print at
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
  * bool invert is whether to swap the colors
  */
-void printTextTintedScaled(const std::string &text, double scaleX, double scaleY, u16 color, int xPos, int yPos, bool top, bool invert = false);
+void printTextTintedScaled(const std::string &text, double scaleX, double scaleY, int palette, int xPos, int yPos, bool top, bool invert = false);
 
 /**
  * Prints colored text to the a screen at a scaled size
  * std::u16string text is the text that will be printed
  * double scaleX is the width scale the text should be draw at
  * double scaleY is the height scale the text should be draw at
- * u16 color is the color to tint the text
+ * int palette is the color to tint the text
  * int xPos is the X position to print at
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
  * bool invert is whether to swap the colors
  */
-void printTextTintedScaled(const std::u16string &text, double scaleX, double scaleY, u16 color, int xPos, int yPos, bool top, bool invert = false);
+void printTextTintedScaled(const std::u16string &text, double scaleX, double scaleY, int palette, int xPos, int yPos, bool top, bool invert = false);
 
 /**
  * Gets the width of a std::string of text with a max

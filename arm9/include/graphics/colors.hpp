@@ -1,27 +1,24 @@
 #ifndef COLORS_HPP
 #define COLORS_HPP
+
 // Grayscale
-inline int WHITE = 0xFFFF;
-inline int LIGHT_GRAY = 0xE739;
-inline int GRAY = 0xCE73;
-inline int DARK_GRAY = 0x98C6;
-inline int DARKER_GRAY = 0x94A5;
-inline int DARKERER_GRAY = 0x8842;
-inline int BLACK = 0x8000;
+#define WHITE 0x01
+#define LIGHT_GRAY 0x4F
+#define GRAY 0x4B
+#define DARK_GRAY 0x41
+#define DARKER_GRAY 0x13
+#define DARKERER_GRAY 0x10
+#define BLACK 0x00
 
 // BGR
-namespace BGR {
-	inline int DARK_BLUE = 0x800C;
-	inline int LIGHT_BLUE = 0x8019;
-	inline int TEAL = 0x833f;
-}
+#define RED 0x04
+#define DARK_RED 0x17
+#define BLUE 0x07
 
-// RGB
-namespace RGB {
-	inline int RED = 0x801F;
-	inline int DARK_RED = 0x8013;
-	inline int BLUE = 0xFC00;
-	inline int TEAL = 0xFF20;
-}
+// Text
+#define WHITE_TEXT 0
+#define GRAY_TEXT 1
+#define RED_TEXT 2
+#define BLUE_TEXT 3
 
 #endif

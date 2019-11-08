@@ -71,7 +71,7 @@ void offsetPalette(Image &image, int paletteOffset) {
 	}
 }
 
-void exportGfx(std::string path, Image &image) {
+void exportGfx(std::string path, Image &image, int paletteOffset) {
 	FILE* file = fopen(path.c_str(), "wb");
 
 	if(file) {
@@ -79,6 +79,9 @@ void exportGfx(std::string path, Image &image) {
 		fwrite(&image.width, 1, 2, file);
 		fwrite(&image.height, 1, 2, file);
 		fwrite(image.bitmap.data(), 1, image.bitmap.size(), file);
+		uint16_t palSize = image.palette.size();
+		fwrite(&palSize, 1, 2, file);
+		fwrite(&paletteOffset, 1, 2, file);
 		fwrite(image.palette.data(), 2, image.palette.size(), file);
 		fclose(file);
 	}
@@ -94,10 +97,10 @@ int main(int argc, char *argv[]) {
 	std::string in = argv[1], out = argv[2];
 
 	if(argc >= 4) {
-		paletteOffset = std::stoi(argv[3]);
+		paletteOffset = std::stoi(argv[3], nullptr, 16);
 	}
 
 	Image bmp = loadBmp16(in, paletteOffset);
 	offsetPalette(bmp, paletteOffset);
-	exportGfx(out, bmp);
+	exportGfx(out, bmp, paletteOffset);
 }

@@ -46,7 +46,7 @@ void drawTrainerCard(void) {
 	snprintf(textTP1[6].text, sizeof(textTP1[6].text), "%i:%i:%i", save->playedHours(), save->playedMinutes(), save->playedSeconds());
 	
 	// Print info
-	printTextTinted(textTP1[0].text, (save->gender() ? RGB::RED : RGB::BLUE), textTP1[0].x+getTextWidth(Lang::get(trainerText[0]))+8, textTP1[0].y, false);
+	printTextTinted(textTP1[0].text, (save->gender() ? RED_TEXT : BLUE_TEXT), textTP1[0].x+getTextWidth(Lang::get(trainerText[0]))+8, textTP1[0].y, false);
 	for(unsigned i=1;i<(sizeof(textTP1)/sizeof(textTP1[0]));i++) {
 		printText(textTP1[i].text, textTP1[i].x+getTextWidth(Lang::get(trainerText[i]))+8, textTP1[i].y, false);
 	}

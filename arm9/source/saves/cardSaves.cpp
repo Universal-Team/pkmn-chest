@@ -111,7 +111,7 @@ bool restoreSave(void) {
 		length = ftell(in);
 		fseek(in, 0, SEEK_SET);
 		if(length != (auxspi ? (int)(LEN*num_blocks) : size)) {
-			drawRectangle(20, 20, 216, 152, RGB::DARK_RED, true);
+			drawRectangle(20, 20, 216, 152, DARK_RED, true);
 			printTextCentered(Lang::get("wrongSaveSize"), 0, 24, true);
 			for(int i=0;i<120;i++)	swiWaitForVBlank();
 			fclose(in);

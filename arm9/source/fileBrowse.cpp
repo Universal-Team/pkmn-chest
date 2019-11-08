@@ -168,20 +168,20 @@ void drawSdText(int i, bool valid) {
 	char str[20];
 	updateDriveLabel(false);
 	snprintf(str, sizeof(str), "sd: (%s)", sdLabel[0] == '\0' ? "SD Card" : sdLabel);
-	printTextTinted(str, valid ? WHITE : RGB::RED, 10, (i+1)*16, false);
+	printTextTinted(str, valid ? WHITE_TEXT : RED_TEXT, 10, (i+1)*16, false);
 }
 
 void drawFatText(int i, bool valid) {
 	char str[21];
 	updateDriveLabel(true);
 	snprintf(str, sizeof(str), "fat: (%s)", fatLabel[0] == '\0' ? "Flashcard" : fatLabel);
-	printTextTinted(str, valid ? WHITE : RGB::RED, 10, (i+1)*16, false);
+	printTextTinted(str, valid ? WHITE_TEXT : RED_TEXT, 10, (i+1)*16, false);
 }
 
 void drawSlot1Text(int i, bool valid) {
 	char slot1Text[34];
 	snprintf(slot1Text, sizeof(slot1Text), "Slot-1: (%s) [%s]", REG_SCFG_MC == 0x11 ? "No card inserted" : gamename, gameid);
-	printTextTinted(slot1Text, valid ? WHITE : RGB::RED, 10, (i+1)*16, false);
+	printTextTinted(slot1Text, valid ? WHITE_TEXT : RED_TEXT, 10, (i+1)*16, false);
 }
 
 bool updateSlot1Text(int &cardWait, bool valid) {
@@ -232,7 +232,7 @@ void showTopMenu(std::vector<topMenuItem> topMenuContents) {
 				}
 				if(addEllipsis)	name += StringUtils::UTF8toUTF16("...");
 
-				printTextTinted(name, topMenuContents[i+tmScreenOffset].valid ? WHITE : RGB::RED, 10, i*16+16, false);
+				printTextTinted(name, topMenuContents[i+tmScreenOffset].valid ? WHITE_TEXT : RED_TEXT, 10, i*16+16, false);
 			}
 		}
 	}

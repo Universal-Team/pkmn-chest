@@ -29,7 +29,7 @@ void savePrompt(void) {
 	drawRectangle(0, 34, 256, 2, DARK_GRAY, false);
 	drawRectangle(0, 36, 256, 1, DARKERER_GRAY, false);
 
-	printTextTinted(Lang::get("saveMsgChest"), GRAY, 5, 0, false, true);
+	printTextTinted(Lang::get("saveMsgChest"), GRAY_TEXT, 5, 0, false, true);
 	if(Input::getBool(Lang::get("save"), Lang::get("discard"))) {
 		Banks::bank->backup();
 		Banks::bank->save();
@@ -37,8 +37,8 @@ void savePrompt(void) {
 
 	drawImageSegment(4, 39, 248, 18, menuBg, 256, 4, 39, false);
 	drawRectangle(0, 0, 256, 32, LIGHT_GRAY, false);
-	if(savePath == cardSave)	printTextTinted(Lang::get("saveMsgCard"), GRAY, 5, 0, false, true);
-	else	printTextTinted(Lang::get("saveMsgSave"), GRAY, 5, 0, false, true);
+	if(savePath == cardSave)	printTextTinted(Lang::get("saveMsgCard"), GRAY_TEXT, 5, 0, false, true);
+	else	printTextTinted(Lang::get("saveMsgSave"), GRAY_TEXT, 5, 0, false, true);
 
 	if(Input::getBool(Lang::get("save"), Lang::get("discard"))) {
 		// Re-encrypt the box data

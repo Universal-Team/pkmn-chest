@@ -114,7 +114,7 @@ void drawSummaryPage(std::shared_ptr<PKX> pkm) {
 	updateOam();
 
 	// Print Pokémon name
-	printTextTintedMaxW(Lang::species[pkm->species()], 90, 1, (pkm->gender() ? (pkm->gender() == 1 ? RGB::RED : GRAY) : RGB::BLUE), 165, 8, false, pkm->gender() > 1);
+	printTextTintedMaxW(Lang::species[pkm->species()], 90, 1, (pkm->gender() ? (pkm->gender() == 1 ? RED_TEXT : GRAY_TEXT) : BLUE_TEXT), 165, 8, false, pkm->gender() > 1);
 
 	// Draw Pokémon, Pokéball, types, and shiny star (if shiny)
 	std::pair<int, int> xy = getPokeballPosition(pkm->ball());
@@ -127,7 +127,7 @@ void drawSummaryPage(std::shared_ptr<PKX> pkm) {
 	drawImage(150, 26-((types[type].height-12)/2), types[type].width, types[type].height, types[type], false);
 	if(pkm->type1() != pkm->type2()) {
 		type = (pkm->generation() == Generation::FOUR && pkm->type2() > 8) ? pkm->type2()-1 : pkm->type2();
-		drawImage(186, 26-((types[type].height-12)/2), types[type].width, types[type].height, types[type], false);
+		drawImage(186, 26-((types[type].height-12)/2), types[type].width, types[type].height, types[type], false, 4);
 	}
 	if(pkm->shiny())	drawImage(150, 45, 8, 8, shiny, false);
 
@@ -156,7 +156,7 @@ void drawSummaryPage(std::shared_ptr<PKX> pkm) {
 		// OT Name is colored
 		if(i != 8)	printTextMaxW(textC1[i].text, 80, 1, textC1[i].x, textC1[i].y, false);
 	}
-	printTextTinted(textC1[8].text, (pkm->otGender() ? RGB::RED : RGB::BLUE), textC1[8].x, textC1[8].y, false);
+	printTextTinted(textC1[8].text, (pkm->otGender() ? RED_TEXT : BLUE_TEXT), textC1[8].x, textC1[8].y, false);
 
 	// Draw buttons // The first 2 don't have buttons
 	for(unsigned i=2;i<sizeof(textC2)/sizeof(textC2[0]);i++) {
