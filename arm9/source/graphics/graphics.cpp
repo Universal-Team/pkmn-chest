@@ -40,8 +40,8 @@ int getCharIndex(char16_t c) {
 
 void initGraphics(void) {
 	// Initialize video mode
-	videoSetMode(MODE_5_2D | DISPLAY_BG3_ACTIVE);
-	videoSetModeSub(MODE_5_2D | DISPLAY_BG3_ACTIVE);
+	videoSetMode(MODE_5_2D);
+	videoSetModeSub(MODE_5_2D);
 
 	// initialize all the VRAM banks
 	vramSetPrimaryBanks(VRAM_A_MAIN_BG,
@@ -54,23 +54,15 @@ void initGraphics(void) {
 	oamInit(&oamMain, SpriteMapping_Bmp_1D_128, false);
 
 	// Init for background
-	// bgInit(3, BgType_Bmp16, BgSize_B16_256x256, 0, 0);
-	// bgInitSub(3, BgType_Bmp16, BgSize_B16_256x256, 0, 0);
-	REG_BG3CNT = BG_MAP_BASE(0) | BG_BMP16_256x256 | BG_PRIORITY(3);
-	REG_BG3X = 0;
-	REG_BG3Y = 0;
-	REG_BG3PA = 1<<8;
-	REG_BG3PB = 0;
-	REG_BG3PC = 0;
-	REG_BG3PD = 1<<8;
+	int id = bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
+	bgSetPriority(id, 3);
+	id = bgInitSub(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
+	bgSetPriority(id, 3);
 
-	REG_BG3CNT_SUB = BG_MAP_BASE(0) | BG_BMP16_256x256 | BG_PRIORITY(3);
-	REG_BG3X_SUB = 0;
-	REG_BG3Y_SUB = 0;
-	REG_BG3PA_SUB = 1<<8;
-	REG_BG3PB_SUB = 0;
-	REG_BG3PC_SUB = 0;
-	REG_BG3PD_SUB = 1<<8;
+	for(int i=0;i<256;i++) {
+		BG_PALETTE[i] = 0xffff - (i*0x10);
+		BG_PALETTE_SUB[i] = 0xffff - (i*0x10);
+	}
 
 	// Set main background as target for sprite transparency
 	REG_BLDCNT = 1<<11;
@@ -185,20 +177,20 @@ void drawImageDMA(int x, int y, int w, int h, const Image &image, bool top) {
 	// 	dmaCopyHalfWords(0, imageBuffer.data()+(i*w), (top ? BG_GFX : BG_GFX_SUB)+((y+i)*256)+x, w*2);
 	// }
 	// Use ↑ with 8bpp backgrounds
-	u16 *dst = (top ? BG_GFX : BG_GFX_SUB);
+	u8 *dst = (u8*)(top ? BG_GFX : BG_GFX_SUB);
 	for(int i=0;i<h;i++) {
 		for(int j=0;j<w;j++) {
-			dst[(y+i)*256+j+x] = image.palette[image.bitmap[(i*w)+j]];
+			dst[(y+i)*256+j+x] = image.bitmap[(i*w)+j];
 		}
 	}
 }
 
 void drawImage(int x, int y, int w, int h, const Image &image, bool top) {
-	u16 *dst = (top ? BG_GFX : BG_GFX_SUB);
+	u8 *dst = (u8*)(top ? BG_GFX : BG_GFX_SUB);
 	for(int i=0;i<h;i++) {
 		for(int j=0;j<w;j++) {
-			if(image.palette[image.bitmap[(i*w)+j]]>>15 != 0) { // Do not render transparent pixel
-				dst[(y+i)*256+j+x] = image.palette[image.bitmap[(i*w)+j]];
+			if(image.bitmap[(i*w)+j] != 0) { // Do not render transparent pixel
+				dst[(y+i)*256+j+x] = image.bitmap[(i*w)+j];
 			}
 		}
 	}
@@ -208,22 +200,22 @@ void drawImageSegmentDMA(int x, int y, int w, int h, const Image &image, int ima
 	// for(int i=0;i<h;i++) {
 	// 	dmaCopyHalfWords(0, image.bitmap.data()+(i*imageWidth), (top ? BG_GFX : BG_GFX_SUB)+((y+i)*256)+x, w*2);
 	// }
-	u16 *dst = (top ? BG_GFX : BG_GFX_SUB);
+	u8* dst = (u8*)(top ? BG_GFX : BG_GFX_SUB);
 	for(int i=0;i<h;i++) {
 		for(int j=0;j<w;j++) {
-			if(image.palette[image.bitmap[((i)*imageWidth)+j]]>>15 != 0) { // Do not render transparent pixel
-				dst[((y+i)*256)+j+x] = image.palette[image.bitmap[((i)*imageWidth)+j]];
+			if(image.bitmap[((i)*imageWidth)+j] != 0) { // Do not render transparent pixel
+				dst[((y+i)*256)+j+x] = image.bitmap[((i)*imageWidth)+j];
 			}
 		}
 	}
 }
 
 void drawImageSegment(int x, int y, int w, int h, const Image &image, int imageWidth, int xOffset, int yOffset, bool top) {
-	u16 *dst = (top ? BG_GFX : BG_GFX_SUB);
+	u8* dst = (u8*)(top ? BG_GFX : BG_GFX_SUB);
 	for(int i=0;i<h;i++) {
 		for(int j=0;j<w;j++) {
-			if(image.palette[image.bitmap[((i+yOffset)*imageWidth)+j+xOffset]]>>15 != 0) { // Do not render transparent pixel
-				dst[((y+i)*256)+j+x] = image.palette[image.bitmap[((i+yOffset)*imageWidth)+j+xOffset]];
+			if(image.bitmap[((i+yOffset)*imageWidth)+j+xOffset] != 0) { // Do not render transparent pixel
+				dst[((y+i)*256)+j+x] = image.bitmap[((i+yOffset)*imageWidth)+j+xOffset];
 			}
 		}
 	}
@@ -245,10 +237,11 @@ void drawImageSegmentScaled(int x, int y, int w, int h, double scaleX, double sc
 void drawImageScaled(int x, int y, int w, int h, double scaleX, double scaleY, const Image &image, bool top) {
 	if(scaleX == 1 && scaleY == 1)	drawImage(x, y, w, h, image, top);
 	else {
+		u8* dst = (u8*)(top ? BG_GFX : BG_GFX_SUB);
 		for(int i=0;i<(h*scaleY);i++) {
 			for(int j=0;j<(w*scaleX);j++) {
-				if(image.palette[image.bitmap[(((int)(i/scaleY))*w)+(j/scaleX)]]>>15 != 0) { // Do not render transparent pixel
-					(top ? BG_GFX : BG_GFX_SUB)[(y+i)*256+x+j] = image.palette[image.bitmap[(((int)(i/scaleY))*w)+(j/scaleX)]];
+				if(image.bitmap[(((int)(i/scaleY))*w)+(j/scaleX)] != 0) { // Do not render transparent pixel
+					dst[(y+i)*256+x+j] = image.bitmap[(((int)(i/scaleY))*w)+(j/scaleX)];
 				}
 			}
 		}
@@ -256,19 +249,20 @@ void drawImageScaled(int x, int y, int w, int h, double scaleX, double scaleY, c
 }
 
 void drawOutline(int x, int y, int w, int h, int color, bool top) {
+	u8* dst = (u8*)(top ? BG_GFX : BG_GFX_SUB);
 	h+=y;
-	if(y>=0 && y<192)	dmaFillHalfWords(((color>>10)&0x1f) | ((color)&(0x1f<<5)) | (color&0x1f)<<10 | BIT(15), (top ? BG_GFX : BG_GFX_SUB)+((y*256)+(x < 0 ? 0 : x)), (x+w > 256 ? w+(256-x-w) : w*2));
+	if(y>=0 && y<192)	dmaFillHalfWords(((color>>10)&0x1f) | ((color)&(0x1f<<5)) | (color&0x1f)<<10 | BIT(15), dst+((y*256)+(x < 0 ? 0 : x)), (x+w > 256 ? w+(256-x-w) : w));
 	for(y++;y<(h-1);y++) {
-		if(y>=0 && y<192 && x>0)	(top ? BG_GFX : BG_GFX_SUB)[(y)*256+x] = ((color>>10)&0x1f) | ((color)&(0x1f<<5)) | (color&0x1f)<<10 | BIT(15);
-		if(y>=0 && y<192 && x+w<256)	(top ? BG_GFX : BG_GFX_SUB)[(y)*256+x+w-1] = ((color>>10)&0x1f) | ((color)&(0x1f<<5)) | (color&0x1f)<<10 | BIT(15);
+		if(y>=0 && y<192 && x>0)	dst[(y)*256+x] = ((color>>10)&0x1f) | ((color)&(0x1f<<5)) | (color&0x1f)<<10 | BIT(15);
+		if(y>=0 && y<192 && x+w<256)	dst[(y)*256+x+w-1] = ((color>>10)&0x1f) | ((color)&(0x1f<<5)) | (color&0x1f)<<10 | BIT(15);
 	}
-	if(y>=0 && y<192)	dmaFillHalfWords(((color>>10)&0x1f) | ((color)&(0x1f<<5)) | (color&0x1f)<<10 | BIT(15), (top ? BG_GFX : BG_GFX_SUB)+((y*256)+(x < 0 ? 0 : x)), (x+w > 256 ? w+(256-x-w) : w*2));
+	if(y>=0 && y<192)	dmaFillHalfWords(((color>>10)&0x1f) | ((color)&(0x1f<<5)) | (color&0x1f)<<10 | BIT(15), dst+((y*256)+(x < 0 ? 0 : x)), (x+w > 256 ? w+(256-x-w) : w));
 }
 
 void drawRectangle(int x, int y, int w, int h, int color, bool top) { drawRectangle(x, y, w, h, color, color, top); }
 void drawRectangle(int x, int y, int w, int h, int color1, int color2, bool top) {
 	for(int i=0;i<h;i++) {
-		dmaFillHalfWords(((i%2) ? color1 : color2) | BIT(15), (top ? BG_GFX : BG_GFX_SUB)+((y+i)*256+x), w*2);
+		dmaFillHalfWords(((i%2) ? color1 : color2) | BIT(15), (u8*)(top ? BG_GFX : BG_GFX_SUB)+((y+i)*256+x), w);
 	}
 }
 
