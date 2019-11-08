@@ -251,7 +251,7 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 							pkm->alternativeForm(0);
 							if(pkm->genderType() == 255)	pkm->gender(2);
 							else if(pkm->genderType() == 0)	pkm->gender(0);
-							else if(pkm->genderType() == 254 || pkm->genderType() == 127)	pkm->gender(1);
+							else if(pkm->genderType() == 254)	pkm->gender(1);
 							else if(pkm->gender() == 2)	pkm->gender(0);
 						}
 						break;
@@ -263,7 +263,7 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 						}
 						if(pkm->genderType() == 255)	pkm->gender(2);
 						else if(pkm->genderType() == 0)	pkm->gender(0);
-						else if(pkm->genderType() == 254 || pkm->genderType() == 127)	pkm->gender(1);
+						else if(pkm->genderType() == 254)	pkm->gender(1);
 						else {
 							pkm->gender(Input::getBool(Lang::get("female"), Lang::get("male")));
 							pkm->PID(PKX::getRandomPID(pkm->species(), pkm->gender(), pkm->version(), pkm->nature(), pkm->alternativeForm(), pkm->abilityNumber(), pkm->PID(), pkm->generation()));
