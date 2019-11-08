@@ -358,12 +358,12 @@ void fillSpriteSegmentScaled(int id, bool top, double scale, const Image &image,
 // 	}
 // }
 
-void fillSpriteText(int id, bool top, const std::string &text, int palette, int xPos, int yPos, bool invert) { fillSpriteText(id, top, StringUtils::UTF8toUTF16(text), palette, xPos, yPos, invert); };
+void fillSpriteText(int id, bool top, const std::string &text, u16 color, int xPos, int yPos, bool invert) { fillSpriteText(id, top, StringUtils::UTF8toUTF16(text), color, xPos, yPos, invert); };
 
-void fillSpriteText(int id, bool top, const std::u16string &text, int palette, int xPos, int yPos, bool invert) {
+void fillSpriteText(int id, bool top, const std::u16string &text, u16 color, int xPos, int yPos, bool invert) {
 	for(unsigned c=0;c<text.size();c++) {
 		int t = getCharIndex(text[c]);
-		Image image = {tileWidth, tileHeight, {}, {}, 0};
+		Image image = {tileWidth, tileHeight, {}, {0x7C1F, (u16)(color & (invert ? 0xBDEF : 0xFBDE)), (u16)(color & (invert ? 0xFBDE : 0xBDEF)), 0x7C1F}, 0};
 		for(int i=0;i<tileSize;i++) {
 			image.bitmap.push_back(fontTiles[i+(t*tileSize)]>>6 & 3);
 			image.bitmap.push_back(fontTiles[i+(t*tileSize)]>>4 & 3);
@@ -420,22 +420,22 @@ void setSpriteVisibility(int id, bool top, int show) { oamSetHidden((top ? &oamM
 Sprite getSpriteInfo(int id, bool top) { return sprites(top)[id]; }
 unsigned getSpriteAmount(bool top) { return maxSprite(top); }
 
-void printText(const std::string &text, int xPos, int yPos, bool top, bool invert) { printTextTinted(StringUtils::UTF8toUTF16(text), WHITE_TEXT, xPos, yPos, top, invert); }
-void printText(const std::u16string &text, int xPos, int yPos, bool top, bool invert) { printTextTinted(text, WHITE_TEXT, xPos, yPos, top, invert); }
-void printTextCentered(const std::string &text, int xOffset, int yPos, bool top, bool invert) { printTextCenteredTinted(StringUtils::UTF8toUTF16(text), WHITE_TEXT, xOffset, yPos, top, invert); }
-void printTextCentered(const std::u16string &text, int xOffset, int yPos, bool top, bool invert) { printTextCenteredTinted(text, WHITE_TEXT, xOffset, yPos, top, invert); }
-void printTextCenteredTinted(const std::string &text, int palette, int xOffset, int yPos, bool top, bool invert) { printTextCenteredTinted(StringUtils::UTF8toUTF16(text), palette, xOffset, yPos, top, invert); }
-void printTextCenteredTinted(std::u16string text, int palette, int xOffset, int yPos, bool top, bool invert) {
+void printText(const std::string &text, int xPos, int yPos, bool top) { printTextTinted(StringUtils::UTF8toUTF16(text), WHITE_TEXT, xPos, yPos, top); }
+void printText(const std::u16string &text, int xPos, int yPos, bool top) { printTextTinted(text, WHITE_TEXT, xPos, yPos, top); }
+void printTextCentered(const std::string &text, int xOffset, int yPos, bool top) { printTextCenteredTinted(StringUtils::UTF8toUTF16(text), WHITE_TEXT, xOffset, yPos, top); }
+void printTextCentered(const std::u16string &text, int xOffset, int yPos, bool top) { printTextCenteredTinted(text, WHITE_TEXT, xOffset, yPos, top); }
+void printTextCenteredTinted(const std::string &text, int palette, int xOffset, int yPos, bool top) { printTextCenteredTinted(StringUtils::UTF8toUTF16(text), palette, xOffset, yPos, top); }
+void printTextCenteredTinted(std::u16string text, int palette, int xOffset, int yPos, bool top) {
 	int i = 0;
 	while(text.find('\n') != text.npos) {
-		printTextTinted(text.substr(0, text.find('\n')), palette, ((256-getTextWidth(text.substr(0, text.find('\n'))))/2)+xOffset, yPos+(i++*16), top, invert);
+		printTextTinted(text.substr(0, text.find('\n')), palette, ((256-getTextWidth(text.substr(0, text.find('\n'))))/2)+xOffset, yPos+(i++*16), top);
 		text = text.substr(text.find('\n')+1);
 	}
-	printTextTinted(text.substr(0, text.find('\n')), palette, ((256-getTextWidth(text.substr(0, text.find('\n'))))/2)+xOffset, yPos+(i*16), top, invert);
+	printTextTinted(text.substr(0, text.find('\n')), palette, ((256-getTextWidth(text.substr(0, text.find('\n'))))/2)+xOffset, yPos+(i*16), top);
 }
-void printTextTinted(const std::string &text, int palette, int xPos, int yPos, bool top, bool invert) { printTextTinted(StringUtils::UTF8toUTF16(text), palette, xPos, yPos, top, invert); }
+void printTextTinted(const std::string &text, int palette, int xPos, int yPos, bool top) { printTextTinted(StringUtils::UTF8toUTF16(text), palette, xPos, yPos, top); }
 
-void printTextTinted(const std::u16string &text, int palette, int xPos, int yPos, bool top, bool invert) {
+void printTextTinted(const std::u16string &text, int palette, int xPos, int yPos, bool top) {
 	int x=xPos;
 	for(unsigned c=0;c<text.size();c++) {
 		if(text[c] == '\n') {
@@ -463,40 +463,40 @@ void printTextTinted(const std::u16string &text, int palette, int xPos, int yPos
 	}
 }
 
-void printTextMaxW(const std::string &text, double w, double scaleY, int xPos, int yPos, bool top, bool invert) { printTextTintedScaled(StringUtils::UTF8toUTF16(text), std::min(1.0, w/getTextWidth(text)), scaleY, WHITE_TEXT, xPos, yPos, top, invert); }
-void printTextMaxW(const std::u16string &text, double w, double scaleY, int xPos, int yPos, bool top, bool invert) { printTextTintedScaled(text, std::min(1.0, w/getTextWidth(text)), scaleY, WHITE_TEXT, xPos, yPos, top, invert); }
-void printTextCenteredMaxW(const std::string &text, double w, double scaleY, int xOffset, int yPos, bool top, bool invert) { printTextCenteredTintedMaxW(StringUtils::UTF8toUTF16(text), w, scaleY, WHITE_TEXT, xOffset, yPos, top, invert); }
-void printTextCenteredMaxW(const std::u16string &text, double w, double scaleY, int xOffset, int yPos, bool top, bool invert) { printTextCenteredTintedMaxW(text, w, scaleY, WHITE_TEXT, xOffset, yPos, top, invert); }
-void printTextCenteredTintedMaxW(const std::string &text, double w, double scaleY, int palette, int xOffset, int yPos, bool top, bool invert) { printTextCenteredTintedMaxW(StringUtils::UTF8toUTF16(text), w, scaleY, palette, xOffset, yPos, top, invert); }
-void printTextCenteredTintedMaxW(std::u16string text, double w, double scaleY, int palette, int xOffset, int yPos, bool top, bool invert) {
+void printTextMaxW(const std::string &text, double w, double scaleY, int xPos, int yPos, bool top) { printTextTintedScaled(StringUtils::UTF8toUTF16(text), std::min(1.0, w/getTextWidth(text)), scaleY, WHITE_TEXT, xPos, yPos, top); }
+void printTextMaxW(const std::u16string &text, double w, double scaleY, int xPos, int yPos, bool top) { printTextTintedScaled(text, std::min(1.0, w/getTextWidth(text)), scaleY, WHITE_TEXT, xPos, yPos, top); }
+void printTextCenteredMaxW(const std::string &text, double w, double scaleY, int xOffset, int yPos, bool top) { printTextCenteredTintedMaxW(StringUtils::UTF8toUTF16(text), w, scaleY, WHITE_TEXT, xOffset, yPos, top); }
+void printTextCenteredMaxW(const std::u16string &text, double w, double scaleY, int xOffset, int yPos, bool top) { printTextCenteredTintedMaxW(text, w, scaleY, WHITE_TEXT, xOffset, yPos, top); }
+void printTextCenteredTintedMaxW(const std::string &text, double w, double scaleY, int palette, int xOffset, int yPos, bool top) { printTextCenteredTintedMaxW(StringUtils::UTF8toUTF16(text), w, scaleY, palette, xOffset, yPos, top); }
+void printTextCenteredTintedMaxW(std::u16string text, double w, double scaleY, int palette, int xOffset, int yPos, bool top) {
 	int i = 0;
 	while(text.find('\n') != text.npos) {
-		printTextTintedScaled(text.substr(0, text.find('\n')), std::min(1.0, w/getTextWidth(text.substr(0, text.find('\n')))), scaleY, palette, ((256-getTextWidthMaxW(text.substr(0, text.find('\n')), w))/2)+xOffset, yPos+(i++*(16*scaleY)), top, invert);
+		printTextTintedScaled(text.substr(0, text.find('\n')), std::min(1.0, w/getTextWidth(text.substr(0, text.find('\n')))), scaleY, palette, ((256-getTextWidthMaxW(text.substr(0, text.find('\n')), w))/2)+xOffset, yPos+(i++*(16*scaleY)), top);
 		text = text.substr(text.find('\n')+1);
 	}
-	printTextTintedScaled(text.substr(0, text.find('\n')), std::min(1.0, w/getTextWidth(text.substr(0, text.find('\n')))), scaleY, palette, ((256-getTextWidthMaxW(text.substr(0, text.find('\n')), w))/2)+xOffset, yPos+(i*(16*scaleY)), top, invert);
+	printTextTintedScaled(text.substr(0, text.find('\n')), std::min(1.0, w/getTextWidth(text.substr(0, text.find('\n')))), scaleY, palette, ((256-getTextWidthMaxW(text.substr(0, text.find('\n')), w))/2)+xOffset, yPos+(i*(16*scaleY)), top);
 }
-void printTextTintedMaxW(const std::string &text, double w, double scaleY, int palette, int xPos, int yPos, bool top, bool invert) { printTextTintedScaled(StringUtils::UTF8toUTF16(text), std::min(1.0, w/getTextWidth(text)), scaleY, palette, xPos, yPos, top, invert); }
-void printTextTintedMaxW(const std::u16string &text, double w,  double scaleY, int palette, int xPos, int yPos, bool top, bool invert) { printTextTintedScaled(text, std::min(1.0, w/getTextWidth(text)), scaleY, palette, xPos, yPos, top, invert); }
+void printTextTintedMaxW(const std::string &text, double w, double scaleY, int palette, int xPos, int yPos, bool top) { printTextTintedScaled(StringUtils::UTF8toUTF16(text), std::min(1.0, w/getTextWidth(text)), scaleY, palette, xPos, yPos, top); }
+void printTextTintedMaxW(const std::u16string &text, double w,  double scaleY, int palette, int xPos, int yPos, bool top) { printTextTintedScaled(text, std::min(1.0, w/getTextWidth(text)), scaleY, palette, xPos, yPos, top); }
 
-void printTextScaled(const std::string &text, double scaleX, double scaleY, int xPos, int yPos, bool top, bool invert) { printTextTintedScaled(StringUtils::UTF8toUTF16(text), scaleX, scaleY, WHITE_TEXT, xPos, yPos, top, invert); }
-void printTextScaled(const std::u16string &text, double scaleX, double scaleY, int xPos, int yPos, bool top, bool invert) { printTextTintedScaled(text, scaleX, scaleY, WHITE_TEXT, xPos, yPos, top, invert); }
-void printTextCenteredScaled(const std::string &text, double scaleX, double scaleY, int xOffset, int yPos, bool top, bool invert) { printTextCenteredTintedScaled(StringUtils::UTF8toUTF16(text), scaleX, scaleY, WHITE_TEXT, xOffset, yPos, top, invert); }
-void printTextCenteredScaled(const std::u16string &text, double scaleX, double scaleY, int xOffset, int yPos, bool top, bool invert) { printTextCenteredTintedScaled(text, scaleX, scaleY, WHITE_TEXT, xOffset, yPos, top, invert); }
-void printTextCenteredTintedScaled(const std::string &text, double scaleX, double scaleY, int palette, int xOffset, int yPos, bool top, bool invert) { printTextCenteredTintedScaled(StringUtils::UTF8toUTF16(text), scaleX, scaleY, palette, xOffset, yPos, top, invert); }
-void printTextCenteredTintedScaled(std::u16string text, double scaleX, double scaleY, int palette, int xOffset, int yPos, bool top, bool invert) {
+void printTextScaled(const std::string &text, double scaleX, double scaleY, int xPos, int yPos, bool top) { printTextTintedScaled(StringUtils::UTF8toUTF16(text), scaleX, scaleY, WHITE_TEXT, xPos, yPos, top); }
+void printTextScaled(const std::u16string &text, double scaleX, double scaleY, int xPos, int yPos, bool top) { printTextTintedScaled(text, scaleX, scaleY, WHITE_TEXT, xPos, yPos, top); }
+void printTextCenteredScaled(const std::string &text, double scaleX, double scaleY, int xOffset, int yPos, bool top) { printTextCenteredTintedScaled(StringUtils::UTF8toUTF16(text), scaleX, scaleY, WHITE_TEXT, xOffset, yPos, top); }
+void printTextCenteredScaled(const std::u16string &text, double scaleX, double scaleY, int xOffset, int yPos, bool top) { printTextCenteredTintedScaled(text, scaleX, scaleY, WHITE_TEXT, xOffset, yPos, top); }
+void printTextCenteredTintedScaled(const std::string &text, double scaleX, double scaleY, int palette, int xOffset, int yPos, bool top) { printTextCenteredTintedScaled(StringUtils::UTF8toUTF16(text), scaleX, scaleY, palette, xOffset, yPos, top); }
+void printTextCenteredTintedScaled(std::u16string text, double scaleX, double scaleY, int palette, int xOffset, int yPos, bool top) {
 	int i = 0;
 	while(text.find('\n') != text.npos) {
-		printTextTintedScaled(text.substr(0, text.find('\n')), scaleX, scaleY, palette, ((256-getTextWidth(text.substr(0, text.find('\n'))))/2)+xOffset, yPos+(i++*(16*scaleY)), top, invert);
+		printTextTintedScaled(text.substr(0, text.find('\n')), scaleX, scaleY, palette, ((256-getTextWidth(text.substr(0, text.find('\n'))))/2)+xOffset, yPos+(i++*(16*scaleY)), top);
 		text = text.substr(text.find('\n')+1);
 	}
-	printTextTintedScaled(text.substr(0, text.find('\n')), scaleX, scaleY, palette, ((256-getTextWidth(text.substr(0, text.find('\n'))))/2)+xOffset, yPos+(i*(16*scaleY)), top, invert);
+	printTextTintedScaled(text.substr(0, text.find('\n')), scaleX, scaleY, palette, ((256-getTextWidth(text.substr(0, text.find('\n'))))/2)+xOffset, yPos+(i*(16*scaleY)), top);
 }
-void printTextTintedScaled(const std::string &text, double scaleX, double scaleY, int palette, int xPos, int yPos, bool top, bool invert) { printTextTintedScaled(StringUtils::UTF8toUTF16(text), scaleX, scaleY, palette, xPos, yPos, top, invert); }
+void printTextTintedScaled(const std::string &text, double scaleX, double scaleY, int palette, int xPos, int yPos, bool top) { printTextTintedScaled(StringUtils::UTF8toUTF16(text), scaleX, scaleY, palette, xPos, yPos, top); }
 
-void printTextTintedScaled(const std::u16string &text, double scaleX, double scaleY, int palette, int xPos, int yPos, bool top, bool invert) {
+void printTextTintedScaled(const std::u16string &text, double scaleX, double scaleY, int palette, int xPos, int yPos, bool top) {
 	if(scaleX == 1 && scaleY == 1) {
-		printTextTinted(text, palette, xPos, yPos, top, invert);
+		printTextTinted(text, palette, xPos, yPos, top);
 		return;
 	}
 

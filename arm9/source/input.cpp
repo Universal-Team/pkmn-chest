@@ -250,21 +250,21 @@ void drawKeyboard(int layout) {
 
 	if(layout == 0) {
 		for(unsigned i=0;i<(sizeof(keys123)/sizeof(keys123[0]));i++) {
-			printTextTinted(keys123[i].character, GRAY_TEXT, xPos+keys123[i].x+16-(getTextWidth(keys123[i].character)/2), 192-keyboard.height+keys123[i].y+8, false, true);
+			printTextTinted(keys123[i].character, GRAY_TEXT, xPos+keys123[i].x+16-(getTextWidth(keys123[i].character)/2), 192-keyboard.height+keys123[i].y+8, false);
 		}
 	} else if(layout == 1) {
 		for(unsigned i=0;i<(sizeof(keysABC)/sizeof(keysABC[0]));i++) {
-			printTextTinted(keysABC[i].character, GRAY_TEXT, xPos+keysABC[i].x+16-(getTextWidth(keysABC[i].character)/2), 192-keyboard.height+keysABC[i].y+8, false, true);
+			printTextTinted(keysABC[i].character, GRAY_TEXT, xPos+keysABC[i].x+16-(getTextWidth(keysABC[i].character)/2), 192-keyboard.height+keysABC[i].y+8, false);
 		}
-		printTextTinted("a/A", GRAY_TEXT, xPos+keysSpecialKana[0].x+16-(getTextWidth("a/A")/2), 192-keyboard.height+keysSpecialKana[0].y+8, false, true);
+		printTextTinted("a/A", GRAY_TEXT, xPos+keysSpecialKana[0].x+16-(getTextWidth("a/A")/2), 192-keyboard.height+keysSpecialKana[0].y+8, false);
 	} else if(layout == 2) {
 		for(unsigned i=0;i<(sizeof(keysAIU)/sizeof(keysAIU[0]));i++) {
 			std::u16string str;
 			str += (katakana ? tokatakana(keysAIU[i].character[0]) : keysAIU[i].character[0]);
-			printTextTinted(str, GRAY_TEXT, xPos+keysAIU[i].x+16-(getTextWidth(str)/2), 192-keyboard.height+keysAIU[i].y+8, false, true);
+			printTextTinted(str, GRAY_TEXT, xPos+keysAIU[i].x+16-(getTextWidth(str)/2), 192-keyboard.height+keysAIU[i].y+8, false);
 		}
-		printTextTinted(katakana ? "ｯﾞﾟ" : "っﾞﾟ", GRAY_TEXT, xPos+keysSpecialKana[0].x+16-(getTextWidth(katakana ? "ｯﾞﾟ" : "っﾞﾟ")/2), 192-keyboard.height+keysSpecialKana[0].y+8, false, true);
-		printTextTinted(katakana ? "あ" : "ア", GRAY_TEXT, xPos+keysSpecialKana[1].x+16-(getTextWidth(katakana ? "あ" : "ア")/2), 192-keyboard.height+keysSpecialKana[1].y+8, false, true);
+		printTextTinted(katakana ? "ｯﾞﾟ" : "っﾞﾟ", GRAY_TEXT, xPos+keysSpecialKana[0].x+16-(getTextWidth(katakana ? "ｯﾞﾟ" : "っﾞﾟ")/2), 192-keyboard.height+keysSpecialKana[0].y+8, false);
+		printTextTinted(katakana ? "あ" : "ア", GRAY_TEXT, xPos+keysSpecialKana[1].x+16-(getTextWidth(katakana ? "あ" : "ア")/2), 192-keyboard.height+keysSpecialKana[1].y+8, false);
 	} else if(layout == 3) {
 		for(unsigned i=0;i<(sizeof(keysQWE)/sizeof(keysQWE[0]));i++) {
 			std::string str;
@@ -1155,8 +1155,8 @@ bool Input::getBool(std::string optionTrue, std::string optionFalse) {
 	drawOutline(38, 65, 180, 61, BLACK, false);
 
 	// Print text
-	printTextCenteredTintedMaxW(optionFalse, 60, 1, GRAY_TEXT, -45, 88, false, true);
-	printTextCenteredTintedMaxW(optionTrue, 60, 1, GRAY_TEXT, 45, 88, false, true);
+	printTextCenteredTintedMaxW(optionFalse, 60, 1, GRAY_TEXT, -45, 88, false);
+	printTextCenteredTintedMaxW(optionTrue, 60, 1, GRAY_TEXT, 45, 88, false);
 
 	int pressed;
 	touchPosition touch;

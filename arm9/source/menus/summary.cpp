@@ -101,27 +101,24 @@ void changeAbility(std::shared_ptr<PKX> &pkm) {
 }
 
 void drawSummaryPage(std::shared_ptr<PKX> pkm) {
-	// Draw background
-	drawImageDMA(0, 0, 256, 192, listBg, false);
-	drawImageScaled(145, 1, infoBox.width, infoBox.height, 1.2, 1, infoBox, false);
-	// Draw lines
-	drawOutline(0, 128, 160, 65, LIGHT_GRAY, false);
-
 	// Hide sprites
 	for(int i=0;i<30;i++) {
 		setSpriteVisibility(i, false, false);
 	}
 	updateOam();
 
-	// Print Pokémon name
-	printTextTintedMaxW(Lang::species[pkm->species()], 90, 1, (pkm->gender() ? (pkm->gender() == 1 ? RED_TEXT : GRAY_TEXT) : BLUE_TEXT), 165, 8, false, pkm->gender() > 1);
+	// Draw background
+	drawImageDMA(0, 0, 256, 192, listBg, false);
+	drawImageScaled(145, 1, infoBox.width, infoBox.height, 1.2, 1, infoBox, false);
+	// Draw lines
+	drawOutline(0, 128, 160, 65, LIGHT_GRAY, false);
 
-	// Draw Pokémon, Pokéball, types, and shiny star (if shiny)
+	// Print Pokémon name
+	printTextTintedMaxW(Lang::species[pkm->species()], 90, 1, (pkm->gender() ? (pkm->gender() == 1 ? RED_TEXT : GRAY_TEXT) : BLUE_TEXT), 165, 8, false);
+
+	// Draw Pokéball, types, and shiny star (if shiny)
 	std::pair<int, int> xy = getPokeballPosition(pkm->ball());
 	drawImageSegment(148, 8, 15, 15, ballSheet, 136, xy.first, xy.second, false);
-
-	Image image = loadPokemonSprite(getPokemonIndex(pkm));
-	drawImageScaled(169, 22, 32, 32, 2, 2, image, false, 0xC0);
 
 	int type = (pkm->generation() == Generation::FOUR && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1();
 	drawImage(150, 26-((types[type].height-12)/2), types[type].width, types[type].height, types[type], false);
@@ -136,7 +133,6 @@ void drawSummaryPage(std::shared_ptr<PKX> pkm) {
 		printTextMaxW(Lang::get(summaryLabels[i]), textC1[i].x-8, 1, 4, textC1[i].y, false);
 
 	}
-
 
 	// Print Pokémon and trainer info
 	snprintf(textC1[0].text,  sizeof(textC1[0].text), "%.3i", pkm->species());
@@ -168,6 +164,10 @@ void drawSummaryPage(std::shared_ptr<PKX> pkm) {
 	for(unsigned i=0;i<(sizeof(textC2)/sizeof(textC2[0]));i++) {
 		printTextMaxW(textC2[i].text, 80, 1, textC2[i].x, textC2[i].y, false);
 	}
+
+	// Draw Pokémon
+	Image image = loadPokemonSprite(getPokemonIndex(pkm));
+	drawImageScaled(169, 22, 32, 32, 2, 2, image, false, 0xC0);
 }
 
 std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
