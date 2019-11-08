@@ -23,8 +23,8 @@ char16_t tohiragana(char16_t c) {
 	return c;
 }
 char16_t nextcharver(char16_t c) {
-	bool katakana = iskatakana(c);
-	if(katakana)	c -= 96;
+	bool isKatakana = iskatakana(c);
+	if(isKatakana)	c -= 96;
 	if((c >= 0x3041 && c <= 0x3061 && c % 2 && c != 0x3045)
 	|| (c == 0x3066 || c == 0x3068)
 	|| (c >= 0x306F && c <= 0x307C && (c % 3 != 2))
@@ -43,7 +43,7 @@ char16_t nextcharver(char16_t c) {
 	} else if(c == 0x3094) {
 		c = 0x3046;
 	}
-	return katakana ? c+96 : c;
+	return isKatakana ? c+96 : c;
 }
 char16_t tossang(char16_t c) {
 	if(c == 0x3131 || c == 0x3137 || c == 0x3142 || c == 0x3145 || c == 0x3148) {
@@ -430,7 +430,7 @@ void processInputAIU(u16 held, unsigned maxLength) {
 		}
 
 		if(direction != -1) {
-			bool katakana = keysHeld() & KEY_R;
+			bool isKatakana = keysHeld() & KEY_R;
 			std::u16string character = (kanaMode == 0) ? keysDPadAIU[direction] : (kanaMode == 1) ? keysDPadAIU2[direction] : keysDPadAIU3[direction];
 			std::pair<int, int> *pos = &keysDPad8[direction];
 
@@ -439,7 +439,7 @@ void processInputAIU(u16 held, unsigned maxLength) {
 			setSpriteVisibility(keyboardSpriteID, false, true);
 			updateOam();
 
-			std::u16string str; str += katakana ? tokatakana(character[0]) : character[0];
+			std::u16string str; str += isKatakana ? tokatakana(character[0]) : character[0];
 			fillSpriteText(keyboardSpriteID, false, str, WHITE, 16-(getTextWidth(str)/2), 8, false);
 		}
 
@@ -495,7 +495,7 @@ void processTouch123(touchPosition touch, unsigned maxLength) {
 					string = string.substr(0, string.length()-1);
 					drawRectangle(0, 192-keyboard.height-16, 256, 16, BLACK, false);
 					printText(string, 0, 192-keyboard.height-16, false);
-					for(int i=0;i<10 && keysHeld() & KEY_TOUCH;i++) {
+					for(int j=0;j<10 && keysHeld() & KEY_TOUCH;j++) {
 						swiWaitForVBlank();
 						scanKeys();
 					}
@@ -571,7 +571,7 @@ void processTouchABC(touchPosition touch, unsigned maxLength) {
 					string = string.substr(0, string.length()-1);
 					drawRectangle(0, 192-keyboard.height-16, 256, 16, BLACK, false);
 					printText(string, 0, 192-keyboard.height-16, false);
-					for(int i=0;i<10 && keysHeld() & KEY_TOUCH;i++) {
+					for(int j=0;j<10 && keysHeld() & KEY_TOUCH;j++) {
 						swiWaitForVBlank();
 						scanKeys();
 					}
@@ -655,7 +655,7 @@ void processTouchAIU(touchPosition touch, unsigned maxLength) {
 					string = string.substr(0, string.length()-1);
 					drawRectangle(0, 192-keyboard.height-16, 256, 16, BLACK, false);
 					printText(string, 0, 192-keyboard.height-16, false);
-					for(int i=0;i<10 && keysHeld() & KEY_TOUCH;i++) {
+					for(int j=0;j<10 && keysHeld() & KEY_TOUCH;j++) {
 						swiWaitForVBlank();
 						scanKeys();
 					}

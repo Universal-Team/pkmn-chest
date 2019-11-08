@@ -582,7 +582,7 @@ u16 PK4::formSpecies(void) const {
 		tmpSpecies      = PersonalDPPtHGSS::formStatIndex(tmpSpecies);
 		if(!tmpSpecies) {
 			tmpSpecies = backSpecies;
-		} else if(form < formcount) {
+		} else {
 			tmpSpecies += form - 1;
 		}
 	}

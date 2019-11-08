@@ -42,9 +42,8 @@
 #define ENTRY_PAGE_LENGTH 10
 #define copyBufSize 0x8000
 
-char path[PATH_MAX];
-char fatLabel[12];
-char sdLabel[12];
+char fatLabel[14];
+char sdLabel[14];
 u32 copyBuf[copyBufSize];
 
 struct topMenuItem {
@@ -110,6 +109,7 @@ void getDirectoryContents(std::vector<DirEntry>& dirContents) {
 }
 
 void showDirectoryContents(const std::vector<DirEntry>& dirContents, int startRow) {
+	char path[PATH_MAX];
 	getcwd(path, PATH_MAX);
 
 	// Print path
@@ -165,14 +165,14 @@ void updateDriveLabel(bool fat) {
 }
 
 void drawSdText(int i, bool valid) {
-	char str[19];
+	char str[20];
 	updateDriveLabel(false);
 	snprintf(str, sizeof(str), "sd: (%s)", sdLabel[0] == '\0' ? "SD Card" : sdLabel);
 	printTextTinted(str, valid ? WHITE : RGB::RED, 10, (i+1)*16, false);
 }
 
 void drawFatText(int i, bool valid) {
-	char str[20];
+	char str[21];
 	updateDriveLabel(true);
 	snprintf(str, sizeof(str), "fat: (%s)", fatLabel[0] == '\0' ? "Flashcard" : fatLabel);
 	printTextTinted(str, valid ? WHITE : RGB::RED, 10, (i+1)*16, false);
@@ -239,7 +239,7 @@ void showTopMenu(std::vector<topMenuItem> topMenuContents) {
 }
 
 std::string topMenuSelect(void) {
-	int pressed = 0, held = 0;
+	int pressed, held;
 	touchPosition touch;
 
 	// Clear screens
@@ -276,7 +276,6 @@ std::string topMenuSelect(void) {
 	// Show topMenuContents
 	showTopMenu(topMenuContents);
 
-	bool bigJump = false;
 	while(1) {
 		// Clear old cursors
 		drawImageSegment(0, 17, 10, 175, listBg, listBg.width, 0, 17, false);
@@ -299,14 +298,18 @@ std::string topMenuSelect(void) {
 
 		} while(!held);
 
-		if(held & KEY_UP)	tmCurPos -= 1;
-		else if(held & KEY_DOWN)	tmCurPos += 1;
-		else if(held & KEY_LEFT) {
+		if(held & KEY_UP) {
+			if(tmCurPos > 0)	tmCurPos -= 1;
+			else	tmCurPos = topMenuContents.size()-1;
+		} else if(held & KEY_DOWN) {
+			if(tmCurPos < (int)topMenuContents.size()-1)	tmCurPos += 1;
+			else	tmCurPos = 0;
+		} else if(held & KEY_LEFT) {
 			tmCurPos -= ENTRY_PAGE_LENGTH;
-			bigJump = true;
+			if(tmCurPos < 0)	tmCurPos = 0;
 		} else if(held & KEY_RIGHT) {
 			tmCurPos += ENTRY_PAGE_LENGTH;
-			bigJump = true;
+			if(tmCurPos > (int)topMenuContents.size()-1)	tmCurPos = topMenuContents.size()-1;
 		} else if(pressed & KEY_A) {
 			selection:
 			if(topMenuContents[tmCurPos].name == "fat:") {
@@ -339,9 +342,8 @@ std::string topMenuSelect(void) {
 								fwrite((topMenuContents[i].name+"\n").c_str(), 1, (topMenuContents[i].name+"\n").size(), out);
 							}
 						}
+						fclose(out);
 					}
-
-					fclose(out);
 				}
 				if(tmCurPos > (int)topMenuContents.size()-1) {
 					tmCurPos = topMenuContents.size()-1;
@@ -358,15 +360,6 @@ std::string topMenuSelect(void) {
 				}
 			}
 		}
-
-		if(tmCurPos < 0) {
-			// Wrap around to bottom of list unless left was pressed
-			tmCurPos = bigJump ? 0 : topMenuContents.size()-1;
-		} else if(tmCurPos > (int)topMenuContents.size()-1) {
-			// Wrap around to top of list unless right was pressed
-			tmCurPos = bigJump ? topMenuContents.size()-1 : 0;
-		}
-		bigJump = false;
 
 		// Scroll screen if needed
 		if(tmCurPos < tmScreenOffset) {
@@ -392,9 +385,8 @@ std::string topMenuSelect(void) {
 std::string browseForFile(const std::vector<std::string>& extensionList, bool accessSubdirectories) {
 	char startPath[PATH_MAX];
 	if(!accessSubdirectories)	getcwd(startPath, PATH_MAX);
-	int pressed = 0, held = 0, screenOffset = 0, fileOffset = 0;
+	int pressed, held, screenOffset = 0, fileOffset = 0;
 	touchPosition touch;
-	bool bigJump = false;
 	std::vector<DirEntry> dirContents;
 
 	getDirectoryContents(dirContents, extensionList);
@@ -416,24 +408,18 @@ std::string browseForFile(const std::vector<std::string>& extensionList, bool ac
 			held = keysDownRepeat();
 		} while(!held);
 
-		if(held & KEY_UP)	fileOffset -= 1;
-		else if(held & KEY_DOWN)	fileOffset += 1;
-		else if(held & KEY_LEFT) {
+		if(held & KEY_UP) {
+			if(fileOffset > 0)	fileOffset -= 1;
+			else	fileOffset = dirContents.size()-1;
+		} else if(held & KEY_DOWN) {
+			if(fileOffset < (int)dirContents.size()-1)	fileOffset += 1;
+			else	fileOffset = 0;
+		} else if(held & KEY_LEFT) {
 			fileOffset -= ENTRY_PAGE_LENGTH;
-			bigJump = true;
+			if(fileOffset < 0)	fileOffset = 0;
 		} else if(held & KEY_RIGHT) {
 			fileOffset += ENTRY_PAGE_LENGTH;
-			bigJump = true;
-		}
-
-		if(fileOffset < 0) {
-			// Wrap around to bottom of list unless left was pressed
-			fileOffset = bigJump ? 0 : dirContents.size()-1;
-			bigJump = true;
-		} else if(fileOffset > ((int)dirContents.size()-1)) {
-			// Wrap around to top of list unless right was pressed
-			fileOffset = bigJump ? dirContents.size()-1 : 0;
-			bigJump = true;
+			if(fileOffset > (int)dirContents.size()-1)	fileOffset = dirContents.size()-1;
 		} else if(pressed & KEY_A) {
 			selection:
 			DirEntry* entry = &dirContents.at(fileOffset);
@@ -449,7 +435,7 @@ std::string browseForFile(const std::vector<std::string>& extensionList, bool ac
 				screenOffset = 0;
 				fileOffset = 0;
 				showDirectoryContents(dirContents, screenOffset);
-			} else if(!entry->isDirectory) {
+			} else {
 				Sound::play(Sound::click);
 				// Return the chosen file
 				return entry->name;
@@ -484,9 +470,8 @@ std::string browseForFile(const std::vector<std::string>& extensionList, bool ac
 
 				if(favs) {
 					fwrite((path+dirContents[fileOffset].name+"\n").c_str(), 1, (path+dirContents[fileOffset].name+"\n").size(), favs);
+					fclose(favs);
 				}
-
-				fclose(favs);
 			}
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
@@ -506,7 +491,6 @@ std::string browseForFile(const std::vector<std::string>& extensionList, bool ac
 			screenOffset = fileOffset - ENTRIES_PER_SCREEN + 1;
 			showDirectoryContents(dirContents, screenOffset);
 		}
-		bigJump = false;
 	}
 }
 
@@ -549,7 +533,6 @@ int fcopy(const char *sourcePath, const char *destinationPath) {
 			fsize = ftell(sourceFile);			// Get source file's size
 			fseek(sourceFile, 0, SEEK_SET);
 		} else {
-			fclose(sourceFile);
 			return -1;
 		}
 
@@ -557,12 +540,11 @@ int fcopy(const char *sourcePath, const char *destinationPath) {
 			fseek(destinationFile, 0, SEEK_SET);
 
 		off_t offset = 0;
-		int numr;
 		drawOutline(5, 39, 247, 18, DARKERER_GRAY, false);
 		while(1) {
 			drawRectangle(((offset < fsize ? (double)offset/fsize : 1)*226)+6, 40, 19, 16, LIGHT_GRAY, false);
 			// Copy file to destination path
-			numr = fread(copyBuf, 2, copyBufSize, sourceFile);
+			int numr = fread(copyBuf, 2, copyBufSize, sourceFile);
 			fwrite(copyBuf, 2, numr, destinationFile);
 			offset += copyBufSize;
 
@@ -571,7 +553,6 @@ int fcopy(const char *sourcePath, const char *destinationPath) {
 				fclose(destinationFile);
 
 				return 1;
-				break;
 			}
 		}
 

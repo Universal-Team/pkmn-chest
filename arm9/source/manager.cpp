@@ -351,7 +351,7 @@ void manageBoxes(void) {
 	std::vector<HeldPkm> heldPokemon;
 	bool heldPokemonScreen = false, heldMode = false;
 	topScreen = false, arrowMode = 0;
-	u16 pressed = 0, held = 0;
+	u16 pressed, held;
 	touchPosition touch;
 	while(1) {
 		do {
@@ -414,7 +414,7 @@ void manageBoxes(void) {
 						// If in the held Pokémon's previous spot, just put held Pokémon back down
 						for(unsigned i=0;i<heldPokemon.size();i++)
 							setSpriteVisibility(heldPokemon[i].position, heldPokemonScreen, heldPokemon[i].pkm->species());
-						setSpriteVisibility(topScreen ? heldPokemonID : heldPokemonID, topScreen, false);
+						setSpriteVisibility(heldPokemonID, topScreen, false);
 						heldPokemon.clear();
 						heldPokemonBox = -1;
 					} else if(!heldMode || currentPokemon((arrowY*6)+arrowX)->species() == 0) {
@@ -457,7 +457,7 @@ void manageBoxes(void) {
 								}
 							}
 							// Hide the moving Pokémon
-							setSpriteVisibility(topScreen ? heldPokemonID : heldPokemonID, topScreen, false);
+							setSpriteVisibility(heldPokemonID, topScreen, false);
 							
 							// Update the box(es) for the moved Pokémon
 							drawBox(topScreen);
@@ -498,7 +498,7 @@ void manageBoxes(void) {
 							fillSpriteText(heldPokemonID, true, StringUtils::UTF8toUTF16(std::to_string(heldPokemon.size())), GRAY, 32-getTextWidth(std::to_string(heldPokemon.size())), 16, true);
 							fillSpriteColor(heldPokemonID, false, 0); // Fill the sprite with transparency
 							fillSpriteText(heldPokemonID, false, StringUtils::UTF8toUTF16(std::to_string(heldPokemon.size())), GRAY, 32-getTextWidth(std::to_string(heldPokemon.size())), 16, true);
-							setSpriteVisibility(topScreen ? heldPokemonID : heldPokemonID, topScreen, true);
+							setSpriteVisibility(heldPokemonID, topScreen, true);
 							updateOam();
 							heldPokemonBox = currentBox();
 							heldPokemonScreen = topScreen;
@@ -536,7 +536,7 @@ void manageBoxes(void) {
 						drawImage(5, 15, bankBox.width, bankBox.height, bankBox, topScreen);
 						printTextCenteredTinted((topScreen ? Banks::bank->boxName(currentBankBox) : save->boxName(currentSaveBox)), GRAY, -44, 20, topScreen, true);
 						drawOutline(8+(std::min(startX, arrowX)*24), 40+(std::min(startY, arrowY)*24), ((std::max(arrowX-startX, startX-arrowX)+1)*24)+8, ((std::max(arrowY-startY, startY-arrowY)+1)*24), WHITE, topScreen);
-						setSpritePosition((topScreen ? arrowID : arrowID), topScreen, (arrowX*24)+24, (arrowY*24)+36);
+						setSpritePosition(arrowID, topScreen, (arrowX*24)+24, (arrowY*24)+36);
 						updateOam();
 					}
 				} else if(currentPokemon((arrowY*6)+arrowX)->species() != 0) {
@@ -549,7 +549,7 @@ void manageBoxes(void) {
 						heldMode = temp-1; // false = move, true = copy
 						setHeldPokemon(currentPokemon(heldPokemon[0].position));
 						if(!heldMode)	setSpriteVisibility(heldPokemon[0].position, heldPokemonScreen,  false);
-						setSpriteVisibility(topScreen ? heldPokemonID : heldPokemonID, topScreen, true);
+						setSpriteVisibility(heldPokemonID, topScreen, true);
 						drawPokemonInfo(currentPokemon(heldPokemon[0].position));
 					}
 				} else if(arrowMode == 0) {
@@ -646,12 +646,12 @@ void manageBoxes(void) {
 
 		if(arrowY == -1) {
 			// If the Arrow Y is at -1 (box title), draw it in the middle
-			setSpritePosition((topScreen ? arrowID : arrowID), topScreen, 90, 16);
-			if(heldPokemon.size())	setSpritePosition((topScreen ? heldPokemonID : heldPokemonID), topScreen, 82, 12);
+			setSpritePosition(arrowID, topScreen, 90, 16);
+			if(heldPokemon.size())	setSpritePosition(heldPokemonID, topScreen, 82, 12);
 		} else {
 			// Otherwise move it to the spot in the box it's at
-			setSpritePosition((topScreen ? arrowID : arrowID), topScreen, (arrowX*24)+24, (arrowY*24)+36);
-			if(heldPokemon.size())	setSpritePosition((topScreen ? heldPokemonID : heldPokemonID), topScreen, (arrowX*24)+16, (arrowY*24)+32);
+			setSpritePosition(arrowID, topScreen, (arrowX*24)+24, (arrowY*24)+36);
+			if(heldPokemon.size())	setSpritePosition(heldPokemonID, topScreen, (arrowX*24)+16, (arrowY*24)+32);
 		}
 		updateOam();
 	}

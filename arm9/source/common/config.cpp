@@ -25,14 +25,18 @@ Lang::Language sysLang() {
 
 void Config::load() {
 	FILE* file = fopen(sdFound() ? "sd:/_nds/pkmn-chest/config.json" : "fat:/_nds/pkmn-chest/config.json", "r");
-	if(file)	configJson = nlohmann::json::parse(file, nullptr, false);
-	fclose(file);
+	if(file) {
+		configJson = nlohmann::json::parse(file, nullptr, false);
+		fclose(file);
+	}
 }
 
 void Config::save() {
 	FILE* file = fopen(sdFound() ? "sd:/_nds/pkmn-chest/config.json" : "fat:/_nds/pkmn-chest/config.json", "w");
-	if(file)	fwrite(configJson.dump(1, '\t').c_str(), 1, configJson.dump(1, '\t').size(), file);
-	fclose(file);
+	if(file) {
+		fwrite(configJson.dump(1, '\t').c_str(), 1, configJson.dump(1, '\t').size(), file);
+		fclose(file);
+	}
 }
 
 bool Config::getBool(const std::string &key) {

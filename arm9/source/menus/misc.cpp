@@ -694,8 +694,8 @@ std::shared_ptr<PKX> selectOrigin(std::shared_ptr<PKX> pkm) {
 					int num = Input::getInt(12);
 					if(num > 0) {
 						pkm->metMonth(num);
-						if(num == 2 && pkm->metDay() > (pkm->metYear()%4 ? 28 : 29)) {
-							pkm->metDay(pkm->metYear()%4 ? 28 : 29);
+						if(num == 2 && pkm->metDay() > ((pkm->metYear()%4) ? 28 : 29)) {
+							pkm->metDay((pkm->metYear()%4) ? 28 : 29);
 						} else if((num == 4 || num == 6 || num == 9 || num == 11) && pkm->metDay() > 30) {
 							pkm->metDay(30);
 						}
@@ -705,7 +705,7 @@ std::shared_ptr<PKX> selectOrigin(std::shared_ptr<PKX> pkm) {
 					int num;
 					switch(pkm->metMonth()) {
 						case 2:
-							num = Input::getInt(pkm->metYear()%4 ? 28 : 29);
+							num = Input::getInt((pkm->metYear()%4) ? 28 : 29);
 							break;
 						case 4:
 						case 6:
@@ -751,13 +751,15 @@ void drawStatsPage(std::shared_ptr<PKX> pkm) {
 	drawRectangle(208, 4, 1, 112, LIGHT_GRAY, false);
 
 	// Print stat info labels
-	int i = pkm->nature();
-	printText(Lang::get(statsLabels[0]), 20, textStatsC1[0].y, false);
-	printTextTintedMaxW(Lang::get(statsLabels[1]), 80, 1, (i!=0&&i<5         ? RGB::RED : i!=0&&!(i%5)      ? RGB::BLUE : WHITE), 20, textStatsC1[1].y, false);
-	printTextTintedMaxW(Lang::get(statsLabels[2]), 80, 1, (i!=6&&i>4&&i<10   ? RGB::RED : i!=6&&!((i-1)%5)  ? RGB::BLUE : WHITE), 20, textStatsC1[2].y, false);
-	printTextTintedMaxW(Lang::get(statsLabels[3]), 80, 1, (i!=18&&i>14&&i<20 ? RGB::RED : i!=18&&!((i-3)%5) ? RGB::BLUE : WHITE), 20, textStatsC1[3].y, false);
-	printTextTintedMaxW(Lang::get(statsLabels[4]), 80, 1, (i!=24&&i>19       ? RGB::RED : i!=24&&!((i-4)%5) ? RGB::BLUE : WHITE), 20, textStatsC1[4].y, false);
-	printTextTintedMaxW(Lang::get(statsLabels[5]), 80, 1, (i!=12&&i>9&&i<15  ? RGB::RED : i!=12&&!((i-2)%5) ? RGB::BLUE : WHITE), 20, textStatsC1[5].y, false);
+	{
+		int i = pkm->nature();
+		printText(Lang::get(statsLabels[0]), 20, textStatsC1[0].y, false);
+		printTextTintedMaxW(Lang::get(statsLabels[1]), 80, 1, (i!=0&&i<5         ? RGB::RED : i!=0&&!(i%5)      ? RGB::BLUE : WHITE), 20, textStatsC1[1].y, false);
+		printTextTintedMaxW(Lang::get(statsLabels[2]), 80, 1, (i!=6&&i>4&&i<10   ? RGB::RED : i!=6&&!((i-1)%5)  ? RGB::BLUE : WHITE), 20, textStatsC1[2].y, false);
+		printTextTintedMaxW(Lang::get(statsLabels[3]), 80, 1, (i!=18&&i>14&&i<20 ? RGB::RED : i!=18&&!((i-3)%5) ? RGB::BLUE : WHITE), 20, textStatsC1[3].y, false);
+		printTextTintedMaxW(Lang::get(statsLabels[4]), 80, 1, (i!=24&&i>19       ? RGB::RED : i!=24&&!((i-4)%5) ? RGB::BLUE : WHITE), 20, textStatsC1[4].y, false);
+		printTextTintedMaxW(Lang::get(statsLabels[5]), 80, 1, (i!=12&&i>9&&i<15  ? RGB::RED : i!=12&&!((i-2)%5) ? RGB::BLUE : WHITE), 20, textStatsC1[5].y, false);
+	}
 
 	// Print column titles
 	printTextCenteredMaxW(Lang::get(statsLabels[6]), 30, 1, textStatsC1[0].x, textStatsC1[0].y-16, false);

@@ -537,7 +537,7 @@ u16 PK5::formSpecies(void) const {
 		tmpSpecies      = PersonalBWB2W2::formStatIndex(tmpSpecies);
 		if(!tmpSpecies) {
 			tmpSpecies = backSpecies;
-		} else if(form < formcount) {
+		} else {
 			tmpSpecies += form - 1;
 		}
 	}

@@ -49,7 +49,6 @@ static bool saveJson() {
 			return 0;
 		}
 	} else {
-		fclose(out);
 		return 0;
 	}
 }
@@ -74,7 +73,6 @@ static bool read() {
 		g_banks = nlohmann::json::parse(data, nullptr, false);
 		return 1;
 	} else {
-		fclose(in);
 		return createJson();
 	}
 }

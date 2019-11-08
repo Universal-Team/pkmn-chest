@@ -24,7 +24,6 @@ bool loadSave(std::string savePath) {
 		fread(saveData, 1, size, in);
 	} else {
 		saveFileName = "";
-		fclose(in);
 		return false;
 	}
 	fclose(in);

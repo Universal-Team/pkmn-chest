@@ -50,7 +50,7 @@ void manageParty(void) {
 	showParty(-1);
 	fillPartySprites();
 
-	int held = 0, pressed = 0, menuSelection = -1, selectedOption = -1;
+	int held, pressed, menuSelection = -1, selectedOption = -1;
 	touchPosition touch;
 	while(1) {
 		do {

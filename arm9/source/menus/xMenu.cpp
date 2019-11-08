@@ -173,7 +173,7 @@ bool xMenu(void) {
 			Sound::play(Sound::back);
 			// Reset arrow color
 			fillArrow(arrowMode);
-			setSpriteVisibility(topScreen ? arrowID : arrowID, topScreen, true);
+			setSpriteVisibility(arrowID, topScreen, true);
 			// Hide menu icons
 			for(int i=0;i<6;i++) {
 				setSpriteVisibility(menuIconID[i], false, false);

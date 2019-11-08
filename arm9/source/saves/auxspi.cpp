@@ -33,8 +33,7 @@
 
 // ========================================================
 //  local functions
-uint8 jedec_table(uint32 id)
-{
+uint8 jedec_table(uint32 id) {
 	switch (id) {
 		// 256 kB
 		case 0x204012:
@@ -64,8 +63,7 @@ uint8 jedec_table(uint32 id)
 	};
 }
 
-uint8 type2_size(auxspi_extra extra)
-{
+uint8 type2_size(auxspi_extra extra) {
 	static const uint32 offset0 = (8*1024-1);        //      8KB
 	static const uint32 offset1 = (2*8*1024-1);      //      16KB
 	u8 buf1;     //      +0k data        read -> write
@@ -85,8 +83,7 @@ uint8 type2_size(auxspi_extra extra)
 }
 
 // ========================================================
-uint8 auxspi_save_type(auxspi_extra extra)
-{
+uint8 auxspi_save_type(auxspi_extra extra) {
 	uint32 jedec = auxspi_save_jedec_id(extra); // 9f
 	int8 sr = auxspi_save_status_register(extra); // 05
 
@@ -97,13 +94,11 @@ uint8 auxspi_save_type(auxspi_extra extra)
 	return 0;
 }
 
-uint32 auxspi_save_size(auxspi_extra extra)
-{
+uint32 auxspi_save_size(auxspi_extra extra) {
 	return 1 << auxspi_save_size_log_2(extra);
 }
 
-uint8 auxspi_save_size_log_2(auxspi_extra extra)
-{
+uint8 auxspi_save_size_log_2(auxspi_extra extra) {
 	uint8 type = auxspi_save_type(extra);
 	switch(type) {
 	case 1:
@@ -120,8 +115,7 @@ uint8 auxspi_save_size_log_2(auxspi_extra extra)
 	}
 }
 
-uint32 auxspi_save_jedec_id(auxspi_extra extra)
-{
+uint32 auxspi_save_jedec_id(auxspi_extra extra) {
 	uint32 id = 0;
 	if(extra)
 		auxspi_disable_extra(extra);
@@ -136,8 +130,7 @@ uint32 auxspi_save_jedec_id(auxspi_extra extra)
 	return id;
 }
 
-uint8 auxspi_save_status_register(auxspi_extra extra)
-{
+uint8 auxspi_save_status_register(auxspi_extra extra) {
 	uint8 sr = 0;
 	if(extra)
 		auxspi_disable_extra(extra);
@@ -148,8 +141,7 @@ uint8 auxspi_save_status_register(auxspi_extra extra)
 	return sr;
 }
 
-void auxspi_read_data(uint32 addr, uint8* buf, uint32 cnt, uint8 type, auxspi_extra extra)
-{
+void auxspi_read_data(uint32 addr, uint8* buf, uint32 cnt, uint8 type, auxspi_extra extra) {
 	if(type == 0)
 		type = auxspi_save_type(extra);
 	if(type == 0)
@@ -172,8 +164,7 @@ void auxspi_read_data(uint32 addr, uint8* buf, uint32 cnt, uint8 type, auxspi_ex
 	auxspi_close();
 }
 
-void auxspi_write_data(uint32 addr, uint8 *buf, uint32 cnt, uint8 type, auxspi_extra extra)
-{
+void auxspi_write_data(uint32 addr, uint8 *buf, uint32 cnt, uint8 type, auxspi_extra extra) {
 	if(type == 0)
 		type = auxspi_save_type();
 	if(type == 0)
@@ -251,8 +242,7 @@ void auxspi_write_data(uint32 addr, uint8 *buf, uint32 cnt, uint8 type, auxspi_e
 	}
 }
 
-void auxspi_disable_extra(auxspi_extra extra)
-{
+void auxspi_disable_extra(auxspi_extra extra) {
 	switch(extra) {
 		case AUXSPI_INFRARED:
 			auxspi_disable_infrared_core();
@@ -270,13 +260,11 @@ void auxspi_disable_extra(auxspi_extra extra)
 	swiWaitForVBlank();
 }
 
-void auxspi_disable_infrared()
-{
+void auxspi_disable_infrared() {
 	auxspi_disable_infrared_core();
 }
 
-void auxspi_disable_big_protection()
-{
+void auxspi_disable_big_protection() {
 	static bool doonce = false;
 	if(doonce)
 		return;
@@ -330,8 +318,7 @@ void auxspi_disable_big_protection()
 
 }
 
-auxspi_extra auxspi_has_extra()
-{
+auxspi_extra auxspi_has_extra() {
 	sysSetBusOwners(true, true);
 
 	// Trying to read the save size in IR mode will fail on non-IR devices.
@@ -359,8 +346,7 @@ auxspi_extra auxspi_has_extra()
 	return AUXSPI_FLASH_CARD;
 }
 
-void auxspi_erase(auxspi_extra extra)
-{
+void auxspi_erase(auxspi_extra extra) {
 	uint8 type = auxspi_save_type(extra);
 	if(type == 3) {
 		uint32 size;
@@ -400,8 +386,7 @@ void auxspi_erase(auxspi_extra extra)
 	}
 }
 
-void auxspi_erase_sector(u32 sector, auxspi_extra extra)
-{
+void auxspi_erase_sector(u32 sector, auxspi_extra extra) {
 	uint8 type = auxspi_save_type(extra);
 	if(type == 3) {
 		if(extra)

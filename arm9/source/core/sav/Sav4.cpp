@@ -172,12 +172,12 @@ u8 Sav4::badges(void) const {
 	u8 badgeBits = data[Trainer1 + 0x1A];
 	u8 ret       = 0;
 	for(size_t i = 0; i < sizeof(badgeBits) * 8; i++) {
-		ret += badgeBits & BIT(i) ? 1 : 0;
+		ret += (badgeBits & BIT(i)) ? 1 : 0;
 	}
 	if(game == Game::HGSS) {
 		badgeBits = data[Trainer1 + 0x1F];
 		for(size_t i = 0; i < sizeof(badgeBits) * 8; i++) {
-			ret += badgeBits & BIT(i) ? 1 : 0;
+			ret += (badgeBits & BIT(i)) ? 1 : 0;
 		}
 	}
 	return ret;
@@ -318,10 +318,7 @@ u8 Sav4::boxWallpaper(u8 box) const {
 	if(game == Game::HGSS) offset += 0x8;
 	offset += (maxBoxes() * 0x28) + box;
 
-	int v;
-	if (offset < 0 || box > maxBoxes())
-		v = box;
-	v = data[offset];
+	int v = data[offset];
 
 	if (game != Game::DP)
 		v = adjustWallpaper(v, -(game == Game::Pt ? 0x8 : 0x10));
@@ -758,7 +755,14 @@ std::unique_ptr<Item> Sav4::item(Pouch pouch, u16 slot) const {
 }
 
 std::vector<std::pair<Pouch, int>> Sav4::pouches(void) const {
-	return {{NormalItem, game == Game::DP ? 161 : game == Game::Pt ? 162 : 162}, {KeyItem, game == Game::DP ? 37 : game == Game::Pt ? 40 : 38}, {TM, game == Game::DP ? 100 : game == Game::Pt ? 100 : 100}, {Mail, game == Game::DP ? 12 : game == Game::Pt ? 12 : 12}, {Medicine, game == Game::DP ? 38 : game == Game::Pt ? 38 : 38}, {Berry, game == Game::DP ? 64 : game == Game::Pt ? 64 : 64}, {Ball, game == Game::DP ? 15 : game == Game::Pt ? 15 : 24}, {Battle, game == Game::DP ? 13 : game == Game::Pt ? 13 : 13}};
+	return {{NormalItem, game == Game::DP ? 161 : game == Game::Pt ? 162 : 162},
+			{KeyItem, game == Game::DP ? 37 : game == Game::Pt ? 40 : 38},
+			{TM, game == Game::DP ? 100 : game == Game::Pt ? 100 : 100},
+			{Mail, game == Game::DP ? 12 : game == Game::Pt ? 12 : 12},
+			{Medicine, game == Game::DP ? 38 : game == Game::Pt ? 38 : 38},
+			{Berry, game == Game::DP ? 64 : game == Game::Pt ? 64 : 64},
+			{Ball, game == Game::DP ? 15 : game == Game::Pt ? 15 : 24},
+			{Battle, game == Game::DP ? 13 : game == Game::Pt ? 13 : 13}};
 }
 
 std::map<Pouch, std::vector<int>> Sav4::validItems() const {

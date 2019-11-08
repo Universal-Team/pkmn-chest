@@ -14,11 +14,13 @@ void loadToVector(std::string path, std::vector<std::string> &vec) {
 	vec.clear();
 
 	FILE* in = fopen(path.c_str(), "r");
-	while(__getline(&line, &len, in) != -1) {
-		if(line[strlen(line)-1] == '\n')	line[strlen(line)-1] = '\0';
-		vec.push_back(line);
+	if(in) {
+		while(__getline(&line, &len, in) != -1) {
+			if(line[strlen(line)-1] == '\n')	line[strlen(line)-1] = '\0';
+			vec.push_back(line);
+		}
+		fclose(in);
 	}
-	fclose(in);
 }
 
 void Lang::load(int lang) {
@@ -44,8 +46,10 @@ void Lang::load(int lang) {
 
 	// Load app strings
 	FILE* file = fopen(("nitro:/lang/"+langs[lang]+"/app.json").c_str(), "rt");
-	if(file)	langJson = nlohmann::json::parse(file, nullptr, false);
-	fclose(file);
+	if(file) {
+		langJson = nlohmann::json::parse(file, nullptr, false);
+		fclose(file);
+	}
 }
 
 std::string Lang::get(const std::string &key) {

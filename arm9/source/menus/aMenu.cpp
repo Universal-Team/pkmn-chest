@@ -137,8 +137,10 @@ int aMenu(int pkmPos, std::vector<Label>& buttons, int buttonMode) {
 				else
 					snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%i - %s - %x%lx.pk%i", sdFound() ? "sd" : "fat", currentPokemon(pkmPos)->species(), currentPokemon(pkmPos)->nickname().c_str(), currentPokemon(pkmPos)->checksum(), currentPokemon(pkmPos)->encryptionConstant(), currentPokemon(pkmPos)->genNumber());
 				FILE* out = fopen(path, "wb");
-				if(out)	fwrite(currentPokemon(pkmPos)->rawData(), 1, 136, out);
-				fclose(out);
+				if(out) {
+					fwrite(currentPokemon(pkmPos)->rawData(), 1, 136, out);
+					fclose(out);
+				}
 			} else if(menuSelection == 5) { // Back
 				back:
 				if(topScreen) {
@@ -243,8 +245,10 @@ int aMenu(int pkmPos, std::vector<Label>& buttons, int buttonMode) {
 						else
 							snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%s/%i - %s - %x%lx.pk%i", sdFound() ? "sd" : "fat", topScreen ? Banks::bank->boxName(currentBankBox).c_str() : save->boxName(currentSaveBox).c_str(), currentPokemon(i)->species(), currentPokemon(i)->nickname().c_str(), currentPokemon(i)->checksum(), currentPokemon(i)->encryptionConstant(), currentPokemon(i)->genNumber());
 						FILE* out = fopen(path, "wb");
-						if(out)	fwrite(currentPokemon(i)->rawData(), 1, 136, out);
-						fclose(out);
+						if(out) {
+							fwrite(currentPokemon(i)->rawData(), 1, 136, out);
+							fclose(out);
+						}
 					}
 				}
 			} else if(menuSelection == 5) { // Back
@@ -272,10 +276,14 @@ int aMenu(int pkmPos, std::vector<Label>& buttons, int buttonMode) {
 				// If the fileName isn't blank, inject the Pokémon
 				if(fileName != "") {
 					FILE* in = fopen(fileName.c_str(), "rb");
-					u8* buffer = 0;
-					fread(buffer, 1, 136, in);
-					if(topScreen)	Banks::bank->pkm(save->emptyPkm()->getPKM(fileName.substr(fileName.size()-1) == "4" ? Generation::FOUR : Generation::FIVE, buffer), currentBankBox, pkmPos);
-					else	save->pkm(save->emptyPkm()->getPKM(fileName.substr(fileName.size()-1) == "4" ? Generation::FOUR : Generation::FIVE, buffer), currentSaveBox, pkmPos, false);
+					if(in) {
+						fseek(in, 0, SEEK_END);
+						u8 buffer[136];
+						fread(buffer, 1, sizeof(buffer), in);
+						if(topScreen)	Banks::bank->pkm(save->emptyPkm()->getPKM(fileName.substr(fileName.size()-1) == "4" ? Generation::FOUR : Generation::FIVE, buffer), currentBankBox, pkmPos);
+						else	save->pkm(save->emptyPkm()->getPKM(fileName.substr(fileName.size()-1) == "4" ? Generation::FOUR : Generation::FIVE, buffer), currentSaveBox, pkmPos, false);
+						fclose(in);
+					}
 				}
 
 				// Reset & redraw screen

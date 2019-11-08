@@ -54,8 +54,8 @@ void dumpSave(void) {
 		unsigned char* buffer;
 		if(card_type == AUXSPI_INFRARED) {
 			int size = auxspi_save_size_log_2(card_type);
-			int size_blocks = 1 << std::max(0, (int8(size) - 18));
 			int type = auxspi_save_type(card_type);
+			int size_blocks;
 			if(size < 16)
 				size_blocks = 1;
 			else
@@ -72,8 +72,8 @@ void dumpSave(void) {
 			fwrite(buffer, 1, size, out);
 		}
 		delete[] buffer;
+		fclose(out);
 	}
-	fclose(out);
 }
 
 bool restoreSave(void) {
@@ -145,7 +145,7 @@ bool restoreSave(void) {
 			}
 		}
 		delete[] buffer;
+		fclose(in);
 	}
-	fclose(in);
 	return true;
 }

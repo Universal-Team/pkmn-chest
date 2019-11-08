@@ -90,7 +90,6 @@ void Bank::load(int maxBoxes) {
 		}
 	} else {
 		// Gui::waitFrame(i18n::localize("BANK_CREATE"));
-		fclose(in);
 		createBank(maxBoxes);
 		needSave = true;
 	}
@@ -117,7 +116,6 @@ void Bank::load(int maxBoxes) {
 			}
 		}
 	} else {
-		fclose(in);
 		boxNames = nlohmann::json::array();
 		for(int i = 0; i < boxes(); i++) {
 			boxNames[i] = "%CHEST% " + std::to_string(i + 1);
@@ -166,7 +164,6 @@ bool Bank::save() const {
 		return true;
 	} else {
 		// Gui::error(i18n::localize("BANK_SAVE_ERROR"), out.result());
-		fclose(out);
 		return false;
 	}
 
@@ -175,7 +172,6 @@ bool Bank::save() const {
 
 void Bank::resize(size_t boxes) {
 	size_t newSize = sizeof(BankHeader) + sizeof(BankEntry) * boxes * 30;
-	auto paths     = this->paths();
 	if(newSize != size) {
 		// Gui::showResizeStorage();
 		u8* newData = new u8[newSize];
@@ -301,26 +297,10 @@ int Bank::boxes() const {
 
 bool Bank::setName(const std::string& name) {
 	auto oldPaths       = paths();
-	std::string oldName = bankName;
 	bankName            = name;
 	auto newPaths       = paths();
 	rename(BANK(oldPaths).c_str(), BANK(newPaths).c_str());
-	// if(rename(BANK(oldPaths), BANK(newPaths) == [failed])
-	// {
-	//     bankName = oldName;
-	//     return false;
-	// }
 	rename(JSON(oldPaths).c_str(), JSON(newPaths).c_str());
-	// if(R_FAILED(Archive::moveFile(ARCHIVE, JSON(oldPaths), ARCHIVE, JSON(newPaths))))
-	// {
-		// bankName = oldName;
-		// if(R_FAILED(Archive::moveFile(ARCHIVE, BANK(newPaths), ARCHIVE, BANK(oldPaths))))
-		// {
-		//     Gui::warn(i18n::localize("CRITICAL_BANK_ERROR_1"), i18n::localize("CRITICAL_BANK_ERROR_2"));
-		//     return false;
-		// }
-		// return false;
-	// }
 	return true;
 }
 

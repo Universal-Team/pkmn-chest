@@ -60,8 +60,8 @@ Image loadBmp16(std::string path, int paletteOffset) {
 			}
 			// printf("|\n");
 		}
+		fclose(file);
 	}
-	fclose(file);
 	return image;
 }
 
@@ -80,9 +80,8 @@ void exportGfx(std::string path, Image &image) {
 		fwrite(&image.height, 1, 2, file);
 		fwrite(image.bitmap.data(), 1, image.bitmap.size(), file);
 		fwrite(image.palette.data(), 2, image.palette.size(), file);
+		fclose(file);
 	}
-
-	fclose(file);
 }
 
 int main(int argc, char *argv[]) {

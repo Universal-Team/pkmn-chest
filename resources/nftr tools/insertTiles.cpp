@@ -97,4 +97,5 @@ int main() {
 
 	FILE* out = fopen("out.nftr", "wb");
 	fwrite(font.data(), 1, font.size(), out);
+	fclose(out);
 }
