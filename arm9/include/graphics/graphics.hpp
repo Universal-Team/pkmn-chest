@@ -116,7 +116,7 @@ void drawImageSegmentScaled(int x, int y, int w, int h, double scaleX, double sc
  * const Image &image is the raw pixel data
  * bool top is whether to draw on the top or bottom screen
  */
-void drawImageScaled(int x, int y, int w, int h, double scaleX, double scaleY, const Image &image, bool top);
+void drawImageScaled(int x, int y, int w, int h, double scaleX, double scaleY, const Image &image, bool top, int paletteOffset = 0);
 
 /*
  * Draws a scaled image to the screen from a vector of raw pixel data

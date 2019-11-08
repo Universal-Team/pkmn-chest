@@ -121,7 +121,7 @@ void drawSummaryPage(std::shared_ptr<PKX> pkm) {
 	drawImageSegment(148, 8, 15, 15, ballSheet, 136, xy.first, xy.second, false);
 
 	Image image = loadPokemonSprite(getPokemonIndex(pkm));
-	drawImageScaled(169, 22, 32, 32, 2, 2, image, false);
+	drawImageScaled(169, 22, 32, 32, 2, 2, image, false, 0xC0);
 
 	int type = (pkm->generation() == Generation::FOUR && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1();
 	drawImage(150, 26-((types[type].height-12)/2), types[type].width, types[type].height, types[type], false);

@@ -26,7 +26,7 @@ bmp2ds	:
 
 %.gfx	:	%.bmp %.txt
 	@mkdir -p $(OUT)/$(@D)
-	@./bmp2ds $< $(OUT)/$@ $(shell cat $(word 2,$^))
+	@./bmp2ds $< $(OUT)/$@ -o $(shell cat $(word 2,$^))
 
 %.gfx	:	%.bmp
 	@mkdir -p $(OUT)/$(@D)

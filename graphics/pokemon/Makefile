@@ -28,7 +28,7 @@ combo	:
 
 %.gfx	:	%.bmp
 	@mkdir -p $(GFX_OUT)/$(@D)
-	@../bmp2ds $< $(GFX_OUT)/$@
+	@../bmp2ds $< $(GFX_OUT)/$@ -c 16
 
 clean	:
 	@echo clean ...

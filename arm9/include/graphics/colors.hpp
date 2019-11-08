@@ -2,18 +2,19 @@
 #define COLORS_HPP
 
 // Grayscale
-#define WHITE 0x01
-#define LIGHT_GRAY 0x4F
-#define GRAY 0x4B
-#define DARK_GRAY 0x41
-#define DARKER_GRAY 0x13
-#define DARKERER_GRAY 0x10
-#define BLACK 0x00
+#define WHITE			0x1
+#define LIGHT_GRAY		0xC
+#define GRAY			0x5
+#define DARK_GRAY		0xD
+#define DARKER_GRAY		0xE
+#define DARKERER_GRAY	0xF
+#define BLACK			0x0
 
-// BGR
-#define RED 0x04
-#define DARK_RED 0x17
-#define BLUE 0x07
+// Colors
+#define RED			0x7
+#define DARK_RED	0x8
+#define BLUE		0xA
+#define DARK_BLUE	0xB
 
 // Text
 #define WHITE_TEXT 0
