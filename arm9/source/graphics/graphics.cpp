@@ -54,6 +54,8 @@ void initGraphics(void) {
 	oamInit(&oamMain, SpriteMapping_Bmp_1D_128, false);
 
 	// Init for background
+	// bgInit(3, BgType_Bmp16, BgSize_B16_256x256, 0, 0);
+	// bgInitSub(3, BgType_Bmp16, BgSize_B16_256x256, 0, 0);
 	REG_BG3CNT = BG_MAP_BASE(0) | BG_BMP16_256x256 | BG_PRIORITY(3);
 	REG_BG3X = 0;
 	REG_BG3Y = 0;

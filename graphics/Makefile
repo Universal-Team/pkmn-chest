@@ -14,9 +14,9 @@ OUT			:=	../nitrofiles
 INPUTS		:= $(foreach dir,$(GRAPHICS),$(addprefix $(dir)/,$(notdir $(wildcard $(dir)/*.bmp))))
 TARGETS		:= $(INPUTS:.bmp=.gfx)
 
-.PHONY	:	bmp2ds clean all directories
+.PHONY	:	bmp2ds clean all directories pokemon
 
-all	:	bmp2ds $(TARGETS)
+all	:	bmp2ds $(TARGETS) pokemon
 	@echo graphics ...
 
 bmp2ds	:
@@ -28,5 +28,8 @@ bmp2ds	:
 
 clean	:
 	@echo clean ...
-	@rm bmp2ds
+	@rm -f bmp2ds
 	@rm -rf $(addprefix $(OUT)/,$(TARGETS))
+
+pokemon	:
+	$(MAKE) -C pokemon
