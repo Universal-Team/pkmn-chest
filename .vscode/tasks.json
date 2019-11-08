@@ -8,12 +8,24 @@
 			"command": "make",
 			"args": ["-s"],
 			"group": {
-				"kind": "build",
-				"isDefault": true
+				"kind": "build"
 			},
 			"presentation": {
 				"reveal": "silent"
-			}
+			},
+			"problemMatcher": "$gcc"
+		},
+		{
+			"label": "Make (skip-graphics)",
+			"command": "make",
+			"args": ["-s", "skip-graphics"],
+			"group": {
+				"kind": "build"
+			},
+			"presentation": {
+				"reveal": "silent"
+			},
+			"problemMatcher": "$gcc"
 		}
 	]
 }
