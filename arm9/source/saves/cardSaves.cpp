@@ -127,7 +127,7 @@ bool restoreSave(void) {
 			buffer = new unsigned char[LEN];
 			drawOutline(5, 39, 247, 18, DARKERER_GRAY, false);
 			for(unsigned int i = 0; i < num_blocks; i++) {
-				drawRectangle((((double)i/num_blocks)*245)+6, 40, 1, 16, LIGHT_GRAY, false);
+				drawRectangle((((float)i/num_blocks)*245)+6, 40, 1, 16, LIGHT_GRAY, false);
 
 				fread(buffer, 1, LEN, in);
 				auxspi_write_data(i << shift, buffer, LEN, type, card_type);

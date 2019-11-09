@@ -38,7 +38,7 @@ std::vector<Label> aMenuTopBarButtons = {
 
 void drawAMenuButtons(std::vector<Label>& buttons, int buttonMode) {
 	for(unsigned i=0;i<buttons.size();i++) {
-		drawImage(buttons[i].x, buttons[i].y, boxButton.width, boxButton.height, boxButton, false);
+		drawImage(buttons[i].x, buttons[i].y, boxButton, false);
 		printTextMaxW(Lang::get(buttons[i].label), 80, 1, buttons[i].x+4, buttons[i].y+4, false);
 	}
 }

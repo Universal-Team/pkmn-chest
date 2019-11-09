@@ -108,8 +108,8 @@ void drawSummaryPage(std::shared_ptr<PKX> pkm) {
 	updateOam();
 
 	// Draw background
-	drawImageDMA(0, 0, 256, 192, listBg, false);
-	drawImageScaled(145, 1, infoBox.width, infoBox.height, 1.2, 1, infoBox, false);
+	drawImageDMA(0, 0, listBg, false);
+	drawImageScaled(145, 1, 1.2, 1, infoBox, false);
 	// Draw lines
 	drawOutline(0, 128, 160, 65, LIGHT_GRAY, false);
 
@@ -118,15 +118,15 @@ void drawSummaryPage(std::shared_ptr<PKX> pkm) {
 
 	// Draw Pokéball, types, and shiny star (if shiny)
 	std::pair<int, int> xy = getPokeballPosition(pkm->ball());
-	drawImageSegment(148, 8, 15, 15, ballSheet, 136, xy.first, xy.second, false);
+	drawImageSegment(148, 8, 15, 15, ballSheet, xy.first, xy.second, false);
 
 	int type = (pkm->generation() == Generation::FOUR && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1();
-	drawImage(150, 26-((types[type].height-12)/2), types[type].width, types[type].height, types[type], false);
+	drawImage(150, 26-((types[type].height-12)/2), types[type], false);
 	if(pkm->type1() != pkm->type2()) {
 		type = (pkm->generation() == Generation::FOUR && pkm->type2() > 8) ? pkm->type2()-1 : pkm->type2();
-		drawImage(186, 26-((types[type].height-12)/2), types[type].width, types[type].height, types[type], false, 4);
+		drawImage(186, 26-((types[type].height-12)/2), types[type], false, 4);
 	}
-	if(pkm->shiny())	drawImage(150, 45, 8, 8, shiny, false);
+	if(pkm->shiny())	drawImage(150, 45, shiny, false);
 
 	// Print Pokémon and trainer info labels
 	for(unsigned i=0;i<summaryLabels.size();i++) {
@@ -156,7 +156,7 @@ void drawSummaryPage(std::shared_ptr<PKX> pkm) {
 
 	// Draw buttons // The first 2 don't have buttons
 	for(unsigned i=2;i<sizeof(textC2)/sizeof(textC2[0]);i++) {
-		drawImage(textC2[i].x-4, textC2[i].y-4, boxButton.width, boxButton.height, boxButton, false);
+		drawImage(textC2[i].x-4, textC2[i].y-4, boxButton, false);
 	}
 	snprintf(textC2[2].text, sizeof(textC2[2].text),"%s", Lang::get("moves").c_str());
 	snprintf(textC2[3].text, sizeof(textC2[3].text),"%s", Lang::get("stats").c_str());
@@ -167,7 +167,7 @@ void drawSummaryPage(std::shared_ptr<PKX> pkm) {
 
 	// Draw Pokémon
 	Image image = loadPokemonSprite(getPokemonIndex(pkm));
-	drawImageScaled(169, 22, 32, 32, 2, 2, image, false, 0xC0);
+	drawImageScaled(169, 22, 2, 2, image, false, 0xC0);
 }
 
 std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {

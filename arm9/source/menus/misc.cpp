@@ -177,7 +177,7 @@ int selectForm(int dexNo, int currentForm) {
 	for(int i=0;i<formCounts[altIndex].noForms;i++) {
 		// TODO: Steal the party sprites or something
 		Image image = loadPokemonSprite(getPokemonIndex(dexNo, i));
-		drawImage((i*32)+(128-((32*formCounts[altIndex].noForms)/2)), 80, 32, 32, image, false, 0xC0);
+		drawImage((i*32)+(128-((32*formCounts[altIndex].noForms)/2)), 80, image, false, 0xC0);
 	}
 
 	// Move arrow to current form
@@ -228,7 +228,7 @@ void drawItemList(int screenPos, std::vector<std::string> itemList) {
 	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
 
 	// Draw search icon
-	drawImage(256-20, 0, search.width, search.height, search, false);
+	drawImage(256-search.width, 0, search, false);
 
 	// Print items
 	for(unsigned i=0;i<std::min(9u, itemList.size()-screenPos);i++) {
@@ -330,7 +330,7 @@ int selectItem(int current, int start, int max, std::vector<std::string> &items)
 
 std::shared_ptr<PKX> selectMoves(std::shared_ptr<PKX> pkm) {
 	// Clear screen
-	drawImageSegmentDMA(0, 0, 256, 192, listBg, 256, false);
+	drawImageDMA(0, 0, listBg, false);
 	printText(Lang::get("moves"), 4, 0, false);
 
 	// Print moves
@@ -384,7 +384,7 @@ std::shared_ptr<PKX> selectMoves(std::shared_ptr<PKX> pkm) {
 			pkm->move(selection, selectItem(pkm->move(selection), 0, save->maxMove()+1, Lang::moves));
 
 			// Clear screen
-			drawImageSegmentDMA(0, 0, 256, 192, listBg, 256, false);
+			drawImageDMA(0, 0, listBg, false);
 			printText(Lang::get("moves"), 4, 0, false);
 
 			// Print moves
@@ -486,7 +486,7 @@ int selectPokeball(int currentBall) {
 		for(int x=0;x<5;x++) {
 			if(!(save->generation() != Generation::FIVE && (y*5)+x == 24)) {
 				std::pair<int, int> xy = getPokeballPosition((y*5)+x+1);
-				drawImageSegment((x*48)+24, (y*32)+24, 15, 15, ballSheet, ballSheet.width, xy.first, xy.second, false);
+				drawImageSegment((x*48)+24, (y*32)+24, 15, 15, ballSheet, xy.first, xy.second, false);
 			}
 		}
 	}
@@ -556,7 +556,7 @@ int selectWallpaper(int currentWallpaper) {
 		for(int x=0;x<6;x++) {
 			std::string path = boxBgPath(false, (y*6)+x);
 			Image image = loadImage(path);
-			drawImageScaled((x*36)+28, (y*36)+28, image.width, image.height, 0.125, 0.125, image, false);
+			drawImageScaled((x*36)+28, (y*36)+28, 0.125, 0.125, image, false);
 		}
 	}
 
@@ -790,7 +790,7 @@ void drawStatsPage(std::shared_ptr<PKX> pkm) {
 
 	// Draw Hidden Power type
 	printText(Lang::get("hpType")+":", 20, 118, false);
-	drawImage(24+getTextWidth(Lang::get("hpType")+":"), 120, types[pkm->hpType()+1].width, types[pkm->hpType()+1].height, types[pkm->hpType()+1], false);
+	drawImage(24+getTextWidth(Lang::get("hpType")+":"), 120, types[pkm->hpType()+1], false);
 
 }
 

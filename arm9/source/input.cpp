@@ -243,7 +243,7 @@ void drawKeyboard(int layout) {
 		}
 	}
 	drawRectangle(0, 192-keyboard.height, 256, keyboard.height, DARKERER_GRAY, DARKER_GRAY, false);
-	drawImage(xPos, 192-keyboard.height, keyboard.width, keyboard.height, keyboard, false);
+	drawImage(xPos, 192-keyboard.height, keyboard, false);
 
 	drawRectangle(0, 192-keyboard.height-16, 256, 16, BLACK, false);
 	printText(string, 0, 192-keyboard.height-16, false);
@@ -342,7 +342,7 @@ void processInputABC(u16 held, unsigned maxLength) {
 				else	character = (keysHeld() & KEY_L) ? &keysDPadABCSymbols[direction] : (Config::getInt("keyboardGroupAmount") ? &keysDPadABC4[direction] : &keysDPadABC3[direction]);
 			std::pair<int, int> *pos = (Config::getInt("keyboardDirections") ? &keysDPad4[direction] : &keysDPad8[direction]);
 
-			fillSpriteImageScaled(keyboardSpriteID, false, 0, 0, 16, 16, 2, keyboardKey);
+			fillSpriteImageScaled(keyboardSpriteID, false, 32, 0, 0, 2, keyboardKey);
 			setSpritePosition(keyboardSpriteID, false, pos->first, pos->second);
 			setSpriteVisibility(keyboardSpriteID, false, true);
 			updateOam();
@@ -434,7 +434,7 @@ void processInputAIU(u16 held, unsigned maxLength) {
 			std::u16string character = (kanaMode == 0) ? keysDPadAIU[direction] : (kanaMode == 1) ? keysDPadAIU2[direction] : keysDPadAIU3[direction];
 			std::pair<int, int> *pos = &keysDPad8[direction];
 
-			fillSpriteImageScaled(keyboardSpriteID, false, 0, 0, 16, 16, 2, keyboardKey);
+			fillSpriteImageScaled(keyboardSpriteID, false, 32, 0, 0, 2, keyboardKey);
 			setSpritePosition(keyboardSpriteID, false, pos->first, pos->second);
 			setSpriteVisibility(keyboardSpriteID, false, true);
 			updateOam();

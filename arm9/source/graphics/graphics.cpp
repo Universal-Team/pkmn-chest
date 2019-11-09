@@ -181,77 +181,77 @@ void copyPalette(const Image &image, bool top, int paletteOffset = 0) {
 	tonccpy((top ? BG_PALETTE : BG_PALETTE_SUB)+image.palOfs+paletteOffset, image.palette.data(), image.palette.size()*2);
 }
 
-void drawImageDMA(int x, int y, int w, int h, const Image &image, bool top) {
-	copyPalette(image, top);
-	for(int i=0;i<h;i++) {
-		dmaCopyHalfWords(0, image.bitmap.data()+(i*w), (u8*)(top ? BG_GFX : BG_GFX_SUB)+((y+i)*256)+x, w);
-	}
-}
-
-void drawImage(int x, int y, int w, int h, const Image &image, bool top, int paletteOffset) {
+void drawImage(int x, int y, const Image &image, bool top, int paletteOffset) {
 	copyPalette(image, top, paletteOffset);
 	u8 *dst = (u8*)(top ? BG_GFX : BG_GFX_SUB);
 	u16 *pal = (top ? BG_PALETTE : BG_PALETTE_SUB);
-	for(int i=0;i<h;i++) {
-		for(int j=0;j<w;j++) {
-			if(pal[image.bitmap[(i*w)+j]+paletteOffset] != 0) { // Do not render transparent pixel
-				dst[(y+i)*256+j+x] = image.bitmap[(i*w)+j] + paletteOffset;
+	for(int i=0;i<image.height;i++) {
+		for(int j=0;j<image.width;j++) {
+			if(pal[image.bitmap[(i*image.width)+j]+paletteOffset] != 0) { // Do not render transparent pixel
+				dst[(y+i)*256+j+x] = image.bitmap[(i*image.width)+j] + paletteOffset;
 			}
 		}
 	}
 }
 
-void drawImageSegmentDMA(int x, int y, int w, int h, const Image &image, int imageWidth, bool top) {
+void drawImageDMA(int x, int y, const Image &image, bool top) {
 	copyPalette(image, top);
-	for(int i=0;i<h;i++) {
-		dmaCopyHalfWords(0, image.bitmap.data()+(i*imageWidth), (u8*)(top ? BG_GFX : BG_GFX_SUB)+((y+i)*256)+x, w);
+	for(int i=0;i<image.height;i++) {
+		dmaCopyHalfWords(0, image.bitmap.data()+(i*image.width), (u8*)(top ? BG_GFX : BG_GFX_SUB)+((y+i)*256)+image.width, image.width);
 	}
 }
 
-void drawImageSegment(int x, int y, int w, int h, const Image &image, int imageWidth, int xOffset, int yOffset, bool top) {
-	copyPalette(image, top);
-	u8* dst = (u8*)(top ? BG_GFX : BG_GFX_SUB);
-	u16 *pal = (top ? BG_PALETTE : BG_PALETTE_SUB);
-	for(int i=0;i<h;i++) {
-		for(int j=0;j<w;j++) {
-			if(pal[image.bitmap[((i+yOffset)*imageWidth)+j+xOffset]] != 0) { // Do not render transparent pixel
-				dst[((y+i)*256)+j+x] = image.bitmap[((i+yOffset)*imageWidth)+j+xOffset];
-			}
-		}
-	}
-}
-
-void drawImageSegmentScaled(int x, int y, int w, int h, double scaleX, double scaleY, const Image &image, int imageWidth, int xOffset, int yOffset, bool top) {
-	if(scaleX == 1 && scaleY == 1)	drawImageSegment(x, y, w, h, image, imageWidth, xOffset, yOffset, top);
-	else {
-		copyPalette(image, top);
-		Image buffer = {(u16)w, (u16)h, {}, image.palette};
-		for(int i=0;i<h;i++) {
-			for(int j=0;j<w;j++) {
-				buffer.bitmap.push_back(image.bitmap[((i+yOffset)*imageWidth)+j+xOffset]);
-			}
-		}
-		drawImageScaled(x, y, w, h, scaleX, scaleY, buffer, top);
-	}
-}
-
-void drawImageScaled(int x, int y, int w, int h, double scaleX, double scaleY, const Image &image, bool top, int paletteOffset) {
-	if(scaleX == 1 && scaleY == 1)	drawImage(x, y, w, h, image, top);
+void drawImageScaled(int x, int y, float scaleX, float scaleY, const Image &image, bool top, int paletteOffset) {
+	if(scaleX == 1 && scaleY == 1)	drawImage(x, y, image, top);
 	else {
 		copyPalette(image, top, paletteOffset);
 		u8* dst = (u8*)(top ? BG_GFX : BG_GFX_SUB);
 		u16 *pal = (top ? BG_PALETTE : BG_PALETTE_SUB);
-		for(int i=0;i<(h*scaleY);i++) {
-			for(int j=0;j<(w*scaleX);j++) {
-				if(pal[image.bitmap[(((int)(i/scaleY))*w)+(j/scaleX)]+paletteOffset] != 0) { // Do not render transparent pixel
-					dst[(y+i)*256+x+j] = image.bitmap[(((int)(i/scaleY))*w)+(j/scaleX)]+paletteOffset;
+		for(int i=0;i<(image.height*scaleY);i++) {
+			for(int j=0;j<(image.width*scaleX);j++) {
+				if(pal[image.bitmap[(((int)(i/scaleY))*image.width)+(j/scaleX)]+paletteOffset] != 0) { // Do not render transparent pixel
+					dst[(y+i)*256+x+j] = image.bitmap[(((int)(i/scaleY))*image.width)+(j/scaleX)]+paletteOffset;
 				}
 			}
 		}
 	}
 }
 
-void drawOutline(int x, int y, int w, int h, int color, bool top) {
+void drawImageSegment(int x, int y, int w, int h, const Image &image, int xOffset, int yOffset, bool top) {
+	copyPalette(image, top);
+	u8* dst = (u8*)(top ? BG_GFX : BG_GFX_SUB);
+	u16 *pal = (top ? BG_PALETTE : BG_PALETTE_SUB);
+	for(int i=0;i<h;i++) {
+		for(int j=0;j<w;j++) {
+			if(pal[image.bitmap[((i+yOffset)*image.width)+j+xOffset]] != 0) { // Do not render transparent pixel
+				dst[((y+i)*256)+j+x] = image.bitmap[((i+yOffset)*image.width)+j+xOffset];
+			}
+		}
+	}
+}
+
+void drawImageSegmentDMA(int x, int y, int w, int h, const Image &image, int xOffset, int yOffset, bool top) {
+	copyPalette(image, top);
+	for(int i=0;i<h;i++) {
+		dmaCopyHalfWords(0, image.bitmap.data()+((yOffset+i)*image.width)+xOffset, (u8*)(top ? BG_GFX : BG_GFX_SUB)+((y+i)*256)+x, w);
+	}
+}
+
+void drawImageSegmentScaled(int x, int y, int w, int h, float scaleX, float scaleY, const Image &image, int xOffset, int yOffset, bool top) {
+	if(scaleX == 1 && scaleY == 1)	drawImageSegment(x, y, w, h, image, xOffset, yOffset, top);
+	else {
+		copyPalette(image, top);
+		Image buffer = {(u16)w, (u16)h, {}, image.palette};
+		for(int i=0;i<h;i++) {
+			for(int j=0;j<w;j++) {
+				buffer.bitmap.push_back(image.bitmap[((i+yOffset)*image.width)+j+xOffset]);
+			}
+		}
+		drawImageScaled(x, y, scaleX, scaleY, buffer, top);
+	}
+}
+
+void drawOutline(int x, int y, int w, int h, u8 color, bool top) {
 	u8* dst = (u8*)(top ? BG_GFX : BG_GFX_SUB);
 	h+=y;
 	if(y>=0 && y<192)	dmaFillHalfWords(color | color << 8, dst+((y*256)+(x < 0 ? 0 : x)), (x+w > 256 ? w+(256-x-w) : w));
@@ -262,8 +262,8 @@ void drawOutline(int x, int y, int w, int h, int color, bool top) {
 	if(y>=0 && y<192)	dmaFillHalfWords(color | color << 8, dst+((y*256)+(x < 0 ? 0 : x)), (x+w > 256 ? w+(256-x-w) : w));
 }
 
-void drawRectangle(int x, int y, int w, int h, int color, bool top) { drawRectangle(x, y, w, h, color, color, top); }
-void drawRectangle(int x, int y, int w, int h, int color1, int color2, bool top) {
+void drawRectangle(int x, int y, int w, int h, u8 color, bool top) { drawRectangle(x, y, w, h, color, color, top); }
+void drawRectangle(int x, int y, int w, int h, u8 color1, u8 color2, bool top) {
 	u8 *dst = (u8*)(top ? BG_GFX : BG_GFX_SUB);
 	for(int i=0;i<h;i++) {
 		if(w > 1) {
@@ -286,7 +286,7 @@ int initSprite(bool top, SpriteSize spriteSize, int id, int rotationIndex) {
 	return id;
 }
 
-void fillSpriteColor(int id, bool top, u8 color) {
+void fillSpriteColor(int id, bool top, u16 color) {
 	int size = 0;
 	switch(sprites(top)[id].size) {
 		default:
@@ -303,60 +303,32 @@ void fillSpriteColor(int id, bool top, u8 color) {
 	toncset16(sprites(top)[id].gfx, color, size);
 }
 
-void fillSpriteImage(int id, bool top, int x, int y, int w, int h, const Image &image, int spriteW) {
-	for(int i=0;i<h;i++) {
-		for(int j=0;j<w;j++) {
-			sprites(top)[id].gfx[((y+i)*spriteW)+(x+j)] = image.palette[image.bitmap[((i)*w)+j]];
+void fillSpriteImage(int id, bool top, int spriteW, int x, int y, const Image &image) {
+	for(int i=0;i<image.height;i++) {
+		for(int j=0;j<image.width;j++) {
+			sprites(top)[id].gfx[((y+i)*spriteW)+(x+j)] = image.palette[image.bitmap[((i)*image.width)+j]];
 		}
 	}
 }
 
-void fillSpriteImageScaled(int id, bool top, int x, int y, int w, int h, double scale, const Image &image) {
-	if(scale == 1)	fillSpriteImage(id, top, x, y, w, h, image);
+void fillSpriteImageScaled(int id, bool top, int spriteW, int x, int y, float scale, const Image &image) {
+	if(scale == 1)	fillSpriteImage(id, top, spriteW, x, y, image);
 	else {
-		for(int i=0;i<(h*scale);i++) {
-			for(int j=0;j<(w*scale);j++) {
-				// if(image.palette[image.bitmap[(((int)(i/scale))*w)+(j/scale)]]>>15 != 0) { // Do not render transparent pixel
-					sprites(top)[id].gfx[(y+i)*32+x+j] = image.palette[image.bitmap[(((int)(i/scale))*w)+(j/scale)]];
-				// }
+		for(int i=0;i<(image.height*scale);i++) {
+			for(int j=0;j<(image.width*scale);j++) {
+				sprites(top)[id].gfx[(y+i)*32+x+j] = image.palette[image.bitmap[(((int)(i/scale))*image.width)+(j/scale)]];
 			}
 		}
 	}
 }
 
-void fillSpriteSegment(int id, bool top, const Image &image, int w, int h, int imageWidth, int xOffset, int yOffset) {
+void fillSpriteSegment(int id, bool top, int spriteW, int x, int y, int w, int h, const Image &image, int xOffset, int yOffset) {
 	for(int i=0;i<h;i++) {
 		for(int j=0;j<w;j++) {
-			sprites(top)[id].gfx[(i*w)+j] = image.palette[image.bitmap[((i+yOffset)*imageWidth)+j+xOffset]];
+			sprites(top)[id].gfx[((y+i)*spriteW)+x+j] = image.palette[image.bitmap[((i+yOffset)*image.width)+j+xOffset]];
 		}
 	}
 }
-
-// update this
-void fillSpriteSegmentScaled(int id, bool top, double scale, const Image &image, int w, int h, int imageWidth, int xOffset, int yOffset) {
-	if(scale == 1)	fillSpriteSegment(id, top, image, w, h, imageWidth, xOffset, yOffset);
-	else {
-		u16 ws = w*(u16)scale;
-		scale = 1/scale;
-		for(double i=0;i<h;i+=scale) {
-			u16 ii=i;
-			u16 is=i/scale;
-			for(double j=0;j<w;j+=scale) {
-				u16 jj=j;
-				u16 js=j/scale;
-				sprites(top)[id].gfx[(is*ws)+js] = image.palette[image.bitmap[((ii+yOffset)*imageWidth)+jj+xOffset]];
-			}
-		}
-	}
-}
-
-// void fillSpriteSegmentTinted(int id, bool top, const Image &image, int palette, int w, int h, int imageWidth, int xOffset, int yOffset) {
-// 	for(int i=0;i<h;i++) {
-// 		for(int j=0;j<w;j++) {
-// 			sprites(top)[id].gfx[(i*w)+j] = (color & image.palette[image.bitmap[((i+yOffset)*imageWidth)+j+xOffset]]);
-// 		}
-// 	}
-// }
 
 void fillSpriteText(int id, bool top, const std::string &text, u16 color, int xPos, int yPos, bool invert) { fillSpriteText(id, top, StringUtils::UTF8toUTF16(text), color, xPos, yPos, invert); };
 
@@ -372,13 +344,7 @@ void fillSpriteText(int id, bool top, const std::u16string &text, u16 color, int
 		}
 
 		xPos += fontWidths[t*3];
-		for(int i=0;i<tileHeight;i++) {
-			for(int j=0;j<tileWidth;j++) {
-				if(image.palette[image.bitmap[((i)*tileWidth)+j]]>>15 != 0) { // Do not render transparent pixel
-					sprites(top)[id].gfx[((yPos+i)*32)+(xPos+j)] = image.palette[image.bitmap[((i)*tileWidth)+j]];
-				}
-			}
-		}
+		fillSpriteImage(id, top, 32, xPos, yPos, image);
 		xPos += fontWidths[(t*3)+1];
 	}
 }
@@ -394,7 +360,7 @@ void prepareSprite(int id, bool top, int x, int y, int priority) {
 		sprites(top)[id].format,
 		sprites(top)[id].gfx,
 		sprites(top)[id].rotationIndex,
-		false, // Don't double the sprite size for rotation
+		false, // Don't float the sprite size for rotation
 		false, // Don't hide the sprite
 		false, false, // vflip, hflip
 		false // Apply mosaic
@@ -447,10 +413,10 @@ void printTextTinted(const std::u16string &text, int palette, int xPos, int yPos
 		int t = getCharIndex(text[c]);
 		Image image = {tileWidth, tileHeight, {}, {}, 0};
 		for(int i=0;i<tileSize;i++) {
-			image.bitmap[(i*4)]   = (palette*3 + (fontTiles[i+(t*tileSize)]>>6 & 3));
-			image.bitmap[(i*4)+1] = (palette*3 + (fontTiles[i+(t*tileSize)]>>4 & 3));
-			image.bitmap[(i*4)+2] = (palette*3 + (fontTiles[i+(t*tileSize)]>>2 & 3));
-			image.bitmap[(i*4)+3] = (palette*3 + (fontTiles[i+(t*tileSize)]    & 3));
+			image.bitmap[(i*4)]   = (fontTiles[i+(t*tileSize)]>>6 & 3);
+			image.bitmap[(i*4)+1] = (fontTiles[i+(t*tileSize)]>>4 & 3);
+			image.bitmap[(i*4)+2] = (fontTiles[i+(t*tileSize)]>>2 & 3);
+			image.bitmap[(i*4)+3] = (fontTiles[i+(t*tileSize)]    & 3);
 		}
 
 		x += fontWidths[t*3];
@@ -458,33 +424,33 @@ void printTextTinted(const std::u16string &text, int palette, int xPos, int yPos
 			x = xPos+fontWidths[t*3];
 			yPos += tileHeight;
 		}
-		drawImage(x, yPos, tileWidth, tileHeight, image, top);
+		drawImage(x, yPos, image, top, palette*3);
 		x += fontWidths[(t*3)+1];
 	}
 }
 
-void printTextMaxW(const std::string &text, double w, double scaleY, int xPos, int yPos, bool top) { printTextTintedScaled(StringUtils::UTF8toUTF16(text), std::min(1.0, w/getTextWidth(text)), scaleY, WHITE_TEXT, xPos, yPos, top); }
-void printTextMaxW(const std::u16string &text, double w, double scaleY, int xPos, int yPos, bool top) { printTextTintedScaled(text, std::min(1.0, w/getTextWidth(text)), scaleY, WHITE_TEXT, xPos, yPos, top); }
-void printTextCenteredMaxW(const std::string &text, double w, double scaleY, int xOffset, int yPos, bool top) { printTextCenteredTintedMaxW(StringUtils::UTF8toUTF16(text), w, scaleY, WHITE_TEXT, xOffset, yPos, top); }
-void printTextCenteredMaxW(const std::u16string &text, double w, double scaleY, int xOffset, int yPos, bool top) { printTextCenteredTintedMaxW(text, w, scaleY, WHITE_TEXT, xOffset, yPos, top); }
-void printTextCenteredTintedMaxW(const std::string &text, double w, double scaleY, int palette, int xOffset, int yPos, bool top) { printTextCenteredTintedMaxW(StringUtils::UTF8toUTF16(text), w, scaleY, palette, xOffset, yPos, top); }
-void printTextCenteredTintedMaxW(std::u16string text, double w, double scaleY, int palette, int xOffset, int yPos, bool top) {
+void printTextMaxW(const std::string &text, float w, float scaleY, int xPos, int yPos, bool top) { printTextTintedScaled(StringUtils::UTF8toUTF16(text), std::min(1.0f, w/getTextWidth(text)), scaleY, WHITE_TEXT, xPos, yPos, top); }
+void printTextMaxW(const std::u16string &text, float w, float scaleY, int xPos, int yPos, bool top) { printTextTintedScaled(text, std::min(1.0f, w/getTextWidth(text)), scaleY, WHITE_TEXT, xPos, yPos, top); }
+void printTextCenteredMaxW(const std::string &text, float w, float scaleY, int xOffset, int yPos, bool top) { printTextCenteredTintedMaxW(StringUtils::UTF8toUTF16(text), w, scaleY, WHITE_TEXT, xOffset, yPos, top); }
+void printTextCenteredMaxW(const std::u16string &text, float w, float scaleY, int xOffset, int yPos, bool top) { printTextCenteredTintedMaxW(text, w, scaleY, WHITE_TEXT, xOffset, yPos, top); }
+void printTextCenteredTintedMaxW(const std::string &text, float w, float scaleY, int palette, int xOffset, int yPos, bool top) { printTextCenteredTintedMaxW(StringUtils::UTF8toUTF16(text), w, scaleY, palette, xOffset, yPos, top); }
+void printTextCenteredTintedMaxW(std::u16string text, float w, float scaleY, int palette, int xOffset, int yPos, bool top) {
 	int i = 0;
 	while(text.find('\n') != text.npos) {
-		printTextTintedScaled(text.substr(0, text.find('\n')), std::min(1.0, w/getTextWidth(text.substr(0, text.find('\n')))), scaleY, palette, ((256-getTextWidthMaxW(text.substr(0, text.find('\n')), w))/2)+xOffset, yPos+(i++*(16*scaleY)), top);
+		printTextTintedScaled(text.substr(0, text.find('\n')), std::min(1.0f, w/getTextWidth(text.substr(0, text.find('\n')))), scaleY, palette, ((256-getTextWidthMaxW(text.substr(0, text.find('\n')), w))/2)+xOffset, yPos+(i++*(16*scaleY)), top);
 		text = text.substr(text.find('\n')+1);
 	}
-	printTextTintedScaled(text.substr(0, text.find('\n')), std::min(1.0, w/getTextWidth(text.substr(0, text.find('\n')))), scaleY, palette, ((256-getTextWidthMaxW(text.substr(0, text.find('\n')), w))/2)+xOffset, yPos+(i*(16*scaleY)), top);
+	printTextTintedScaled(text.substr(0, text.find('\n')), std::min(1.0f, w/getTextWidth(text.substr(0, text.find('\n')))), scaleY, palette, ((256-getTextWidthMaxW(text.substr(0, text.find('\n')), w))/2)+xOffset, yPos+(i*(16*scaleY)), top);
 }
-void printTextTintedMaxW(const std::string &text, double w, double scaleY, int palette, int xPos, int yPos, bool top) { printTextTintedScaled(StringUtils::UTF8toUTF16(text), std::min(1.0, w/getTextWidth(text)), scaleY, palette, xPos, yPos, top); }
-void printTextTintedMaxW(const std::u16string &text, double w,  double scaleY, int palette, int xPos, int yPos, bool top) { printTextTintedScaled(text, std::min(1.0, w/getTextWidth(text)), scaleY, palette, xPos, yPos, top); }
+void printTextTintedMaxW(const std::string &text, float w, float scaleY, int palette, int xPos, int yPos, bool top) { printTextTintedScaled(StringUtils::UTF8toUTF16(text), std::min(1.0f, w/getTextWidth(text)), scaleY, palette, xPos, yPos, top); }
+void printTextTintedMaxW(const std::u16string &text, float w,  float scaleY, int palette, int xPos, int yPos, bool top) { printTextTintedScaled(text, std::min(1.0f, w/getTextWidth(text)), scaleY, palette, xPos, yPos, top); }
 
-void printTextScaled(const std::string &text, double scaleX, double scaleY, int xPos, int yPos, bool top) { printTextTintedScaled(StringUtils::UTF8toUTF16(text), scaleX, scaleY, WHITE_TEXT, xPos, yPos, top); }
-void printTextScaled(const std::u16string &text, double scaleX, double scaleY, int xPos, int yPos, bool top) { printTextTintedScaled(text, scaleX, scaleY, WHITE_TEXT, xPos, yPos, top); }
-void printTextCenteredScaled(const std::string &text, double scaleX, double scaleY, int xOffset, int yPos, bool top) { printTextCenteredTintedScaled(StringUtils::UTF8toUTF16(text), scaleX, scaleY, WHITE_TEXT, xOffset, yPos, top); }
-void printTextCenteredScaled(const std::u16string &text, double scaleX, double scaleY, int xOffset, int yPos, bool top) { printTextCenteredTintedScaled(text, scaleX, scaleY, WHITE_TEXT, xOffset, yPos, top); }
-void printTextCenteredTintedScaled(const std::string &text, double scaleX, double scaleY, int palette, int xOffset, int yPos, bool top) { printTextCenteredTintedScaled(StringUtils::UTF8toUTF16(text), scaleX, scaleY, palette, xOffset, yPos, top); }
-void printTextCenteredTintedScaled(std::u16string text, double scaleX, double scaleY, int palette, int xOffset, int yPos, bool top) {
+void printTextScaled(const std::string &text, float scaleX, float scaleY, int xPos, int yPos, bool top) { printTextTintedScaled(StringUtils::UTF8toUTF16(text), scaleX, scaleY, WHITE_TEXT, xPos, yPos, top); }
+void printTextScaled(const std::u16string &text, float scaleX, float scaleY, int xPos, int yPos, bool top) { printTextTintedScaled(text, scaleX, scaleY, WHITE_TEXT, xPos, yPos, top); }
+void printTextCenteredScaled(const std::string &text, float scaleX, float scaleY, int xOffset, int yPos, bool top) { printTextCenteredTintedScaled(StringUtils::UTF8toUTF16(text), scaleX, scaleY, WHITE_TEXT, xOffset, yPos, top); }
+void printTextCenteredScaled(const std::u16string &text, float scaleX, float scaleY, int xOffset, int yPos, bool top) { printTextCenteredTintedScaled(text, scaleX, scaleY, WHITE_TEXT, xOffset, yPos, top); }
+void printTextCenteredTintedScaled(const std::string &text, float scaleX, float scaleY, int palette, int xOffset, int yPos, bool top) { printTextCenteredTintedScaled(StringUtils::UTF8toUTF16(text), scaleX, scaleY, palette, xOffset, yPos, top); }
+void printTextCenteredTintedScaled(std::u16string text, float scaleX, float scaleY, int palette, int xOffset, int yPos, bool top) {
 	int i = 0;
 	while(text.find('\n') != text.npos) {
 		printTextTintedScaled(text.substr(0, text.find('\n')), scaleX, scaleY, palette, ((256-getTextWidth(text.substr(0, text.find('\n'))))/2)+xOffset, yPos+(i++*(16*scaleY)), top);
@@ -492,9 +458,9 @@ void printTextCenteredTintedScaled(std::u16string text, double scaleX, double sc
 	}
 	printTextTintedScaled(text.substr(0, text.find('\n')), scaleX, scaleY, palette, ((256-getTextWidth(text.substr(0, text.find('\n'))))/2)+xOffset, yPos+(i*(16*scaleY)), top);
 }
-void printTextTintedScaled(const std::string &text, double scaleX, double scaleY, int palette, int xPos, int yPos, bool top) { printTextTintedScaled(StringUtils::UTF8toUTF16(text), scaleX, scaleY, palette, xPos, yPos, top); }
+void printTextTintedScaled(const std::string &text, float scaleX, float scaleY, int palette, int xPos, int yPos, bool top) { printTextTintedScaled(StringUtils::UTF8toUTF16(text), scaleX, scaleY, palette, xPos, yPos, top); }
 
-void printTextTintedScaled(const std::u16string &text, double scaleX, double scaleY, int palette, int xPos, int yPos, bool top) {
+void printTextTintedScaled(const std::u16string &text, float scaleX, float scaleY, int palette, int xPos, int yPos, bool top) {
 	if(scaleX == 1 && scaleY == 1) {
 		printTextTinted(text, palette, xPos, yPos, top);
 		return;
@@ -511,10 +477,10 @@ void printTextTintedScaled(const std::u16string &text, double scaleX, double sca
 		int t = getCharIndex(text[c]);
 		Image image = {tileWidth, tileHeight, {}, {}, 0};
 		for(int i=0;i<tileSize;i++) {
-			image.bitmap[(i*4)]   = (palette*3 + (fontTiles[i+(t*tileSize)]>>6 & 3));
-			image.bitmap[(i*4)+1] = (palette*3 + (fontTiles[i+(t*tileSize)]>>4 & 3));
-			image.bitmap[(i*4)+2] = (palette*3 + (fontTiles[i+(t*tileSize)]>>2 & 3));
-			image.bitmap[(i*4)+3] = (palette*3 + (fontTiles[i+(t*tileSize)]    & 3));
+			image.bitmap[(i*4)]   = (fontTiles[i+(t*tileSize)]>>6 & 3);
+			image.bitmap[(i*4)+1] = (fontTiles[i+(t*tileSize)]>>4 & 3);
+			image.bitmap[(i*4)+2] = (fontTiles[i+(t*tileSize)]>>2 & 3);
+			image.bitmap[(i*4)+3] = (fontTiles[i+(t*tileSize)]    & 3);
 		}
 
 		x += fontWidths[t*3];
@@ -522,15 +488,15 @@ void printTextTintedScaled(const std::u16string &text, double scaleX, double sca
 			x = xPos+fontWidths[t*3];
 			yPos += tileHeight;
 		}
-		drawImageScaled(x, yPos, tileWidth, tileHeight, scaleX, scaleY, image, top);
+		drawImageScaled(x, yPos, scaleX, scaleY, image, top, palette*3);
 		x += fontWidths[(t*3)+1]*scaleX;
 	}
 }
 
 int getTextWidthMaxW(const std::string &text, int w) { return std::min(w, getTextWidth(StringUtils::UTF8toUTF16(text))); }
 int getTextWidthMaxW(const std::u16string &text, int w) { return std::min(w, getTextWidth(text)); }
-int getTextWidthScaled(const std::string &text, double scale) { return getTextWidth(StringUtils::UTF8toUTF16(text))*scale; }
-int getTextWidthScaled(const std::u16string &text, double scale) { return getTextWidth(text)*scale; }
+int getTextWidthScaled(const std::string &text, float scale) { return getTextWidth(StringUtils::UTF8toUTF16(text))*scale; }
+int getTextWidthScaled(const std::u16string &text, float scale) { return getTextWidth(text)*scale; }
 int getTextWidth(const std::string &text) { return getTextWidth(StringUtils::UTF8toUTF16(text)); }
 int getTextWidth(const std::u16string &text) {
 	int textWidth = 0;

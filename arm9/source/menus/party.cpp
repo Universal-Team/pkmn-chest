@@ -20,7 +20,7 @@ struct button {
 
 void showParty(int selection) {
 	for(int i=0;i<6;i++) {
-		drawImage(partyButtons[i].x, partyButtons[i].y, menuButton.width, menuButton.height, selection == i ? menuButtonBlue : menuButton, false);
+		drawImage(partyButtons[i].x, partyButtons[i].y, selection == i ? menuButtonBlue : menuButton, false);
 		if(save->pkm(i)->species() != 0) {
 			if(save->pkm(i)->nicknamed())	printText(save->pkm(i)->nickname(), partyButtons[i].x+47, partyButtons[i].y+14, false);
 			else	printText(Lang::species[save->pkm(i)->species()], partyButtons[i].x+47, partyButtons[i].y+14, false);
@@ -35,7 +35,7 @@ void fillPartySprites(void) {
 			setSpriteVisibility(partyIconID[i], false, false);
 		} else {
 			Image image = loadPokemonSprite(getPokemonIndex(save->pkm(i)));
-			fillSpriteImage(partyIconID[i], false, 0, 0, 32, 32, image);
+			fillSpriteImage(partyIconID[i], false, 32, 0, 0, image);
 			setSpritePosition(partyIconID[i], false, partyButtons[i].x+8, partyButtons[i].y);
 			setSpriteVisibility(partyIconID[i], false, true);
 			updateOam();
@@ -45,7 +45,7 @@ void fillPartySprites(void) {
 
 void manageParty(void) {
 	// Draw background
-	drawImageDMA(0, 0, 256, 192, menuBg, false);
+	drawImageDMA(0, 0, menuBg, false);
 
 	showParty(-1);
 	fillPartySprites();
@@ -101,7 +101,7 @@ void manageParty(void) {
 				save->pkm(showPokemonSummary(save->pkm(selectedOption)), selectedOption);
 
 				// Redraw background
-				drawImageDMA(0, 0, 256, 192, menuBg, false);
+				drawImageDMA(0, 0, menuBg, false);
 
 				// Show sprites
 				showParty(menuSelection);

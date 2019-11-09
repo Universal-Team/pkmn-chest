@@ -141,14 +141,14 @@ Image loadPokemonSprite(int dexNo) {
 
 void fillArrow(int arrowMode) {
 	if(arrowMode == 0) {
-		fillSpriteImage(arrowID, false, 0, 0, 16, 16, arrowRed, 16);
-		fillSpriteImage(arrowID, true, 0, 0, 16, 16, arrowRed, 16);
+		fillSpriteImage(arrowID, false, 16, 0, 0, arrowRed);
+		fillSpriteImage(arrowID, true, 16, 0, 0, arrowRed);
 	} else if(arrowMode == 1) {
-		fillSpriteImage(arrowID, false, 0, 0, 16, 16, arrowBlue, 16);
-		fillSpriteImage(arrowID, true, 0, 0, 16, 16, arrowBlue, 16);
+		fillSpriteImage(arrowID, false, 16, 0, 0, arrowBlue);
+		fillSpriteImage(arrowID, true, 16, 0, 0, arrowBlue);
 	} else {
-		fillSpriteImage(arrowID, false, 0, 0, 16, 16, arrowYellow, 16);
-		fillSpriteImage(arrowID, true, 0, 0, 16, 16, arrowYellow, 16);
+		fillSpriteImage(arrowID, false, 16, 0, 0, arrowYellow);
+		fillSpriteImage(arrowID, true, 16, 0, 0, arrowYellow);
 	}
 }
 
@@ -188,7 +188,7 @@ void loadGraphics(void) {
 	// Prepare menu icon sprites
 	for(int i=0;i<6;i++) {
 		int id = initSprite(false, SpriteSize_32x32);
-		fillSpriteSegment(id, false, menuIconSheet, 32, 32, menuIconSheet.width, 0, i*32);
+		fillSpriteSegment(id, false, 32, 0, 0, 32, 32, menuIconSheet, 0, i*32);
 		prepareSprite(id, false, 0, 0, 0);
 		setSpriteVisibility(id, false, false);
 		menuIconID.push_back(id);
@@ -204,15 +204,15 @@ void loadGraphics(void) {
 
 	// Prepare bottom arrow sprite
 	initSprite(false, SpriteSize_16x16, arrowID);
-	fillSpriteImage(arrowID, false, 0, 0, 16, 16, arrowRed, 16);
 	prepareSprite(arrowID, false, 24, 36, 0);
 	setSpriteVisibility(arrowID, false, false);
 
 	// Prepare top arrow sprite
 	initSprite(true, SpriteSize_16x16, arrowID);
-	fillSpriteImage(arrowID, true, 0, 0, 16, 16, arrowRed, 16);
 	prepareSprite(arrowID, true, 24, 36, 0);
 	setSpriteVisibility(arrowID, true, false);
+
+	fillArrow(0);
 
 	// Prepare bottom sprite for moving pokemon
 	initSprite(false, SpriteSize_32x32, heldPokemonID);
@@ -232,8 +232,8 @@ void loadGraphics(void) {
 
 void drawBoxScreen(void) {
 	// Draws backgrounds
-	drawImageDMA(0, 0, 256, 192, boxBgTop, true);
-	drawImage(164, 2, infoBox.width, infoBox.height-16, infoBox, true);
+	drawImageDMA(0, 0, boxBgTop, true);
+	drawImageSegment(164, 2, infoBox.width, infoBox.height-16, infoBox, 0, 0, true);
 	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
 	
 
@@ -289,7 +289,7 @@ void drawBox(bool top) {
 		std::shared_ptr<PKX> tempPkm = (top ? Banks::bank->pkm(currentBankBox, i) : save->pkm(currentSaveBox, i));
 		if(tempPkm->species() != 0) {
 			Image image = loadPokemonSprite(getPokemonIndex(tempPkm));
-			fillSpriteImage(i, top, 0, 0, 32, 32, image);
+			fillSpriteImage(i, top, 32, 0, 0, image);
 			setSpriteVisibility(i, top, true);
 			setSpriteAlpha(i, top, (*tempPkm == *filter) ? 15 : 8);
 		}
@@ -297,23 +297,23 @@ void drawBox(bool top) {
 	updateOam();
 
 	// Draw box image
-	drawImage(5, 15, bankBox.width, bankBox.height, bankBox, top);
+	drawImage(5, 15, bankBox, top);
 
 	// Print box name
 	printTextCenteredTintedMaxW((top ? Banks::bank->boxName(currentBankBox) : save->boxName(currentSaveBox)), 110, 1, GRAY_TEXT, -44, 20, top);
 
 	if(!top) {
-		drawImage(0, 192-20, search.width, search.height, search, false);
+		drawImage(0, 192-search.width, search, false);
 	}
 }
 
 void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 	// Clear previous draw
-	drawImage(164, 2, infoBox.width, infoBox.height-16, infoBox, true);
+	drawImageSegment(164, 2, infoBox.width, infoBox.height-16, infoBox, 0, 0, true);
 
 	if(pkm->species() > 0 && pkm->species() < 650) {
 		// Show shiny star if applicable
-		if(pkm->shiny())	drawImage(239, 45, 8, 8, shiny, true);
+		if(pkm->shiny())	drawImage(239, 45, shiny, true);
 
 		// Print Pokédex number
 		char str[9];
@@ -326,10 +326,10 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 
 		// Draw types
 		int type = (pkm->generation() == Generation::FOUR && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1();
-		drawImage(170, 43-((types[type].height-12)/2), types[type].width, types[type].height, types[type], true);
+		drawImage(170, 43-((types[type].height-12)/2), types[type], true);
 		if(pkm->type1() != pkm->type2()) {
 			type = (pkm->generation() == Generation::FOUR && pkm->type2() > 8) ? pkm->type2()-1 : pkm->type2();
-			drawImage(205, 43-((types[type].height-12)/2), types[type].width, types[type].height, types[type], true, 4);
+			drawImage(205, 43-((types[type].height-12)/2), types[type], true, 4);
 		}
 
 		// Print Level
@@ -343,8 +343,8 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 void setHeldPokemon(std::shared_ptr<PKX> pkm) {
 	if(pkm->species() != 0) {
 		Image image = loadPokemonSprite(getPokemonIndex(pkm));
-		fillSpriteImage(heldPokemonID, false, 0, 0, 32, 32, image);
-		fillSpriteImage(heldPokemonID, true, 0, 0, 32, 32, image);
+		fillSpriteImage(heldPokemonID, false, 32, 0, 0, image);
+		fillSpriteImage(heldPokemonID, true, 32, 0, 0, image);
 	}
 }
 
@@ -489,7 +489,7 @@ void manageBoxes(void) {
 						else if(held & KEY_RIGHT && arrowX < 5)	arrowX++;
 						if(pressed & KEY_A) {
 							yellowSelection:
-							drawImage(5, 15, bankBox.width, bankBox.height, bankBox, topScreen);
+							drawImage(5, 15, bankBox, topScreen);
 							printTextCenteredTinted((topScreen ? Banks::bank->boxName(currentBankBox) : save->boxName(currentSaveBox)), GRAY_TEXT, -44, 20, topScreen);
 							for(int y=std::min(startY, arrowY);y<std::max(startY,arrowY)+1;y++) {
 								for(int x=std::min(startX, arrowX);x<std::max(startX,arrowX)+1;x++) {
@@ -510,7 +510,7 @@ void manageBoxes(void) {
 							updateOam();
 							break;
 						} else if(pressed & KEY_B) {
-							drawImage(5, 15, bankBox.width, bankBox.height, bankBox, topScreen);
+							drawImage(5, 15, bankBox, topScreen);
 							printTextCenteredTinted((topScreen ? Banks::bank->boxName(currentBankBox) : save->boxName(currentSaveBox)), GRAY_TEXT, -44, 20, topScreen);
 							drawPokemonInfo(currentPokemon((arrowY*6)+arrowX));
 							break;
@@ -536,7 +536,7 @@ void manageBoxes(void) {
 							}
 						}
 
-						drawImage(5, 15, bankBox.width, bankBox.height, bankBox, topScreen);
+						drawImage(5, 15, bankBox, topScreen);
 						printTextCenteredTinted((topScreen ? Banks::bank->boxName(currentBankBox) : save->boxName(currentSaveBox)), GRAY_TEXT, -44, 20, topScreen);
 						drawOutline(8+(std::min(startX, arrowX)*24), 40+(std::min(startY, arrowY)*24), ((std::max(arrowX-startX, startX-arrowX)+1)*24)+8, ((std::max(arrowY-startY, startY-arrowY)+1)*24), WHITE, topScreen);
 						setSpritePosition(arrowID, topScreen, (arrowX*24)+24, (arrowY*24)+36);
