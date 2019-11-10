@@ -269,6 +269,7 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 						else if(pkm->genderType() == 0)	pkm->gender(0);
 						else if(pkm->genderType() == 254 || pkm->genderType() == 127)	pkm->gender(1);
 						else {
+							drawSummaryPage(pkm, false);
 							pkm->gender(Input::getBool(Lang::get("female"), Lang::get("male")));
 							pkm->PID(PKX::getRandomPID(pkm->species(), pkm->gender(), pkm->version(), pkm->nature(), pkm->alternativeForm(), pkm->abilityNumber(), pkm->PID(), pkm->generation()));
 						}
@@ -304,20 +305,24 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 					} case 8: {
 						std::string name = Input::getLine(7);
 						if(name != "")	pkm->otName(name);
+						drawSummaryPage(pkm, false);
 						pkm->otGender(Input::getBool(Lang::get("female"), Lang::get("male")));
 						drawSummaryPage(pkm, false);
 						break;
 					} case 9: {
 						int num = Input::getInt(65535);
 						if(num != -1)	pkm->TID(num);
+						drawSummaryPage(pkm, false);
 						break;
 					} case 10: {
 						int num = Input::getInt(65535);
 						if(num != -1)	pkm->SID(num);
+						drawSummaryPage(pkm, false);
 						break;
 					} case 11: {
 						int num = Input::getInt(255);
 						if(num != -1)	pkm->otFriendship(num);
+						drawSummaryPage(pkm, false);
 						break;
 					}
 				}
@@ -326,19 +331,24 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 					case 0: {
 						int num = selectPokeball(pkm->ball());
 						if(num > 0)	pkm->ball(num);
+						drawSummaryPage(pkm, true);
 						break;
 					} case 1: {
 						int num = selectForm(pkm->species(), pkm->alternativeForm());
 						if(num != -1)	pkm->alternativeForm(num);
+						drawSummaryPage(pkm, false);
 						break;
 					} case 2: {
 						selectMoves(pkm);
+						drawSummaryPage(pkm, true);
 						break;
 					} case 3: {
 						selectStats(pkm);
+						drawSummaryPage(pkm, true);
 						break;
 					} case 4: {
 						selectOrigin(pkm);
+						drawSummaryPage(pkm, true);
 					}
 				}
 			}

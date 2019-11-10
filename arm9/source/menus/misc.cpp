@@ -228,12 +228,17 @@ int selectForm(int dexNo, int currentForm) {
 	}
 }
 
-void drawItemList(int screenPos, std::vector<std::string> itemList) {
-	// Clear the screen
-	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
+void drawItemList(int screenPos, std::vector<std::string> itemList, bool background) {
+	if(background) {
+		// Clear the screen
+		drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
 
-	// Draw search icon
-	drawImage(256-search.width, 0, search, false, false);
+		// Draw search icon
+		drawImage(256-search.width, 0, search, false, false);
+	}
+
+	// Clear text
+	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 
 	// Print items
 	for(unsigned i=0;i<std::min(9u, itemList.size()-screenPos);i++) {
@@ -250,7 +255,7 @@ int selectItem(int current, int start, int max, std::vector<std::string> &items)
 
 	// Print items
 	std::vector<std::string> itemList(&items[start], &items[max]);
-	drawItemList(current-start, itemList);
+	drawItemList(current-start, itemList, true);
 
 	int held, pressed, screenPos = current-start, newMove = current-start, entriesPerScreen = 9;
 	touchPosition touch;
@@ -278,10 +283,12 @@ int selectItem(int current, int start, int max, std::vector<std::string> &items)
 			Sound::play(Sound::click);
 			for(int i=0;i<max;i++) {
 				if(itemList[newMove] == items[i]) {
+					drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 					return i;
 				}
 			}
 		} if(pressed & KEY_B) {
+			drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 			Sound::play(Sound::back);
 			return current;
 		} else if(pressed & KEY_TOUCH) {
@@ -293,6 +300,7 @@ int selectItem(int current, int start, int max, std::vector<std::string> &items)
 				if(touch.px >= 4 && touch.px <= 4+getTextWidth(itemList[screenPos+i]) && touch.py >= 4+(i*20) && touch.py <= 4+((i+1)*20)) {
 					for(int j=0;j<max;j++) {
 						if(itemList[screenPos+i] == items[j]) {
+							drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 							return j;
 						}
 					}
@@ -313,7 +321,7 @@ int selectItem(int current, int start, int max, std::vector<std::string> &items)
 				}
 				newMove = 0;
 				screenPos = 0;
-			drawItemList(screenPos, itemList);
+			drawItemList(screenPos, itemList, false);
 			setSpriteVisibility(arrowID, false, true);
 			updateOam();
 		}
@@ -321,10 +329,10 @@ int selectItem(int current, int start, int max, std::vector<std::string> &items)
 		// Scroll screen if needed
 		if(newMove < screenPos) {
 			screenPos = newMove;
-			drawItemList(screenPos, itemList);
+			drawItemList(screenPos, itemList, false);
 		} else if(newMove > screenPos + entriesPerScreen - 1) {
 			screenPos = newMove - entriesPerScreen + 1;
-			drawItemList(screenPos, itemList);
+			drawItemList(screenPos, itemList, false);
 		}
 
 		// Move cursor
@@ -336,6 +344,7 @@ int selectItem(int current, int start, int max, std::vector<std::string> &items)
 std::shared_ptr<PKX> selectMoves(std::shared_ptr<PKX> pkm) {
 	// Clear screen
 	drawImageDMA(0, 0, listBg, false, false);
+	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 	printText(Lang::get("moves"), 4, 0, false);
 
 	// Print moves
@@ -390,6 +399,7 @@ std::shared_ptr<PKX> selectMoves(std::shared_ptr<PKX> pkm) {
 			pkm->move(selection, selectItem(pkm->move(selection), 0, save->maxMove()+1, Lang::moves));
 
 			// Clear screen
+			drawImageDMA(0, 0, listBg, false, false);
 			drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 			printText(Lang::get("moves"), 4, 0, false);
 
@@ -407,6 +417,7 @@ std::shared_ptr<PKX> selectMoves(std::shared_ptr<PKX> pkm) {
 int selectNature(int currentNature) {
 	// Clear screen
 	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
+	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 
 	// Draw labels (not a for loop as speed is 3rd)
 	{
@@ -486,6 +497,7 @@ int selectNature(int currentNature) {
 int selectPokeball(int currentBall) {
 	// Clear screen
 	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
+	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 
 	// Draw Pokéballs
 	for(int y=0;y<5;y++) {
@@ -621,7 +633,7 @@ int selectWallpaper(int currentWallpaper) {
 
 void drawOriginPage(std::shared_ptr<PKX> pkm, std::vector<std::string> &varText) {
 	// Clear screen
-	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
+	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 
 	// Print text
 	varText = { 
@@ -633,17 +645,19 @@ void drawOriginPage(std::shared_ptr<PKX> pkm, std::vector<std::string> &varText)
 		: (pkm->metLocation() > Lang::locations5.size() ? "" : Lang::locations5[pkm->metLocation()]),
 		Lang::games[pkm->version()],
 	};
+	printText(Lang::get("origin"), 4, 0, false);
 	for(unsigned i=0;i<originLabels.size();i++) {
-		printText(Lang::get(originLabels[i])+": "+varText[i], 4, 4+(i*20), false);
+		printText(Lang::get(originLabels[i])+": "+varText[i], 4, (i+1)*16, false);
 	}
 }
 
 std::shared_ptr<PKX> selectOrigin(std::shared_ptr<PKX> pkm) {
 	std::vector<std::string> varText;
+	drawImageDMA(0, 0, listBg, false, false);
 	drawOriginPage(pkm, varText);
 
 	setSpriteVisibility(arrowID, false, true);
-	setSpritePosition(arrowID, false, 4+getTextWidth(Lang::get(originLabels[0])+": "+varText[0]), -2);
+	setSpritePosition(arrowID, false, 4+getTextWidth(Lang::get(originLabels[0])+": "+varText[0]), 10);
 	updateOam();
 
 	bool optionSelected = false;
@@ -740,7 +754,7 @@ std::shared_ptr<PKX> selectOrigin(std::shared_ptr<PKX> pkm) {
 		}
 
 		// Move arrow
-		setSpritePosition(arrowID, false, 4+getTextWidth(Lang::get(originLabels[selection])+": "+varText[selection]), (selection*20)-2);
+		setSpritePosition(arrowID, false, 4+getTextWidth(Lang::get(originLabels[selection])+": "+varText[selection]), (selection*16)+10);
 		updateOam();
 	}
 }
