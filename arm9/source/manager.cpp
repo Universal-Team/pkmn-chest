@@ -180,8 +180,8 @@ void loadGraphics(void) {
 	// Prepare their locations
 	for(int y=0;y<5;y++) {
 		for(int x=0;x<6;x++) {
-			prepareSprite((y*6)+x,  true, 8+(x*24), 32+(y*24), 2);
-			prepareSprite((y*6)+x, false, 8+(x*24), 32+(y*24), 2);
+			prepareSprite((y*6)+x,  true, 8+(x*24), 32+(y*24), 3);
+			prepareSprite((y*6)+x, false, 8+(x*24), 32+(y*24), 3);
 		}
 	}
 
@@ -232,10 +232,13 @@ void loadGraphics(void) {
 
 void drawBoxScreen(void) {
 	// Draws backgrounds
-	drawImageDMA(0, 0, boxBgTop, true);
-	drawImageSegment(164, 2, infoBox.width, infoBox.height-16, infoBox, 0, 0, true);
-	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
-	
+	drawImageDMA(0, 0, boxBgTop, true, false);
+	drawImageSegment(164, 2, infoBox.width, infoBox.height-16, infoBox, 0, 0, true, false);
+	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
+
+	// Clear text
+	drawRectangle(0, 0, 256, 192, CLEAR, true, true);
+	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 
 	// Show bottom arrow
 	setSpriteVisibility(arrowID, false, true);
@@ -297,23 +300,25 @@ void drawBox(bool top) {
 	updateOam();
 
 	// Draw box image
-	drawImage(5, 15, bankBox, top);
+	drawImage(5, 15, bankBox, top, false);
 
 	// Print box name
+	drawRectangle(5, 20, bankBox.width, 16, CLEAR, top, true);
 	printTextCenteredTintedMaxW((top ? Banks::bank->boxName(currentBankBox) : save->boxName(currentSaveBox)), 110, 1, GRAY_TEXT, -44, 20, top);
 
 	if(!top) {
-		drawImage(0, 192-search.width, search, false);
+		drawImage(0, 192-search.width, search, false, false);
 	}
 }
 
 void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 	// Clear previous draw
-	drawImageSegment(164, 2, infoBox.width, infoBox.height-16, infoBox, 0, 0, true);
+	drawImageSegment(164, 2, infoBox.width, infoBox.height-16, infoBox, 0, 0, true, false);
+	drawRectangle(164, 2, infoBox.width, infoBox.height-16, CLEAR, true, true);
 
 	if(pkm->species() > 0 && pkm->species() < 650) {
 		// Show shiny star if applicable
-		if(pkm->shiny())	drawImage(239, 45, shiny, true);
+		if(pkm->shiny())	drawImage(239, 45, shiny, true, false);
 
 		// Print Pokédex number
 		char str[9];
@@ -326,10 +331,10 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 
 		// Draw types
 		int type = (pkm->generation() == Generation::FOUR && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1();
-		drawImage(170, 43-((types[type].height-12)/2), types[type], true);
+		drawImage(170, 43-((types[type].height-12)/2), types[type], true, false);
 		if(pkm->type1() != pkm->type2()) {
 			type = (pkm->generation() == Generation::FOUR && pkm->type2() > 8) ? pkm->type2()-1 : pkm->type2();
-			drawImage(205, 43-((types[type].height-12)/2), types[type], true, 4);
+			drawImage(205, 43-((types[type].height-12)/2), types[type], true, false, 4);
 		}
 
 		// Print Level
@@ -474,7 +479,7 @@ void manageBoxes(void) {
 					}
 				} else if(arrowMode == 2) {
 					int startX = arrowX, startY = arrowY;
-					drawOutline(8+(startX*24), 40+(startY*24), (((arrowX+1)-startX)*24)+8, (((arrowY+1)-startY)*24), WHITE, topScreen);
+					drawOutline(8+(startX*24), 40+(startY*24), (((arrowX+1)-startX)*24)+8, (((arrowY+1)-startY)*24), WHITE, topScreen, true);
 					while(1) {
 						do {
 							swiWaitForVBlank();
@@ -489,7 +494,7 @@ void manageBoxes(void) {
 						else if(held & KEY_RIGHT && arrowX < 5)	arrowX++;
 						if(pressed & KEY_A) {
 							yellowSelection:
-							drawImage(5, 15, bankBox, topScreen);
+							drawRectangle(5, 15, bankBox.width, bankBox.height, CLEAR, topScreen, true);
 							printTextCenteredTinted((topScreen ? Banks::bank->boxName(currentBankBox) : save->boxName(currentSaveBox)), GRAY_TEXT, -44, 20, topScreen);
 							for(int y=std::min(startY, arrowY);y<std::max(startY,arrowY)+1;y++) {
 								for(int x=std::min(startX, arrowX);x<std::max(startX,arrowX)+1;x++) {
@@ -510,7 +515,7 @@ void manageBoxes(void) {
 							updateOam();
 							break;
 						} else if(pressed & KEY_B) {
-							drawImage(5, 15, bankBox, topScreen);
+							drawRectangle(5, 15, bankBox.width, bankBox.height, CLEAR, topScreen, true);
 							printTextCenteredTinted((topScreen ? Banks::bank->boxName(currentBankBox) : save->boxName(currentSaveBox)), GRAY_TEXT, -44, 20, topScreen);
 							drawPokemonInfo(currentPokemon((arrowY*6)+arrowX));
 							break;
@@ -536,9 +541,9 @@ void manageBoxes(void) {
 							}
 						}
 
-						drawImage(5, 15, bankBox, topScreen);
+						drawRectangle(5, 15, bankBox.width, bankBox.height, CLEAR, topScreen, true);
 						printTextCenteredTinted((topScreen ? Banks::bank->boxName(currentBankBox) : save->boxName(currentSaveBox)), GRAY_TEXT, -44, 20, topScreen);
-						drawOutline(8+(std::min(startX, arrowX)*24), 40+(std::min(startY, arrowY)*24), ((std::max(arrowX-startX, startX-arrowX)+1)*24)+8, ((std::max(arrowY-startY, startY-arrowY)+1)*24), WHITE, topScreen);
+						drawOutline(8+(std::min(startX, arrowX)*24), 40+(std::min(startY, arrowY)*24), ((std::max(arrowX-startX, startX-arrowX)+1)*24)+8, ((std::max(arrowY-startY, startY-arrowY)+1)*24), WHITE, topScreen, true);
 						setSpritePosition(arrowID, topScreen, (arrowX*24)+24, (arrowY*24)+36);
 						updateOam();
 					}
@@ -567,14 +572,17 @@ void manageBoxes(void) {
 				setSpriteVisibility(arrowID, false, false);
 				updateOam();
 				if(Input::getBool(Lang::get("filter"), Lang::get("sort"))) {
+					drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 					changeFilter(filter);
 				} else {
+					drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 					sortMenu(topScreen);
 				}
 
 				// Redraw
 				setSpriteVisibility(arrowID, false, !topScreen);
-				drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
+				drawRectangle(0, 0, 256, 192, CLEAR, false, true);
+				drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
 				drawBox(false);
 				drawPokemonInfo(currentPokemon((arrowY*6)+arrowX));
 				if(topScreen)	drawBox(topScreen);
@@ -608,6 +616,7 @@ void manageBoxes(void) {
 
 		if(pressed & KEY_X && heldPokemon.size() == 0) {
 			Sound::play(Sound::click);
+			drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 			if(!xMenu())	break;
 		}
 

@@ -42,7 +42,7 @@ std::string langNames[] = { "Deutsche", "English", "Español", "Français", "Ita
 
 void drawChestFileMenu(void) {
 	// Draw background
-	drawImageDMA(0, 0, listBg, false);
+	drawImageDMA(0, 0, listBg, false, false);
 	printText(Lang::get("options"), 4, 0, false);
 
 	// Print text
@@ -53,6 +53,7 @@ void drawChestFileMenu(void) {
 }
 
 void chestFileMenu(void) {
+	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 	drawChestFileMenu();
 
 	setSpriteVisibility(arrowID, false, true);
@@ -77,6 +78,7 @@ void chestFileMenu(void) {
 		} else if(pressed & KEY_A) {
 			optionSelected = true;
 		} else if(pressed & KEY_B) {
+			drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 			Sound::play(Sound::back);
 			return;
 		} else if(pressed & KEY_TOUCH) {
@@ -121,10 +123,11 @@ void chestFileMenu(void) {
 					std::string str = browseForFile(extList, false);
 					if(str.substr(0, str.find_last_of(".")) != getChestFile() && str != "")	Banks::removeBank(str.substr(0, str.find_last_of(".")));
 					else if(str != "") {
-						drawRectangle(20, 20, 216, 152, DARK_RED, false);
+						drawRectangle(20, 20, 216, 152, DARK_RED, false, true);
 						printTextCentered("You can not delete", 0, 24, false);
 						printTextCentered("the current bank.", 0, 40, false);
 						for(int i=0;i<120;i++)	swiWaitForVBlank();
+						drawRectangle(20, 20, 216, 152, CLEAR, false, true);
 					}
 					chdir(path);
 					break;
@@ -157,7 +160,8 @@ void chestFileMenu(void) {
 
 void drawConfigMenu(void) {
 	// Draw background
-	drawImageDMA(0, 0, listBg, false);
+	drawImageDMA(0, 0, listBg, false, false);
+	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 	printText(Lang::get("options"), 4, 0, false);
 
 	if(optionsText.size() < textCP1Labels.size()) {
@@ -215,6 +219,7 @@ void configMenu(void) {
 		} else if(pressed & KEY_B) {
 			Sound::play(Sound::back);
 			Config::save();
+			drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 			setSpriteVisibility(arrowID, false, false);
 			updateOam();
 			return;

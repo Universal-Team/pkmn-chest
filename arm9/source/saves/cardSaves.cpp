@@ -111,9 +111,10 @@ bool restoreSave(void) {
 		length = ftell(in);
 		fseek(in, 0, SEEK_SET);
 		if(length != (auxspi ? (int)(LEN*num_blocks) : size)) {
-			drawRectangle(20, 20, 216, 152, DARK_RED, true);
+			drawRectangle(20, 20, 216, 152, DARK_RED, true, true);
 			printTextCentered(Lang::get("wrongSaveSize"), 0, 24, true);
 			for(int i=0;i<120;i++)	swiWaitForVBlank();
+			drawRectangle(20, 20, 216, 152, CLEAR, true, true);
 			fclose(in);
 			return false;
 		}
@@ -125,24 +126,26 @@ bool restoreSave(void) {
 		}
 		if(auxspi){
 			buffer = new unsigned char[LEN];
-			drawOutline(5, 39, 247, 18, DARKERER_GRAY, false);
+			drawOutline(5, 39, 247, 18, DARKERER_GRAY, false, true);
 			for(unsigned int i = 0; i < num_blocks; i++) {
-				drawRectangle((((float)i/num_blocks)*245)+6, 40, 1, 16, LIGHT_GRAY, false);
+				drawRectangle((((float)i/num_blocks)*245)+6, 40, 1, 16, LIGHT_GRAY, false, true);
 
 				fread(buffer, 1, LEN, in);
 				auxspi_write_data(i << shift, buffer, LEN, type, card_type);
 			}
+			drawRectangle(4, 39, 248, 18, CLEAR, false, true);
 		} else {
 			int blocks = size / 32;
 			int written = 0;
 			buffer = new unsigned char[blocks];
-			drawOutline(5, 39, 247, 18, DARKERER_GRAY, false);
+			drawOutline(5, 39, 247, 18, DARKERER_GRAY, false, true);
 			for(unsigned int i = 0; i < 32; i++) {
-				drawRectangle(((i/32)*245)+6, 40, 8, 16, LIGHT_GRAY, false);
+				drawRectangle(((i/32)*245)+6, 40, 8, 16, LIGHT_GRAY, false, true);
 				fread(buffer, 1, blocks, in);
 				cardWriteEeprom(written, buffer, blocks, type);
 				written += blocks;
 			}
+			drawRectangle(4, 39, 248, 18, CLEAR, false, true);
 		}
 		delete[] buffer;
 		fclose(in);

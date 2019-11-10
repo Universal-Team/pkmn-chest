@@ -8,6 +8,7 @@ std::vector<char> fontTiles;
 std::vector<char> fontWidths;
 std::vector<u16> fontMap;
 u16 tileSize, tileWidth, tileHeight;
+u8 *bg3Main, *bg2Main, *bg3Sub, *bg2Sub, *bg1Sub;
 
 #define sprites(top) (top ? spritesMain : spritesSub)
 #define maxSprite(top) (top ? maxSpriteMain : maxSpriteSub)
@@ -54,9 +55,20 @@ void initGraphics(void) {
 
 	// Init for background
 	int id = bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
+	bg3Main = (u8*)bgGetGfxPtr(id);
 	bgSetPriority(id, 3);
+
+	id = bgInit(2, BgType_Bmp8, BgSize_B8_256x256, 3, 0);
+	bg2Main = (u8*)bgGetGfxPtr(id);
+	bgSetPriority(id, 2);
+
 	id = bgInitSub(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
+	bg3Sub = (u8*)bgGetGfxPtr(id);
 	bgSetPriority(id, 3);
+
+	id = bgInitSub(2, BgType_Bmp8, BgSize_B8_256x256, 3, 0);
+	bg2Sub = (u8*)bgGetGfxPtr(id);
+	bgSetPriority(id, 2);
 
 	u16 palette[] = {0, 0xFBDE, 0xBDEF, // WHITE_TEXT
 					 0, 0x8C63, 0xCA52, // GRAY_TEXT
@@ -181,9 +193,25 @@ void copyPalette(const Image &image, bool top, int paletteOffset = 0) {
 	tonccpy((top ? BG_PALETTE : BG_PALETTE_SUB)+image.palOfs+paletteOffset, image.palette.data(), image.palette.size()*2);
 }
 
-void drawImage(int x, int y, const Image &image, bool top, int paletteOffset) {
+u8 *gfxPointer(bool top, bool layer) {
+	if(top) {
+		if(layer) {
+			return bg2Main;
+		} else {
+			return bg3Main;
+		}
+	} else {
+		if(layer) {
+			return bg2Sub;
+		} else {
+			return bg3Sub;
+		}
+	}
+}
+
+void drawImage(int x, int y, const Image &image, bool top, bool layer, int paletteOffset) {
 	copyPalette(image, top, paletteOffset);
-	u8 *dst = (u8*)(top ? BG_GFX : BG_GFX_SUB);
+	u8 *dst = gfxPointer(top, layer);
 	u16 *pal = (top ? BG_PALETTE : BG_PALETTE_SUB);
 	for(int i=0;i<image.height;i++) {
 		for(int j=0;j<image.width;j++) {
@@ -194,18 +222,18 @@ void drawImage(int x, int y, const Image &image, bool top, int paletteOffset) {
 	}
 }
 
-void drawImageDMA(int x, int y, const Image &image, bool top) {
+void drawImageDMA(int x, int y, const Image &image, bool top, bool layer) {
 	copyPalette(image, top);
 	for(int i=0;i<image.height;i++) {
-		dmaCopyHalfWords(0, image.bitmap.data()+(i*image.width), (u8*)(top ? BG_GFX : BG_GFX_SUB)+((y+i)*256)+image.width, image.width);
+		dmaCopyHalfWords(0, image.bitmap.data()+(i*image.width), gfxPointer(top, layer)+((y+i)*256)+x, image.width);
 	}
 }
 
-void drawImageScaled(int x, int y, float scaleX, float scaleY, const Image &image, bool top, int paletteOffset) {
-	if(scaleX == 1 && scaleY == 1)	drawImage(x, y, image, top);
+void drawImageScaled(int x, int y, float scaleX, float scaleY, const Image &image, bool top, bool layer, int paletteOffset) {
+	if(scaleX == 1 && scaleY == 1)	drawImage(x, y, image, top, layer);
 	else {
 		copyPalette(image, top, paletteOffset);
-		u8* dst = (u8*)(top ? BG_GFX : BG_GFX_SUB);
+		u8* dst = gfxPointer(top, layer);
 		u16 *pal = (top ? BG_PALETTE : BG_PALETTE_SUB);
 		for(int i=0;i<(image.height*scaleY);i++) {
 			for(int j=0;j<(image.width*scaleX);j++) {
@@ -217,9 +245,9 @@ void drawImageScaled(int x, int y, float scaleX, float scaleY, const Image &imag
 	}
 }
 
-void drawImageSegment(int x, int y, int w, int h, const Image &image, int xOffset, int yOffset, bool top) {
+void drawImageSegment(int x, int y, int w, int h, const Image &image, int xOffset, int yOffset, bool top, bool layer) {
 	copyPalette(image, top);
-	u8* dst = (u8*)(top ? BG_GFX : BG_GFX_SUB);
+	u8* dst = gfxPointer(top, layer);
 	u16 *pal = (top ? BG_PALETTE : BG_PALETTE_SUB);
 	for(int i=0;i<h;i++) {
 		for(int j=0;j<w;j++) {
@@ -230,15 +258,15 @@ void drawImageSegment(int x, int y, int w, int h, const Image &image, int xOffse
 	}
 }
 
-void drawImageSegmentDMA(int x, int y, int w, int h, const Image &image, int xOffset, int yOffset, bool top) {
+void drawImageSegmentDMA(int x, int y, int w, int h, const Image &image, int xOffset, int yOffset, bool top, bool layer) {
 	copyPalette(image, top);
 	for(int i=0;i<h;i++) {
-		dmaCopyHalfWords(0, image.bitmap.data()+((yOffset+i)*image.width)+xOffset, (u8*)(top ? BG_GFX : BG_GFX_SUB)+((y+i)*256)+x, w);
+		dmaCopyHalfWords(0, image.bitmap.data()+((yOffset+i)*image.width)+xOffset, gfxPointer(top, layer)+((y+i)*256)+x, w);
 	}
 }
 
-void drawImageSegmentScaled(int x, int y, int w, int h, float scaleX, float scaleY, const Image &image, int xOffset, int yOffset, bool top) {
-	if(scaleX == 1 && scaleY == 1)	drawImageSegment(x, y, w, h, image, xOffset, yOffset, top);
+void drawImageSegmentScaled(int x, int y, int w, int h, float scaleX, float scaleY, const Image &image, int xOffset, int yOffset, bool top, bool layer) {
+	if(scaleX == 1 && scaleY == 1)	drawImageSegment(x, y, w, h, image, xOffset, yOffset, top, layer);
 	else {
 		copyPalette(image, top);
 		Image buffer = {(u16)w, (u16)h, {}, image.palette};
@@ -247,12 +275,12 @@ void drawImageSegmentScaled(int x, int y, int w, int h, float scaleX, float scal
 				buffer.bitmap.push_back(image.bitmap[((i+yOffset)*image.width)+j+xOffset]);
 			}
 		}
-		drawImageScaled(x, y, scaleX, scaleY, buffer, top);
+		drawImageScaled(x, y, scaleX, scaleY, buffer, top, layer);
 	}
 }
 
-void drawOutline(int x, int y, int w, int h, u8 color, bool top) {
-	u8* dst = (u8*)(top ? BG_GFX : BG_GFX_SUB);
+void drawOutline(int x, int y, int w, int h, u8 color, bool top, bool layer) {
+	u8* dst = gfxPointer(top, layer);
 	h+=y;
 	if(y>=0 && y<192)	dmaFillHalfWords(color | color << 8, dst+((y*256)+(x < 0 ? 0 : x)), (x+w > 256 ? w+(256-x-w) : w));
 	for(y++;y<(h-1);y++) {
@@ -262,9 +290,9 @@ void drawOutline(int x, int y, int w, int h, u8 color, bool top) {
 	if(y>=0 && y<192)	dmaFillHalfWords(color | color << 8, dst+((y*256)+(x < 0 ? 0 : x)), (x+w > 256 ? w+(256-x-w) : w));
 }
 
-void drawRectangle(int x, int y, int w, int h, u8 color, bool top) { drawRectangle(x, y, w, h, color, color, top); }
-void drawRectangle(int x, int y, int w, int h, u8 color1, u8 color2, bool top) {
-	u8 *dst = (u8*)(top ? BG_GFX : BG_GFX_SUB);
+void drawRectangle(int x, int y, int w, int h, u8 color, bool top, bool layer) { drawRectangle(x, y, w, h, color, color, top, layer); }
+void drawRectangle(int x, int y, int w, int h, u8 color1, u8 color2, bool top, bool layer) {
+	u8 *dst = gfxPointer(top, layer);
 	for(int i=0;i<h;i++) {
 		if(w > 1) {
 			dmaFillHalfWords(((i%2) ? color1 : color2) | ((i%2) ? color1 : color2) << 8, dst+((y+i)*256+x), w);
@@ -424,7 +452,7 @@ void printTextTinted(const std::u16string &text, int palette, int xPos, int yPos
 			x = xPos+fontWidths[t*3];
 			yPos += tileHeight;
 		}
-		drawImage(x, yPos, image, top, palette*3);
+		drawImage(x, yPos, image, top, true, palette*3);
 		x += fontWidths[(t*3)+1];
 	}
 }
@@ -488,7 +516,7 @@ void printTextTintedScaled(const std::u16string &text, float scaleX, float scale
 			x = xPos+fontWidths[t*3];
 			yPos += tileHeight;
 		}
-		drawImageScaled(x, yPos, scaleX, scaleY, image, top, palette*3);
+		drawImageScaled(x, yPos, scaleX, scaleY, image, top, true, palette*3);
 		x += fontWidths[(t*3)+1]*scaleX;
 	}
 }

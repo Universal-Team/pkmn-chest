@@ -24,8 +24,8 @@ int main(int argc, char **argv) {
 	if(!(rand() % 100))	angleChange *= 2;
 	if(!(rand() % 128))	angleChange *= -1;
 
-	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, true);
-	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
+	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, true, false);
+	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
 
 	// Init filesystem
 	if(!fatInitDefault()) {
@@ -78,9 +78,10 @@ int main(int argc, char **argv) {
 
 	while(1) {
 		if(!loadSave(savePath = browseForSave())) {
-			drawRectangle(20, 20, 216, 152, DARK_RED, true);
+			drawRectangle(20, 20, 216, 152, DARK_RED, true, true);
 			printTextCentered(Lang::get("invalidSave"), 0, 24, true);
 			for(int i=0;i<120;i++)	swiWaitForVBlank();
+			drawRectangle(20, 20, 216, 152, CLEAR, true, true);
 			continue;
 		}
 		currentSaveBox = save->currentBox();

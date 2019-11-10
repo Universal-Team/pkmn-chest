@@ -38,7 +38,7 @@ std::vector<Label> aMenuTopBarButtons = {
 
 void drawAMenuButtons(std::vector<Label>& buttons, int buttonMode) {
 	for(unsigned i=0;i<buttons.size();i++) {
-		drawImage(buttons[i].x, buttons[i].y, boxButton, false);
+		drawImage(buttons[i].x, buttons[i].y, boxButton, false, true);
 		printTextMaxW(Lang::get(buttons[i].label), 80, 1, buttons[i].x+4, buttons[i].y+4, false);
 	}
 }
@@ -92,14 +92,15 @@ int aMenu(int pkmPos, std::vector<Label>& buttons, int buttonMode) {
 					setSpriteVisibility(arrowID, true, true);
 				}
 				updateOam();
-				drawRectangle(170, 0, 86, 192, DARKERER_GRAY, DARKER_GRAY, false);
+				drawRectangle(170, 0, 86, 192, CLEAR, false, true);
 				return 1;
 			} else if(menuSelection == 1) { // Edit
 				if(topScreen)	Banks::bank->pkm(showPokemonSummary(currentPokemon(pkmPos)), currentBankBox, pkmPos);
 				else	save->pkm(showPokemonSummary(currentPokemon(pkmPos)), currentSaveBox, pkmPos, false);
 
 				// Redraw screen
-				drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
+				drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
+				drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 				drawBox(false);
 				if(topScreen)	drawBox(topScreen);
 				drawPokemonInfo(currentPokemon(pkmPos));
@@ -110,25 +111,16 @@ int aMenu(int pkmPos, std::vector<Label>& buttons, int buttonMode) {
 					setSpriteVisibility(arrowID, true, true);
 				}
 				updateOam();
-				drawRectangle(170, 0, 86, 192, DARKERER_GRAY, DARKER_GRAY, false);
+				drawRectangle(170, 0, 86, 192, CLEAR, false, true);
 				return 2;
 			} else if(menuSelection == 3) { // Release
-				// Hide sprites below getBool message
-				for(int i=7;i<24;i++)
-					if(i%6)	setSpriteVisibility(i, false, false);
-				updateOam();
 				if(Input::getBool(Lang::get("release"), Lang::get("cancel"))) {
 					if(topScreen)	Banks::bank->pkm(save->emptyPkm(), currentBankBox, pkmPos);
 					else	save->pkm(save->emptyPkm(), currentSaveBox, pkmPos, false);
-					drawBox(false);
-					if(topScreen)	drawBox(topScreen);
-					drawRectangle(5+bankBox.width, 0, 256-(5+bankBox.width), 192, DARKERER_GRAY, DARKER_GRAY, false);
 					drawPokemonInfo(save->emptyPkm());
+					drawBox(topScreen);
 					goto back;
 				}
-				drawBox(false);
-				if(topScreen)	drawBox(topScreen);
-				drawRectangle(5+bankBox.width, 0, 256-(5+bankBox.width), 192, DARKERER_GRAY, DARKER_GRAY, false);
 				drawAMenuButtons(buttons, buttonMode);
 			} else if(menuSelection == 4) { // Dump
 				char path[256];
@@ -148,20 +140,20 @@ int aMenu(int pkmPos, std::vector<Label>& buttons, int buttonMode) {
 					setSpriteVisibility(arrowID, true, true);
 				}
 				updateOam();
-				drawRectangle(170, 0, 86, 192, DARKERER_GRAY, DARKER_GRAY, false);
+				drawRectangle(170, 0, 86, 192, CLEAR, false, true);
 				break;
 			}
 		} else if(optionSelected && buttonMode == 1) { // Top bar
 			optionSelected = false;
 			if(menuSelection == 0) { // Jump
 				// Clear buttons
-				drawRectangle(170, 0, 86, 192, DARKERER_GRAY, DARKER_GRAY, false);
+				drawRectangle(170, 0, 86, 192, CLEAR, false, true);
 
 				// Select a box
 				int num = selectBox(topScreen ? currentBankBox : currentSaveBox);
 
 				// Clear mini boxes
-				drawRectangle(170, 0, 86, 192, DARKERER_GRAY, DARKER_GRAY, false);
+				drawRectangle(170, 0, 86, 192, CLEAR, false, true);
 
 				if(num == -1 || num == (topScreen ? currentBankBox : currentSaveBox)) { // If B was pressed or the box wasn't changed
 					drawAMenuButtons(buttons, buttonMode);
@@ -171,10 +163,7 @@ int aMenu(int pkmPos, std::vector<Label>& buttons, int buttonMode) {
 					goto back;
 				}
 			} else if(menuSelection == 1) { // Rename
-				// Hide bottom screen sprites
-				for(int i=0;i<30;i++) {
-					setSpriteVisibility(i, false, false);
-				}
+				// Hide arrow sprite
 				setSpriteVisibility(arrowID, false, false);
 				updateOam();
 				std::string newName = Input::getLine(topScreen ? 16 : 8);
@@ -184,11 +173,10 @@ int aMenu(int pkmPos, std::vector<Label>& buttons, int buttonMode) {
 				}
 
 				// Redraw screen
-				drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
-				if(topScreen)	drawBox(topScreen);
-				drawAMenuButtons(buttons, buttonMode);
 				setSpriteVisibility(arrowID, false, true);
-				drawBox(false);
+				updateOam();
+				drawAMenuButtons(buttons, buttonMode);
+				drawBox(topScreen);
 			} else if(menuSelection == 2) { // Swap
 				std::vector<std::shared_ptr<PKX>> tempBox;
 				// Copy save Pokémon to a buffer
@@ -229,7 +217,7 @@ int aMenu(int pkmPos, std::vector<Label>& buttons, int buttonMode) {
 
 					// Redraw screen
 					setSpriteVisibility(arrowID, false, true);
-					drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
+					drawRectangle(170, 0, 86, 192, CLEAR, false, true);
 					drawAMenuButtons(buttons, buttonMode);
 					drawBox(false);
 				}
@@ -288,7 +276,8 @@ int aMenu(int pkmPos, std::vector<Label>& buttons, int buttonMode) {
 
 				// Reset & redraw screen
 				chdir(path);
-				drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
+				drawRectangle(0, 0, 256, 192, CLEAR, false, true);
+				drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
 				drawBox(false);
 				if(topScreen)	drawBox(topScreen);
 				drawPokemonInfo(currentPokemon(pkmPos));
@@ -335,7 +324,8 @@ int aMenu(int pkmPos, std::vector<Label>& buttons, int buttonMode) {
 				else	save->pkm(showPokemonSummary(pkm), currentSaveBox, pkmPos, false);
 
 				// Redraw screen
-				drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
+				drawRectangle(0, 0, 256, 192, CLEAR, false, true);
+				drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
 				drawBox(false);
 				if(topScreen)	drawBox(topScreen);
 				drawPokemonInfo(currentPokemon(pkmPos));

@@ -8,7 +8,8 @@
 #define DARK_GRAY		0xD
 #define DARKER_GRAY		0xE
 #define DARKERER_GRAY	0xF
-#define BLACK			0x0
+#define BLACK			0x4
+#define CLEAR			0x0
 
 // Colors
 #define RED			0x7

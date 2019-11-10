@@ -79,22 +79,27 @@ int pkmLang(void) {
 void drawMiniBoxes(int currentBox) {
 	if(currentBox < 0)	currentBox = (topScreen ? Banks::bank->boxes()-1 : save->maxBoxes()-1)+currentBox;
 	// Clear text
-	drawRectangle(210, 0, 46, 192, DARKERER_GRAY, DARKER_GRAY, false);
+	drawRectangle(210, 0, 46, 192, CLEAR, false, true);
+
+	// Load palette
+	for(unsigned int i=0;i<types.size();i++) {
+		BG_PALETTE_SUB[0xD0+i] = types[i].palette[(i==0 || i==8) ? 1 : 2];
+	}
 
 	for(int i=0;i<5;i++) {
-		drawRectangle(170, 10+(i*33), 35, 30, WHITE, false);
-		drawOutline(170, 10+(i*33), 35, 30, DARK_GRAY, false);
+		drawRectangle(170, 10+(i*33), 38, 32, WHITE, false, true);
+		drawOutline(170, 10+(i*33), 38, 32, DARK_GRAY, false, true);
 		for(int j=0;j<30;j++) {
 			if((topScreen ? Banks::bank->pkm(currentBox, j)->species() : save->pkm(currentBox, j)->species()) != 0) {
 				// Type 1
 				int type = topScreen ? Banks::bank->pkm(currentBox, j)->type1() : save->pkm(currentBox, j)->type1();
 				if(((topScreen ? Banks::bank->pkm(currentBox, j)->generation() : save->pkm(currentBox, j)->generation()) == Generation::FOUR) && type > 8)	type--;
-				drawRectangle(173+((j-((j/6)*6))*5), 13+((j/6)*5)+(i*33), 2, 4, types[type].palette[types[type].bitmap[types[type].width+1]], false);
+				drawRectangle(172+((j-((j/6)*6))*6), 12+((j/6)*6)+(i*33), 2, 4, 0xD0+type, false, true);
 
 				// Type 2
 				type = topScreen ? Banks::bank->pkm(currentBox, j)->type2() : save->pkm(currentBox, j)->type2();
 				if(((topScreen ? Banks::bank->pkm(currentBox, j)->generation() : save->pkm(currentBox, j)->generation()) == Generation::FOUR) && type > 8)	type--;
-				drawRectangle(175+((j-((j/6)*6))*5), 13+((j/6)*5)+(i*33), 2, 4, types[type].palette[types[type].bitmap[types[type].width+1]], false);
+				drawRectangle(174+((j-((j/6)*6))*6), 12+((j/6)*6)+(i*33), 2, 4, 0xD0+type, false, true);
 			}
 		}
 		// Print box number
@@ -170,14 +175,14 @@ int selectForm(int dexNo, int currentForm) {
 	}
 
 	// Draw background
-	drawRectangle(0, 60, 256, 72, DARK_GRAY, false);
-	drawOutline(0, 60, 256, 72, LIGHT_GRAY, false);
+	drawRectangle(0, 60, 256, 72, DARKERER_GRAY, DARKER_GRAY, false, true);
+	drawOutline(0, 60, 256, 72, LIGHT_GRAY, false, true);
 
 	// Draw forms
 	for(int i=0;i<formCounts[altIndex].noForms;i++) {
 		// TODO: Steal the party sprites or something
 		Image image = loadPokemonSprite(getPokemonIndex(dexNo, i));
-		drawImage((i*32)+(128-((32*formCounts[altIndex].noForms)/2)), 80, image, false, 0xC0);
+		drawImage((i*32)+(128-((32*formCounts[altIndex].noForms)/2)), 80, image, false, true, 0xC0);
 	}
 
 	// Move arrow to current form
@@ -225,10 +230,10 @@ int selectForm(int dexNo, int currentForm) {
 
 void drawItemList(int screenPos, std::vector<std::string> itemList) {
 	// Clear the screen
-	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
+	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
 
 	// Draw search icon
-	drawImage(256-search.width, 0, search, false);
+	drawImage(256-search.width, 0, search, false, false);
 
 	// Print items
 	for(unsigned i=0;i<std::min(9u, itemList.size()-screenPos);i++) {
@@ -330,7 +335,7 @@ int selectItem(int current, int start, int max, std::vector<std::string> &items)
 
 std::shared_ptr<PKX> selectMoves(std::shared_ptr<PKX> pkm) {
 	// Clear screen
-	drawImageDMA(0, 0, listBg, false);
+	drawImageDMA(0, 0, listBg, false, false);
 	printText(Lang::get("moves"), 4, 0, false);
 
 	// Print moves
@@ -366,6 +371,7 @@ std::shared_ptr<PKX> selectMoves(std::shared_ptr<PKX> pkm) {
 			Sound::play(Sound::click);
 			optionSelected = true;
 		} else if(pressed & KEY_B) {
+			drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 			Sound::play(Sound::back);
 			return pkm;
 		} else if(pressed & KEY_TOUCH) {
@@ -384,7 +390,7 @@ std::shared_ptr<PKX> selectMoves(std::shared_ptr<PKX> pkm) {
 			pkm->move(selection, selectItem(pkm->move(selection), 0, save->maxMove()+1, Lang::moves));
 
 			// Clear screen
-			drawImageDMA(0, 0, listBg, false);
+			drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 			printText(Lang::get("moves"), 4, 0, false);
 
 			// Print moves
@@ -400,7 +406,7 @@ std::shared_ptr<PKX> selectMoves(std::shared_ptr<PKX> pkm) {
 
 int selectNature(int currentNature) {
 	// Clear screen
-	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
+	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
 
 	// Draw labels (not a for loop as speed is 3rd)
 	{
@@ -479,14 +485,14 @@ int selectNature(int currentNature) {
 
 int selectPokeball(int currentBall) {
 	// Clear screen
-	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
+	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
 
 	// Draw Pokéballs
 	for(int y=0;y<5;y++) {
 		for(int x=0;x<5;x++) {
 			if(!(save->generation() != Generation::FIVE && (y*5)+x == 24)) {
 				std::pair<int, int> xy = getPokeballPosition((y*5)+x+1);
-				drawImageSegment((x*48)+24, (y*32)+24, 15, 15, ballSheet, xy.first, xy.second, false);
+				drawImageSegment((x*48)+24, (y*32)+24, 15, 15, ballSheet, xy.first, xy.second, false, false);
 			}
 		}
 	}
@@ -549,14 +555,14 @@ int selectPokeball(int currentBall) {
 
 int selectWallpaper(int currentWallpaper) {
 	// Clear screen
-	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
+	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
 
 	// Draw wallpapers
 	for(int y=0;y<4;y++) {
 		for(int x=0;x<6;x++) {
 			std::string path = boxBgPath(false, (y*6)+x);
 			Image image = loadImage(path);
-			drawImageScaled((x*36)+28, (y*36)+28, 0.125, 0.125, image, false);
+			drawImageScaled((x*36)+28, (y*36)+28, 0.125, 0.125, image, false, false);
 		}
 	}
 
@@ -615,7 +621,7 @@ int selectWallpaper(int currentWallpaper) {
 
 void drawOriginPage(std::shared_ptr<PKX> pkm, std::vector<std::string> &varText) {
 	// Clear screen
-	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
+	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
 
 	// Print text
 	varText = { 
@@ -739,17 +745,22 @@ std::shared_ptr<PKX> selectOrigin(std::shared_ptr<PKX> pkm) {
 	}
 }
 
-void drawStatsPage(std::shared_ptr<PKX> pkm) {
-	// Clear the screen
-	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
+void drawStatsPage(std::shared_ptr<PKX> pkm, bool background) {
+	if(background) {
+		// Clear the screen
+		drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
 
-	// Draw lines
-	for(unsigned i=1;i<(sizeof(textStatsC1)/sizeof(textStatsC1[0]));i++) {
-		drawRectangle(16, textStatsC1[i].y, 230, 1, LIGHT_GRAY, false);
+		// Draw lines
+		for(unsigned i=1;i<(sizeof(textStatsC1)/sizeof(textStatsC1[0]));i++) {
+			drawRectangle(16, textStatsC1[i].y, 230, 1, LIGHT_GRAY, false, false);
+		}
+		drawRectangle(128, 4, 1, 112, LIGHT_GRAY, false, false);
+		drawRectangle(168, 4, 1, 112, LIGHT_GRAY, false, false);
+		drawRectangle(208, 4, 1, 112, LIGHT_GRAY, false, false);
 	}
-	drawRectangle(128, 4, 1, 112, LIGHT_GRAY, false);
-	drawRectangle(168, 4, 1, 112, LIGHT_GRAY, false);
-	drawRectangle(208, 4, 1, 112, LIGHT_GRAY, false);
+
+	// Clear text
+	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 
 	// Print stat info labels
 	{
@@ -790,12 +801,12 @@ void drawStatsPage(std::shared_ptr<PKX> pkm) {
 
 	// Draw Hidden Power type
 	printText(Lang::get("hpType")+":", 20, 118, false);
-	drawImage(24+getTextWidth(Lang::get("hpType")+":"), 120, types[pkm->hpType()+1], false);
+	drawImage(24+getTextWidth(Lang::get("hpType")+":"), 120, types[pkm->hpType()+1], false, true);
 
 }
 
 std::shared_ptr<PKX> selectStats(std::shared_ptr<PKX> pkm) {
-	drawStatsPage(pkm);
+	drawStatsPage(pkm, true);
 	setSpritePosition(arrowID, false, 128+(textStatsC2[0].x+(getTextWidth(textStatsC2[0].text)/2))+2, textStatsC2[0].y-6);
 	setSpriteVisibility(arrowID, false, true);
 	updateOam();
@@ -868,7 +879,7 @@ std::shared_ptr<PKX> selectStats(std::shared_ptr<PKX> pkm) {
 			}
 			setSpriteVisibility(arrowID, false, true);
 			updateOam();
-			drawStatsPage(pkm);
+			drawStatsPage(pkm, false);
 		}
 
 		if(selection == 6) { // Hidden Power type

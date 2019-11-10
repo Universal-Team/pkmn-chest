@@ -28,7 +28,7 @@ std::vector<std::string> trainerText = {"name", "trainerID", "secretID", "money"
 
 void drawTrainerCard(void) {
 	// Draw background
-	drawImageDMA(0, 0, listBg, false);
+	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 	printText(Lang::get("trainerInfo"), 4, 0, false);
 
 	// Print labels
@@ -54,6 +54,7 @@ void drawTrainerCard(void) {
 
 void showTrainerCard(void) {
 	// Draw the trainer info
+	drawImageDMA(0, 0, listBg, false, false);
 	drawTrainerCard();
 
 	// Move arrow to first option
@@ -83,6 +84,7 @@ void showTrainerCard(void) {
 		} else if(pressed & KEY_A) {
 			optionSelected = true;
 		} else if(pressed & KEY_B) {
+			drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 			Sound::play(Sound::back);
 			return;
 		} else if(pressed & KEY_TOUCH) {

@@ -47,9 +47,10 @@ Image loadImage(std::string path);
  * int y is the Y position
  * const Image &image is the Image
  * bool top is whether to draw on the top or bottom screen
+ * bool layer is whether to draw on layer 3 (false) or layer 2 (true)
  * int paletteOffset is where to offset the palette to (default 0)
  */
-void drawImage(int x, int y, const Image &image, bool top, int paletteOffset = 0);
+void drawImage(int x, int y, const Image &image, bool top, bool layer, int paletteOffset = 0);
 
 /*
  * Faster image draw that doesn't skip transparency
@@ -57,8 +58,9 @@ void drawImage(int x, int y, const Image &image, bool top, int paletteOffset = 0
  * int y is the Y position
  * const Image &image is the Image
  * bool top is whether to draw on the top or bottom screen
+ * bool layer is whether to draw on layer 3 (false) or layer 2 (true)
  */
-void drawImageDMA(int x, int y, const Image &image, bool top);
+void drawImageDMA(int x, int y, const Image &image, bool top, bool layer);
 
 /*
  * Draws a scaled Image
@@ -68,9 +70,10 @@ void drawImageDMA(int x, int y, const Image &image, bool top);
  * float scaleY is the Scale to draw the Y at
  * const Image &image is the Image
  * bool top is whether to draw on the top or bottom screen
+ * bool layer is whether to draw on layer 3 (false) or layer 2 (true)
  * int paletteOffset is where to offset the palette to (default 0)
  */
-void drawImageScaled(int x, int y, float scaleX, float scaleY, const Image &image, bool top, int paletteOffset = 0);
+void drawImageScaled(int x, int y, float scaleX, float scaleY, const Image &image, bool top, bool layer, int paletteOffset = 0);
 
 /*
  * Draws a segment of an Image to the screen
@@ -82,8 +85,9 @@ void drawImageScaled(int x, int y, float scaleX, float scaleY, const Image &imag
  * int xOffset is the X position in the sheet to start at
  * int yOffset is the Y position in the sheet to start at
  * bool top is whether to draw on the top or bottom screen
+ * bool layer is whether to draw on layer 3 (false) or layer 2 (true)
  */
-void drawImageSegment(int x, int y, int w, int h, const Image &image, int xOffset, int yOffset, bool top);
+void drawImageSegment(int x, int y, int w, int h, const Image &image, int xOffset, int yOffset, bool top, bool layer);
 
 /*
  * Faster image segment draw that doesn't skip transparency
@@ -95,8 +99,9 @@ void drawImageSegment(int x, int y, int w, int h, const Image &image, int xOffse
  * int xOffset is the X position in the sheet to start at
  * int yOffset is the Y position in the sheet to start at
  * bool top is whether to draw on the top or bottom screen
+ * bool layer is whether to draw on layer 3 (false) or layer 2 (true)
  */
-void drawImageSegmentDMA(int x, int y, int w, int h, const Image &image, int xOffset, int yOffset, bool top);
+void drawImageSegmentDMA(int x, int y, int w, int h, const Image &image, int xOffset, int yOffset, bool top, bool layer);
 
 /*
  * Draws a scaled segment of an Image
@@ -110,8 +115,9 @@ void drawImageSegmentDMA(int x, int y, int w, int h, const Image &image, int xOf
  * int xOffset is the X position in the sheet to start at
  * int yOffset is the Y position in the sheet to start at
  * bool top is whether to draw on the top or bottom screen
+ * bool layer is whether to draw on layer 3 (false) or layer 2 (true)
  */
-void drawImageSegmentScaled(int x, int y, int w, int h, float scaleX, float scaleY, const Image &image, int xOffset, int yOffset, bool top);
+void drawImageSegmentScaled(int x, int y, int w, int h, float scaleX, float scaleY, const Image &image, int xOffset, int yOffset, bool top, bool layer);
 
 /*
  * Draws a rectangle outline of a given size at a given position
@@ -121,8 +127,9 @@ void drawImageSegmentScaled(int x, int y, int w, int h, float scaleX, float scal
  * int h is the Height
  * u8 color is the index of the color to use
  * bool top is whether to draw on the top or bottom screen
+ * bool layer is whether to draw on layer 3 (false) or layer 2 (true)
  */
-void drawOutline(int x, int y, int w, int h, u8 color, bool top);
+void drawOutline(int x, int y, int w, int h, u8 color, bool top, bool layer);
 
 /*
  * Draws a rectangle of a given size at a given position
@@ -132,8 +139,9 @@ void drawOutline(int x, int y, int w, int h, u8 color, bool top);
  * int h is the Height
  * u8 color is the index of the color to use
  * bool top is whether to draw on the top or bottom screen
+ * bool layer is whether to draw on layer 3 (false) or layer 2 (true)
  */
-void drawRectangle(int x, int y, int w, int h, u8 color, bool top);
+void drawRectangle(int x, int y, int w, int h, u8 color, bool top, bool layer);
 
 /*
  * Draws a rectangle of a given size at a given position
@@ -144,8 +152,9 @@ void drawRectangle(int x, int y, int w, int h, u8 color, bool top);
  * u8 color is the index of the even lines' color (0, 2, 4...)
  * u8 color is the index of the odd lines' color (1, 3, 5...)
  * bool top is whether to draw on the top or bottom screen
+ * bool layer is whether to draw on layer 3 (false) or layer 2 (true)
  */
-void drawRectangle(int x, int y, int w, int h, u8 color1, u8 color2, bool top);
+void drawRectangle(int x, int y, int w, int h, u8 color1, u8 color2, bool top, bool layer);
 
 /*
  * Creates a vector item and allocated VRAM for a sprite

@@ -216,7 +216,7 @@ void sortPokemon(bool top) {
 }
 void drawSortMenu(void) {
 	// Clear screen
-	drawImageDMA(0, 0, listBg, false);
+	drawImageDMA(0, 0, listBg, false, false);
 	printText(Lang::get("sort"), 4, 0, false);
 
 	// Print items
@@ -224,7 +224,7 @@ void drawSortMenu(void) {
 		printText(Lang::get("filter")+" "+std::to_string(i+1)+": "+Lang::get(sortText[int(sortTypes[i])]), 4, 16+(i*16), false);
 	}
 
-	drawImage(253-boxButton.width, 189-boxButton.height, boxButton, false);
+	drawImage(253-boxButton.width, 189-boxButton.height, boxButton, false, false);
 	printTextMaxW(Lang::get("sort"), boxButton.width-8, 1, 260-boxButton.width, 193-boxButton.height, false);
 }
 
@@ -240,7 +240,6 @@ void sortMenu(bool top) {
 		setSpriteVisibility(i, false, false);
 	}
 	updateOam();
-
 
 	bool optionSelected = false;
 	int held, pressed, selection = 0;

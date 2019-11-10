@@ -20,7 +20,7 @@ struct button {
 
 void showParty(int selection) {
 	for(int i=0;i<6;i++) {
-		drawImage(partyButtons[i].x, partyButtons[i].y, selection == i ? menuButtonBlue : menuButton, false);
+		drawImage(partyButtons[i].x, partyButtons[i].y, selection == i ? menuButtonBlue : menuButton, false, false);
 		if(save->pkm(i)->species() != 0) {
 			if(save->pkm(i)->nicknamed())	printText(save->pkm(i)->nickname(), partyButtons[i].x+47, partyButtons[i].y+14, false);
 			else	printText(Lang::species[save->pkm(i)->species()], partyButtons[i].x+47, partyButtons[i].y+14, false);
@@ -45,7 +45,8 @@ void fillPartySprites(void) {
 
 void manageParty(void) {
 	// Draw background
-	drawImageDMA(0, 0, menuBg, false);
+	drawImageDMA(0, 0, menuBg, false, false);
+	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 
 	showParty(-1);
 	fillPartySprites();
@@ -87,6 +88,7 @@ void manageParty(void) {
 				setSpriteVisibility(partyIconID[i], false, false);
 			}
 			updateOam();
+			drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 			Sound::play(Sound::back);
 			break;
 		}
@@ -101,7 +103,8 @@ void manageParty(void) {
 				save->pkm(showPokemonSummary(save->pkm(selectedOption)), selectedOption);
 
 				// Redraw background
-				drawImageDMA(0, 0, menuBg, false);
+				drawImageDMA(0, 0, menuBg, false, false);
+				drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 
 				// Show sprites
 				showParty(menuSelection);
