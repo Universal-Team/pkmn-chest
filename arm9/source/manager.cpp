@@ -11,16 +11,26 @@
 #include "lang.hpp"
 #include "loader.hpp"
 #include "loading.hpp"
+#include "party.hpp"
 #include "PKFilter.hpp"
 #include "sort.hpp"
 #include "sound.hpp"
 #include "xMenu.hpp"
 
-bool topScreen;
+#define PARTY_TRAY_X 20
+#define PARTY_TRAY_Y 48
+
+const std::pair<int, int> partySpritePos[] = {
+	{4,  0}, {44,  8},
+	{4, 32}, {44, 40},
+	{4, 64}, {44, 72},
+};
+
+bool topScreen, partyShown = false;
 int arrowID = 126, shinyID, currentSaveBox, currentBankBox, heldPokemonID = 125, keyboardSpriteID = 124, arrowMode = 0;
 std::vector<int> menuIconID, partyIconID;
 std::string savePath;
-Image arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, boxBgTop, boxButton, infoBox, keyboardKey, menuBg, menuButton, menuButtonBlue, search, shiny, listBg;
+Image arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, boxBgTop, boxButton, infoBox, keyboardKey, listBg, menuBg, menuButton, menuButtonBlue, party, search, shiny;
 std::vector<Image> types;
 FILE* pokemonGFX;
 std::shared_ptr<PKFilter> filter = std::make_shared<PKFilter>();
@@ -167,6 +177,7 @@ void loadGraphics(void) {
 	menuButton = loadImage("nitro:/graphics/menuButton.gfx");
 	menuButtonBlue = loadImage("nitro:/graphics/menuButtonBlue.gfx");
 	Image menuIconSheet = loadImage("nitro:/graphics/menuIconSheet.gfx");
+	party = loadImage("nitro:/graphics/party.gfx");
 	search = loadImage("nitro:/graphics/search.gfx");
 	shiny = loadImage("nitro:/graphics/shiny.gfx");
 
@@ -307,7 +318,9 @@ void drawBox(bool top) {
 	printTextCenteredTintedMaxW((top ? Banks::bank->boxName(currentBankBox) : save->boxName(currentSaveBox)), 110, 1, GRAY_TEXT, -44, 20, top);
 
 	if(!top) {
-		drawImage(0, 192-search.width, search, false, false);
+		drawImage(boxButton.width+5, 192-search.height, search, false, false);
+		printTextMaxW(Lang::get("party"), boxButton.width-8, 1, 4, 192-boxButton.height+4, false);
+		drawImage(0, 192-boxButton.height, boxButton, false, false);
 	}
 }
 
@@ -416,7 +429,7 @@ void manageBoxes(void) {
 			Sound::play(Sound::click);
 			if(arrowY == -1) {
 				if(heldPokemon.size() == 0)	aMenu(-1, aMenuTopBarButtons, 1);
-			} else {
+			} else if(arrowY < 5) {
 				if(heldPokemon.size() > 0) {
 					if(heldPokemon[0].position == (arrowY*6)+arrowX && heldPokemonBox == currentBox() && heldPokemonScreen == topScreen) {
 						// If in the held Pokémon's previous spot, just put held Pokémon back down
@@ -565,6 +578,51 @@ void manageBoxes(void) {
 				} else if(arrowMode == 0) {
 					aMenu((arrowY*6)+arrowX, aMenuEmptySlotButtons, 2);
 				}
+			} else {
+				toggleParty:
+				windowEnableSub(WINDOW_0);
+				bgWindowEnable(bg2Sub, WINDOW_0);
+				bgWindowEnable(bg3Sub, WINDOW_0);
+				bgWindowEnable(bg3Sub, WINDOW_OUT);
+				oamWindowEnable(&oamSub, WINDOW_0);
+				oamWindowEnable(&oamSub, WINDOW_OUT);
+
+				windowSetBoundsSub(WINDOW_0, 0, PARTY_TRAY_Y, 255, 192-boxButton.height);
+				drawImage(PARTY_TRAY_X, PARTY_TRAY_Y, party, false, true);
+				if(partyShown) {
+					for(int i=0;i<30;i++) {
+						setSpriteAlpha(i, false, 15);
+					}
+					int scroll = 255;
+					while(scroll > 120) {
+						bgSetScroll(bg2Sub, 0, scroll);
+						for(int j=0;j<6;j++) {
+							setSpritePosition(partyIconID[j], false, PARTY_TRAY_X + partySpritePos[j].first, PARTY_TRAY_Y + partySpritePos[j].second);
+						}
+						updateOam();
+						bgUpdate();
+						scroll -= 6;
+						swiWaitForVBlank();
+					}
+				} else {
+					for(int i=0;i<30;i++) {
+						setSpriteAlpha(i, false, 4);
+					}
+					int scroll = 120;
+					while(scroll < 256) {
+						bgSetScroll(bg2Sub, 0, scroll);
+						for(int j=0;j<6;j++) {
+							setSpritePosition(partyIconID[j], false, PARTY_TRAY_X + partySpritePos[j].first, PARTY_TRAY_Y + partySpritePos[j].second);
+						}
+						updateOam();
+						bgUpdate();
+						scroll += 6;
+						swiWaitForVBlank();
+					}
+					bgSetScroll(bg2Sub, 0, 0);
+					bgUpdate();
+				}
+				partyShown = !partyShown;
 			}
 		} else if(pressed & KEY_Y) {
 			if(heldPokemon.size() == 0) {
@@ -611,7 +669,9 @@ void manageBoxes(void) {
 			if((touch.px > 26 && touch.px < 141 && touch.py > 19 && touch.py < 37)) {
 				arrowY = -1;
 				goto selection;
-			} else if(touch.px <= search.width && touch.py >= 192-search.height) {
+			} else if(touch.px <= boxButton.width && touch.py >= 192-boxButton.height) {
+				goto toggleParty;
+			} else if(touch.px >= boxButton.width+5 && touch.px <= boxButton.width+5+search.width && touch.py >= 192-search.height) {
 				goto filter;
 			}
 		}

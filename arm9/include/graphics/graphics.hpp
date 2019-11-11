@@ -6,9 +6,6 @@
 
 #include "utils.hpp"
 
-// Converts 3 0-255 (0x0-0xff) values to a BGR15 value
-#define BGR15(b, g, r)   ((b)|((g)<<5)|((r)<<10))
-
 struct Image {
 	u16 width;
 	u16 height;
@@ -28,6 +25,7 @@ struct Sprite {
 };
 
 extern std::vector<u16> font;
+extern int bg3Main, bg2Main, bg3Sub, bg2Sub, bg1Sub;
 
 // Initializes the screens for drawing
 void initGraphics(void);

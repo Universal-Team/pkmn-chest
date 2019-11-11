@@ -8,7 +8,7 @@ std::vector<char> fontTiles;
 std::vector<char> fontWidths;
 std::vector<u16> fontMap;
 u16 tileSize, tileWidth, tileHeight;
-u8 *bg3Main, *bg2Main, *bg3Sub, *bg2Sub, *bg1Sub;
+int bg3Main, bg2Main, bg3Sub, bg2Sub, bg1Sub;
 
 #define sprites(top) (top ? spritesMain : spritesSub)
 #define maxSprite(top) (top ? maxSpriteMain : maxSpriteSub)
@@ -54,21 +54,20 @@ void initGraphics(void) {
 	oamInit(&oamMain, SpriteMapping_Bmp_1D_128, false);
 
 	// Init for background
-	int id = bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
-	bg3Main = (u8*)bgGetGfxPtr(id);
-	bgSetPriority(id, 3);
+	bg3Main = bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
+	bgSetPriority(bg3Main, 3);
 
-	id = bgInit(2, BgType_Bmp8, BgSize_B8_256x256, 3, 0);
-	bg2Main = (u8*)bgGetGfxPtr(id);
-	bgSetPriority(id, 2);
+	bg2Main = bgInit(2, BgType_Bmp8, BgSize_B8_256x256, 3, 0);
+	bgSetPriority(bg2Main, 2);
 
-	id = bgInitSub(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
-	bg3Sub = (u8*)bgGetGfxPtr(id);
-	bgSetPriority(id, 3);
+	bg3Sub = bgInitSub(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
+	bgSetPriority(bg3Sub, 3);
 
-	id = bgInitSub(2, BgType_Bmp8, BgSize_B8_256x256, 3, 0);
-	bg2Sub = (u8*)bgGetGfxPtr(id);
-	bgSetPriority(id, 2);
+	bg2Sub = bgInitSub(2, BgType_Bmp8, BgSize_B8_256x256, 3, 0);
+	bgSetPriority(bg2Sub, 2);
+
+	// Enable wrapping
+	bgWrapOn(bg2Sub);
 
 	u16 palette[] = {0, 0xFBDE, 0xBDEF, // WHITE_TEXT
 					 0, 0x8C63, 0xCA52, // GRAY_TEXT
@@ -196,15 +195,15 @@ void copyPalette(const Image &image, bool top, int paletteOffset = 0) {
 u8 *gfxPointer(bool top, bool layer) {
 	if(top) {
 		if(layer) {
-			return bg2Main;
+			return (u8*)bgGetGfxPtr(bg2Main);
 		} else {
-			return bg3Main;
+			return (u8*)bgGetGfxPtr(bg3Main);
 		}
 	} else {
 		if(layer) {
-			return bg2Sub;
+			return (u8*)bgGetGfxPtr(bg2Sub);
 		} else {
-			return bg3Sub;
+			return (u8*)bgGetGfxPtr(bg3Sub);
 		}
 	}
 }
