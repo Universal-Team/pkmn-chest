@@ -373,7 +373,7 @@ void fillSpriteText(int id, bool top, const std::u16string &text, int palette, i
 			image.bitmap.push_back(fontTiles[i+(t*tileSize)] & 3);
 		}
 
-		dmaCopyHalfWords(0, BG_PALETTE+(palette*3), image.palette.data(), 8);
+		tonccpy(image.palette.data(), BG_PALETTE+(palette*3), 8);
 
 		xPos += fontWidths[t*3];
 		fillSpriteImage(id, top, 32, xPos, yPos, image, true);
