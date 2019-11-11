@@ -331,10 +331,12 @@ void fillSpriteColor(int id, bool top, u16 color) {
 	toncset16(sprites(top)[id].gfx, color, size);
 }
 
-void fillSpriteImage(int id, bool top, int spriteW, int x, int y, const Image &image) {
+void fillSpriteImage(int id, bool top, int spriteW, int x, int y, const Image &image, bool skipAlpha) {
 	for(int i=0;i<image.height;i++) {
 		for(int j=0;j<image.width;j++) {
-			sprites(top)[id].gfx[((y+i)*spriteW)+(x+j)] = image.palette[image.bitmap[((i)*image.width)+j]];
+			if(!(skipAlpha && image.palette[image.bitmap[(i*image.width)+j]] == 0)) {
+				sprites(top)[id].gfx[((y+i)*spriteW)+(x+j)] = image.palette[image.bitmap[(i*image.width)+j]];
+			}
 		}
 	}
 }
@@ -358,12 +360,12 @@ void fillSpriteSegment(int id, bool top, int spriteW, int x, int y, int w, int h
 	}
 }
 
-void fillSpriteText(int id, bool top, const std::string &text, u16 color, int xPos, int yPos, bool invert) { fillSpriteText(id, top, StringUtils::UTF8toUTF16(text), color, xPos, yPos, invert); };
+void fillSpriteText(int id, bool top, const std::string &text, int palette, int xPos, int yPos) { fillSpriteText(id, top, StringUtils::UTF8toUTF16(text), palette, xPos, yPos); };
 
-void fillSpriteText(int id, bool top, const std::u16string &text, u16 color, int xPos, int yPos, bool invert) {
+void fillSpriteText(int id, bool top, const std::u16string &text, int palette, int xPos, int yPos) {
 	for(unsigned c=0;c<text.size();c++) {
 		int t = getCharIndex(text[c]);
-		Image image = {tileWidth, tileHeight, {}, {0x7C1F, (u16)(color & (invert ? 0xBDEF : 0xFBDE)), (u16)(color & (invert ? 0xFBDE : 0xBDEF)), 0x7C1F}, 0};
+		Image image = {tileWidth, tileHeight, {}, {0, 0, 0, 0}, 0};
 		for(int i=0;i<tileSize;i++) {
 			image.bitmap.push_back(fontTiles[i+(t*tileSize)]>>6 & 3);
 			image.bitmap.push_back(fontTiles[i+(t*tileSize)]>>4 & 3);
@@ -371,8 +373,10 @@ void fillSpriteText(int id, bool top, const std::u16string &text, u16 color, int
 			image.bitmap.push_back(fontTiles[i+(t*tileSize)] & 3);
 		}
 
+		dmaCopyHalfWords(0, BG_PALETTE+(palette*3), image.palette.data(), 8);
+
 		xPos += fontWidths[t*3];
-		fillSpriteImage(id, top, 32, xPos, yPos, image);
+		fillSpriteImage(id, top, 32, xPos, yPos, image, true);
 		xPos += fontWidths[(t*3)+1];
 	}
 }

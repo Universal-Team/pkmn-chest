@@ -503,9 +503,11 @@ void manageBoxes(void) {
 								}
 							}
 							fillSpriteColor(heldPokemonID, true, 0); // Fill the sprite with transparency
-							fillSpriteText(heldPokemonID, true, StringUtils::UTF8toUTF16(std::to_string(heldPokemon.size())), GRAY, 32-getTextWidth(std::to_string(heldPokemon.size())), 16, true);
+							fillSpriteImage(heldPokemonID, true, 32, 16, 16, keyboardKey);
+							fillSpriteText(heldPokemonID, true, StringUtils::UTF8toUTF16(std::to_string(heldPokemon.size())), WHITE_TEXT, 24-(getTextWidth(std::to_string(heldPokemon.size()))/2), 16);
 							fillSpriteColor(heldPokemonID, false, 0); // Fill the sprite with transparency
-							fillSpriteText(heldPokemonID, false, StringUtils::UTF8toUTF16(std::to_string(heldPokemon.size())), GRAY, 32-getTextWidth(std::to_string(heldPokemon.size())), 16, true);
+							fillSpriteImage(heldPokemonID, false, 32, 16, 16, keyboardKey);
+							fillSpriteText(heldPokemonID, false, StringUtils::UTF8toUTF16(std::to_string(heldPokemon.size())), WHITE_TEXT, 24-(getTextWidth(std::to_string(heldPokemon.size()))/2), 16);
 							setSpriteVisibility(heldPokemonID, topScreen, true);
 							updateOam();
 							heldPokemonBox = currentBox();

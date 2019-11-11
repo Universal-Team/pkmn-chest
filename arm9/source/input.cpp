@@ -350,7 +350,7 @@ void processInputABC(u16 held, unsigned maxLength) {
 			for(unsigned i=0;i<character->size();i++) {
 				std::u16string str = character->substr(i, 1);
 				if(upper)	std::transform(str.begin(), str.end(), str.begin(), ::toupper);
-				fillSpriteText(keyboardSpriteID, false, str, WHITE, offsets[i].first-(getTextWidth(str)/2), offsets[i].second, false);
+				fillSpriteText(keyboardSpriteID, false, str, WHITE_TEXT, offsets[i].first-(getTextWidth(str)/2), offsets[i].second);
 			}
 		}
 
@@ -439,7 +439,7 @@ void processInputAIU(u16 held, unsigned maxLength) {
 			updateOam();
 
 			std::u16string str; str += isKatakana ? tokatakana(character[0]) : character[0];
-			fillSpriteText(keyboardSpriteID, false, str, WHITE, 16-(getTextWidth(str)/2), 8, false);
+			fillSpriteText(keyboardSpriteID, false, str, WHITE_TEXT, 16-(getTextWidth(str)/2), 8);
 		}
 
 		if(held & (KEY_A | KEY_B | KEY_X | KEY_Y | KEY_START)) {

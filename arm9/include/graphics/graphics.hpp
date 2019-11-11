@@ -179,8 +179,9 @@ void fillSpriteColor(int id, bool top, u16 color);
  * int x is the x position to draw at
  * int y is the y positoin to draw at
  * const Image &image is the Image
+ * bool skipAlpha is whether to draw transparent pixels
  */
-void fillSpriteImage(int id, bool top, int spriteW, int x, int y, const Image &image);
+void fillSpriteImage(int id, bool top, int spriteW, int x, int y, const Image &image, bool skipAlpha = false);
 
 /*
  * Fills a sprite from a scaled Image
@@ -213,12 +214,11 @@ void fillSpriteSegment(int id, bool top, int spriteW, int x, int y, int w, int h
  * Fills a sprite with text
  * int id is the sprite to print to
  * std::string text is the text that will be printed
- * u16 color is the color to tint the text
+ * int palette is the color to tint the text
  * int xPos is the X position to print at
  * int yPos is the Y position to print at
- * bool invert is whether to swap the colors
  */
-void fillSpriteText(int id, bool top, const std::string &text, u16 color, int xPos, int yPos, bool invert = false);
+void fillSpriteText(int id, bool top, const std::string &text, int palette, int xPos, int yPos);
 
 /**
  * Fills a sprite with text
@@ -227,9 +227,8 @@ void fillSpriteText(int id, bool top, const std::string &text, u16 color, int xP
  * u16 color is the color to tint the text
  * int xPos is the X position to print at
  * int yPos is the Y position to print at
- * bool invert is whether to swap the colors
  */
-void fillSpriteText(int id, bool top, const std::u16string &text, u16 color, int xPos, int yPos, bool invert = false);
+void fillSpriteText(int id, bool top, const std::u16string &text, int palette, int xPos, int yPos);
 
 /*
  * Sets the sprite to be drawn
