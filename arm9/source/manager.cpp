@@ -386,7 +386,7 @@ void manageBoxes(void) {
 		if(held & KEY_UP) {
 			if(arrowY > (topScreen ? -1 : -2))	arrowY--;
 		} else if(held & KEY_DOWN) {
-			if(arrowY < (topScreen ? 5 : 4))	arrowY++;
+			if(arrowY < 5)	arrowY++;
 		}
 		if(held & KEY_LEFT && arrowY != -1) {
 			if(arrowX > 0)	arrowX--;
@@ -580,46 +580,62 @@ void manageBoxes(void) {
 				}
 			} else {
 				toggleParty:
+
+				// Set up windows
 				windowEnableSub(WINDOW_0);
 				bgWindowEnable(bg2Sub, WINDOW_0);
 				bgWindowEnable(bg3Sub, WINDOW_0);
 				bgWindowEnable(bg3Sub, WINDOW_OUT);
 				oamWindowEnable(&oamSub, WINDOW_0);
-				oamWindowEnable(&oamSub, WINDOW_OUT);
+				windowSetBoundsSub(WINDOW_0, 0, 36, 255, 192-boxButton.height);
 
-				windowSetBoundsSub(WINDOW_0, 0, PARTY_TRAY_Y, 255, 192-boxButton.height);
+				// Draw party tray background
 				drawImage(PARTY_TRAY_X, PARTY_TRAY_Y, party, false, true);
+
+				// Fill sprites
+				for(int i=0;i<6;i++) {
+					Image image = loadPokemonSprite(getPokemonIndex(save->pkm(i)));
+					fillSpriteImage(partyIconID[i], false, 32, 0, 0, image);
+					setSpriteVisibility(partyIconID[i], false, true);
+				}
+
 				if(partyShown) {
-					for(int i=0;i<30;i++) {
-						setSpriteAlpha(i, false, 15);
-					}
-					int scroll = 255;
-					while(scroll > 120) {
+					int scroll = 0;
+					while(scroll > -130) {
 						bgSetScroll(bg2Sub, 0, scroll);
 						for(int j=0;j<6;j++) {
-							setSpritePosition(partyIconID[j], false, PARTY_TRAY_X + partySpritePos[j].first, PARTY_TRAY_Y + partySpritePos[j].second);
+							setSpritePosition(partyIconID[j], false, PARTY_TRAY_X + partySpritePos[j].first, PARTY_TRAY_Y + partySpritePos[j].second - scroll);
 						}
 						updateOam();
 						bgUpdate();
 						scroll -= 6;
 						swiWaitForVBlank();
 					}
+
+					// Reset sprite alpha
+					for(int i=0;i<30;i++) {
+						setSpriteAlpha(i, false, 15);
+					}
 				} else {
+					// Fade out sprites
 					for(int i=0;i<30;i++) {
 						setSpriteAlpha(i, false, 4);
 					}
-					int scroll = 120;
-					while(scroll < 256) {
+					int scroll = -120;
+					while(scroll < 0) {
 						bgSetScroll(bg2Sub, 0, scroll);
 						for(int j=0;j<6;j++) {
-							setSpritePosition(partyIconID[j], false, PARTY_TRAY_X + partySpritePos[j].first, PARTY_TRAY_Y + partySpritePos[j].second);
+							setSpritePosition(partyIconID[j], false, PARTY_TRAY_X + partySpritePos[j].first, PARTY_TRAY_Y + partySpritePos[j].second - scroll);
 						}
 						updateOam();
 						bgUpdate();
 						scroll += 6;
 						swiWaitForVBlank();
 					}
-					bgSetScroll(bg2Sub, 0, 0);
+					for(int j=0;j<6;j++) {
+						setSpritePosition(partyIconID[j], false, PARTY_TRAY_X + partySpritePos[j].first, PARTY_TRAY_Y + partySpritePos[j].second);
+					}
+					bgSetScrollf(bg2Sub, 0, 0);
 					bgUpdate();
 				}
 				partyShown = !partyShown;
@@ -692,7 +708,7 @@ void manageBoxes(void) {
 				setSpriteVisibility(heldPokemonID, false, false);
 				setSpriteVisibility(heldPokemonID, true, true);
 			}
-		} else if(arrowY == 5) {
+		} else if(arrowY == 5 && topScreen) {
 			// If the Arrow Y is at 5, switch to the bottom screen
 			arrowY = -1;
 			topScreen = false;
@@ -722,9 +738,14 @@ void manageBoxes(void) {
 			// If the Arrow Y is at -1 (box title), draw it in the middle
 			setSpritePosition(arrowID, topScreen, 90, 16);
 			if(heldPokemon.size())	setSpritePosition(heldPokemonID, topScreen, 82, 12);
-		} else {
+		} else if(arrowY < 5) {
 			// Otherwise move it to the spot in the box it's at
 			setSpritePosition(arrowID, topScreen, (arrowX*24)+24, (arrowY*24)+36);
+			if(heldPokemon.size())	setSpritePosition(heldPokemonID, topScreen, (arrowX*24)+16, (arrowY*24)+32);
+		} else {
+			// Or move it to Party button
+			// TODO: Fix arrow positioning
+			setSpritePosition(arrowID, topScreen, 24, 192-16);
 			if(heldPokemon.size())	setSpritePosition(heldPokemonID, topScreen, (arrowX*24)+16, (arrowY*24)+32);
 		}
 		updateOam();

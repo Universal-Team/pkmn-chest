@@ -67,7 +67,7 @@ void initGraphics(void) {
 	bgSetPriority(bg2Sub, 2);
 
 	// Enable wrapping
-	bgWrapOn(bg2Sub);
+	// bgWrapOn(bg2Sub);
 
 	u16 palette[] = {0, 0xFBDE, 0xBDEF, // WHITE_TEXT
 					 0, 0x8C63, 0xCA52, // GRAY_TEXT
