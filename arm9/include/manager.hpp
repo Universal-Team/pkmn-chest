@@ -7,10 +7,10 @@
 #include "Sav.hpp"
 
 extern bool topScreen;
-extern int arrowID, shinyID, currentSaveBox, currentBankBox, heldPokemonID, keyboardSpriteID, arrowMode;
+extern int arrowID, currentSaveBox, currentBankBox, heldPokemonID, keyboardSpriteID, arrowMode;
 extern std::vector<int> menuIconID, partyIconID;
 extern std::string savePath;
-extern Image arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, boxBgTop, boxButton, infoBox, keyboardKey, menuBg, menuButton, menuButtonBlue, optionsBg, search, shiny, listBg;
+extern Image arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, boxBgTop, boxButton, infoBox, keyboardKey, listBg, menuBg, menuButton, menuButtonBlue, party, search, shiny;
 extern std::vector<Image> types;
 
 // Returns the current box for the cursor's current screen

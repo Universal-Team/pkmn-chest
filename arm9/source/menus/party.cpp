@@ -8,6 +8,135 @@
 #include "summary.hpp"
 #include "sound.hpp"
 
+#define PARTY_TRAY_X 20
+#define PARTY_TRAY_Y 48
+
+bool partyShown = false;
+int partyX = 0, partyY = 0;
+
+const std::pair<int, int> partySpritePos[] = {
+	{4,  0}, {44,  8},
+	{4, 32}, {44, 40},
+	{4, 64}, {44, 72},
+};
+
+void showParty(void) {
+	// Set up windows
+	windowEnableSub(WINDOW_0);
+	bgWindowEnable(bg2Sub, WINDOW_0);
+	bgWindowEnable(bg3Sub, WINDOW_0);
+	bgWindowEnable(bg3Sub, WINDOW_OUT);
+	oamWindowEnable(&oamSub, WINDOW_0);
+	windowSetBoundsSub(WINDOW_0, 0, 0, 255, 192-boxButton.height);
+	bgSetScroll(bg2Sub, 0, -120);
+	bgUpdate();
+
+	// Draw party tray background
+	drawImage(PARTY_TRAY_X, PARTY_TRAY_Y, party, false, true);
+
+	// Fill sprites
+	for(int i=0;i<6;i++) {
+		Image image = loadPokemonSprite(getPokemonIndex(save->pkm(i)));
+		fillSpriteImage(partyIconID[i], false, 32, 0, 0, image);
+		setSpriteVisibility(partyIconID[i], false, true);
+	}
+
+	// Fade out sprites
+	for(int i=0;i<30;i++) {
+		setSpriteAlpha(i, false, 4);
+	}
+
+	// Scroll up
+	partyY = 120, partyX = (arrowMode == 0 ? 0 : 150);
+	while(partyY > 0) {
+		partyY -= 6;
+		bgSetScroll(bg2Sub, -partyX, -partyY);
+		for(int j=0;j<6;j++) {
+			setSpritePosition(partyIconID[j], false, PARTY_TRAY_X + partySpritePos[j].first + partyX, PARTY_TRAY_Y + partySpritePos[j].second + partyY);
+		}
+		updateOam();
+		bgUpdate();
+		swiWaitForVBlank();
+	}
+
+	// Align to y = 0
+	partyY = 0;
+	for(int j=0;j<6;j++) {
+		setSpritePosition(partyIconID[j], false, PARTY_TRAY_X + partySpritePos[j].first + partyX, PARTY_TRAY_Y + partySpritePos[j].second + partyY);
+	}
+	bgSetScroll(bg2Sub, -partyX, -partyY);
+	bgUpdate();
+}
+
+void hideParty(void) {
+	// Scroll down
+	while(partyY < 130) {
+		partyY += 6;
+		bgSetScroll(bg2Sub, -partyX, -partyY);
+		for(int j=0;j<6;j++) {
+			setSpritePosition(partyIconID[j], false, PARTY_TRAY_X + partySpritePos[j].first + partyX, std::min(PARTY_TRAY_Y + partySpritePos[j].second + partyY, 192));
+		}
+		updateOam();
+		bgUpdate();
+		swiWaitForVBlank();
+	}
+
+	// Reset sprite alpha
+	for(int i=0;i<30;i++) {
+		setSpriteAlpha(i, false, 15);
+	}
+
+	// Disable windows
+	windowDisableSub(WINDOW_0);
+	bgSetScroll(bg2Sub, 0, 0);
+	bgUpdate();
+
+	// Clear party tray
+	drawRectangle(PARTY_TRAY_X, PARTY_TRAY_Y, party.width, party.height, CLEAR, false, true);
+
+	// Hide party sprites
+	for(int i=0;i<6;i++) {
+		setSpriteVisibility(partyIconID[i], false, false);
+	}
+	updateOam();
+}
+
+void toggleParty(void) {
+	if(partyShown) {
+		hideParty();
+	} else {
+		showParty();
+	}
+	partyShown = !partyShown;
+}
+
+void moveParty(void) {
+	if(arrowMode == 0) {
+		while(partyX > 0) {
+			partyX -= 8;
+			bgSetScroll(bg2Sub, -partyX, -partyY);
+			for(int j=0;j<6;j++) {
+				setSpritePosition(partyIconID[j], false, PARTY_TRAY_X + partySpritePos[j].first + partyX, PARTY_TRAY_Y + partySpritePos[j].second);
+			}
+			updateOam();
+			bgUpdate();
+			swiWaitForVBlank();
+		}
+	} else {
+		while(partyX < 150) {
+			partyX += 8;
+			bgSetScroll(bg2Sub, -partyX, -partyY);
+			for(int j=0;j<6;j++) {
+				setSpritePosition(partyIconID[j], false, PARTY_TRAY_X + partySpritePos[j].first + partyX, PARTY_TRAY_Y + partySpritePos[j].second);
+			}
+			updateOam();
+			bgUpdate();
+			swiWaitForVBlank();
+		}
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
 struct button {
 	int x;
 	int y;

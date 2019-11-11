@@ -17,17 +17,8 @@
 #include "sound.hpp"
 #include "xMenu.hpp"
 
-#define PARTY_TRAY_X 20
-#define PARTY_TRAY_Y 48
-
-const std::pair<int, int> partySpritePos[] = {
-	{4,  0}, {44,  8},
-	{4, 32}, {44, 40},
-	{4, 64}, {44, 72},
-};
-
-bool topScreen, partyShown = false;
-int arrowID = 126, shinyID, currentSaveBox, currentBankBox, heldPokemonID = 125, keyboardSpriteID = 124, arrowMode = 0;
+bool topScreen;
+int arrowID = 126, currentSaveBox, currentBankBox, heldPokemonID = 125, keyboardSpriteID = 124, arrowMode = 0;
 std::vector<int> menuIconID, partyIconID;
 std::string savePath;
 Image arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, boxBgTop, boxButton, infoBox, keyboardKey, listBg, menuBg, menuButton, menuButtonBlue, party, search, shiny;
@@ -352,9 +343,6 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 
 		// Print Level
 		printTextTinted(Lang::get("lv")+std::to_string(pkm->level()), GRAY_TEXT, 170, 57, true);
-	} else {
-		// Hide shiny star
-		setSpriteVisibility(shinyID, true, false);
 	}
 }
 
@@ -579,74 +567,11 @@ void manageBoxes(void) {
 					aMenu((arrowY*6)+arrowX, aMenuEmptySlotButtons, 2);
 				}
 			} else {
-				toggleParty:
-
-				// Set up windows
-				windowEnableSub(WINDOW_0);
-				bgWindowEnable(bg2Sub, WINDOW_0);
-				bgWindowEnable(bg3Sub, WINDOW_0);
-				bgWindowEnable(bg3Sub, WINDOW_OUT);
-				oamWindowEnable(&oamSub, WINDOW_0);
-				windowSetBoundsSub(WINDOW_0, 0, 36, 255, 192-boxButton.height);
-
-				// Draw party tray background
-				drawImage(PARTY_TRAY_X, PARTY_TRAY_Y, party, false, true);
-
-				// Fill sprites
-				for(int i=0;i<6;i++) {
-					Image image = loadPokemonSprite(getPokemonIndex(save->pkm(i)));
-					fillSpriteImage(partyIconID[i], false, 32, 0, 0, image);
-					setSpriteVisibility(partyIconID[i], false, true);
-				}
-
-				if(partyShown) {
-					int scroll = 0;
-					while(scroll > -130) {
-						bgSetScroll(bg2Sub, 0, scroll);
-						for(int j=0;j<6;j++) {
-							setSpritePosition(partyIconID[j], false, PARTY_TRAY_X + partySpritePos[j].first, PARTY_TRAY_Y + partySpritePos[j].second - scroll);
-						}
-						updateOam();
-						bgUpdate();
-						scroll -= 6;
-						swiWaitForVBlank();
-					}
-
-					// Reset sprite alpha
-					for(int i=0;i<30;i++) {
-						setSpriteAlpha(i, false, 15);
-					}
-				} else {
-					// Fade out sprites
-					for(int i=0;i<30;i++) {
-						setSpriteAlpha(i, false, 4);
-					}
-					int scroll = -120;
-					while(scroll < 0) {
-						bgSetScroll(bg2Sub, 0, scroll);
-						for(int j=0;j<6;j++) {
-							setSpritePosition(partyIconID[j], false, PARTY_TRAY_X + partySpritePos[j].first, PARTY_TRAY_Y + partySpritePos[j].second - scroll);
-						}
-						updateOam();
-						bgUpdate();
-						scroll += 6;
-						swiWaitForVBlank();
-					}
-					for(int j=0;j<6;j++) {
-						setSpritePosition(partyIconID[j], false, PARTY_TRAY_X + partySpritePos[j].first, PARTY_TRAY_Y + partySpritePos[j].second);
-					}
-					bgSetScrollf(bg2Sub, 0, 0);
-					bgUpdate();
-				}
-				partyShown = !partyShown;
+				toggleParty();
 			}
 		} else if(pressed & KEY_Y) {
 			if(heldPokemon.size() == 0) {
 				filter:
-				// Hide sprites below Input::getBool
-				for(int i=7;i<24;i++)	if(i%6)	setSpriteVisibility(i, false, false);
-				setSpriteVisibility(arrowID, false, false);
-				updateOam();
 				if(Input::getBool(Lang::get("filter"), Lang::get("sort"))) {
 					drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 					changeFilter(filter);
@@ -686,13 +611,13 @@ void manageBoxes(void) {
 				arrowY = -1;
 				goto selection;
 			} else if(touch.px <= boxButton.width && touch.py >= 192-boxButton.height) {
-				goto toggleParty;
+				toggleParty();
 			} else if(touch.px >= boxButton.width+5 && touch.px <= boxButton.width+5+search.width && touch.py >= 192-search.height) {
 				goto filter;
 			}
 		}
 
-		if(pressed & KEY_X && heldPokemon.size() == 0) {
+		if(pressed & KEY_X && heldPokemon.size() == 0 && !partyShown) {
 			Sound::play(Sound::click);
 			drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 			if(!xMenu())	break;
@@ -726,6 +651,10 @@ void manageBoxes(void) {
 			else	arrowMode = 0;
 
 			fillArrow(arrowMode);
+
+			if(partyShown) {
+				moveParty();
+			}
 		}
 
 		if((held & KEY_UP || held & KEY_DOWN || held & KEY_LEFT || held & KEY_RIGHT || held & KEY_L || held & KEY_R || held & KEY_TOUCH) && heldPokemon.size() == 0) {
