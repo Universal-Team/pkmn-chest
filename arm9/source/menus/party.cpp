@@ -8,17 +8,27 @@
 #include "summary.hpp"
 #include "sound.hpp"
 
-#define PARTY_TRAY_X 20
-#define PARTY_TRAY_Y 48
-
 bool partyShown = false;
 int partyX = 0, partyY = 0;
 
-const std::pair<int, int> partySpritePos[] = {
-	{4,  0}, {44,  8},
-	{4, 32}, {44, 40},
-	{4, 64}, {44, 72},
-};
+void fillPartySprites(void) {
+	for(unsigned i=0;i<partyIconID.size();i++) {
+		if(save->pkm(i)->species() == 0) {
+			setSpriteVisibility(partyIconID[i], false, false);
+		} else {
+			Image image = loadPokemonSprite(getPokemonIndex(save->pkm(i)));
+			fillSpriteImage(partyIconID[i], false, 32, 0, 0, image);
+			setSpriteVisibility(partyIconID[i], false, true);
+		}
+	}
+	updateOam();
+}
+
+void fadeSprites(int alpha) {
+	for(int i=0;i<30;i++) {
+		setSpriteAlpha(i, false, alpha);
+	}
+}
 
 void showParty(void) {
 	// Set up windows
@@ -27,7 +37,7 @@ void showParty(void) {
 	bgWindowEnable(bg3Sub, WINDOW_0);
 	bgWindowEnable(bg3Sub, WINDOW_OUT);
 	oamWindowEnable(&oamSub, WINDOW_0);
-	windowSetBoundsSub(WINDOW_0, 0, 0, 255, 192-boxButton.height);
+	windowSetBoundsSub(WINDOW_0, 0, 10, 255, 192-boxButton.height);
 	bgSetScroll(bg2Sub, 0, -120);
 	bgUpdate();
 
@@ -35,16 +45,10 @@ void showParty(void) {
 	drawImage(PARTY_TRAY_X, PARTY_TRAY_Y, party, false, true);
 
 	// Fill sprites
-	for(int i=0;i<6;i++) {
-		Image image = loadPokemonSprite(getPokemonIndex(save->pkm(i)));
-		fillSpriteImage(partyIconID[i], false, 32, 0, 0, image);
-		setSpriteVisibility(partyIconID[i], false, true);
-	}
+	fillPartySprites();
 
 	// Fade out sprites
-	for(int i=0;i<30;i++) {
-		setSpriteAlpha(i, false, 4);
-	}
+	fadeSprites(arrowMode == 0 ? 6 : 15);
 
 	// Scroll up
 	partyY = 120, partyX = (arrowMode == 0 ? 0 : 150);
@@ -82,9 +86,7 @@ void hideParty(void) {
 	}
 
 	// Reset sprite alpha
-	for(int i=0;i<30;i++) {
-		setSpriteAlpha(i, false, 15);
-	}
+	fadeSprites(15);
 
 	// Disable windows
 	windowDisableSub(WINDOW_0);
@@ -102,16 +104,22 @@ void hideParty(void) {
 }
 
 void toggleParty(void) {
+	setSpriteVisibility(arrowID, false, false);
 	if(partyShown) {
 		hideParty();
 	} else {
 		showParty();
 	}
 	partyShown = !partyShown;
+	setSpriteVisibility(arrowID, false, true);
+	updateOam();
 }
 
-void moveParty(void) {
-	if(arrowMode == 0) {
+void moveParty(int arrowMode, bool holdingPokemon) {
+	if(!partyShown)	return;
+	setSpriteVisibility(arrowID, false, false);
+	if(arrowMode == 0 && !holdingPokemon) {
+		fadeSprites(6);
 		while(partyX > 0) {
 			partyX -= 8;
 			bgSetScroll(bg2Sub, -partyX, -partyY);
@@ -133,7 +141,10 @@ void moveParty(void) {
 			bgUpdate();
 			swiWaitForVBlank();
 		}
+		fadeSprites(15);
 	}
+	setSpriteVisibility(arrowID, false, true);
+	updateOam();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -153,21 +164,6 @@ void showParty(int selection) {
 		if(save->pkm(i)->species() != 0) {
 			if(save->pkm(i)->nicknamed())	printText(save->pkm(i)->nickname(), partyButtons[i].x+47, partyButtons[i].y+14, false);
 			else	printText(Lang::species[save->pkm(i)->species()], partyButtons[i].x+47, partyButtons[i].y+14, false);
-		}
-	}
-}
-
-void fillPartySprites(void) {
-	// Fill sprites and set positions
-	for(unsigned i=0;i<partyIconID.size();i++) {
-		if(save->pkm(i)->species() == 0) {
-			setSpriteVisibility(partyIconID[i], false, false);
-		} else {
-			Image image = loadPokemonSprite(getPokemonIndex(save->pkm(i)));
-			fillSpriteImage(partyIconID[i], false, 32, 0, 0, image);
-			setSpritePosition(partyIconID[i], false, partyButtons[i].x+8, partyButtons[i].y);
-			setSpriteVisibility(partyIconID[i], false, true);
-			updateOam();
 		}
 	}
 }

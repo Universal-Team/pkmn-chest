@@ -17,7 +17,7 @@
 #include "sound.hpp"
 #include "xMenu.hpp"
 
-bool topScreen;
+bool topScreen, inParty;
 int arrowID = 126, currentSaveBox, currentBankBox, heldPokemonID = 125, keyboardSpriteID = 124, arrowMode = 0;
 std::vector<int> menuIconID, partyIconID;
 std::string savePath;
@@ -35,9 +35,10 @@ int currentBox(void) {
 	return topScreen ? currentBankBox : currentSaveBox;
 }
 
-std::shared_ptr<PKX> currentPokemon(int slot) {
-	if(topScreen)	return Banks::bank->pkm(currentBox(), slot);
-	else	return save->pkm(currentBox(), slot);
+std::shared_ptr<PKX> currentPokemon(int x, int y) {
+	if(topScreen)	return Banks::bank->pkm(currentBox(), (y*6)+x);
+	else if(inParty)	return save->pkm((y*2)+x);
+	else	return save->pkm(currentBox(), (y*6)+x);
 }
 
 int getPokemonIndex(std::shared_ptr<PKX> pkm) {
@@ -199,7 +200,7 @@ void loadGraphics(void) {
 	// Prepare party sprites
 	for(int i=0;i<6;i++) {
 		int id = initSprite(false, SpriteSize_32x32);
-		prepareSprite(id, false, 0, 0, 0);
+		prepareSprite(id, false, 0, 0, 2);
 		setSpriteVisibility(id, false, false);
 		partyIconID.push_back(id);
 	}
@@ -296,7 +297,8 @@ void drawBox(bool top) {
 			Image image = loadPokemonSprite(getPokemonIndex(tempPkm));
 			fillSpriteImage(i, top, 32, 0, 0, image);
 			setSpriteVisibility(i, top, true);
-			setSpriteAlpha(i, top, (*tempPkm == *filter) ? 15 : 8);
+			if(!(partyShown && arrowMode == 0))
+				setSpriteAlpha(i, top, (*tempPkm == *filter) ? 15 : 8);
 		}
 	}
 	updateOam();
@@ -358,7 +360,7 @@ void manageBoxes(void) {
 	filter->ball(1);
 	int arrowX = 0, arrowY = 0, heldPokemonBox = -1;
 	std::vector<HeldPkm> heldPokemon;
-	bool heldPokemonScreen = false, heldMode = false;
+	bool heldPokemonScreen = false, heldInParty = false, heldMode = false;
 	topScreen = false, arrowMode = 0;
 	u16 pressed, held;
 	touchPosition touch;
@@ -371,52 +373,124 @@ void manageBoxes(void) {
 			held = keysDownRepeat();
 		} while(!held);
 
-		if(held & KEY_UP) {
-			if(arrowY > (topScreen ? -1 : -2))	arrowY--;
-		} else if(held & KEY_DOWN) {
-			if(arrowY < 5)	arrowY++;
-		}
-		if(held & KEY_LEFT && arrowY != -1) {
-			if(arrowX > 0)	arrowX--;
-			else	arrowX = 5;
-		} else if(held & KEY_RIGHT && arrowY != -1) {
-			if(arrowX < 5)	arrowX++;
-			else	arrowX = 0;
-		}
-		if(held & KEY_LEFT && arrowY == -1) {
-			goto switchBoxLeft;
-		} else if(held & KEY_RIGHT && arrowY == -1) {
-			goto switchBoxRight;
-		}
-		if(held & KEY_L || (touch.px > 6 && touch.px < 26 && touch.py > 19 && touch.py < 37)) {
-			switchBoxLeft:
-			if(currentBox() > 0)
-				(topScreen ? currentBankBox : currentSaveBox)--;
-			else if(topScreen) currentBankBox = Banks::bank->boxes()-1;
-			else currentSaveBox = save->maxBoxes()-1;
-			drawBox(topScreen);
-			if(!heldMode && currentBox() == heldPokemonBox && topScreen == heldPokemonScreen) {
-				for(unsigned i=0;i<heldPokemon.size();i++) {
-					setSpriteVisibility(heldPokemon[i].position, heldPokemonScreen, false);
+		if(!inParty) {
+			if(held & KEY_UP) {	
+				if(arrowY > (topScreen ? -1 : -2))	arrowY--;
+			} else if(held & KEY_DOWN) {
+				if(arrowY < 5)	arrowY++;
+			}
+			if(held & KEY_LEFT && arrowY != -1) {
+				if(arrowX > 0) {
+					arrowX--;
+				} else if(!topScreen && partyShown) {
+					arrowX = 1;
+					inParty = true;
+
+					arrowY = (arrowY < 3 ? arrowY/2 : 2);
+				} else {
+					arrowX = 5;
+				}
+			} else if(held & KEY_RIGHT && arrowY != -1) {
+				if(arrowX < 5) {
+					arrowX++;
+				} else if(!topScreen && partyShown) {
+					arrowX = 0;
+					inParty = true;
+
+					arrowY = (arrowY < 3 ? arrowY/2 : 2);
+				} else {
+					arrowX = 0;
 				}
 			}
-		} else if(held & KEY_R || (touch.px > 141 && touch.px < 161 && touch.py > 19 && touch.py < 37)) {
-			switchBoxRight:
-			if((topScreen ? currentBankBox < Banks::bank->boxes()-1 : currentSaveBox < save->maxBoxes()-1))
-				(topScreen ? currentBankBox : currentSaveBox)++;
-			else (topScreen ? currentBankBox : currentSaveBox) = 0;
-			drawBox(topScreen);
-			if(!heldMode && currentBox() == heldPokemonBox && topScreen == heldPokemonScreen) {
-				for(unsigned i=0;i<heldPokemon.size();i++) {
-					setSpriteVisibility(heldPokemon[i].position, heldPokemonScreen, false);
+			if(held & KEY_LEFT && arrowY == -1) {
+				goto switchBoxLeft;
+			} else if(held & KEY_RIGHT && arrowY == -1) {
+				goto switchBoxRight;
+			}
+			if(held & KEY_L || (touch.px > 6 && touch.px < 26 && touch.py > 19 && touch.py < 37)) {
+				switchBoxLeft:
+				if(currentBox() > 0)
+					(topScreen ? currentBankBox : currentSaveBox)--;
+				else if(topScreen) currentBankBox = Banks::bank->boxes()-1;
+				else currentSaveBox = save->maxBoxes()-1;
+				drawBox(topScreen);
+				if(!heldMode && currentBox() == heldPokemonBox && topScreen == heldPokemonScreen) {
+					for(unsigned i=0;i<heldPokemon.size();i++) {
+						setSpriteVisibility(heldPokemon[i].position, heldPokemonScreen, false);
+					}
+				}
+			} else if(held & KEY_R || (touch.px > 141 && touch.px < 161 && touch.py > 19 && touch.py < 37)) {
+				switchBoxRight:
+				if((topScreen ? currentBankBox < Banks::bank->boxes()-1 : currentSaveBox < save->maxBoxes()-1))
+					(topScreen ? currentBankBox : currentSaveBox)++;
+				else (topScreen ? currentBankBox : currentSaveBox) = 0;
+				drawBox(topScreen);
+				if(!heldMode && currentBox() == heldPokemonBox && topScreen == heldPokemonScreen) {
+					for(unsigned i=0;i<heldPokemon.size();i++) {
+						setSpriteVisibility(heldPokemon[i].position, heldPokemonScreen, false);
+					}
+				}
+			}
+		} else { // Cursor movement in party tray
+			if(held & KEY_UP) {
+				if(arrowY == 6)	arrowY = 2;
+				else if(arrowY > 0)	arrowY--;
+				else	arrowY = 6;
+			} else if(held & KEY_DOWN) {
+				if(arrowY < 2)	arrowY++;
+				else if(arrowY == 2)	arrowY = 6;
+				else	arrowY = 0;
+			}
+			if(arrowMode == 0 && heldPokemon.size() == 0) { // Party tray is over the box
+				if(held & KEY_LEFT) {
+					if(arrowY > 0 || arrowX % 2) {
+						if(arrowX % 2) {
+							arrowX--;
+						} else {
+							arrowX++;
+							arrowY--;
+						}
+					}
+				} else if(held & KEY_RIGHT) {
+					if(arrowY < 3) {
+						if(arrowX % 2 && arrowY == 2) {
+							arrowY = 6;
+						} else if(arrowX % 2) {
+							arrowX--;
+							arrowY++;
+						} else {
+							arrowX++;
+						}
+					} else {
+						arrowX = 0, arrowY = 0;
+					}
+				}
+			} else { // Party box is to the right
+				if(held & KEY_LEFT) {
+					if(arrowX == 1) {
+						arrowX--;
+					} else {
+						arrowX = 5;
+						inParty = false;
+						arrowY = (arrowY < 2 ? arrowY*2 : 3);
+					}
+				} else if(held & KEY_RIGHT) {
+					if(arrowX == 0) {
+						arrowX++;
+					} else {
+						arrowX = 0;
+						inParty = false;
+						arrowY = (arrowY < 2 ? arrowY*2 : 3);
+					}
 				}
 			}
 		}
+
 		if(pressed & KEY_A) {
 			selection:
 			Sound::play(Sound::click);
 			if(arrowY == -1) {
-				if(heldPokemon.size() == 0)	aMenu(-1, aMenuTopBarButtons, 1);
+				if(heldPokemon.size() == 0)	aMenu(-1, -1, aMenuTopBarButtons, 1);
 			} else if(arrowY < 5) {
 				if(heldPokemon.size() > 0) {
 					if(heldPokemon[0].position == (arrowY*6)+arrowX && heldPokemonBox == currentBox() && heldPokemonScreen == topScreen) {
@@ -426,7 +500,8 @@ void manageBoxes(void) {
 						setSpriteVisibility(heldPokemonID, topScreen, false);
 						heldPokemon.clear();
 						heldPokemonBox = -1;
-					} else if(!heldMode || currentPokemon((arrowY*6)+arrowX)->species() == 0) {
+						moveParty(arrowMode, heldPokemon.size() > 0);
+					} else if(!heldMode || currentPokemon(arrowX, arrowY)->species() == 0) {
 						int canPlace = true;
 						for(unsigned i=0;i<heldPokemon.size();i++) {
 							if(heldPokemon[i].x-heldPokemon[0].x > 5-arrowX)	canPlace = false;
@@ -443,39 +518,53 @@ void manageBoxes(void) {
 						}
 						if(canPlace) {
 							for(unsigned i=0;i<heldPokemon.size();i++) {
-								if(topScreen || (heldPokemonScreen ? Banks::bank->pkm(heldPokemonBox, heldPokemon[i].position) : save->pkm(heldPokemonBox, heldPokemon[i].position))->species() <= save->maxSpecies()) {
+								if(topScreen || heldPokemon[i].pkm->species() <= save->maxSpecies()) {
 									// If not copying / there isn't a Pokémon at the new spot, move Pokémon
 									// Save the Pokémon at the cursor's postion to a temp variable
 									std::shared_ptr<PKX> tempPkm;
-									if(currentPokemon(((arrowY+heldPokemon[i].y)*6)+arrowX+heldPokemon[i].x)->species() != 0)	tempPkm = currentPokemon(((arrowY+heldPokemon[i].y)*6)+arrowX+heldPokemon[i].x);
+									if(currentPokemon(arrowX+heldPokemon[i].x, arrowY+heldPokemon[i].y)->species() != 0)	tempPkm = currentPokemon(arrowX+heldPokemon[i].x, arrowY+heldPokemon[i].y);
 									else	tempPkm = save->emptyPkm();
 									// Write the held Pokémon to the cursor position
-									if(topScreen)	Banks::bank->pkm(heldPokemon[i].pkm, currentBox(), ((arrowY+heldPokemon[i].y)*6)+arrowX+heldPokemon[i].x);
-									else {
+									if(topScreen) {
+										Banks::bank->pkm(heldPokemon[i].pkm, currentBox(), ((arrowY+heldPokemon[i].y)*6)+arrowX+heldPokemon[i].x);
+									} else if(inParty) {
+										save->pkm(heldPokemon[i].pkm,((arrowY+heldPokemon[i].y)*2)+arrowX+heldPokemon[i].x);
+										save->dex(heldPokemon[i].pkm);
+									} else {
 										save->pkm(heldPokemon[i].pkm, currentBox(), ((arrowY+heldPokemon[i].y)*6)+arrowX+heldPokemon[i].x, false);
 										save->dex(heldPokemon[i].pkm);
 									}
 									// If not copying, write the cursor position's previous Pokémon to the held Pokémon's old spot
 									if(!heldMode) {
-										if(heldPokemonScreen)	Banks::bank->pkm(tempPkm, heldPokemonBox, heldPokemon[i].position);
-										else {
+										if(heldPokemonScreen) {
+											Banks::bank->pkm(tempPkm, heldPokemonBox, heldPokemon[i].position);
+										} else if(heldInParty) {
+											save->pkm(tempPkm, heldPokemon[i].position);
+											save->dex(tempPkm);
+										} else {
 											save->pkm(tempPkm, heldPokemonBox, heldPokemon[i].position, false);
 											save->dex(tempPkm);
 										}
 									}
 								}
 							}
+							save->fixParty();
+
 							// Hide the moving Pokémon
 							setSpriteVisibility(heldPokemonID, topScreen, false);
 							
 							// Update the box(es) for the moved Pokémon
 							drawBox(topScreen);
 							if(heldPokemonScreen != topScreen)	drawBox(heldPokemonScreen);
-							drawPokemonInfo(currentPokemon((arrowY*6)+arrowX));
+							drawPokemonInfo(currentPokemon(arrowX, arrowY));
+							fillPartySprites();
 
 							// Not holding a Pokémon anymore
 							heldPokemon.clear();
 							heldPokemonBox = -1;
+
+							// Move the party tray back
+							moveParty(arrowMode, heldPokemon.size() > 0);
 						}
 					}
 				} else if(arrowMode == 2) {
@@ -499,7 +588,7 @@ void manageBoxes(void) {
 							printTextCenteredTinted((topScreen ? Banks::bank->boxName(currentBankBox) : save->boxName(currentSaveBox)), GRAY_TEXT, -44, 20, topScreen);
 							for(int y=std::min(startY, arrowY);y<std::max(startY,arrowY)+1;y++) {
 								for(int x=std::min(startX, arrowX);x<std::max(startX,arrowX)+1;x++) {
-									heldPokemon.push_back({currentPokemon((y*6)+x), (y*6)+x, x-std::min(startX, arrowX), y-std::min(startY, arrowY)});
+									heldPokemon.push_back({currentPokemon(x, y), (y*6)+x, x-std::min(startX, arrowX), y-std::min(startY, arrowY)});
 									setSpriteVisibility((y*6)+x, topScreen, false);
 								}
 							}
@@ -520,7 +609,7 @@ void manageBoxes(void) {
 						} else if(pressed & KEY_B) {
 							drawRectangle(5, 15, bankBox.width, bankBox.height, CLEAR, topScreen, true);
 							printTextCenteredTinted((topScreen ? Banks::bank->boxName(currentBankBox) : save->boxName(currentSaveBox)), GRAY_TEXT, -44, 20, topScreen);
-							drawPokemonInfo(currentPokemon((arrowY*6)+arrowX));
+							drawPokemonInfo(currentPokemon(arrowX, arrowY));
 							break;
 						} else if(pressed & KEY_TOUCH) {
 							touchRead(&touch);
@@ -550,24 +639,40 @@ void manageBoxes(void) {
 						setSpritePosition(arrowID, topScreen, (arrowX*24)+24, (arrowY*24)+36);
 						updateOam();
 					}
-				} else if(currentPokemon((arrowY*6)+arrowX)->species() != 0) {
+				} else if(currentPokemon(arrowX, arrowY)->species() != 0) {
 					int temp = 1;
-					if(arrowMode == 1 || (temp = aMenu((arrowY*6)+arrowX, aMenuButtons, 0))) {
+					if(arrowMode == 1 || (temp = aMenu(arrowX, arrowY, aMenuButtons, 0))) {
 						// If no pokemon is currently held and there is one at the cursor, pick it up
-						heldPokemon.push_back({currentPokemon((arrowY*6)+arrowX)->clone(), (arrowY*6)+arrowX, 0, 0});
+						heldPokemon.push_back({currentPokemon(arrowX, arrowY)->clone(), (arrowY*(inParty ? 2 : 6))+arrowX, 0, 0});
 						heldPokemonBox = currentBox();
 						heldPokemonScreen = topScreen;
+						heldInParty = inParty;
 						heldMode = temp-1; // false = move, true = copy
-						setHeldPokemon(currentPokemon(heldPokemon[0].position));
-						if(!heldMode)	setSpriteVisibility(heldPokemon[0].position, heldPokemonScreen,  false);
+						setHeldPokemon(heldPokemon[0].pkm);
+
+						moveParty(arrowMode, heldPokemon.size() > 0);
+
+						if(!heldMode) {
+							if(heldInParty)	setSpriteVisibility(partyIconID[heldPokemon[0].position], heldPokemonScreen, false);
+							else	setSpriteVisibility(heldPokemon[0].position, heldPokemonScreen, false);
+						}
 						setSpriteVisibility(heldPokemonID, topScreen, true);
-						drawPokemonInfo(currentPokemon(heldPokemon[0].position));
+						drawPokemonInfo(heldPokemon[0].pkm);
 					}
 				} else if(arrowMode == 0) {
-					aMenu((arrowY*6)+arrowX, aMenuEmptySlotButtons, 2);
+					aMenu(arrowX, arrowY, aMenuEmptySlotButtons, 2);
 				}
 			} else {
+				toggleParty:
 				toggleParty();
+				if(partyShown) {
+					arrowX = 0, arrowY = 0;
+					inParty = true;
+				} else {
+					if(arrowX > 5)	arrowX = 0;
+					arrowY = 5;
+					inParty = false;
+				}
 			}
 		} else if(pressed & KEY_Y) {
 			if(heldPokemon.size() == 0) {
@@ -585,7 +690,7 @@ void manageBoxes(void) {
 				drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 				drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
 				drawBox(false);
-				drawPokemonInfo(currentPokemon((arrowY*6)+arrowX));
+				drawPokemonInfo(currentPokemon(arrowX, arrowY));
 				if(topScreen)	drawBox(topScreen);
 			}
 		} else if(pressed & KEY_TOUCH) {
@@ -611,7 +716,7 @@ void manageBoxes(void) {
 				arrowY = -1;
 				goto selection;
 			} else if(touch.px <= boxButton.width && touch.py >= 192-boxButton.height) {
-				toggleParty();
+				goto toggleParty;
 			} else if(touch.px >= boxButton.width+5 && touch.px <= boxButton.width+5+search.width && touch.py >= 192-search.height) {
 				goto filter;
 			}
@@ -653,29 +758,32 @@ void manageBoxes(void) {
 			fillArrow(arrowMode);
 
 			if(partyShown) {
-				moveParty();
+				moveParty(arrowMode, heldPokemon.size() > 0);
 			}
 		}
 
 		if((held & KEY_UP || held & KEY_DOWN || held & KEY_LEFT || held & KEY_RIGHT || held & KEY_L || held & KEY_R || held & KEY_TOUCH) && heldPokemon.size() == 0) {
 			// If the cursor is moved and we're not holding a Pokémon, draw the new one
-			if(arrowY != -1)	drawPokemonInfo(currentPokemon((arrowY*6)+arrowX));
+			if(arrowY != -1)	drawPokemonInfo(currentPokemon(arrowX, arrowY));
 			else	drawPokemonInfo(save->emptyPkm());
 		}
 
-		if(arrowY == -1) {
+		if(inParty && arrowY < 3) {
+			// Move it to the party tray if there
+			setSpritePosition(arrowID, topScreen, PARTY_TRAY_X+partySpritePos[(arrowY*2)+(arrowX)].first+partyX+16, PARTY_TRAY_Y+partySpritePos[(arrowY*2)+(arrowX)].second+partyY+4);
+			if(heldPokemon.size())	setSpritePosition(heldPokemonID, topScreen, PARTY_TRAY_X+partySpritePos[(arrowY*2)+(arrowX)].first+partyX+8, PARTY_TRAY_Y+partySpritePos[(arrowY*2)+(arrowX)].second+partyY);
+		} else if(arrowY == -1) {
 			// If the Arrow Y is at -1 (box title), draw it in the middle
 			setSpritePosition(arrowID, topScreen, 90, 16);
 			if(heldPokemon.size())	setSpritePosition(heldPokemonID, topScreen, 82, 12);
 		} else if(arrowY < 5) {
-			// Otherwise move it to the spot in the box it's at
+			// If in the main box, move it to the spot in the box it's at
 			setSpritePosition(arrowID, topScreen, (arrowX*24)+24, (arrowY*24)+36);
 			if(heldPokemon.size())	setSpritePosition(heldPokemonID, topScreen, (arrowX*24)+16, (arrowY*24)+32);
 		} else {
 			// Or move it to Party button
-			// TODO: Fix arrow positioning
-			setSpritePosition(arrowID, topScreen, 24, 192-16);
-			if(heldPokemon.size())	setSpritePosition(heldPokemonID, topScreen, (arrowX*24)+16, (arrowY*24)+32);
+			setSpritePosition(arrowID, topScreen, getTextWidth(Lang::get("party"))+6, 191-boxButton.height);
+			if(heldPokemon.size())	setSpritePosition(heldPokemonID, topScreen, getTextWidth(Lang::get("party"))-2, 191-boxButton.height-4);
 		}
 		updateOam();
 	}

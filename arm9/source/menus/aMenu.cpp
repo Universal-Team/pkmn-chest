@@ -14,6 +14,8 @@
 #include "summary.hpp"
 #include "sound.hpp"
 
+#define pkmPos(x, y) ((y*6)+x)
+
 std::vector<Label> aMenuButtons = {
 	{170,  16,    "move"}, // Move
 	{170,  42,    "edit"}, // Edit
@@ -43,7 +45,7 @@ void drawAMenuButtons(std::vector<Label>& buttons, int buttonMode) {
 	}
 }
 
-int aMenu(int pkmPos, std::vector<Label>& buttons, int buttonMode) {
+int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 	setSpritePosition(arrowID, false, buttons[0].x+getTextWidthMaxW(Lang::get(buttons[0].label), 80)+4, buttons[0].y);
 	setSpriteVisibility(arrowID, true, false);
 	setSpriteVisibility(arrowID, false, true);
@@ -95,15 +97,15 @@ int aMenu(int pkmPos, std::vector<Label>& buttons, int buttonMode) {
 				drawRectangle(170, 0, 86, 192, CLEAR, false, true);
 				return 1;
 			} else if(menuSelection == 1) { // Edit
-				if(topScreen)	Banks::bank->pkm(showPokemonSummary(currentPokemon(pkmPos)), currentBankBox, pkmPos);
-				else	save->pkm(showPokemonSummary(currentPokemon(pkmPos)), currentSaveBox, pkmPos, false);
+				if(topScreen)	Banks::bank->pkm(showPokemonSummary(currentPokemon(pkmX, pkmY)), currentBankBox, pkmPos(pkmX, pkmY));
+				else	save->pkm(showPokemonSummary(currentPokemon(pkmX, pkmY)), currentSaveBox, pkmPos(pkmX, pkmY), false);
 
 				// Redraw screen
 				drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
 				drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 				drawBox(false);
 				if(topScreen)	drawBox(topScreen);
-				drawPokemonInfo(currentPokemon(pkmPos));
+				drawPokemonInfo(currentPokemon(pkmX, pkmY));
 				drawAMenuButtons(buttons, buttonMode);
 			} else if(menuSelection == 2) { // Copy
 				if(topScreen) {
@@ -115,8 +117,8 @@ int aMenu(int pkmPos, std::vector<Label>& buttons, int buttonMode) {
 				return 2;
 			} else if(menuSelection == 3) { // Release
 				if(Input::getBool(Lang::get("release"), Lang::get("cancel"))) {
-					if(topScreen)	Banks::bank->pkm(save->emptyPkm(), currentBankBox, pkmPos);
-					else	save->pkm(save->emptyPkm(), currentSaveBox, pkmPos, false);
+					if(topScreen)	Banks::bank->pkm(save->emptyPkm(), currentBankBox, pkmPos(pkmX, pkmY));
+					else	save->pkm(save->emptyPkm(), currentSaveBox, pkmPos(pkmX, pkmY), false);
 					drawPokemonInfo(save->emptyPkm());
 					drawBox(topScreen);
 					goto back;
@@ -124,13 +126,13 @@ int aMenu(int pkmPos, std::vector<Label>& buttons, int buttonMode) {
 				drawAMenuButtons(buttons, buttonMode);
 			} else if(menuSelection == 4) { // Dump
 				char path[256];
-				if(currentPokemon(pkmPos)->alternativeForm())
-					snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%i-%i - %s - %x%lx.pk%i", sdFound() ? "sd" : "fat", currentPokemon(pkmPos)->species(), currentPokemon(pkmPos)->alternativeForm(), currentPokemon(pkmPos)->nickname().c_str(), currentPokemon(pkmPos)->checksum(), currentPokemon(pkmPos)->encryptionConstant(), currentPokemon(pkmPos)->genNumber());
+				if(currentPokemon(pkmX, pkmY)->alternativeForm())
+					snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%i-%i - %s - %x%lx.pk%i", sdFound() ? "sd" : "fat", currentPokemon(pkmX, pkmY)->species(), currentPokemon(pkmX, pkmY)->alternativeForm(), currentPokemon(pkmX, pkmY)->nickname().c_str(), currentPokemon(pkmX, pkmY)->checksum(), currentPokemon(pkmX, pkmY)->encryptionConstant(), currentPokemon(pkmX, pkmY)->genNumber());
 				else
-					snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%i - %s - %x%lx.pk%i", sdFound() ? "sd" : "fat", currentPokemon(pkmPos)->species(), currentPokemon(pkmPos)->nickname().c_str(), currentPokemon(pkmPos)->checksum(), currentPokemon(pkmPos)->encryptionConstant(), currentPokemon(pkmPos)->genNumber());
+					snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%i - %s - %x%lx.pk%i", sdFound() ? "sd" : "fat", currentPokemon(pkmX, pkmY)->species(), currentPokemon(pkmX, pkmY)->nickname().c_str(), currentPokemon(pkmX, pkmY)->checksum(), currentPokemon(pkmX, pkmY)->encryptionConstant(), currentPokemon(pkmX, pkmY)->genNumber());
 				FILE* out = fopen(path, "wb");
 				if(out) {
-					fwrite(currentPokemon(pkmPos)->rawData(), 1, 136, out);
+					fwrite(currentPokemon(pkmX, pkmY)->rawData(), 1, 136, out);
 					fclose(out);
 				}
 			} else if(menuSelection == 5) { // Back
@@ -226,16 +228,18 @@ int aMenu(int pkmPos, std::vector<Label>& buttons, int buttonMode) {
 				snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%s", sdFound() ? "sd" : "fat", topScreen ? Banks::bank->boxName(currentBankBox).c_str() : save->boxName(currentSaveBox).c_str());
 				mkdir(path, 0777);
 
-				for(int i=0;i<30;i++) {
-					if(currentPokemon(i)->species() != 0) {
-						if(currentPokemon(i)->alternativeForm())
-							snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%s/%i-%i - %s - %x%lx.pk%i", sdFound() ? "sd" : "fat", topScreen ? Banks::bank->boxName(currentBankBox).c_str() : save->boxName(currentSaveBox).c_str(), currentPokemon(i)->species(), currentPokemon(i)->alternativeForm(), currentPokemon(i)->nickname().c_str(), currentPokemon(i)->checksum(), currentPokemon(i)->encryptionConstant(), currentPokemon(i)->genNumber());
-						else
-							snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%s/%i - %s - %x%lx.pk%i", sdFound() ? "sd" : "fat", topScreen ? Banks::bank->boxName(currentBankBox).c_str() : save->boxName(currentSaveBox).c_str(), currentPokemon(i)->species(), currentPokemon(i)->nickname().c_str(), currentPokemon(i)->checksum(), currentPokemon(i)->encryptionConstant(), currentPokemon(i)->genNumber());
-						FILE* out = fopen(path, "wb");
-						if(out) {
-							fwrite(currentPokemon(i)->rawData(), 1, 136, out);
-							fclose(out);
+				for(int y=0;y<5;y++) {
+					for(int x=0;x<6;x++) {
+						if(currentPokemon(x, y)->species() != 0) {
+							if(currentPokemon(x, y)->alternativeForm())
+								snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%s/%i-%i - %s - %x%lx.pk%i", sdFound() ? "sd" : "fat", topScreen ? Banks::bank->boxName(currentBankBox).c_str() : save->boxName(currentSaveBox).c_str(), currentPokemon(x, y)->species(), currentPokemon(x, y)->alternativeForm(), currentPokemon(x, y)->nickname().c_str(), currentPokemon(x, y)->checksum(), currentPokemon(x, y)->encryptionConstant(), currentPokemon(x, y)->genNumber());
+							else
+								snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%s/%i - %s - %x%lx.pk%i", sdFound() ? "sd" : "fat", topScreen ? Banks::bank->boxName(currentBankBox).c_str() : save->boxName(currentSaveBox).c_str(), currentPokemon(x, y)->species(), currentPokemon(x, y)->nickname().c_str(), currentPokemon(x, y)->checksum(), currentPokemon(x, y)->encryptionConstant(), currentPokemon(x, y)->genNumber());
+							FILE* out = fopen(path, "wb");
+							if(out) {
+								fwrite(currentPokemon(x, y)->rawData(), 1, 136, out);
+								fclose(out);
+							}
 						}
 					}
 				}
@@ -268,8 +272,8 @@ int aMenu(int pkmPos, std::vector<Label>& buttons, int buttonMode) {
 						fseek(in, 0, SEEK_END);
 						u8 buffer[136];
 						fread(buffer, 1, sizeof(buffer), in);
-						if(topScreen)	Banks::bank->pkm(save->emptyPkm()->getPKM(fileName.substr(fileName.size()-1) == "4" ? Generation::FOUR : Generation::FIVE, buffer), currentBankBox, pkmPos);
-						else	save->pkm(save->emptyPkm()->getPKM(fileName.substr(fileName.size()-1) == "4" ? Generation::FOUR : Generation::FIVE, buffer), currentSaveBox, pkmPos, false);
+						if(topScreen)	Banks::bank->pkm(save->emptyPkm()->getPKM(fileName.substr(fileName.size()-1) == "4" ? Generation::FOUR : Generation::FIVE, buffer), currentBankBox, pkmPos(pkmX, pkmY));
+						else	save->pkm(save->emptyPkm()->getPKM(fileName.substr(fileName.size()-1) == "4" ? Generation::FOUR : Generation::FIVE, buffer), currentSaveBox, pkmPos(pkmX, pkmY), false);
 						fclose(in);
 					}
 				}
@@ -280,7 +284,7 @@ int aMenu(int pkmPos, std::vector<Label>& buttons, int buttonMode) {
 				drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
 				drawBox(false);
 				if(topScreen)	drawBox(topScreen);
-				drawPokemonInfo(currentPokemon(pkmPos));
+				drawPokemonInfo(currentPokemon(pkmX, pkmY));
 
 				if(!topScreen)	setSpriteVisibility(arrowID, false, true);
 				updateOam();
@@ -320,15 +324,15 @@ int aMenu(int pkmPos, std::vector<Label>& buttons, int buttonMode) {
 				pkm->metYear(gmtime(&current)->tm_year - 100);
 				pkm->metLevel(1);
 
-				if(topScreen)	Banks::bank->pkm(showPokemonSummary(pkm), currentBankBox, pkmPos);
-				else	save->pkm(showPokemonSummary(pkm), currentSaveBox, pkmPos, false);
+				if(topScreen)	Banks::bank->pkm(showPokemonSummary(pkm), currentBankBox, pkmPos(pkmX, pkmY));
+				else	save->pkm(showPokemonSummary(pkm), currentSaveBox, pkmPos(pkmX, pkmY), false);
 
 				// Redraw screen
 				drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 				drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
 				drawBox(false);
 				if(topScreen)	drawBox(topScreen);
-				drawPokemonInfo(currentPokemon(pkmPos));
+				drawPokemonInfo(currentPokemon(pkmX, pkmY));
 				goto back;
 			} else if(menuSelection == 2) {
 				goto back;

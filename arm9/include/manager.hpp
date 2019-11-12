@@ -20,7 +20,7 @@ int currentBox(void);
  * Returns the Pokémon in the provided slot
  * on the cursor's current screen
  */
-std::shared_ptr<PKX> currentPokemon(int slot);
+std::shared_ptr<PKX> currentPokemon(int x, int y);
 
 /*
  * Gets the image offset for a Pokémon
