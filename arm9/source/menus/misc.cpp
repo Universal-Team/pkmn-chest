@@ -79,26 +79,31 @@ int pkmLang(void) {
 void drawMiniBoxes(int currentBox) {
 	if(currentBox < 0)	currentBox = (topScreen ? Banks::bank->boxes()-1 : save->maxBoxes()-1)+currentBox;
 	// Clear text
-	drawRectangle(210, 0, 46, 192, DARKERER_GRAY, DARKER_GRAY, false);
+	drawRectangle(210, 0, 46, 192, CLEAR, false, true);
+
+	// Load palette
+	for(unsigned int i=0;i<types.size();i++) {
+		BG_PALETTE_SUB[0xD0+i] = types[i].palette[(i==0 || i==8) ? 1 : 2];
+	}
 
 	for(int i=0;i<5;i++) {
-		drawRectangle(170, 10+(i*33), 35, 30, WHITE, false);
-		drawOutline(170, 10+(i*33), 35, 30, DARK_GRAY, false);
+		drawRectangle(170, 10+(i*33), 38, 32, WHITE, false, true);
+		drawOutline(170, 10+(i*33), 38, 32, DARK_GRAY, false, true);
 		for(int j=0;j<30;j++) {
 			if((topScreen ? Banks::bank->pkm(currentBox, j)->species() : save->pkm(currentBox, j)->species()) != 0) {
 				// Type 1
 				int type = topScreen ? Banks::bank->pkm(currentBox, j)->type1() : save->pkm(currentBox, j)->type1();
 				if(((topScreen ? Banks::bank->pkm(currentBox, j)->generation() : save->pkm(currentBox, j)->generation()) == Generation::FOUR) && type > 8)	type--;
-				drawRectangle(173+((j-((j/6)*6))*5), 13+((j/6)*5)+(i*33), 2, 4, types[type].palette[types[type].bitmap[types[type].width+1]], false);
+				drawRectangle(172+((j-((j/6)*6))*6), 12+((j/6)*6)+(i*33), 2, 4, 0xD0+type, false, true);
 
 				// Type 2
 				type = topScreen ? Banks::bank->pkm(currentBox, j)->type2() : save->pkm(currentBox, j)->type2();
 				if(((topScreen ? Banks::bank->pkm(currentBox, j)->generation() : save->pkm(currentBox, j)->generation()) == Generation::FOUR) && type > 8)	type--;
-				drawRectangle(175+((j-((j/6)*6))*5), 13+((j/6)*5)+(i*33), 2, 4, types[type].palette[types[type].bitmap[types[type].width+1]], false);
+				drawRectangle(174+((j-((j/6)*6))*6), 12+((j/6)*6)+(i*33), 2, 4, 0xD0+type, false, true);
 			}
 		}
 		// Print box number
-		printText(std::to_string(currentBox+1), 210, 20+(i*33), false);
+		printText(std::to_string(currentBox+1), 210, 20+(i*33), false, true);
 		if(currentBox < (topScreen ? Banks::bank->boxes()-1 : save->maxBoxes()-1))	currentBox++;
 		else	currentBox = 0;
 	}
@@ -170,13 +175,14 @@ int selectForm(int dexNo, int currentForm) {
 	}
 
 	// Draw background
-	drawRectangle(0, 60, 256, 72, DARK_GRAY, false);
-	drawOutline(0, 60, 256, 72, LIGHT_GRAY, false);
+	drawRectangle(0, 60, 256, 72, DARKERER_GRAY, DARKER_GRAY, false, true);
+	drawOutline(0, 60, 256, 72, LIGHT_GRAY, false, true);
 
 	// Draw forms
 	for(int i=0;i<formCounts[altIndex].noForms;i++) {
+		// TODO: Steal the party sprites or something
 		Image image = loadPokemonSprite(getPokemonIndex(dexNo, i));
-		drawImage((i*32)+(128-((32*formCounts[altIndex].noForms)/2)), 80, 32, 32, image, false);
+		drawImage((i*32)+(128-((32*formCounts[altIndex].noForms)/2)), 80, image, false, true, 0xC0);
 	}
 
 	// Move arrow to current form
@@ -222,16 +228,21 @@ int selectForm(int dexNo, int currentForm) {
 	}
 }
 
-void drawItemList(int screenPos, std::vector<std::string> itemList) {
-	// Clear the screen
-	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
+void drawItemList(int screenPos, std::vector<std::string> itemList, bool background) {
+	if(background) {
+		// Clear the screen
+		drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
 
-	// Draw search icon
-	drawImage(256-20, 0, search.width, search.height, search, false);
+		// Draw search icon
+		drawImage(256-search.width, 0, search, false, false);
+	}
+
+	// Clear text
+	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 
 	// Print items
 	for(unsigned i=0;i<std::min(9u, itemList.size()-screenPos);i++) {
-		printText(itemList[screenPos+i], 4, 4+(i*20), false);
+		printText(itemList[screenPos+i], 4, 4+(i*20), false, true);
 	}
 }
 
@@ -244,7 +255,7 @@ int selectItem(int current, int start, int max, std::vector<std::string> &items)
 
 	// Print items
 	std::vector<std::string> itemList(&items[start], &items[max]);
-	drawItemList(current-start, itemList);
+	drawItemList(current-start, itemList, true);
 
 	int held, pressed, screenPos = current-start, newMove = current-start, entriesPerScreen = 9;
 	touchPosition touch;
@@ -272,10 +283,12 @@ int selectItem(int current, int start, int max, std::vector<std::string> &items)
 			Sound::play(Sound::click);
 			for(int i=0;i<max;i++) {
 				if(itemList[newMove] == items[i]) {
+					drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 					return i;
 				}
 			}
 		} if(pressed & KEY_B) {
+			drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 			Sound::play(Sound::back);
 			return current;
 		} else if(pressed & KEY_TOUCH) {
@@ -287,6 +300,7 @@ int selectItem(int current, int start, int max, std::vector<std::string> &items)
 				if(touch.px >= 4 && touch.px <= 4+getTextWidth(itemList[screenPos+i]) && touch.py >= 4+(i*20) && touch.py <= 4+((i+1)*20)) {
 					for(int j=0;j<max;j++) {
 						if(itemList[screenPos+i] == items[j]) {
+							drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 							return j;
 						}
 					}
@@ -307,7 +321,7 @@ int selectItem(int current, int start, int max, std::vector<std::string> &items)
 				}
 				newMove = 0;
 				screenPos = 0;
-			drawItemList(screenPos, itemList);
+			drawItemList(screenPos, itemList, false);
 			setSpriteVisibility(arrowID, false, true);
 			updateOam();
 		}
@@ -315,10 +329,10 @@ int selectItem(int current, int start, int max, std::vector<std::string> &items)
 		// Scroll screen if needed
 		if(newMove < screenPos) {
 			screenPos = newMove;
-			drawItemList(screenPos, itemList);
+			drawItemList(screenPos, itemList, false);
 		} else if(newMove > screenPos + entriesPerScreen - 1) {
 			screenPos = newMove - entriesPerScreen + 1;
-			drawItemList(screenPos, itemList);
+			drawItemList(screenPos, itemList, false);
 		}
 
 		// Move cursor
@@ -329,12 +343,13 @@ int selectItem(int current, int start, int max, std::vector<std::string> &items)
 
 std::shared_ptr<PKX> selectMoves(std::shared_ptr<PKX> pkm) {
 	// Clear screen
-	drawImageSegmentDMA(0, 0, 256, 192, listBg, 256, false);
-	printText(Lang::get("moves"), 4, 0, false);
+	drawImageDMA(0, 0, listBg, false, false);
+	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
+	printText(Lang::get("moves"), 4, 0, false, true);
 
 	// Print moves
 	for(int i=0;i<4;i++) {
-		printText(Lang::moves[pkm->move(i)], 4, 16+(i*16), false);
+		printText(Lang::moves[pkm->move(i)], 4, 16+(i*16), false, true);
 	}
 
 	// Set arrow position
@@ -365,6 +380,7 @@ std::shared_ptr<PKX> selectMoves(std::shared_ptr<PKX> pkm) {
 			Sound::play(Sound::click);
 			optionSelected = true;
 		} else if(pressed & KEY_B) {
+			drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 			Sound::play(Sound::back);
 			return pkm;
 		} else if(pressed & KEY_TOUCH) {
@@ -383,12 +399,13 @@ std::shared_ptr<PKX> selectMoves(std::shared_ptr<PKX> pkm) {
 			pkm->move(selection, selectItem(pkm->move(selection), 0, save->maxMove()+1, Lang::moves));
 
 			// Clear screen
-			drawImageSegmentDMA(0, 0, 256, 192, listBg, 256, false);
-			printText(Lang::get("moves"), 4, 0, false);
+			drawImageDMA(0, 0, listBg, false, false);
+			drawRectangle(0, 0, 256, 192, CLEAR, false, true);
+			printText(Lang::get("moves"), 4, 0, false, true);
 
 			// Print moves
 			for(int i=0;i<4;i++) {
-				printText(Lang::moves[pkm->move(i)], 4, 16+(i*16), false);
+				printText(Lang::moves[pkm->move(i)], 4, 16+(i*16), false, true);
 			}
 		}
 
@@ -399,29 +416,30 @@ std::shared_ptr<PKX> selectMoves(std::shared_ptr<PKX> pkm) {
 
 int selectNature(int currentNature) {
 	// Clear screen
-	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
+	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
+	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 
 	// Draw labels (not a for loop as speed is 3rd)
 	{
 		int x = -2;
-		printTextCenteredTintedMaxW(Lang::get(statsLabels[1]), 48, 1, RGB::BLUE, ((x++)*48), 4, false);
-		printTextCenteredTintedMaxW(Lang::get(statsLabels[2]), 48, 1, RGB::BLUE, ((x++)*48), 4, false);
-		printTextCenteredTintedMaxW(Lang::get(statsLabels[5]), 48, 1, RGB::BLUE, ((x++)*48), 4, false);
-		printTextCenteredTintedMaxW(Lang::get(statsLabels[3]), 48, 1, RGB::BLUE, ((x++)*48), 4, false);
-		printTextCenteredTintedMaxW(Lang::get(statsLabels[4]), 48, 1, RGB::BLUE, ((x++)*48), 4, false);
+		printTextCenteredTintedMaxW(Lang::get(statsLabels[1]), 48, 1, BLUE_TEXT, ((x++)*48), 4, false, true);
+		printTextCenteredTintedMaxW(Lang::get(statsLabels[2]), 48, 1, BLUE_TEXT, ((x++)*48), 4, false, true);
+		printTextCenteredTintedMaxW(Lang::get(statsLabels[5]), 48, 1, BLUE_TEXT, ((x++)*48), 4, false, true);
+		printTextCenteredTintedMaxW(Lang::get(statsLabels[3]), 48, 1, BLUE_TEXT, ((x++)*48), 4, false, true);
+		printTextCenteredTintedMaxW(Lang::get(statsLabels[4]), 48, 1, BLUE_TEXT, ((x++)*48), 4, false, true);
 
 		int y = 0;
-		printTextTintedScaled(Lang::get(statsLabels[1]), 0.8, 0.8, RGB::RED, 1, ((y++)*32)+22, false);
-		printTextTintedScaled(Lang::get(statsLabels[2]), 0.8, 0.8, RGB::RED, 1, ((y++)*32)+22, false);
-		printTextTintedScaled(Lang::get(statsLabels[5]), 0.8, 0.8, RGB::RED, 1, ((y++)*32)+22, false);
-		printTextTintedScaled(Lang::get(statsLabels[3]), 0.8, 0.8, RGB::RED, 1, ((y++)*32)+22, false);
-		printTextTintedScaled(Lang::get(statsLabels[4]), 0.8, 0.8, RGB::RED, 1, ((y++)*32)+22, false);
+		printTextTintedScaled(Lang::get(statsLabels[1]), 0.8, 0.8, RED_TEXT, 1, ((y++)*32)+22, false, true);
+		printTextTintedScaled(Lang::get(statsLabels[2]), 0.8, 0.8, RED_TEXT, 1, ((y++)*32)+22, false, true);
+		printTextTintedScaled(Lang::get(statsLabels[5]), 0.8, 0.8, RED_TEXT, 1, ((y++)*32)+22, false, true);
+		printTextTintedScaled(Lang::get(statsLabels[3]), 0.8, 0.8, RED_TEXT, 1, ((y++)*32)+22, false, true);
+		printTextTintedScaled(Lang::get(statsLabels[4]), 0.8, 0.8, RED_TEXT, 1, ((y++)*32)+22, false, true);
 	}
 
 	// Print natures
 	for(int y=0;y<5;y++) {
 		for(int x=0;x<5;x++) {
-			printTextCenteredMaxW(Lang::natures[(y*5)+x], 48, 1, ((x-2)*48), (y*32)+32, false);
+			printTextCenteredMaxW(Lang::natures[(y*5)+x], 48, 1, ((x-2)*48), (y*32)+32, false, true);
 		}
 	}
 
@@ -478,14 +496,15 @@ int selectNature(int currentNature) {
 
 int selectPokeball(int currentBall) {
 	// Clear screen
-	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
+	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
+	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 
 	// Draw Pokéballs
 	for(int y=0;y<5;y++) {
 		for(int x=0;x<5;x++) {
 			if(!(save->generation() != Generation::FIVE && (y*5)+x == 24)) {
 				std::pair<int, int> xy = getPokeballPosition((y*5)+x+1);
-				drawImageSegment((x*48)+24, (y*32)+24, 15, 15, ballSheet, ballSheet.width, xy.first, xy.second, false);
+				drawImageSegment((x*48)+24, (y*32)+24, 15, 15, ballSheet, xy.first, xy.second, false, false);
 			}
 		}
 	}
@@ -548,14 +567,14 @@ int selectPokeball(int currentBall) {
 
 int selectWallpaper(int currentWallpaper) {
 	// Clear screen
-	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
+	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
 
 	// Draw wallpapers
 	for(int y=0;y<4;y++) {
 		for(int x=0;x<6;x++) {
 			std::string path = boxBgPath(false, (y*6)+x);
 			Image image = loadImage(path);
-			drawImageScaled((x*36)+28, (y*36)+28, image.width, image.height, 0.125, 0.125, image, false);
+			drawImageScaled((x*36)+28, (y*36)+28, 0.125, 0.125, image, false, false);
 		}
 	}
 
@@ -614,7 +633,7 @@ int selectWallpaper(int currentWallpaper) {
 
 void drawOriginPage(std::shared_ptr<PKX> pkm, std::vector<std::string> &varText) {
 	// Clear screen
-	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
+	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 
 	// Print text
 	varText = { 
@@ -626,17 +645,19 @@ void drawOriginPage(std::shared_ptr<PKX> pkm, std::vector<std::string> &varText)
 		: (pkm->metLocation() > Lang::locations5.size() ? "" : Lang::locations5[pkm->metLocation()]),
 		Lang::games[pkm->version()],
 	};
+	printText(Lang::get("origin"), 4, 0, false, true);
 	for(unsigned i=0;i<originLabels.size();i++) {
-		printText(Lang::get(originLabels[i])+": "+varText[i], 4, 4+(i*20), false);
+		printText(Lang::get(originLabels[i])+": "+varText[i], 4, (i+1)*16, false, true);
 	}
 }
 
 std::shared_ptr<PKX> selectOrigin(std::shared_ptr<PKX> pkm) {
 	std::vector<std::string> varText;
+	drawImageDMA(0, 0, listBg, false, false);
 	drawOriginPage(pkm, varText);
 
 	setSpriteVisibility(arrowID, false, true);
-	setSpritePosition(arrowID, false, 4+getTextWidth(Lang::get(originLabels[0])+": "+varText[0]), -2);
+	setSpritePosition(arrowID, false, 4+getTextWidth(Lang::get(originLabels[0])+": "+varText[0]), 10);
 	updateOam();
 
 	bool optionSelected = false;
@@ -733,39 +754,44 @@ std::shared_ptr<PKX> selectOrigin(std::shared_ptr<PKX> pkm) {
 		}
 
 		// Move arrow
-		setSpritePosition(arrowID, false, 4+getTextWidth(Lang::get(originLabels[selection])+": "+varText[selection]), (selection*20)-2);
+		setSpritePosition(arrowID, false, 4+getTextWidth(Lang::get(originLabels[selection])+": "+varText[selection]), (selection*16)+10);
 		updateOam();
 	}
 }
 
-void drawStatsPage(std::shared_ptr<PKX> pkm) {
-	// Clear the screen
-	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
+void drawStatsPage(std::shared_ptr<PKX> pkm, bool background) {
+	if(background) {
+		// Clear the screen
+		drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
 
-	// Draw lines
-	for(unsigned i=1;i<(sizeof(textStatsC1)/sizeof(textStatsC1[0]));i++) {
-		drawRectangle(16, textStatsC1[i].y, 230, 1, LIGHT_GRAY, false);
+		// Draw lines
+		for(unsigned i=1;i<(sizeof(textStatsC1)/sizeof(textStatsC1[0]));i++) {
+			drawRectangle(16, textStatsC1[i].y, 230, 1, LIGHT_GRAY, false, false);
+		}
+		drawRectangle(128, 4, 1, 112, LIGHT_GRAY, false, false);
+		drawRectangle(168, 4, 1, 112, LIGHT_GRAY, false, false);
+		drawRectangle(208, 4, 1, 112, LIGHT_GRAY, false, false);
 	}
-	drawRectangle(128, 4, 1, 112, LIGHT_GRAY, false);
-	drawRectangle(168, 4, 1, 112, LIGHT_GRAY, false);
-	drawRectangle(208, 4, 1, 112, LIGHT_GRAY, false);
+
+	// Clear text
+	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 
 	// Print stat info labels
 	{
 		int i = pkm->nature();
-		printText(Lang::get(statsLabels[0]), 20, textStatsC1[0].y, false);
-		printTextTintedMaxW(Lang::get(statsLabels[1]), 80, 1, (i!=0&&i<5         ? RGB::RED : i!=0&&!(i%5)      ? RGB::BLUE : WHITE), 20, textStatsC1[1].y, false);
-		printTextTintedMaxW(Lang::get(statsLabels[2]), 80, 1, (i!=6&&i>4&&i<10   ? RGB::RED : i!=6&&!((i-1)%5)  ? RGB::BLUE : WHITE), 20, textStatsC1[2].y, false);
-		printTextTintedMaxW(Lang::get(statsLabels[3]), 80, 1, (i!=18&&i>14&&i<20 ? RGB::RED : i!=18&&!((i-3)%5) ? RGB::BLUE : WHITE), 20, textStatsC1[3].y, false);
-		printTextTintedMaxW(Lang::get(statsLabels[4]), 80, 1, (i!=24&&i>19       ? RGB::RED : i!=24&&!((i-4)%5) ? RGB::BLUE : WHITE), 20, textStatsC1[4].y, false);
-		printTextTintedMaxW(Lang::get(statsLabels[5]), 80, 1, (i!=12&&i>9&&i<15  ? RGB::RED : i!=12&&!((i-2)%5) ? RGB::BLUE : WHITE), 20, textStatsC1[5].y, false);
+		printText(Lang::get(statsLabels[0]), 20, textStatsC1[0].y, false, true);
+		printTextTintedMaxW(Lang::get(statsLabels[1]), 80, 1, (i!=0&&i<5         ? RED_TEXT : i!=0&&!(i%5)      ? BLUE_TEXT : WHITE_TEXT), 20, textStatsC1[1].y, false, true);
+		printTextTintedMaxW(Lang::get(statsLabels[2]), 80, 1, (i!=6&&i>4&&i<10   ? RED_TEXT : i!=6&&!((i-1)%5)  ? BLUE_TEXT : WHITE_TEXT), 20, textStatsC1[2].y, false, true);
+		printTextTintedMaxW(Lang::get(statsLabels[3]), 80, 1, (i!=18&&i>14&&i<20 ? RED_TEXT : i!=18&&!((i-3)%5) ? BLUE_TEXT : WHITE_TEXT), 20, textStatsC1[3].y, false, true);
+		printTextTintedMaxW(Lang::get(statsLabels[4]), 80, 1, (i!=24&&i>19       ? RED_TEXT : i!=24&&!((i-4)%5) ? BLUE_TEXT : WHITE_TEXT), 20, textStatsC1[4].y, false, true);
+		printTextTintedMaxW(Lang::get(statsLabels[5]), 80, 1, (i!=12&&i>9&&i<15  ? RED_TEXT : i!=12&&!((i-2)%5) ? BLUE_TEXT : WHITE_TEXT), 20, textStatsC1[5].y, false, true);
 	}
 
 	// Print column titles
-	printTextCenteredMaxW(Lang::get(statsLabels[6]), 30, 1, textStatsC1[0].x, textStatsC1[0].y-16, false);
-	printTextCentered(Lang::get(statsLabels[7]), textStatsC2[0].x, textStatsC2[0].y-16, false);
-	printTextCentered(Lang::get(statsLabels[8]), textStatsC3[0].x, textStatsC3[0].y-16, false);
-	printTextCenteredMaxW(Lang::get(statsLabels[9]), 30, 1, textStatsC4[0].x, textStatsC4[0].y-16, false);
+	printTextCenteredMaxW(Lang::get(statsLabels[6]), 30, 1, textStatsC1[0].x, textStatsC1[0].y-16, false, true);
+	printTextCentered(Lang::get(statsLabels[7]), textStatsC2[0].x, textStatsC2[0].y-16, false, true);
+	printTextCentered(Lang::get(statsLabels[8]), textStatsC3[0].x, textStatsC3[0].y-16, false, true);
+	printTextCenteredMaxW(Lang::get(statsLabels[9]), 30, 1, textStatsC4[0].x, textStatsC4[0].y-16, false, true);
 
 	// Set base stat info
 	snprintf(textStatsC1[0].text,  sizeof(textStatsC1[0].text), "%i", pkm->baseHP());
@@ -781,20 +807,20 @@ void drawStatsPage(std::shared_ptr<PKX> pkm) {
 		snprintf(textStatsC3[i].text,  sizeof(textStatsC3[i].text), "%i", pkm->ev(statOrder[i]));
 		snprintf(textStatsC4[i].text,  sizeof(textStatsC4[i].text), "%i", pkm->stat(statOrder[i]));
 
-		printTextCentered(textStatsC1[i].text, textStatsC1[i].x, textStatsC1[i].y, false);
-		printTextCentered(textStatsC2[i].text, textStatsC2[i].x, textStatsC2[i].y, false);
-		printTextCentered(textStatsC3[i].text, textStatsC3[i].x, textStatsC3[i].y, false);
-		printTextCentered(textStatsC4[i].text, textStatsC4[i].x, textStatsC4[i].y, false);
+		printTextCentered(textStatsC1[i].text, textStatsC1[i].x, textStatsC1[i].y, false, true);
+		printTextCentered(textStatsC2[i].text, textStatsC2[i].x, textStatsC2[i].y, false, true);
+		printTextCentered(textStatsC3[i].text, textStatsC3[i].x, textStatsC3[i].y, false, true);
+		printTextCentered(textStatsC4[i].text, textStatsC4[i].x, textStatsC4[i].y, false, true);
 	}
 
 	// Draw Hidden Power type
-	printText(Lang::get("hpType")+":", 20, 118, false);
-	drawImage(24+getTextWidth(Lang::get("hpType")+":"), 120, types[pkm->hpType()+1].width, types[pkm->hpType()+1].height, types[pkm->hpType()+1], false);
+	printText(Lang::get("hpType")+":", 20, 118, false, true);
+	drawImage(24+getTextWidth(Lang::get("hpType")+":"), 120, types[pkm->hpType()+1], false, true);
 
 }
 
 std::shared_ptr<PKX> selectStats(std::shared_ptr<PKX> pkm) {
-	drawStatsPage(pkm);
+	drawStatsPage(pkm, true);
 	setSpritePosition(arrowID, false, 128+(textStatsC2[0].x+(getTextWidth(textStatsC2[0].text)/2))+2, textStatsC2[0].y-6);
 	setSpriteVisibility(arrowID, false, true);
 	updateOam();
@@ -867,7 +893,7 @@ std::shared_ptr<PKX> selectStats(std::shared_ptr<PKX> pkm) {
 			}
 			setSpriteVisibility(arrowID, false, true);
 			updateOam();
-			drawStatsPage(pkm);
+			drawStatsPage(pkm, false);
 		}
 
 		if(selection == 6) { // Hidden Power type

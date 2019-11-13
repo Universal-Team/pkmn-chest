@@ -17,14 +17,14 @@ std::vector<std::string> genders = {"male", "female", "unknown"}, filterLabels =
 
 void selectMoves(std::shared_ptr<PKFilter> &filter) {
 	// Clear screen
-	drawImageSegmentDMA(0, 0, 256, 192, listBg, 256, false);
-	printText(Lang::get("moves"), 4, 0, false);
+	drawImageDMA(0, 0, listBg, false, false);
+	printText(Lang::get("moves"), 4, 0, false, true);
 
 	// Print moves
 	for(int i=0;i<4;i++) {
-		printText(filter->moveEnabled(i) ? "√" : "x", 4, 16+(i*16), false);
-		printTextMaxW(Lang::moves[filter->move(i)], 100, 1, 20, 16+(i*16), false);
-		printText(filter->moveInversed(i) ? "≠" : "=", 120, 16+(i*16), false);
+		printText(filter->moveEnabled(i) ? "√" : "x", 4, 16+(i*16), false, true);
+		printTextMaxW(Lang::moves[filter->move(i)], 100, 1, 20, 16+(i*16), false, true);
+		printText(filter->moveInversed(i) ? "≠" : "=", 120, 16+(i*16), false, true);
 	}
 
 	// Set arrow position
@@ -92,14 +92,14 @@ void selectMoves(std::shared_ptr<PKFilter> &filter) {
 			}
 
 			// Clear screen
-			drawImageSegmentDMA(0, 0, 256, 192, listBg, 256, false);
-			printText(Lang::get("moves"), 4, 0, false);
+			drawImageDMA(0, 0, listBg, false, false);
+			printText(Lang::get("moves"), 4, 0, false, true);
 
 			// Print moves
 			for(int i=0;i<4;i++) {
-				printText(filter->moveEnabled(i) ? "√" : "x", 4, 16+(i*16), false);
-				printTextMaxW(Lang::moves[filter->move(i)], 100, 1, 20, 16+(i*16), false);
-				printText(filter->moveInversed(i) ? "≠" : "=", 120, 16+(i*16), false);
+				printText(filter->moveEnabled(i) ? "√" : "x", 4, 16+(i*16), false, true);
+				printTextMaxW(Lang::moves[filter->move(i)], 100, 1, 20, 16+(i*16), false, true);
+				printText(filter->moveInversed(i) ? "≠" : "=", 120, 16+(i*16), false, true);
 			}
 		}
 
@@ -113,8 +113,8 @@ void selectMoves(std::shared_ptr<PKFilter> &filter) {
 
 void drawFilterMenu(std::shared_ptr<PKFilter> &filter) {
 	// Clear screen
-	drawImageSegmentDMA(0, 0, 256, 192, listBg, 256, false);
-	printText(Lang::get("filter"), 4, 0, false);
+	drawImageDMA(0, 0, listBg, false, false);
+	printText(Lang::get("filter"), 4, 0, false, true);
 
 	// Fill filterValues
 	filterValues.clear();
@@ -157,10 +157,10 @@ void drawFilterMenu(std::shared_ptr<PKFilter> &filter) {
 
 	// Print items
 	for(unsigned i=0;i<filterLabels.size();i++) {
-		printText(filterEnabled[i] ? "o" : "x", 4, 16+(i*16), false);
-		printTextMaxW(Lang::get(filterLabels[i]), 100, 1, 20, 16+(i*16), false);
-		printText(filterInversed[i] ? "≠" : "=", 120, 16+(i*16), false);
-		printTextMaxW(filterValues[i], 100, 1, 136, 16+(i*16), false);
+		printText(filterEnabled[i] ? "o" : "x", 4, 16+(i*16), false, true);
+		printTextMaxW(Lang::get(filterLabels[i]), 100, 1, 20, 16+(i*16), false, true);
+		printText(filterInversed[i] ? "≠" : "=", 120, 16+(i*16), false, true);
+		printTextMaxW(filterValues[i], 100, 1, 136, 16+(i*16), false, true);
 	}
 }
 

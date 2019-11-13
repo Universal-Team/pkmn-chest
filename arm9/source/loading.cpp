@@ -24,7 +24,7 @@ void loadLoadingLogo(void) {
 	logo = loadImage("nitro:/graphics/icon.gfx");
 	if(!(rand() % 8192)) { // Full odds shiny chest ;P
 		for(unsigned i=0;i<logo.palette.size();i++) {
-			if(logo.palette[i] == 0x801F || logo.palette[i] == 0x8C9F || logo.palette[i] == 0x8018)	logo.palette[i] |= RGB::BLUE & GRAY;
+			if(logo.palette[i] == 0x801F || logo.palette[i] == 0x8C9F || logo.palette[i] == 0x8018)	logo.palette[i] |= BLUE & GRAY;
 		}
 	}
 	for(unsigned int i=0;i<logo.bitmap.size();i++) {

@@ -1,5 +1,6 @@
 #include <math.h>
 #include <string>
+#include <string.h>
 #include <vector>
 
 struct Image {
@@ -9,7 +10,7 @@ struct Image {
 	std::vector<uint16_t> palette;
 };
 
-Image loadBmp16(std::string path, int paletteOffset) {
+Image loadBmp16(std::string path, int paletteOffset, int paletteCount) {
 	FILE* file = fopen(path.c_str(), "rb");
 	Image image = {0, 0};
 
@@ -34,8 +35,17 @@ Image loadBmp16(std::string path, int paletteOffset) {
 			int g = round((((palTemp[i]>>16)&0xff)*31)/255.0);
 			int b = round((((palTemp[i]>>8)&0xff)*31)/255.0);
 			image.palette[i] = r | g<<5 | b<<10 | 1<<15;
+			if(i > 0 && image.palette[i] == image.palette[i-1] && i > paletteCount) {
+				image.palette.resize(i);
+				break;
+			}
 			if(image.palette[i] == 0xfc1f)	image.palette[i] = 0;
 		}
+
+		// for(unsigned int i=0;i<image.palette.size();i++) {
+		// 	printf("%x|", image.palette[i]);
+		// }
+		// printf("\n");
 
 		int rowWidth = image.width;
 		while(rowWidth%8)	rowWidth++;
@@ -71,7 +81,7 @@ void offsetPalette(Image &image, int paletteOffset) {
 	}
 }
 
-void exportGfx(std::string path, Image &image) {
+void exportGfx(std::string path, Image &image, int paletteOffset) {
 	FILE* file = fopen(path.c_str(), "wb");
 
 	if(file) {
@@ -79,25 +89,36 @@ void exportGfx(std::string path, Image &image) {
 		fwrite(&image.width, 1, 2, file);
 		fwrite(&image.height, 1, 2, file);
 		fwrite(image.bitmap.data(), 1, image.bitmap.size(), file);
+		uint16_t palSize = image.palette.size();
+		fwrite(&palSize, 1, 2, file);
+		fwrite(&paletteOffset, 1, 2, file);
 		fwrite(image.palette.data(), 2, image.palette.size(), file);
 		fclose(file);
 	}
 }
 
 int main(int argc, char *argv[]) {
-	int paletteOffset = 0;
+	int paletteOffset = 0, paletteCount = 0;
 	if(argc < 3) {
-		printf("usage: bmp2ds in.bmp out.gfx [paletteOffest]\n");
+		printf("usage: bmp2ds in.bmp out.gfx [-o paletteOffest] [-c paletteCount]\n");
 		return 1;
 	}
 
 	std::string in = argv[1], out = argv[2];
 
-	if(argc >= 4) {
-		paletteOffset = std::stoi(argv[3]);
+	for(int i=0;i<argc;i++) {
+		if(strcmp(argv[i], "-o") == 0) {
+			if(i+1 < argc) {
+				paletteOffset = std::stoi(argv[i+1], nullptr, 16);
+			}
+		} else if(strcmp(argv[i], "-c") == 0) {
+			if(i+1 < argc) {
+				paletteCount = std::stoi(argv[i+1], nullptr, 16);
+			}
+		}
 	}
 
-	Image bmp = loadBmp16(in, paletteOffset);
+	Image bmp = loadBmp16(in, paletteOffset, paletteCount);
 	offsetPalette(bmp, paletteOffset);
-	exportGfx(out, bmp);
+	exportGfx(out, bmp, paletteOffset);
 }

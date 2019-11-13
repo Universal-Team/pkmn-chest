@@ -22,23 +22,25 @@ std::vector<Label> xMenuButtons = {
 };
 
 void savePrompt(void) {
-	// Draw background
-	drawImageDMA(0, 0, 256, 192, menuBg, false);
-	drawRectangle(0, 0, 256, 33, LIGHT_GRAY, false);
-	drawRectangle(0, 33, 256, 1, BLACK, false);
-	drawRectangle(0, 34, 256, 2, DARK_GRAY, false);
-	drawRectangle(0, 36, 256, 1, DARKERER_GRAY, false);
+	// Clear text
+	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 
-	printTextTinted(Lang::get("saveMsgChest"), GRAY, 5, 0, false, true);
+	// Draw background
+	drawImageDMA(0, 0, menuBg, false, false);
+	drawRectangle(0, 0, 256, 33, LIGHT_GRAY, false, false);
+	drawRectangle(0, 33, 256, 1, BLACK, false, false, false);
+	drawRectangle(0, 34, 256, 2, DARK_GRAY, false, false);
+	drawRectangle(0, 36, 256, 1, DARKERER_GRAY, false, false);
+
+	printTextTinted(Lang::get("saveMsgChest"), GRAY_TEXT, 5, 0, false, true);
 	if(Input::getBool(Lang::get("save"), Lang::get("discard"))) {
 		Banks::bank->backup();
 		Banks::bank->save();
 	}
 
-	drawImageSegment(4, 39, 248, 18, menuBg, 256, 4, 39, false);
-	drawRectangle(0, 0, 256, 32, LIGHT_GRAY, false);
-	if(savePath == cardSave)	printTextTinted(Lang::get("saveMsgCard"), GRAY, 5, 0, false, true);
-	else	printTextTinted(Lang::get("saveMsgSave"), GRAY, 5, 0, false, true);
+	drawRectangle(0, 0, 256, 32, CLEAR, false, true);
+	if(savePath == cardSave)	printTextTinted(Lang::get("saveMsgCard"), GRAY_TEXT, 5, 0, false, true);
+	else	printTextTinted(Lang::get("saveMsgSave"), GRAY_TEXT, 5, 0, false, true);
 
 	if(Input::getBool(Lang::get("save"), Lang::get("discard"))) {
 		// Re-encrypt the box data
@@ -49,22 +51,21 @@ void savePrompt(void) {
 		loadSave(savePath);
 		save->cryptBoxData(true);
 		if(savePath == cardSave) {
-			drawImageSegment(4, 39, 248, 18, menuBg, 256, 4, 39, false);
 			updateCardInfo();
-			if(!restoreSave()) {
-				drawImageDMA(0, 0, 256, 192, boxBgTop, true);
-				drawBox(true);
-			}
+			restoreSave();
 		}
 	}
+
+	// Clear text
+	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 }
 
 void drawXMenuButtons(unsigned menuSelection) {
 	xMenuButtons[3].label = save->otName();
 
 	for(unsigned i=0;i<xMenuButtons.size();i++) {
-		drawImage(xMenuButtons[i].x, xMenuButtons[i].y, menuButton.width, menuButton.height, menuSelection == i ? menuButtonBlue : menuButton, false);
-		printText((i==3) ? xMenuButtons[i].label : Lang::get(xMenuButtons[i].label), xMenuButtons[i].x+47, xMenuButtons[i].y+14, false);
+		drawImage(xMenuButtons[i].x, xMenuButtons[i].y, menuSelection == i ? menuButtonBlue : menuButton, false, false);
+		printText((i==3) ? xMenuButtons[i].label : Lang::get(xMenuButtons[i].label), xMenuButtons[i].x+47, xMenuButtons[i].y+14, false, true);
 		setSpriteAlpha(menuIconID[i], false, menuSelection == i ? 8 : 15);
 		updateOam();
 	}
@@ -82,7 +83,7 @@ bool xMenu(void) {
 	fillArrow(0);
 
 	// Draw background
-	drawImageDMA(0, 0, 256, 192, menuBg, false);
+	drawImageDMA(0, 0, menuBg, false, false);
 
 	// Enable sprites and set positions
 	for(unsigned i=0;i<menuIconID.size();i++) {
@@ -179,7 +180,8 @@ bool xMenu(void) {
 				setSpriteVisibility(menuIconID[i], false, false);
 			}
 			updateOam();
-			drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false);
+			drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
+			drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 			drawBox(false);
 			break;
 		}
@@ -227,7 +229,7 @@ bool xMenu(void) {
 			}
 
 			// Redraw menu
-			drawImage(0, 0, 256, 192, menuBg, false);
+			drawImage(0, 0, menuBg, false, false);
 			for(unsigned i=0;i<menuIconID.size();i++) {
 				setSpritePosition(menuIconID[i], false, xMenuButtons[i].x+3, xMenuButtons[i].y+6);
 				setSpriteVisibility(menuIconID[i], false, true);

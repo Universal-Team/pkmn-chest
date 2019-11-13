@@ -23,9 +23,12 @@ include $(DEVKITARM)/ds_rules
 #---------------------------------------------------------------------------------
 # main targets
 #---------------------------------------------------------------------------------
-all: checkarm9 graphics $(TARGET).nds
+all: checkarm9 $(TARGET).nds
 
-skip-graphics: checkarm9 $(TARGET).nds
+skip-graphics	:	checkarm9 $(NITRO_FILES) arm9/$(TARGET).elf
+	ndstool	-c $(TARGET).nds -9 arm9/$(TARGET).elf \
+	-b1 icon.bmp "$(GAME_TITLE);$(GAME_SUBTITLE1)" $(_ADDFILES) \
+	-z 80040000 -u 00030004 -a 00000138
 
 #---------------------------------------------------------------------------------
 checkarm9:
@@ -36,7 +39,7 @@ graphics:
 	$(MAKE) -C graphics
 
 #---------------------------------------------------------------------------------
-$(TARGET).nds	: $(NITRO_FILES) arm9/$(TARGET).elf
+$(TARGET).nds	: graphics $(NITRO_FILES) arm9/$(TARGET).elf
 	ndstool	-c $(TARGET).nds -9 arm9/$(TARGET).elf \
 	-b1 icon.bmp "$(GAME_TITLE);$(GAME_SUBTITLE1)" $(_ADDFILES) \
 	-z 80040000 -u 00030004 -a 00000138
