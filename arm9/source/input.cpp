@@ -245,36 +245,36 @@ void drawKeyboard(int layout) {
 	drawImage(xPos, 192-keyboard.height, keyboard, false, true);
 
 	drawRectangle(0, 192-keyboard.height-16, 256, 16, DARKERER_GRAY, false, true);
-	printText(string, 0, 192-keyboard.height-16, false);
+	printText(string, 0, 192-keyboard.height-16, false, true);
 
 	if(layout == 0) {
 		for(unsigned i=0;i<(sizeof(keys123)/sizeof(keys123[0]));i++) {
-			printTextTinted(keys123[i].character, GRAY_TEXT, xPos+keys123[i].x+16-(getTextWidth(keys123[i].character)/2), 192-keyboard.height+keys123[i].y+8, false);
+			printTextTinted(keys123[i].character, GRAY_TEXT, xPos+keys123[i].x+16-(getTextWidth(keys123[i].character)/2), 192-keyboard.height+keys123[i].y+8, false, true);
 		}
 	} else if(layout == 1) {
 		for(unsigned i=0;i<(sizeof(keysABC)/sizeof(keysABC[0]));i++) {
-			printTextTinted(keysABC[i].character, GRAY_TEXT, xPos+keysABC[i].x+16-(getTextWidth(keysABC[i].character)/2), 192-keyboard.height+keysABC[i].y+8, false);
+			printTextTinted(keysABC[i].character, GRAY_TEXT, xPos+keysABC[i].x+16-(getTextWidth(keysABC[i].character)/2), 192-keyboard.height+keysABC[i].y+8, false, true);
 		}
-		printTextTinted("a/A", GRAY_TEXT, xPos+keysSpecialKana[0].x+16-(getTextWidth("a/A")/2), 192-keyboard.height+keysSpecialKana[0].y+8, false);
+		printTextTinted("a/A", GRAY_TEXT, xPos+keysSpecialKana[0].x+16-(getTextWidth("a/A")/2), 192-keyboard.height+keysSpecialKana[0].y+8, false, true);
 	} else if(layout == 2) {
 		for(unsigned i=0;i<(sizeof(keysAIU)/sizeof(keysAIU[0]));i++) {
 			std::u16string str;
 			str += (katakana ? tokatakana(keysAIU[i].character[0]) : keysAIU[i].character[0]);
-			printTextTinted(str, GRAY_TEXT, xPos+keysAIU[i].x+16-(getTextWidth(str)/2), 192-keyboard.height+keysAIU[i].y+8, false);
+			printTextTinted(str, GRAY_TEXT, xPos+keysAIU[i].x+16-(getTextWidth(str)/2), 192-keyboard.height+keysAIU[i].y+8, false, true);
 		}
-		printTextTinted(katakana ? "ｯﾞﾟ" : "っﾞﾟ", GRAY_TEXT, xPos+keysSpecialKana[0].x+16-(getTextWidth(katakana ? "ｯﾞﾟ" : "っﾞﾟ")/2), 192-keyboard.height+keysSpecialKana[0].y+8, false);
-		printTextTinted(katakana ? "あ" : "ア", GRAY_TEXT, xPos+keysSpecialKana[1].x+16-(getTextWidth(katakana ? "あ" : "ア")/2), 192-keyboard.height+keysSpecialKana[1].y+8, false);
+		printTextTinted(katakana ? "ｯﾞﾟ" : "っﾞﾟ", GRAY_TEXT, xPos+keysSpecialKana[0].x+16-(getTextWidth(katakana ? "ｯﾞﾟ" : "っﾞﾟ")/2), 192-keyboard.height+keysSpecialKana[0].y+8, false, true);
+		printTextTinted(katakana ? "あ" : "ア", GRAY_TEXT, xPos+keysSpecialKana[1].x+16-(getTextWidth(katakana ? "あ" : "ア")/2), 192-keyboard.height+keysSpecialKana[1].y+8, false, true);
 	} else if(layout == 3) {
 		for(unsigned i=0;i<(sizeof(keysQWE)/sizeof(keysQWE[0]));i++) {
 			std::string str;
 			str += (caps||shift ? toupper(keysQWE[i].character[0]) : keysQWE[i].character[0]);
-			printText(str, xPos+keysQWE[i].x+8-(getTextWidth(str)/2), 192-keyboard.height+keysQWE[i].y, false);
+			printText(str, xPos+keysQWE[i].x+8-(getTextWidth(str)/2), 192-keyboard.height+keysQWE[i].y, false, true);
 		}
 	} else if(layout == 4) {
 		for(unsigned i=0;i<(sizeof(keysKor)/sizeof(keysKor[0]));i++) {
 			std::u16string str;
 			str += (shift ? tossang(keysKor[i].character[0]) : keysKor[i].character[0]);
-			printText(str, xPos+keysKor[i].x+8-(getTextWidth(str)/2), 192-keyboard.height+keysKor[i].y, false);
+			printText(str, xPos+keysKor[i].x+8-(getTextWidth(str)/2), 192-keyboard.height+keysKor[i].y, false, true);
 		}
 	}
 }
@@ -493,7 +493,7 @@ void processTouch123(touchPosition touch, unsigned maxLength) {
 					drawRectangle(keysSpecialKana[i].x+xPos, keysSpecialKana[i].y+(192-keyboard.height), 32, 32, GRAY, false, true);
 					string = string.substr(0, string.length()-1);
 					drawRectangle(0, 192-keyboard.height-16, 256, 16, DARKERER_GRAY, false, true);
-					printText(string, 0, 192-keyboard.height-16, false);
+					printText(string, 0, 192-keyboard.height-16, false, true);
 					for(int j=0;j<10 && keysHeld() & KEY_TOUCH;j++) {
 						swiWaitForVBlank();
 						scanKeys();
@@ -569,7 +569,7 @@ void processTouchABC(touchPosition touch, unsigned maxLength) {
 					drawRectangle(keysSpecialKana[i].x+xPos, keysSpecialKana[i].y+(192-keyboard.height), 32, 32, GRAY, false, true);
 					string = string.substr(0, string.length()-1);
 					drawRectangle(0, 192-keyboard.height-16, 256, 16, DARKERER_GRAY, false, true);
-					printText(string, 0, 192-keyboard.height-16, false);
+					printText(string, 0, 192-keyboard.height-16, false, true);
 					for(int j=0;j<10 && keysHeld() & KEY_TOUCH;j++) {
 						swiWaitForVBlank();
 						scanKeys();
@@ -653,7 +653,7 @@ void processTouchAIU(touchPosition touch, unsigned maxLength) {
 					drawRectangle(keysSpecialKana[i].x+xPos, keysSpecialKana[i].y+(192-keyboard.height), 32, 32, GRAY, false, true);
 					string = string.substr(0, string.length()-1);
 					drawRectangle(0, 192-keyboard.height-16, 256, 16, DARKERER_GRAY, false, true);
-					printText(string, 0, 192-keyboard.height-16, false);
+					printText(string, 0, 192-keyboard.height-16, false, true);
 					for(int j=0;j<10 && keysHeld() & KEY_TOUCH;j++) {
 						swiWaitForVBlank();
 						scanKeys();
@@ -714,7 +714,7 @@ void processTouchQWE(touchPosition touch, unsigned maxLength) {
 				char c = keysQWE[i].character[0];
 				string += (shift || caps ? toupper(c) : c);
 				shift = false;
-				printText(string, 0, 192-keyboard.height-16, false);
+				printText(string, 0, 192-keyboard.height-16, false, true);
 				break;
 			}
 		}
@@ -724,7 +724,7 @@ void processTouchQWE(touchPosition touch, unsigned maxLength) {
 			drawRectangle(key.x, key.y+(192-keyboard.height), 96, 16, DARK_GRAY, false, true);
 			string += u8u16(key.character);
 			shift = false;
-			printText(string, 0, 192-keyboard.height-16, false);
+			printText(string, 0, 192-keyboard.height-16, false, true);
 		}
 	}
 	// Check if a special key was pressed
@@ -734,7 +734,7 @@ void processTouchQWE(touchPosition touch, unsigned maxLength) {
 				drawRectangle(keysSpecialQWE[i].x, keysSpecialQWE[i].y+(192-keyboard.height), 16, 16, DARK_GRAY, false, true);
 				string = string.substr(0, string.length()-1);
 				drawRectangle(0, 192-keyboard.height-16, 256, 16, DARKERER_GRAY, false, true);
-				printText(string, 0, 192-keyboard.height-16, false);
+				printText(string, 0, 192-keyboard.height-16, false, true);
 			} else if(keysSpecialQWE[i].character == "caps") {
 				caps = !caps;
 				if(caps) drawRectangle(keysSpecialQWE[i].x, keysSpecialQWE[i].y+(192-keyboard.height), 16, 16, GRAY, false, true);
@@ -903,7 +903,7 @@ void processTouchKor(touchPosition touch, unsigned maxLength) {
 				}
 
 				shift = false;
-				printText(string, 0, 192-keyboard.height-16, false);
+				printText(string, 0, 192-keyboard.height-16, false, true);
 				break;
 			}
 		}
@@ -913,7 +913,7 @@ void processTouchKor(touchPosition touch, unsigned maxLength) {
 			drawRectangle(key.x, key.y+(192-keyboard.height), 96, 16, DARK_GRAY, false, true);
 			string += u8u16(key.character);
 			shift = false;
-			printText(string, 0, 192-keyboard.height-16, false);
+			printText(string, 0, 192-keyboard.height-16, false, true);
 		}
 	}
 	// Check if a special key was pressed
@@ -972,7 +972,7 @@ void processTouchKor(touchPosition touch, unsigned maxLength) {
 				}
 
 				drawRectangle(0, 192-keyboard.height-16, 256, 16, DARKERER_GRAY, false, true);
-				printText(string, 0, 192-keyboard.height-16, false);
+				printText(string, 0, 192-keyboard.height-16, false, true);
 			} else if(keysSpecialQWE[i].character == "caps") {
 				caps = !caps;
 				if(caps) drawRectangle(keysSpecialQWE[i].x, keysSpecialQWE[i].y+(192-keyboard.height), 16, 16, GRAY, false, true);
@@ -1020,10 +1020,10 @@ std::string Input::getLine(unsigned maxLength) {
 			pressed = keysDown();
 			if(cursorBlink == 30) {
 				drawRectangle(0, 192-keyboard.height-16, 256, 16, DARKERER_GRAY, false, true);
-				printText(string+u8u16("_"), 0, 192-keyboard.height-16, false);
+				printText(string+u8u16("_"), 0, 192-keyboard.height-16, false, true);
 			} else if(cursorBlink == 0) {
 				drawRectangle(0, 192-keyboard.height-16, 256, 16, DARKERER_GRAY, false, true);
-				printText(string, 0, 192-keyboard.height-16, false);
+				printText(string, 0, 192-keyboard.height-16, false, true);
 			} else if(cursorBlink == -30) {
 				cursorBlink = 31;
 			}
@@ -1043,7 +1043,7 @@ std::string Input::getLine(unsigned maxLength) {
 			drawKeyboard(loadedLayout);
 			// Print string
 			drawRectangle(0, 192-keyboard.height-16, 256, 16, DARKERER_GRAY, false, true);
-			printText(string + (cursorBlink ? u8u16("_") : u8u16("")), 0, 192-keyboard.height-16, false);
+			printText(string + (cursorBlink ? u8u16("_") : u8u16("")), 0, 192-keyboard.height-16, false, true);
 
 			// If caps lock / shift are on, highlight the key
 			if(caps)	drawRectangle(keysSpecialQWE[1].x, keysSpecialQWE[1].y+(192-keyboard.height), 16, 16, GRAY, false, true);
@@ -1058,15 +1058,15 @@ std::string Input::getLine(unsigned maxLength) {
 
 			// Print string
 			drawRectangle(0, 192-keyboard.height-16, 256, 16, DARKERER_GRAY, false, true);
-			printText(string + (cursorBlink ? u8u16("_") : u8u16("")), 0, 192-keyboard.height-16, false);
+			printText(string + (cursorBlink ? u8u16("_") : u8u16("")), 0, 192-keyboard.height-16, false, true);
 		} else if(held & KEY_B) {
 			string = string.substr(0, string.length()-1);
 			drawRectangle(0, 192-keyboard.height-16, 256, 16, DARKERER_GRAY, false, true);
-			printText(string, 0, 192-keyboard.height-16, false);
+			printText(string, 0, 192-keyboard.height-16, false, true);
 		} else if(held & KEY_Y) {
 			string += u8u16(" ");
 			drawRectangle(0, 192-keyboard.height-16, 256, 16, DARKERER_GRAY, false, true);
-			printText(string, 0, 192-keyboard.height-16, false);
+			printText(string, 0, 192-keyboard.height-16, false, true);
 		}
 		if(held & KEY_START || enter) {
 			Sound::play(Sound::click);
@@ -1106,10 +1106,10 @@ int Input::getInt(unsigned max) {
 			pressed = keysDown();
 			if(cursorBlink == 30) {
 				drawRectangle(0, 192-keyboard.height-16, 256, 16, DARKERER_GRAY, false, true);
-				printText(string+u8u16("_"), 0, 192-keyboard.height-16, false);
+				printText(string+u8u16("_"), 0, 192-keyboard.height-16, false, true);
 			} else if(cursorBlink == 0) {
 				drawRectangle(0, 192-keyboard.height-16, 256, 16, DARKERER_GRAY, false, true);
-				printText(string, 0, 192-keyboard.height-16, false);
+				printText(string, 0, 192-keyboard.height-16, false, true);
 			} else if(cursorBlink == -30) {
 				cursorBlink = 31;
 			}
@@ -1126,11 +1126,11 @@ int Input::getInt(unsigned max) {
 
 			// Print string
 			drawRectangle(0, 192-keyboard.height-16, 256, 16, DARKERER_GRAY, false, true);
-			printText(string + (cursorBlink ? u8u16("_") : u8u16("")), 0, 192-keyboard.height-16, false);
+			printText(string + (cursorBlink ? u8u16("_") : u8u16("")), 0, 192-keyboard.height-16, false, true);
 		} else if(held & KEY_B) {
 			string = string.substr(0, string.length()-1);
 			drawRectangle(0, 192-keyboard.height-16, 256, 16, DARKERER_GRAY, false, true);
-			printText(string, 0, 192-keyboard.height-16, false);
+			printText(string, 0, 192-keyboard.height-16, false, true);
 		}
 		if(held & KEY_START || enter) {
 			Sound::play(Sound::click);
@@ -1158,8 +1158,8 @@ bool Input::getBool(std::string optionTrue, std::string optionFalse) {
 	drawOutline(138, 75, 70, 41, BLACK, false, true);
 
 	// Print text
-	printTextCenteredTintedMaxW(optionFalse, 60, 1, GRAY_TEXT, -45, 88, false);
-	printTextCenteredTintedMaxW(optionTrue, 60, 1, GRAY_TEXT, 45, 88, false);
+	printTextCenteredTintedMaxW(optionFalse, 60, 1, GRAY_TEXT, -45, 88, false, true);
+	printTextCenteredTintedMaxW(optionTrue, 60, 1, GRAY_TEXT, 45, 88, false, true);
 
 	int pressed;
 	touchPosition touch;

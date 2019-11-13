@@ -83,7 +83,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 	DIR *pdir = opendir(".");
 
 	if(pdir == NULL) {
-		printText("Unable to open the directory.", 0, 0, false);
+		printText("Unable to open the directory.", 0, 0, false, true);
 	} else {
 		while(true) {
 			DirEntry dirEntry;
@@ -114,7 +114,7 @@ void showDirectoryContents(const std::vector<DirEntry>& dirContents, int startRo
 
 	// Print path
 	drawRectangle(0, 0, 256, 16, CLEAR, false, true);
-	printTextMaxW(path, 250, 1, 4, 0, false);
+	printTextMaxW(path, 250, 1, 4, 0, false, true);
 
 	// Print directory listing
 	for(int i=0;i < ENTRIES_PER_SCREEN; i++) {
@@ -132,7 +132,7 @@ void showDirectoryContents(const std::vector<DirEntry>& dirContents, int startRo
 			}
 			if(addEllipsis)	name += StringUtils::UTF8toUTF16("...");
 
-			printText(name, 10, i*16+16, false);
+			printText(name, 10, i*16+16, false, true);
 		}
 	}
 }
@@ -168,20 +168,20 @@ void drawSdText(int i, bool valid) {
 	char str[20];
 	updateDriveLabel(false);
 	snprintf(str, sizeof(str), "sd: (%s)", sdLabel[0] == '\0' ? "SD Card" : sdLabel);
-	printTextTinted(str, valid ? WHITE_TEXT : RED_TEXT, 10, (i+1)*16, false);
+	printTextTinted(str, valid ? WHITE_TEXT : RED_TEXT, 10, (i+1)*16, false, true);
 }
 
 void drawFatText(int i, bool valid) {
 	char str[21];
 	updateDriveLabel(true);
 	snprintf(str, sizeof(str), "fat: (%s)", fatLabel[0] == '\0' ? "Flashcard" : fatLabel);
-	printTextTinted(str, valid ? WHITE_TEXT : RED_TEXT, 10, (i+1)*16, false);
+	printTextTinted(str, valid ? WHITE_TEXT : RED_TEXT, 10, (i+1)*16, false, true);
 }
 
 void drawSlot1Text(int i, bool valid) {
 	char slot1Text[34];
 	snprintf(slot1Text, sizeof(slot1Text), "Slot-1: (%s) [%s]", REG_SCFG_MC == 0x11 ? "No card inserted" : gamename, gameid);
-	printTextTinted(slot1Text, valid ? WHITE_TEXT : RED_TEXT, 10, (i+1)*16, false);
+	printTextTinted(slot1Text, valid ? WHITE_TEXT : RED_TEXT, 10, (i+1)*16, false, true);
 }
 
 bool updateSlot1Text(int &cardWait, bool valid) {
@@ -190,7 +190,7 @@ bool updateSlot1Text(int &cardWait, bool valid) {
 		cardWait = 30;
 		if(!noCardMessageSet) {
 			drawRectangle(10, ((tmSlot1Offset-tmScreenOffset)+1)*16, 246, 16, CLEAR, false, true);
-			printText("Slot-1: (No card inserted)", 10, ((tmSlot1Offset-tmScreenOffset)+1)*16, false);
+			printText("Slot-1: (No card inserted)", 10, ((tmSlot1Offset-tmScreenOffset)+1)*16, false, true);
 			noCardMessageSet = true;
 			return false;
 		}
@@ -232,7 +232,7 @@ void showTopMenu(std::vector<topMenuItem> topMenuContents) {
 				}
 				if(addEllipsis)	name += StringUtils::UTF8toUTF16("...");
 
-				printTextTinted(name, topMenuContents[i+tmScreenOffset].valid ? WHITE_TEXT : RED_TEXT, 10, i*16+16, false);
+				printTextTinted(name, topMenuContents[i+tmScreenOffset].valid ? WHITE_TEXT : RED_TEXT, 10, i*16+16, false, true);
 			}
 		}
 	}
@@ -251,7 +251,7 @@ std::string topMenuSelect(void) {
 	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 
 	// Print version number
-	printText(VER_NUMBER, 256-getTextWidth(VER_NUMBER)-1, 176, true);
+	printText(VER_NUMBER, 256-getTextWidth(VER_NUMBER)-1, 176, true, true);
 
 	if(!flashcardFound())	updateCardInfo();
 
@@ -381,7 +381,7 @@ std::string topMenuSelect(void) {
 			// Print the path to the currently selected file
 			std::u16string path = StringUtils::UTF8toUTF16(topMenuContents[tmCurPos].name);
 			path = path.substr(0, path.find_last_of(StringUtils::UTF8toUTF16("/"))+1); // Cut to just the path
-			printTextMaxW(path, 250, 1, 4, 0, false);
+			printTextMaxW(path, 250, 1, 4, 0, false, true);
 		}
 	}
 }
@@ -517,7 +517,7 @@ std::string browseForSave(void) {
 	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 
 	// Print version number
-	printText(VER_NUMBER, 256-getTextWidth(VER_NUMBER)-1, 176, true);
+	printText(VER_NUMBER, 256-getTextWidth(VER_NUMBER)-1, 176, true, true);
 
 	std::vector<std::string> extensionList;
 	extensionList.push_back("sav");

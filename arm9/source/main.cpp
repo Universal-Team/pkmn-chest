@@ -68,7 +68,7 @@ int main(int argc, char **argv) {
 	loadFont();
 	Config::load();
 	Lang::load(Config::getLang("lang"));
-	printTextCentered(Lang::get("loading"), 0, 32, false);
+	printTextCentered(Lang::get("loading"), 0, 32, false, true);
 
 	Sound::init();
 	Banks::init();
@@ -79,7 +79,7 @@ int main(int argc, char **argv) {
 	while(1) {
 		if(!loadSave(savePath = browseForSave())) {
 			drawRectangle(20, 20, 216, 152, DARK_RED, true, true);
-			printTextCentered(Lang::get("invalidSave"), 0, 24, true);
+			printTextCentered(Lang::get("invalidSave"), 0, 24, true, true);
 			for(int i=0;i<120;i++)	swiWaitForVBlank();
 			drawRectangle(20, 20, 216, 152, CLEAR, true, true);
 			continue;

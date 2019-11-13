@@ -307,13 +307,12 @@ void drawBox(bool top) {
 	drawImage(5, 15, bankBox, top, false);
 
 	// Print box name
-	drawRectangle(5, 20, bankBox.width, 16, CLEAR, top, true);
-	printTextCenteredTintedMaxW((top ? Banks::bank->boxName(currentBankBox) : save->boxName(currentSaveBox)), 110, 1, GRAY_TEXT, -44, 20, top);
+	printTextCenteredTintedMaxW((top ? Banks::bank->boxName(currentBankBox) : save->boxName(currentSaveBox)), 110, 1, GRAY_TEXT, -44, 20, top, false);
 
 	if(!top) {
 		drawImage(boxButton.width+5, 192-search.height, search, false, false);
-		printTextMaxW(Lang::get("party"), boxButton.width-8, 1, 4, 192-boxButton.height+4, false);
 		drawImage(0, 192-boxButton.height, boxButton, false, false);
+		printTextMaxW(Lang::get("party"), boxButton.width-8, 1, 4, 192-boxButton.height+4, false, false);
 	}
 }
 
@@ -329,11 +328,11 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 		// Print Pokédex number
 		char str[9];
 		snprintf(str, sizeof(str), "%s%.3i", Lang::get("dexNo").c_str(), pkm->species());
-		printTextTinted(str, GRAY_TEXT, 170, 8, true);
+		printTextTinted(str, GRAY_TEXT, 170, 8, true, true);
 
 		// Print name
-		if(pkm->nicknamed())	printTextTintedMaxW(pkm->nickname(), 80, 1, (pkm->gender() ? (pkm->gender() == 1 ? RED_TEXT : GRAY_TEXT) : BLUE_TEXT), 170, 25, true);
-		else	printTextTintedMaxW(Lang::species[pkm->species()], 80, 1, (pkm->gender() ? (pkm->gender() == 1 ? RED_TEXT : GRAY_TEXT) : BLUE_TEXT), 170, 25, true);
+		if(pkm->nicknamed())	printTextTintedMaxW(pkm->nickname(), 80, 1, (pkm->gender() ? (pkm->gender() == 1 ? RED_TEXT : GRAY_TEXT) : BLUE_TEXT), 170, 25, true, true);
+		else	printTextTintedMaxW(Lang::species[pkm->species()], 80, 1, (pkm->gender() ? (pkm->gender() == 1 ? RED_TEXT : GRAY_TEXT) : BLUE_TEXT), 170, 25, true, true);
 
 		// Draw types
 		int type = (pkm->generation() == Generation::FOUR && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1();
@@ -344,7 +343,7 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 		}
 
 		// Print Level
-		printTextTinted(Lang::get("lv")+std::to_string(pkm->level()), GRAY_TEXT, 170, 57, true);
+		printTextTinted(Lang::get("lv")+std::to_string(pkm->level()), GRAY_TEXT, 170, 57, true, true);
 	}
 }
 

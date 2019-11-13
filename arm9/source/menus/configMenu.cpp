@@ -43,12 +43,12 @@ std::string langNames[] = { "Deutsche", "English", "Español", "Français", "Ita
 void drawChestFileMenu(void) {
 	// Draw background
 	drawImageDMA(0, 0, listBg, false, false);
-	printText(Lang::get("options"), 4, 0, false);
+	printText(Lang::get("options"), 4, 0, false, true);
 
 	// Print text
-	printText(Lang::get(textCP1Labels[0].label)+": "+optionsText[0], textCP1Labels[0].x, textCP1Labels[0].y, false);
+	printText(Lang::get(textCP1Labels[0].label)+": "+optionsText[0], textCP1Labels[0].x, textCP1Labels[0].y, false, true);
 	for(unsigned i=0;i<textChestFile.size();i++) {
-		printText(Lang::get(textChestFile[i].label), textChestFile[i].x, textChestFile[i].y, false);
+		printText(Lang::get(textChestFile[i].label), textChestFile[i].x, textChestFile[i].y, false, true);
 	}
 }
 
@@ -124,8 +124,7 @@ void chestFileMenu(void) {
 					if(str.substr(0, str.find_last_of(".")) != getChestFile() && str != "")	Banks::removeBank(str.substr(0, str.find_last_of(".")));
 					else if(str != "") {
 						drawRectangle(20, 20, 216, 152, DARK_RED, false, true);
-						printTextCentered("You can not delete", 0, 24, false);
-						printTextCentered("the current bank.", 0, 40, false);
+						printTextCentered(Lang::get("cantDeleteCurrentBank"), 0, 24, false, true);
 						for(int i=0;i<120;i++)	swiWaitForVBlank();
 						drawRectangle(20, 20, 216, 152, CLEAR, false, true);
 					}
@@ -162,7 +161,7 @@ void drawConfigMenu(void) {
 	// Draw background
 	drawImageDMA(0, 0, listBg, false, false);
 	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
-	printText(Lang::get("options"), 4, 0, false);
+	printText(Lang::get("options"), 4, 0, false, true);
 
 	if(optionsText.size() < textCP1Labels.size()) {
 		optionsText.resize(textCP1Labels.size());
@@ -183,10 +182,10 @@ void drawConfigMenu(void) {
 
 	// Print text
 	for(unsigned i=0;i<textCP1Labels.size();i++) {
-		printText(Lang::get(textCP1Labels[i].label)+":", textCP1Labels[i].x, textCP1Labels[i].y, false);
+		printText(Lang::get(textCP1Labels[i].label)+":", textCP1Labels[i].x, textCP1Labels[i].y, false, true);
 	}
 	for(unsigned i=0;i<optionsText.size();i++) {
-		printText(optionsText[i], textCP1Labels[i].x+getTextWidth(Lang::get(textCP1Labels[i].label))+11, textCP1Labels[i].y, false);
+		printText(optionsText[i], textCP1Labels[i].x+getTextWidth(Lang::get(textCP1Labels[i].label))+11, textCP1Labels[i].y, false, true);
 	}
 }
 

@@ -24,7 +24,7 @@ int getMaxItem(int pouchIndex) {
 
 void drawBag(Pouch pouch, int maxItem, int screenPos, bool background) {
 	// Clear text
-	drawRectangle(0, 0, background ? 256 : 169, 192, CLEAR, false, true);
+	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 
 	// Draw background
 	if(background) {
@@ -36,16 +36,16 @@ void drawBag(Pouch pouch, int maxItem, int screenPos, bool background) {
 		// Draw pouch buttons
 		for(unsigned i=0;i<save->pouches().size();i++) {
 			drawImageScaled(170, (104-(10*save->pouches().size()))+i*(20), 1, (float)20/boxButton.height, boxButton, false, false);
-			printTextMaxW(save->pouchName(save->pouches()[i].first), boxButton.width-8, 1, 174, (104-(10*save->pouches().size()))+i*(20)+2, false);
+			printTextMaxW(save->pouchName(save->pouches()[i].first), boxButton.width-8, 1, 174, (104-(10*save->pouches().size()))+i*(20)+2, false, false);
 		}
 	}
 
-	printText(save->pouchName(pouch), 4, 0, false);
+	printText(save->pouchName(pouch), 4, 0, false, true);
 
 	// Print items
 	for(int i=0;i<std::min(entriesPerScreen, maxItem+1);i++) {
-		printTextMaxW(Lang::items[save->item(pouch, screenPos+i)->id()], 127, 1, 30, 16+(i*16), false);
-		printText(std::to_string(save->item(pouch, screenPos+i)->count()), 4, 16+(i*16), false);
+		printTextMaxW(Lang::items[save->item(pouch, screenPos+i)->id()], 127, 1, 30, 16+(i*16), false, true);
+		printText(std::to_string(save->item(pouch, screenPos+i)->count()), 4, 16+(i*16), false, true);
 	}
 }
 

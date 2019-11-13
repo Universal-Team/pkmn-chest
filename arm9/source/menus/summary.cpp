@@ -130,7 +130,7 @@ void drawSummaryPage(std::shared_ptr<PKX> pkm, bool background) {
 	drawRectangle(0, 0, 256, 192, 0, false, true);
 
 	// Print Pokémon name
-	printTextTintedMaxW(Lang::species[pkm->species()], 90, 1, (pkm->gender() ? (pkm->gender() == 1 ? RED_TEXT : GRAY_TEXT) : BLUE_TEXT), 165, 8, false);
+	printTextTintedMaxW(Lang::species[pkm->species()], 90, 1, (pkm->gender() ? (pkm->gender() == 1 ? RED_TEXT : GRAY_TEXT) : BLUE_TEXT), 165, 8, false, true);
 
 	// Draw/clear shiny star
 	if(pkm->shiny())	drawImage(150, 45, shiny, false, true);
@@ -138,7 +138,7 @@ void drawSummaryPage(std::shared_ptr<PKX> pkm, bool background) {
 
 	// Print Pokémon and trainer info labels
 	for(unsigned i=0;i<summaryLabels.size();i++) {
-		printTextMaxW(Lang::get(summaryLabels[i]), textC1[i].x-8, 1, 4, textC1[i].y, false);
+		printTextMaxW(Lang::get(summaryLabels[i]), textC1[i].x-8, 1, 4, textC1[i].y, false, true);
 	}
 
 	// Print Pokémon and trainer info
@@ -152,14 +152,14 @@ void drawSummaryPage(std::shared_ptr<PKX> pkm, bool background) {
 	snprintf(textC1[6].text,  sizeof(textC1[6].text), "%s", pkm->shiny() ? Lang::get("yes").c_str() : Lang::get("no").c_str());
 	snprintf(textC1[7].text,  sizeof(textC1[7].text), "%s", pkm->pkrs() ? Lang::get("yes").c_str() : Lang::get("no").c_str());
 	snprintf(textC1[8].text,  sizeof(textC1[8].text), "%s", pkm->otName().c_str());
+	for(unsigned i=0;i<(sizeof(textC1)/sizeof(textC1[0]));i++) {
 	snprintf(textC1[9].text,  sizeof(textC1[9].text), "%.5i", pkm->TID());
 	snprintf(textC1[10].text, sizeof(textC1[10].text),"%.5i", pkm->SID());
 	snprintf(textC1[11].text, sizeof(textC1[11].text),"%i", pkm->otFriendship());
-	for(unsigned i=0;i<(sizeof(textC1)/sizeof(textC1[0]));i++) {
 		// OT Name is colored
-		if(i != 8)	printTextMaxW(textC1[i].text, 80, 1, textC1[i].x, textC1[i].y, false);
+		if(i != 8)	printTextMaxW(textC1[i].text, 80, 1, textC1[i].x, textC1[i].y, false, true);
 	}
-	printTextTinted(textC1[8].text, (pkm->otGender() ? RED_TEXT : BLUE_TEXT), textC1[8].x, textC1[8].y, false);
+	printTextTinted(textC1[8].text, (pkm->otGender() ? RED_TEXT : BLUE_TEXT), textC1[8].x, textC1[8].y, false, true);
 
 	// Draw buttons // The first 2 don't have buttons
 	for(unsigned i=2;i<sizeof(textC2)/sizeof(textC2[0]);i++) {
@@ -169,7 +169,7 @@ void drawSummaryPage(std::shared_ptr<PKX> pkm, bool background) {
 	snprintf(textC2[3].text, sizeof(textC2[3].text),"%s", Lang::get("stats").c_str());
 	snprintf(textC2[4].text, sizeof(textC2[4].text),"%s", Lang::get("origin").c_str());
 	for(unsigned i=0;i<(sizeof(textC2)/sizeof(textC2[0]));i++) {
-		printTextMaxW(textC2[i].text, 80, 1, textC2[i].x, textC2[i].y, false);
+		printTextMaxW(textC2[i].text, 80, 1, textC2[i].x, textC2[i].y, false, true);
 	}
 }
 

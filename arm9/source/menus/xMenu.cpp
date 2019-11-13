@@ -32,15 +32,15 @@ void savePrompt(void) {
 	drawRectangle(0, 34, 256, 2, DARK_GRAY, false, false);
 	drawRectangle(0, 36, 256, 1, DARKERER_GRAY, false, false);
 
-	printTextTinted(Lang::get("saveMsgChest"), GRAY_TEXT, 5, 0, false);
+	printTextTinted(Lang::get("saveMsgChest"), GRAY_TEXT, 5, 0, false, true);
 	if(Input::getBool(Lang::get("save"), Lang::get("discard"))) {
 		Banks::bank->backup();
 		Banks::bank->save();
 	}
 
 	drawRectangle(0, 0, 256, 32, CLEAR, false, true);
-	if(savePath == cardSave)	printTextTinted(Lang::get("saveMsgCard"), GRAY_TEXT, 5, 0, false);
-	else	printTextTinted(Lang::get("saveMsgSave"), GRAY_TEXT, 5, 0, false);
+	if(savePath == cardSave)	printTextTinted(Lang::get("saveMsgCard"), GRAY_TEXT, 5, 0, false, true);
+	else	printTextTinted(Lang::get("saveMsgSave"), GRAY_TEXT, 5, 0, false, true);
 
 	if(Input::getBool(Lang::get("save"), Lang::get("discard"))) {
 		// Re-encrypt the box data
@@ -65,7 +65,7 @@ void drawXMenuButtons(unsigned menuSelection) {
 
 	for(unsigned i=0;i<xMenuButtons.size();i++) {
 		drawImage(xMenuButtons[i].x, xMenuButtons[i].y, menuSelection == i ? menuButtonBlue : menuButton, false, false);
-		printText((i==3) ? xMenuButtons[i].label : Lang::get(xMenuButtons[i].label), xMenuButtons[i].x+47, xMenuButtons[i].y+14, false);
+		printText((i==3) ? xMenuButtons[i].label : Lang::get(xMenuButtons[i].label), xMenuButtons[i].x+47, xMenuButtons[i].y+14, false, true);
 		setSpriteAlpha(menuIconID[i], false, menuSelection == i ? 8 : 15);
 		updateOam();
 	}

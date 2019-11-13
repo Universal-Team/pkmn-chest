@@ -169,8 +169,8 @@ void showParty(int selection) {
 	for(int i=0;i<6;i++) {
 		drawImage(partyButtons[i].x, partyButtons[i].y, selection == i ? menuButtonBlue : menuButton, false, false);
 		if(save->pkm(i)->species() != 0) {
-			if(save->pkm(i)->nicknamed())	printText(save->pkm(i)->nickname(), partyButtons[i].x+47, partyButtons[i].y+14, false);
-			else	printText(Lang::species[save->pkm(i)->species()], partyButtons[i].x+47, partyButtons[i].y+14, false);
+			if(save->pkm(i)->nicknamed())	printText(save->pkm(i)->nickname(), partyButtons[i].x+47, partyButtons[i].y+14, false, true);
+			else	printText(Lang::species[save->pkm(i)->species()], partyButtons[i].x+47, partyButtons[i].y+14, false, true);
 		}
 	}
 }
