@@ -30,14 +30,18 @@ void fadeSprites(int alpha) {
 	}
 }
 
-void showParty(void) {
-	// Set up windows
+void enableWindows(void) {
 	windowEnableSub(WINDOW_0);
-	bgWindowEnable(bg2Sub, WINDOW_0);
+	bgWindowEnable(bg2Sub, WINDOW_OUT);
 	bgWindowEnable(bg3Sub, WINDOW_0);
 	bgWindowEnable(bg3Sub, WINDOW_OUT);
-	oamWindowEnable(&oamSub, WINDOW_0);
-	windowSetBoundsSub(WINDOW_0, 0, 10, 255, 192-boxButton.height);
+	oamWindowEnable(&oamSub, WINDOW_OUT);
+	windowSetBoundsSub(WINDOW_0, 0, 192-boxButton.height, 150, boxButton.height);
+}
+
+void showParty(void) {
+	// Set up windows
+	enableWindows();
 	bgSetScroll(bg2Sub, 0, -120);
 	bgUpdate();
 
@@ -70,9 +74,12 @@ void showParty(void) {
 	}
 	bgSetScroll(bg2Sub, -partyX, -partyY);
 	bgUpdate();
+	windowDisableSub(WINDOW_0);
 }
 
 void hideParty(void) {
+	enableWindows();
+
 	// Scroll down
 	while(partyY < 130) {
 		partyY += 6;
@@ -143,7 +150,7 @@ void moveParty(int arrowMode, bool holdingPokemon) {
 		}
 		fadeSprites(15);
 	}
-	setSpriteVisibility(arrowID, false, true);
+	setSpriteVisibility(arrowID, false, !topScreen);
 	updateOam();
 }
 
