@@ -124,7 +124,7 @@ void chestFileMenu(void) {
 					if(str.substr(0, str.find_last_of(".")) != getChestFile() && str != "")	Banks::removeBank(str.substr(0, str.find_last_of(".")));
 					else if(str != "") {
 						drawRectangle(20, 20, 216, 152, DARK_RED, false, true);
-						printTextCentered(Lang::get("cantDeleteCurrentBank"), 0, 24, false, true);
+						printTextCentered(Lang::get("cantDeleteCurrentChest"), 0, 24, false, true);
 						for(int i=0;i<120;i++)	swiWaitForVBlank();
 						drawRectangle(20, 20, 216, 152, CLEAR, false, true);
 					}
