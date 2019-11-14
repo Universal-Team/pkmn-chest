@@ -85,6 +85,7 @@
 	"release": "релиз",
 	"remove": "удалить",
 	"rename": "переименовать",
+	"reopenIfFrozen": "If progress freezes,\nclose and reopen the console.",
 	"save": "сохранить",
 	"saveMsgCard": "вы хотели бы сохранить\nв карточке игры?",
 	"saveMsgChest": "вы хотели бы сохранить\nв сундук?",
