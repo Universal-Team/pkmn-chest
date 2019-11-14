@@ -85,6 +85,7 @@
 	"release": "freilassen",
 	"remove": "entfernen",
 	"rename": "Umbenennen",
+	"reopenIfFrozen": "If progress freezes,\nclose and reopen the console.",
 	"save": "Speichern",
 	"saveMsgCard": "Möchtest du deine Änderungen zu deiner\nGame Cart speichern?",
 	"saveMsgChest": "Möchtest du deine Änderungen zu der\nchest speichern?",
