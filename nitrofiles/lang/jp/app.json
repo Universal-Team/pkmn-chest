@@ -85,7 +85,7 @@
 	"release": "逃す",
 	"remove": "削除",
 	"rename": "名前を変更",
-	"reopenIfFrozen": "If progress freezes,\nclose and reopen the console.",
+	"reopenIfFrozen": "進行が停止した場合は、\n本体を閉じて再度開きます。",
 	"save": "セーブ",
 	"saveMsgCard": "ゲームカードへの変更を保存しますか?",
 	"saveMsgChest": "チェストへの変更を保存しますか?",
