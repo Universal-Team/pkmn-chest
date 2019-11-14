@@ -85,6 +85,7 @@
 	"release": "Libertar",
 	"remove": "Remover",
 	"rename": "Renomear",
+	"reopenIfFrozen": "If progress freezes,\nclose and reopen the console.",
 	"save": "Guardar",
 	"saveMsgCard": "Gostarias de guardar as alterações\npara o cartão de jogo?",
 	"saveMsgChest": "Gostarias de guardar as alterações\npara o baú?",
