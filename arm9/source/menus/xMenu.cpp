@@ -34,6 +34,8 @@ void savePrompt(void) {
 
 	printTextTinted(Lang::get("saveMsgChest"), GRAY_TEXT, 5, 0, false, true);
 	if(Input::getBool(Lang::get("save"), Lang::get("discard"))) {
+		drawRectangle(0, 0, 256, 32, CLEAR, false, true);
+		printTextTinted(Lang::get("reopenIfFrozen"), GRAY_TEXT, 5, 0, false, true);
 		Banks::bank->backup();
 		Banks::bank->save();
 	}
@@ -43,6 +45,8 @@ void savePrompt(void) {
 	else	printTextTinted(Lang::get("saveMsgSave"), GRAY_TEXT, 5, 0, false, true);
 
 	if(Input::getBool(Lang::get("save"), Lang::get("discard"))) {
+		drawRectangle(0, 0, 256, 32, CLEAR, false, true);
+		printTextTinted(Lang::get("reopenIfFrozen"), GRAY_TEXT, 5, 0, false, true);
 		// Re-encrypt the box data
 		save->cryptBoxData(false);
 		// Save changes to save file
