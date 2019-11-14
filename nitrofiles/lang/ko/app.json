@@ -85,6 +85,7 @@
 	"release": "맡긴다",
 	"remove": "Remove",
 	"rename": "Rename",
+	"reopenIfFrozen": "If progress freezes,\nclose and reopen the console.",
 	"save": "Save",
 	"saveMsgCard": "Would you like to save changes\nto the gamecard?",
 	"saveMsgChest": "Would you like to save changes\nto the chest?",
