@@ -6,7 +6,7 @@
 #include "loader.hpp"
 #include "Sav.hpp"
 
-extern bool topScreen;
+extern bool topScreen, inParty;
 extern int arrowID, currentSaveBox, currentBankBox, heldPokemonID, keyboardSpriteID, arrowMode;
 extern std::vector<int> menuIconID, partyIconID;
 extern std::string savePath;

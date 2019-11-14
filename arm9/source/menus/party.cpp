@@ -60,7 +60,7 @@ void showParty(void) {
 		partyY -= 6;
 		bgSetScroll(bg2Sub, -partyX, -partyY);
 		for(int j=0;j<6;j++) {
-			setSpritePosition(partyIconID[j], false, PARTY_TRAY_X + partySpritePos[j].first + partyX, PARTY_TRAY_Y + partySpritePos[j].second + partyY);
+			setSpritePosition(partyIconID[j], false, PARTY_TRAY_X + partySpritePos[j].first + partyX, std::min(PARTY_TRAY_Y + partySpritePos[j].second + partyY, 192));
 		}
 		updateOam();
 		bgUpdate();

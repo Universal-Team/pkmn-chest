@@ -285,11 +285,6 @@ void drawBox(bool top) {
 	// Load box image
 	bankBox = loadImage(boxBgPath(top));
 
-	// Hide all Pokémon sprites for bank box
-	for(int i=0;i<30;i++) {
-		setSpriteVisibility(i, top, false);
-	}
-	updateOam();
 	for(int i=0;i<30;i++) {
 		// Fill Pokémon Sprites
 		std::shared_ptr<PKX> tempPkm = (top ? Banks::bank->pkm(currentBankBox, i) : save->pkm(currentSaveBox, i));
@@ -299,6 +294,8 @@ void drawBox(bool top) {
 			setSpriteVisibility(i, top, true);
 			if(!(partyShown && arrowMode == 0))
 				setSpriteAlpha(i, top, (*tempPkm == *filter) ? 15 : 8);
+		} else {
+			setSpriteVisibility(i, top, false);
 		}
 	}
 	updateOam();
@@ -567,6 +564,13 @@ void manageBoxes(void) {
 							if(partyShown) {
 								moveParty(arrowMode, heldPokemon.size() > 0);
 								if(arrowMode == 0 && !inParty) {
+									if(topScreen) {
+										topScreen = false;
+										setSpriteVisibility(arrowID, true, false);
+										setSpriteVisibility(heldPokemonID, true, false);
+										setSpriteVisibility(arrowID, false, true);
+										setSpriteVisibility(heldPokemonID, false, heldPokemon.size() > 0);
+									}
 									inParty = true;
 									arrowX = 0, arrowY = 0;
 								}

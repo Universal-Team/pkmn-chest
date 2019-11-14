@@ -11,10 +11,11 @@
 #include "loader.hpp"
 #include "manager.hpp"
 #include "misc.hpp"
+#include "party.hpp"
 #include "summary.hpp"
 #include "sound.hpp"
 
-#define pkmPos(x, y) ((y*6)+x)
+#define pkmPos(x, y) ((y*(inParty ? 2 : 6))+x)
 
 std::vector<Label> aMenuButtons = {
 	{170,  16,    "move"}, // Move
@@ -97,7 +98,15 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				drawRectangle(170, 0, 86, 192, CLEAR, false, true);
 				return 1;
 			} else if(menuSelection == 1) { // Edit
+				if(partyShown) {
+					// Hide party Pokémon
+					for(unsigned int i=0;i<partyIconID.size();i++) {
+						setSpriteVisibility(partyIconID[i], false, false);
+					}
+					updateOam();
+				}
 				if(topScreen)	Banks::bank->pkm(showPokemonSummary(currentPokemon(pkmX, pkmY)), currentBankBox, pkmPos(pkmX, pkmY));
+				else if(inParty)	save->pkm(showPokemonSummary(currentPokemon(pkmX, pkmY)), pkmPos(pkmX, pkmY));
 				else	save->pkm(showPokemonSummary(currentPokemon(pkmX, pkmY)), currentSaveBox, pkmPos(pkmX, pkmY), false);
 
 				// Redraw screen
@@ -107,6 +116,10 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				if(topScreen)	drawBox(topScreen);
 				drawPokemonInfo(currentPokemon(pkmX, pkmY));
 				drawAMenuButtons(buttons, buttonMode);
+				if(partyShown) {
+					drawImage(PARTY_TRAY_X, PARTY_TRAY_Y, party, false, true);
+					fillPartySprites();
+				}
 			} else if(menuSelection == 2) { // Copy
 				if(topScreen) {
 					setSpriteVisibility(arrowID, false, false);
@@ -116,14 +129,32 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				drawRectangle(170, 0, 86, 192, CLEAR, false, true);
 				return 2;
 			} else if(menuSelection == 3) { // Release
+				if(partyShown) {
+					// Hide party Pokémon
+					for(unsigned int i=0;i<partyIconID.size();i++) {
+						setSpriteVisibility(partyIconID[i], false, false);
+					}
+					updateOam();
+				}
 				if(Input::getBool(Lang::get("release"), Lang::get("cancel"))) {
 					if(topScreen)	Banks::bank->pkm(save->emptyPkm(), currentBankBox, pkmPos(pkmX, pkmY));
+					else if(inParty)	save->pkm(save->emptyPkm(), pkmPos(pkmX, pkmY));
 					else	save->pkm(save->emptyPkm(), currentSaveBox, pkmPos(pkmX, pkmY), false);
 					drawPokemonInfo(save->emptyPkm());
 					drawBox(topScreen);
+
+					if(partyShown) {
+						save->fixParty();
+						drawImage(PARTY_TRAY_X, PARTY_TRAY_Y, party, false, true);
+						fillPartySprites();
+					}
 					goto back;
 				}
 				drawAMenuButtons(buttons, buttonMode);
+				if(partyShown) {
+					drawImage(PARTY_TRAY_X, PARTY_TRAY_Y, party, false, true);
+					fillPartySprites();
+				}
 			} else if(menuSelection == 4) { // Dump
 				char path[256];
 				if(currentPokemon(pkmX, pkmY)->alternativeForm())
@@ -253,6 +284,12 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				for(int i=0;i<30;i++) {
 					setSpriteVisibility(i, false, false);
 				}
+				if(partyShown) {
+					// Hide party Pokémon
+					for(unsigned int i=0;i<partyIconID.size();i++) {
+						setSpriteVisibility(partyIconID[i], false, false);
+					}
+				}
 				setSpriteVisibility(arrowID, false, false);
 				updateOam();
 
@@ -269,10 +306,10 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				if(fileName != "") {
 					FILE* in = fopen(fileName.c_str(), "rb");
 					if(in) {
-						fseek(in, 0, SEEK_END);
 						u8 buffer[136];
 						fread(buffer, 1, sizeof(buffer), in);
 						if(topScreen)	Banks::bank->pkm(save->emptyPkm()->getPKM(fileName.substr(fileName.size()-1) == "4" ? Generation::FOUR : Generation::FIVE, buffer), currentBankBox, pkmPos(pkmX, pkmY));
+						else if(inParty)	save->pkm(save->emptyPkm()->getPKM(fileName.substr(fileName.size()-1) == "4" ? Generation::FOUR : Generation::FIVE, buffer), pkmPos(pkmX, pkmY));
 						else	save->pkm(save->emptyPkm()->getPKM(fileName.substr(fileName.size()-1) == "4" ? Generation::FOUR : Generation::FIVE, buffer), currentSaveBox, pkmPos(pkmX, pkmY), false);
 						fclose(in);
 					}
@@ -286,10 +323,22 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				if(topScreen)	drawBox(topScreen);
 				drawPokemonInfo(currentPokemon(pkmX, pkmY));
 
+				if(partyShown) {
+					drawImage(PARTY_TRAY_X, PARTY_TRAY_Y, party, false, true);
+					fillPartySprites();
+				}
+
 				if(!topScreen)	setSpriteVisibility(arrowID, false, true);
 				updateOam();
 				goto back;
 			} else if(menuSelection == 1) { // Create
+				if(partyShown) {
+					// Hide party Pokémon
+					for(unsigned int i=0;i<partyIconID.size();i++) {
+						setSpriteVisibility(partyIconID[i], false, false);
+					}
+					updateOam();
+				}
 				std::shared_ptr<PKX> pkm = save->emptyPkm()->clone();
 				pkm->TID(save->TID());
 				pkm->SID(save->SID());
@@ -325,6 +374,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				pkm->metLevel(1);
 
 				if(topScreen)	Banks::bank->pkm(showPokemonSummary(pkm), currentBankBox, pkmPos(pkmX, pkmY));
+				else if(inParty)	save->pkm(showPokemonSummary(pkm), pkmPos(pkmX, pkmY));
 				else	save->pkm(showPokemonSummary(pkm), currentSaveBox, pkmPos(pkmX, pkmY), false);
 
 				// Redraw screen
@@ -333,6 +383,10 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				drawBox(false);
 				if(topScreen)	drawBox(topScreen);
 				drawPokemonInfo(currentPokemon(pkmX, pkmY));
+				if(partyShown) {
+					drawImage(PARTY_TRAY_X, PARTY_TRAY_Y, party, false, true);
+					fillPartySprites();
+				}
 				goto back;
 			} else if(menuSelection == 2) {
 				goto back;
