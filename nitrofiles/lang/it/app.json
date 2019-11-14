@@ -85,6 +85,7 @@
 	"release": "Rilascia",
 	"remove": "Rimuovi",
 	"rename": "Rinomina",
+	"reopenIfFrozen": "If progress freezes,\nclose and reopen the console.",
 	"save": "Salva",
 	"saveMsgCard": "Vuoi salvare i cambiamenti\nnella cartuccia?",
 	"saveMsgChest": "Vuoi salvare i cambiamenti\nnella chest?",
