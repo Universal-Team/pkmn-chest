@@ -11,6 +11,7 @@
 #include "lang.hpp"
 #include "lang.hpp"
 #include "manager.hpp"
+#include "misc.hpp"
 #include "xMenu.hpp"
 #include "sound.hpp"
 
@@ -34,11 +35,11 @@ std::vector<Label> textChestFile {
 	{12, 80, "change"}, // Change
 };
 
-std::vector<std::string> songs = {"off", "center1", "center4", "center5", "twinleafTown", "elmLab", "oakLab", "gameCorner"};
+const std::vector<std::string> songs = {"off", "center1", "center4", "center5", "twinleafTown", "elmLab", "oakLab", "gameCorner"};
 
 std::vector<std::string> optionsText;
 
-std::string langNames[] = { "Deutsche", "English", "Español", "Français", "Italiano", "Lietuvių", "Português", "русский", "日本語", "한국", "Bruh"};
+const std::vector<std::string> langNames = {"Bruh", "Deutsche", "English", "Español", "Français", "Italiano", "Lietuvių", "Português", "русский", "日本語", "한국"};
 
 void drawChestFileMenu(void) {
 	// Draw background
@@ -83,7 +84,7 @@ void chestFileMenu(void) {
 			return;
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
-			for(unsigned i=0;i<(sizeof(textChestFile)/sizeof(textChestFile[0]));i++) {
+			for(unsigned i=0;i<textChestFile.size();i++) {
 				if(touch.px >= textChestFile[i].x && touch.px <= textChestFile[i].x+getTextWidth(Lang::get(textChestFile[i].label)) && touch.py >= textChestFile[i].y && touch.py <= textChestFile[i].y+16) {
 					selection = i;
 					optionSelected = true;
@@ -251,11 +252,17 @@ void configMenu(void) {
 				} case 2: { // Language
 					if(pressed & KEY_LEFT) {
 						if(Config::getLang("lang") > 0)	Config::setInt("lang", Config::getLang("lang")-1);
-						else	Config::setInt("lang", (sizeof(langNames)/sizeof(langNames[0]))-1);
-					} else {
-						if(Config::getLang("lang") < (int)(sizeof(langNames)/sizeof(langNames[0]))-1)	Config::setInt("lang", Config::getLang("lang")+1);
+						else	Config::setInt("lang", langNames.size()-1);
+					} else if(pressed & KEY_RIGHT) {
+						if(Config::getLang("lang") < (int)langNames.size()-1)	Config::setInt("lang", Config::getLang("lang")+1);
 						else	Config::setInt("lang", 0);
+					} else {
+						int num = selectItem(Config::getLang("lang"), 0, langNames.size(), langNames);
+						if(num != -1) {
+							Config::setInt("lang", num);
+						}
 					}
+
 					Lang::load(Config::getLang("lang"));
 					break;
 				} case 3: { // Backup Amount

@@ -10,7 +10,7 @@ int pkmLang(void);
 int selectForm(int dexNo, int currentForm);
 
 // Shows a list of items in a vector to select from
-int selectItem(int current, int start, int max, std::vector<std::string> &items);
+int selectItem(int current, int start, int max, const std::vector<std::string> &items);
 
 // Shows the move editing menu
 std::shared_ptr<PKX> selectMoves(std::shared_ptr<PKX> pkm);

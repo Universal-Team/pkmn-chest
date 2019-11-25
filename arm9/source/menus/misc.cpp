@@ -246,7 +246,7 @@ void drawItemList(int screenPos, std::vector<std::string> itemList, bool backgro
 	}
 }
 
-int selectItem(int current, int start, int max, std::vector<std::string> &items) {
+int selectItem(int current, int start, int max, const std::vector<std::string> &items) {
 	if(current < start || current > max)	current = start;
 	// Set arrow position
 	setSpritePosition(arrowID, false, 4+getTextWidth(items[current]), -2);
