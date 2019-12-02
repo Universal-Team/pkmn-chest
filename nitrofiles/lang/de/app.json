@@ -13,6 +13,7 @@
 	"berries": "Beeren",
 	"bp": "GP",
 	"cancel": "Abbrechen",
+	"cantDeleteCurrentChest": "Du kannst\ndie aktuelle Truhe nicht löschen.",
 	"center1": "Pokémon Center (Gen. 1)",
 	"center4": "Pokémon Center (Gen. 4)",
 	"center5": "Pokémon Center (Gen. 5)",
@@ -84,6 +85,7 @@
 	"release": "freilassen",
 	"remove": "entfernen",
 	"rename": "Umbenennen",
+	"reopenIfFrozen": "Wenn Fortschritt einfriert,\nDie Konsole schließen und öffnen.",
 	"save": "Speichern",
 	"saveMsgCard": "Möchtest du deine Änderungen zu deiner\nGame Cart speichern?",
 	"saveMsgChest": "Möchtest du deine Änderungen zu der\nchest speichern?",
@@ -93,7 +95,7 @@
 	"sort": "Sortieren",
 	"soundFX": "Sound Effekte",
 	"spAtk": "Sp. Ang.",
-	"spAtkIV": "Sp-Angriff DV",
+	"spAtkIV": "Sp.-Angriff DV",
 	"spDef": "Sp. Vert.",
 	"spDefIV": "Sp-Verteidigung DV",
 	"species": "Spezies",
@@ -112,6 +114,6 @@
 	"unknown": "Unbekannt",
 	"unlimited": "Unlimitiert",
 	"wallpaper": "Hintergrund",
-	"wrongSaveSize": "Warning: The size of the save\ndoesn't match the size of the\ncurrent gamecard! Write stopped.",
+	"wrongSaveSize": "Warnung: Die Größe des Speichers\nentspricht nicht der Größe der\naktuellen Spielkarte! Schreiben gestoppt.",
 	"yes": "Ja"
 }
