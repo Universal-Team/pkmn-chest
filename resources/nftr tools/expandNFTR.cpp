@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <vector>
 
-int increaseAmount = 23;
+int increaseAmount = 0;
 uint16_t tileSize;
 
 int amountToIncrease(bool tile, bool width) {
@@ -12,7 +12,13 @@ int amountToIncrease(bool tile, bool width) {
 	return out;
 }
 
-int main() {
+int main(int argc, char *argv[]) {
+	if(argc < 2) {
+		printf("Please pass an amount to increase by!\n");
+		return 1;
+	} else {
+		increaseAmount = atoi(argv[1]);
+	}
 	// Get file size
 	FILE* in = fopen("in.nftr", "rb");
 	if(!in) {
