@@ -25,7 +25,7 @@ void loadToVector(std::string path, std::vector<std::string> &vec) {
 
 void Lang::load(int lang) {
 	// Check if the language has game info
-	int tempLang = (access(("nitro:/lang/"+langs[lang]+"/abilities.txt").c_str(), F_OK) == 0) ? lang : 1;
+	int tempLang = (access(("nitro:/lang/"+langs[lang]+"/abilities.txt").c_str(), F_OK) == 0) ? lang : Lang::en;
 
 	// Fill vectors from files
 	loadToVector("nitro:/lang/"+langs[tempLang]+"/abilities.txt", Lang::abilities);
@@ -38,7 +38,7 @@ void Lang::load(int lang) {
 	loadToVector("nitro:/lang/"+langs[tempLang]+"/species.txt", Lang::species);
 
 	// Load types picture
-	tempLang = (access(("nitro:/lang/"+langs[lang]+"/types/0.gfx").c_str(), F_OK) == 0) ? lang : 1;
+	tempLang = (access(("nitro:/lang/"+langs[lang]+"/types/0.gfx").c_str(), F_OK) == 0) ? lang : Lang::en;
 	types.clear();
 	for(int i=0;i<17;i++) {
 		types.push_back(loadImage("nitro:/lang/"+langs[tempLang]+"/types/"+std::to_string(i)+".gfx"));
