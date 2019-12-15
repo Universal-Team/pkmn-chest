@@ -200,9 +200,6 @@ bool xMenu(void) {
 			updateOam();
 			Sound::play(Sound::click);
 			switch(selectedOption) {
-				case 0: // Party
-					manageParty();
-					break;
 				case 1: // Options
 					configMenu();
 					break;

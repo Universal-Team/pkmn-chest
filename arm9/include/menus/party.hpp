@@ -19,6 +19,4 @@ void fillPartySprites(void);
 void toggleParty(void);
 void moveParty(int arrowMode, bool holdingPokemon);
 
-void manageParty(void);
-
 #endif
