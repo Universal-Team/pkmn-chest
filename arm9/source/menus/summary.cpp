@@ -121,10 +121,10 @@ void drawSummaryPage(std::shared_ptr<PKX> pkm, bool background) {
 		drawImageSegment(148, 8, 15, 15, ballSheet, xy.first, xy.second, false, false);
 		// Draw types
 		int type = (pkm->generation() == Generation::FOUR && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1();
-		drawImage(150, 26-((types[type].height-12)/2), types[type], false, false);
+		drawImage(150, 25-((types[type].height-12)/2), types[type], false, false);
 		if(pkm->type1() != pkm->type2()) {
 			type = (pkm->generation() == Generation::FOUR && pkm->type2() > 8) ? pkm->type2()-1 : pkm->type2();
-			drawImage(186, 26-((types[type].height-12)/2), types[type], false, false, 4);
+			drawImage(186, 25-((types[type].height-12)/2), types[type], false, false, 4);
 		}
 	}
 	drawRectangle(0, 0, 256, 192, 0, false, true);

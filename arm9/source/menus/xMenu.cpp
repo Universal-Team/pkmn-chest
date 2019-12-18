@@ -221,8 +221,6 @@ bool xMenu(void) {
 					// Hide remaining sprites
 					for(unsigned i=0;i<128;i++) {
 						setSpriteVisibility(i, false, false);
-					}
-					for(unsigned i=0;i<128;i++) {
 						setSpriteVisibility(i, true, false);
 					}
 					updateOam();

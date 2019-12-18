@@ -333,10 +333,10 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 
 		// Draw types
 		int type = (pkm->generation() == Generation::FOUR && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1();
-		drawImage(170, 43-((types[type].height-12)/2), types[type], true, false);
+		drawImage(170, 42-((types[type].height-12)/2), types[type], true, false);
 		if(pkm->type1() != pkm->type2()) {
 			type = (pkm->generation() == Generation::FOUR && pkm->type2() > 8) ? pkm->type2()-1 : pkm->type2();
-			drawImage(205, 43-((types[type].height-12)/2), types[type], true, false, 4);
+			drawImage(205, 42-((types[type].height-12)/2), types[type], true, false, 4);
 		}
 
 		// Print Level
