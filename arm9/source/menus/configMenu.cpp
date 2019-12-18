@@ -178,8 +178,8 @@ void drawConfigMenu(void) {
 		optionsText[3] = std::to_string(Config::getInt("backupAmount"));
 	optionsText[4] = Lang::get(songs[Config::getInt("music")]);
 	optionsText[5] = Config::getBool("playSfx") ? Lang::get("yes") : Lang::get("no");
-	optionsText[6] = Config::getInt("keyboardDirections") ? "4" : "8";
-	optionsText[7] = Config::getInt("keyboardGroupAmount") ? "ABCD" : "ABC.";
+	optionsText[6] = Config::getBool("keyboardDirections") ? "4" : "8";
+	optionsText[7] = Config::getBool("keyboardGroupAmount") ? "ABCD" : "ABC.";
 
 	// Print text
 	for(unsigned i=0;i<textCP1Labels.size();i++) {
