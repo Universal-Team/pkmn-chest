@@ -1228,20 +1228,18 @@ bool Input::getBool(std::string optionTrue, std::string optionFalse) {
 			touchRead(&touch);
 			if(touch.py > 76 && touch.py < 116) {
 				if(touch.px > 48 && touch.px < 118) {
-					drawRectangle(38, 65, 180, 61, CLEAR, false, true);
-					Sound::play(Sound::back);
-					return false;
+					goto no;
 				} else if(touch.px > 138 && touch.px < 208) {
-					drawRectangle(38, 65, 180, 61, CLEAR, false, true);
-					Sound::play(Sound::click);
-					return true;
+					goto yes;
 				}
 			}
 		} else if(pressed & KEY_A) {
+			yes:
 			Sound::play(Sound::click);
 			drawRectangle(38, 65, 180, 61, CLEAR, false, true);
 			return true;
 		} else if(pressed & KEY_B) {
+			no:
 			Sound::play(Sound::back);
 			drawRectangle(38, 65, 180, 61, CLEAR, false, true);
 			return false;
