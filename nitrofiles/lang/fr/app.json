@@ -85,7 +85,7 @@
 	"release": "Relacher",
 	"remove": "Supprimer",
 	"rename": "Renommer",
-	"reopenIfFrozen": "If progress freezes,\nclose and reopen the console.",
+	"reopenIfFrozen": "Si la progression se bloque,\nferme et reouvre la console.",
 	"save": "Sauvegarder",
 	"saveMsgCard": "Voulez vous appliquez les changement\nà la cartouche?",
 	"saveMsgChest": "Voulez vous appliquez les changement\nau coffre?",
