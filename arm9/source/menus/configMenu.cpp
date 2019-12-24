@@ -44,12 +44,15 @@ const std::vector<std::string> langNames = {"Bruh", "Deutsche", "English", "Espa
 void drawChestFileMenu(void) {
 	// Draw background
 	drawImageDMA(0, 0, listBg, false, false);
-	printText(Lang::get("options"), 4, 0, false, true);
+	printText(Lang::get("options"), 4, 0, false, false);
+
+	// Get bank name
+	optionsText[0] = Banks::bank->name();
 
 	// Print text
-	printText(Lang::get(textCP1Labels[0].label)+": "+optionsText[0], textCP1Labels[0].x, textCP1Labels[0].y, false, true);
+	printText(Lang::get(textCP1Labels[0].label)+": "+optionsText[0], textCP1Labels[0].x, textCP1Labels[0].y, false, false);
 	for(unsigned i=0;i<textChestFile.size();i++) {
-		printText(Lang::get(textChestFile[i].label), textChestFile[i].x, textChestFile[i].y, false, true);
+		printText(Lang::get(textChestFile[i].label), textChestFile[i].x, textChestFile[i].y, false, false);
 	}
 }
 
@@ -100,7 +103,7 @@ void chestFileMenu(void) {
 			updateOam();
 			switch(selection) {
 				case 0: { // New
-					std::string str = Input::getLine();
+					std::string str = Input::getLine(12);
 					if(str != "") {
 						savePrompt();
 						Config::setString("chestFile", str);
@@ -110,7 +113,7 @@ void chestFileMenu(void) {
 					drawBox(true);
 					break;
 				} case 1: { // Rename
-					std::string str = Input::getLine();
+					std::string str = Input::getLine(12);
 					if(str != "")	Banks::renameBank(getChestFile(), str);
 					Config::setString("chestFile", str);
 					Config::save();
@@ -127,8 +130,8 @@ void chestFileMenu(void) {
 						drawRectangle(20, 20, 216, 152, DARK_RED, false, true);
 						printTextCentered(Lang::get("cantDeleteCurrentChest"), 0, 24, false, true);
 						for(int i=0;i<120;i++)	swiWaitForVBlank();
-						drawRectangle(20, 20, 216, 152, CLEAR, false, true);
 					}
+					drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 					chdir(path);
 					break;
 				} case 3: { // Change
@@ -146,6 +149,7 @@ void chestFileMenu(void) {
 					}
 					chdir(path);
 					drawBox(true);
+					drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 					break;
 				}
 			}
@@ -161,8 +165,7 @@ void chestFileMenu(void) {
 void drawConfigMenu(void) {
 	// Draw background
 	drawImageDMA(0, 0, listBg, false, false);
-	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
-	printText(Lang::get("options"), 4, 0, false, true);
+	printText(Lang::get("options"), 4, 0, false, false);
 
 	if(optionsText.size() < textCP1Labels.size()) {
 		optionsText.resize(textCP1Labels.size());
@@ -183,14 +186,15 @@ void drawConfigMenu(void) {
 
 	// Print text
 	for(unsigned i=0;i<textCP1Labels.size();i++) {
-		printText(Lang::get(textCP1Labels[i].label)+":", textCP1Labels[i].x, textCP1Labels[i].y, false, true);
+		printText(Lang::get(textCP1Labels[i].label)+":", textCP1Labels[i].x, textCP1Labels[i].y, false, false);
 	}
 	for(unsigned i=0;i<optionsText.size();i++) {
-		printText(optionsText[i], textCP1Labels[i].x+getTextWidth(Lang::get(textCP1Labels[i].label))+11, textCP1Labels[i].y, false, true);
+		printText(optionsText[i], textCP1Labels[i].x+getTextWidth(Lang::get(textCP1Labels[i].label))+11, textCP1Labels[i].y, false, false);
 	}
 }
 
 void configMenu(void) {
+	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 	drawConfigMenu();
 
 	setSpriteVisibility(arrowID, false, true);
