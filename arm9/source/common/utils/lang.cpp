@@ -5,7 +5,7 @@
 #include "json.hpp"
 
 std::vector<std::string> Lang::abilities, Lang::games, Lang::items, Lang::locations4, Lang::locations5, Lang::moves, Lang::natures, Lang::species;
-const std::string langs[] = {"br", "de", "en", "es", "fr", "it", "lt", "pt", "ru", "jp", "ko"};
+const std::string langs[] = {"br", "de", "en", "es", "fr", "id", "it", "lt", "pt", "ru", "jp", "ko"};
 nlohmann::json langJson;
 
 void loadToVector(std::string path, std::vector<std::string> &vec) {
