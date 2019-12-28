@@ -102,22 +102,6 @@ void drawImageSegment(int x, int y, int w, int h, const Image &image, int xOffse
 void drawImageSegmentDMA(int x, int y, int w, int h, const Image &image, int xOffset, int yOffset, bool top, bool layer);
 
 /*
- * Draws a scaled segment of an Image
- * int x is the X position
- * int y is the Y position
- * int w is the Width of the segment
- * int h is the Height of the segment
- * float scale is the Scale to draw the X at
- * float scale is the Scale to draw the Y at
- * const Image &image is the Image
- * int xOffset is the X position in the sheet to start at
- * int yOffset is the Y position in the sheet to start at
- * bool top is whether to draw on the top or bottom screen
- * bool layer is whether to draw on layer 3 (false) or layer 2 (true)
- */
-void drawImageSegmentScaled(int x, int y, int w, int h, float scaleX, float scaleY, const Image &image, int xOffset, int yOffset, bool top, bool layer);
-
-/*
  * Draws a rectangle outline of a given size at a given position
  * int x is the X position
  * int y is the Y position

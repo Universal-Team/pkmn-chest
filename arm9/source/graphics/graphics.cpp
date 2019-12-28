@@ -1,5 +1,6 @@
 #include "graphics.hpp"
 #include "colors.hpp"
+#include "imgcpy.h"
 #include "tonccpy.h"
 
 std::vector<Sprite> spritesMain(128), spritesSub(128);
@@ -210,11 +211,7 @@ void drawImage(int x, int y, const Image &image, bool top, bool layer, int palet
 	u8 *dst = gfxPointer(top, layer);
 	u16 *pal = (top ? BG_PALETTE : BG_PALETTE_SUB);
 	for(int i=0;i<image.height;i++) {
-		for(int j=0;j<image.width;j++) {
-			if(pal[image.bitmap[(i*image.width)+j]+paletteOffset] != 0) { // Do not render transparent pixel
-				dst[(y+i)*256+j+x] = image.bitmap[(i*image.width)+j] + paletteOffset;
-			}
-		}
+		imgcpy(dst+((y+i)*256+x), image.bitmap.data()+((i*image.width)), pal, image.width, paletteOffset);
 	}
 }
 
@@ -231,12 +228,12 @@ void drawImageScaled(int x, int y, float scaleX, float scaleY, const Image &imag
 		copyPalette(image, top, paletteOffset);
 		u8* dst = gfxPointer(top, layer);
 		u16 *pal = (top ? BG_PALETTE : BG_PALETTE_SUB);
+		u8 buffer[(int)(image.width*scaleX)];
 		for(int i=0;i<(image.height*scaleY);i++) {
 			for(int j=0;j<(image.width*scaleX);j++) {
-				if(pal[image.bitmap[(((int)(i/scaleY))*image.width)+(j/scaleX)]+paletteOffset] != 0) { // Do not render transparent pixel
-					dst[(y+i)*256+x+j] = image.bitmap[(((int)(i/scaleY))*image.width)+(j/scaleX)]+paletteOffset;
-				}
+				buffer[j] = image.bitmap[(((int)(i/scaleY))*image.width)+(j/scaleX)];
 			}
+			imgcpy(dst+(y+i)*256+x, buffer, pal, (int)(image.width*scaleX), paletteOffset);
 		}
 	}
 }
@@ -246,11 +243,7 @@ void drawImageSegment(int x, int y, int w, int h, const Image &image, int xOffse
 	u8* dst = gfxPointer(top, layer);
 	u16 *pal = (top ? BG_PALETTE : BG_PALETTE_SUB);
 	for(int i=0;i<h;i++) {
-		for(int j=0;j<w;j++) {
-			if(pal[image.bitmap[((i+yOffset)*image.width)+j+xOffset]] != 0) { // Do not render transparent pixel
-				dst[((y+i)*256)+j+x] = image.bitmap[((i+yOffset)*image.width)+j+xOffset];
-			}
-		}
+		imgcpy(dst+((y+i)*256+x), image.bitmap.data()+(((yOffset+i)*image.width)+xOffset), pal, w, 0);
 	}
 }
 
@@ -261,29 +254,15 @@ void drawImageSegmentDMA(int x, int y, int w, int h, const Image &image, int xOf
 	}
 }
 
-void drawImageSegmentScaled(int x, int y, int w, int h, float scaleX, float scaleY, const Image &image, int xOffset, int yOffset, bool top, bool layer) {
-	if(scaleX == 1 && scaleY == 1)	drawImageSegment(x, y, w, h, image, xOffset, yOffset, top, layer);
-	else {
-		copyPalette(image, top);
-		Image buffer = {(u16)w, (u16)h, {}, image.palette};
-		for(int i=0;i<h;i++) {
-			for(int j=0;j<w;j++) {
-				buffer.bitmap.push_back(image.bitmap[((i+yOffset)*image.width)+j+xOffset]);
-			}
-		}
-		drawImageScaled(x, y, scaleX, scaleY, buffer, top, layer);
-	}
-}
-
 void drawOutline(int x, int y, int w, int h, u8 color, bool top, bool layer) {
 	u8* dst = gfxPointer(top, layer);
 	h+=y;
-	if(y>=0 && y<192)	dmaFillHalfWords(color | color << 8, dst+((y*256)+(x < 0 ? 0 : x)), (x+w > 256 ? w+(256-x-w) : w));
+	if(y>=0 && y<192)	toncset(dst+((y*256)+(x < 0 ? 0 : x)), color, (x+w > 256 ? w+(256-x-w) : w));
 	for(y++;y<(h-1);y++) {
-		if(y>=0 && y<192 && x>0)	dst[(y)*256+x] = color;
-		if(y>=0 && y<192 && x+w<256)	dst[(y)*256+x+w-1] = color;
+		if(y>=0 && y<192 && x>0)	toncset(dst+((y)*256+x), color, 1);
+		if(y>=0 && y<192 && x+w<256)	toncset(dst+((y)*256+x+w-1), color, 1);
 	}
-	if(y>=0 && y<192)	dmaFillHalfWords(color | color << 8, dst+((y*256)+(x < 0 ? 0 : x)), (x+w > 256 ? w+(256-x-w) : w));
+	if(y>=0 && y<192)	toncset(dst+((y*256)+(x < 0 ? 0 : x)), color, (x+w > 256 ? w+(256-x-w) : w));
 }
 
 void drawRectangle(int x, int y, int w, int h, u8 color, bool top, bool layer) { drawRectangle(x, y, w, h, color, color, top, layer); }
@@ -293,7 +272,7 @@ void drawRectangle(int x, int y, int w, int h, u8 color1, u8 color2, bool top, b
 		if(w > 1) {
 			dmaFillHalfWords(((i%2) ? color1 : color2) | ((i%2) ? color1 : color2) << 8, dst+((y+i)*256+x), w);
 		} else {
-			dst[(y+i)*256+x] = ((i%2) ? color1 : color2);
+			toncset(dst+((y+i)*256+x), ((i%2) ? color1 : color2), w);
 		}
 	}
 }

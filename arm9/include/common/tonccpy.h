@@ -12,7 +12,7 @@ extern "C" {
 
 typedef unsigned int uint;
 #define BIT_MASK(len) ((1<<(len))-1)
-static inline u32 quad8(u8 x) { x |= x<<8; return x | x<<16; }
+static inline u32 quad8(u32 x) { x |= x<<8; return x | x<<16; }
 
 
 //# Declarations and inlines.
@@ -20,10 +20,6 @@ static inline u32 quad8(u8 x) { x |= x<<8; return x | x<<16; }
 void tonccpy(void *dst, const void *src, uint size);
 
 void __toncset(void *dst, u32 fill, uint size);
-static inline void toncset(void *dst, u8 src, uint size);
-static inline void toncset16(void *dst, u16 src, uint size);
-static inline void toncset32(void *dst, u32 src, uint size);
-
 
 //! VRAM-safe memset, byte version. Size in bytes.
 static inline void toncset(void *dst, u8 src, uint size) { __toncset(dst, quad8(src), size); }
