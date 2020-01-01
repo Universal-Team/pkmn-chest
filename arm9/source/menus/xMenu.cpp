@@ -69,7 +69,8 @@ void drawXMenuButtons(unsigned menuSelection) {
 
 	for(unsigned i=0;i<xMenuButtons.size();i++) {
 		drawImage(xMenuButtons[i].x, xMenuButtons[i].y, menuSelection == i ? menuButtonBlue : menuButton, false, false);
-		printText((i==3) ? xMenuButtons[i].label : Lang::get(xMenuButtons[i].label), xMenuButtons[i].x+47, xMenuButtons[i].y+14, false, true);
+		if(i != 0) // skipping 0 (party) until I replace it with something
+			printText((i==3) ? xMenuButtons[i].label : Lang::get(xMenuButtons[i].label), xMenuButtons[i].x+47, xMenuButtons[i].y+14, false, true);
 		setSpriteAlpha(menuIconID[i], false, menuSelection == i ? 8 : 15);
 		updateOam();
 	}

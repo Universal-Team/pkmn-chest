@@ -191,7 +191,8 @@ void loadGraphics(void) {
 	// Prepare menu icon sprites
 	for(int i=0;i<6;i++) {
 		int id = initSprite(false, SpriteSize_32x32);
-		fillSpriteSegment(id, false, 32, 0, 0, 32, 32, menuIconSheet, 0, i*32);
+		if(i != 0) // 0 (party) skiped until I know what to replace it with
+			fillSpriteSegment(id, false, 32, 0, 0, 32, 32, menuIconSheet, 0, i*32);
 		prepareSprite(id, false, 0, 0, 0);
 		setSpriteVisibility(id, false, false);
 		menuIconID.push_back(id);
