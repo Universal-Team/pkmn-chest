@@ -572,8 +572,7 @@ int selectWallpaper(int currentWallpaper) {
 	// Draw wallpapers
 	for(int y=0;y<4;y++) {
 		for(int x=0;x<6;x++) {
-			std::string path = boxBgPath(false, (y*6)+x);
-			Image image = loadImage(path);
+			Image image = loadImage(boxBgPath(false, (y*6)+x));
 			drawImageScaled((x*36)+28, (y*36)+28, 0.125, 0.125, image, false, false);
 		}
 	}

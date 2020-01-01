@@ -26,6 +26,7 @@ std::vector<Label> textCP1Labels {
 	{4,  96,        "soundFX"}, // Sound FX
 	{4, 112, "dPadDirections"}, // D-Pad typing directions
 	{4, 128,     "dPadGroups"}, // D-Pad typing groups
+	{4, 144,          "theme"}, // Theme
 };
 
 std::vector<Label> textChestFile {
@@ -183,6 +184,7 @@ void drawConfigMenu(void) {
 	optionsText[5] = Config::getBool("playSfx") ? Lang::get("yes") : Lang::get("no");
 	optionsText[6] = Config::getBool("keyboardDirections") ? "4" : "8";
 	optionsText[7] = Config::getBool("keyboardGroupAmount") ? "ABCD" : "ABC.";
+	optionsText[8] = Config::getString("themeDir").substr(Config::getString("themeDir").find_last_of("/") == std::string::npos ? 0 : Config::getString("themeDir").find_last_of("/")+1);
 
 	// Print text
 	for(unsigned i=0;i<textCP1Labels.size();i++) {
@@ -299,6 +301,18 @@ void configMenu(void) {
 					break;
 				} case 7: { // D-Pad typing grounds
 					Config::setBool("keyboardGroupAmount", !Config::getBool("keyboardGroupAmount"));
+					break;
+				} case 8: { // Theme
+					char startPath[PATH_MAX];
+					getcwd(startPath, PATH_MAX);
+
+					chdir(sdFound() ? "sd:/_nds/pkmn-chest/themes" : "fat:/_nds/pkmn-chest/themes");
+					std::string themePath = browseForFile({}, false, true);
+
+					if(themePath != "") {
+						Config::setString("themeDir", (sdFound() ? "sd:/_nds/pkmn-chest/themes/" : "fat:/_nds/pkmn-chest/themes/") + themePath);
+					}
+					chdir(startPath);
 					break;
 				}
 			}

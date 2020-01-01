@@ -41,7 +41,7 @@ void Lang::load(int lang) {
 	tempLang = (access(("nitro:/lang/"+langs[lang]+"/types/0.gfx").c_str(), F_OK) == 0) ? lang : Lang::en;
 	types.clear();
 	for(int i=0;i<17;i++) {
-		types.push_back(loadImage("nitro:/lang/"+langs[tempLang]+"/types/"+std::to_string(i)+".gfx"));
+		types.push_back(loadImage("/lang/"+langs[tempLang]+"/types/"+std::to_string(i)+".gfx"));
 	}
 
 	// Load app strings

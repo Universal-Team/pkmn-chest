@@ -232,9 +232,9 @@ void drawKeyboard(int layout) {
 		int prevHeight = keyboard.height, prevLayout = loadedLayout;
 		loadedLayout = layout;
 		if(layout < 3) {
-			keyboard = loadImage("nitro:/graphics/keyboardKana.gfx");
+			keyboard = loadImage("/graphics/keyboardKana.gfx");
 		} else {
-			keyboard = loadImage("nitro:/graphics/keyboardQWE.gfx");
+			keyboard = loadImage("/graphics/keyboardQWE.gfx");
 			xPos = 0;
 		}
 		if(prevLayout != -1) {

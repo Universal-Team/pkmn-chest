@@ -156,24 +156,27 @@ void fillArrow(int arrowMode) {
 
 void loadGraphics(void) {
 	// Load images into RAM
-	arrowBlue = loadImage("nitro:/graphics/arrowBlue.gfx");
-	arrowRed = loadImage("nitro:/graphics/arrowRed.gfx");
-	arrowYellow = loadImage("nitro:/graphics/arrowYellow.gfx");
-	ballSheet = loadImage("nitro:/graphics/ballSheet.gfx");
-	boxBgTop = loadImage("nitro:/graphics/boxBgTop.gfx");
-	boxButton = loadImage("nitro:/graphics/boxButton.gfx");
-	infoBox = loadImage("nitro:/graphics/infoBox.gfx");
-	keyboardKey = loadImage("nitro:/graphics/keyboardKey.gfx");
-	listBg = loadImage("nitro:/graphics/listBg.gfx");
-	menuBg = loadImage("nitro:/graphics/menuBg.gfx");
-	menuButton = loadImage("nitro:/graphics/menuButton.gfx");
-	menuButtonBlue = loadImage("nitro:/graphics/menuButtonBlue.gfx");
-	Image menuIconSheet = loadImage("nitro:/graphics/menuIconSheet.gfx");
-	party = loadImage("nitro:/graphics/party.gfx");
-	search = loadImage("nitro:/graphics/search.gfx");
-	shiny = loadImage("nitro:/graphics/shiny.gfx");
+	arrowBlue = loadImage("/graphics/arrowBlue.gfx");
+	arrowRed = loadImage("/graphics/arrowRed.gfx");
+	arrowYellow = loadImage("/graphics/arrowYellow.gfx");
+	ballSheet = loadImage("/graphics/ballSheet.gfx");
+	boxBgTop = loadImage("/graphics/boxBgTop.gfx");
+	boxButton = loadImage("/graphics/boxButton.gfx");
+	infoBox = loadImage("/graphics/infoBox.gfx");
+	keyboardKey = loadImage("/graphics/keyboardKey.gfx");
+	listBg = loadImage("/graphics/listBg.gfx");
+	menuBg = loadImage("/graphics/menuBg.gfx");
+	menuButton = loadImage("/graphics/menuButton.gfx");
+	menuButtonBlue = loadImage("/graphics/menuButtonBlue.gfx");
+	Image menuIconSheet = loadImage("/graphics/menuIconSheet.gfx");
+	party = loadImage("/graphics/party.gfx");
+	search = loadImage("/graphics/search.gfx");
+	shiny = loadImage("/graphics/shiny.gfx");
 
-	pokemonGFX = fopen("nitro:/graphics/pokemon.combo.gfx", "rb");
+	pokemonGFX = fopen((Config::getString("themeDir")+"/graphics/pokemon.combo.gfx").c_str(), "rb");
+	if(!pokemonGFX) {
+		pokemonGFX = fopen("nitro:/graphics/pokemon.combo.gfx", "rb");
+	}
 
 	// Init Pokémon Sprites
 	for(int i=0;i<30;i++) {
@@ -259,7 +262,7 @@ void drawBoxScreen(void) {
 }
 
 std::string boxBgPath(bool top, int box) {
-	if(top)	return "nitro:/graphics/box/chest.gfx";
+	if(top)	return "/graphics/box/chest.gfx";
 	std::string game;
 	switch(save->game) {
 		default:
@@ -279,7 +282,7 @@ std::string boxBgPath(bool top, int box) {
 			game = box < 16 ? "bw" : "b2w2";
 			break;
 	}
-	return "nitro:/graphics/box/"+game+"/"+std::to_string(box)+".gfx";
+	return "/graphics/box/"+game+"/"+std::to_string(box)+".gfx";
 }
 
 void drawBox(bool top) {

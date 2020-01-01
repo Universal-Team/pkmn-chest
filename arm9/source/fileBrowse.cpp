@@ -386,7 +386,7 @@ std::string topMenuSelect(void) {
 	}
 }
 
-std::string browseForFile(const std::vector<std::string>& extensionList, bool accessSubdirectories) {
+std::string browseForFile(const std::vector<std::string>& extensionList, bool accessSubdirectories, bool canChooseDirs) {
 	char startPath[PATH_MAX];
 	if(!accessSubdirectories)	getcwd(startPath, PATH_MAX);
 	int pressed, held, screenOffset = 0, fileOffset = 0;
@@ -430,7 +430,7 @@ std::string browseForFile(const std::vector<std::string>& extensionList, bool ac
 		} else if(pressed & KEY_A) {
 			selection:
 			DirEntry* entry = &dirContents.at(fileOffset);
-			if(entry->isDirectory) {
+			if(entry->isDirectory && !canChooseDirs) {
 				// Don't go up directory if in the start directory
 				char path[PATH_MAX];
 				getcwd(path, PATH_MAX);

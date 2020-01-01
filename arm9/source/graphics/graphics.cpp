@@ -1,5 +1,6 @@
 #include "graphics.hpp"
 #include "colors.hpp"
+#include "config.hpp"
 #include "imgcpy.h"
 #include "tonccpy.h"
 
@@ -81,94 +82,103 @@ void initGraphics(void) {
 }
 
 void loadFont(void) {
-	FILE* font = fopen("nitro:/graphics/font.nftr", "rb");
-
-	// Get file size
-	fseek(font, 0, SEEK_END);
-	u32 fileSize = ftell(font);
-
-	// Load font info
-	fseek(font, 0x30, SEEK_SET);
-	u32 chunkSize;
-	fread(&chunkSize, 4, 1, font);
-	fseek(font, 0x34, SEEK_SET);
-	tileWidth = fgetc(font);
-	fseek(font, 0x35, SEEK_SET);
-	tileHeight = fgetc(font);
-	fseek(font, 0x36, SEEK_SET);
-	fread(&tileSize, 2, 1, font);
-
-	// Load character glyphs
-	int tileAmount = ((chunkSize-0x10)/tileSize);
-	fontTiles = std::vector<char>(tileSize*tileAmount);
-	fseek(font, 0x3C, SEEK_SET);
-	fread(fontTiles.data(), tileSize, tileAmount, font);
-
-	// Fix top row
-	for(int i=0;i<tileAmount;i++) {
-		fontTiles[i*tileSize] = 0;
-		fontTiles[i*tileSize+1] = 0;
-		fontTiles[i*tileSize+2] = 0;
+	FILE *font = fopen((Config::getString("themeDir")+"/graphics/font.nftr").c_str(), "rb");
+	if(!font) {
+		font = fopen("nitro:/graphics/font.nftr", "rb");
 	}
 
-	// Load character widths
-	fseek(font, 0x24, SEEK_SET);
-	u32 locHDWC;
-	fread(&locHDWC, 4, 1, font);
-	fseek(font, locHDWC-4, SEEK_SET);
-	fread(&chunkSize, 4, 1, font);
-	fseek(font, 8, SEEK_CUR);
-	fontWidths = std::vector<char>(3*tileAmount);
-	fread(fontWidths.data(), 3, tileAmount, font);
+	if(font) {
+		// Get file size
+		fseek(font, 0, SEEK_END);
+		u32 fileSize = ftell(font);
 
-	// Load character maps
-	fontMap = std::vector<u16>(tileAmount);
-	fseek(font, 0x28, SEEK_SET);
-	u32 locPAMC, mapType;
-	fread(&locPAMC, 4, 1, font);
+		// Load font info
+		fseek(font, 0x30, SEEK_SET);
+		u32 chunkSize;
+		fread(&chunkSize, 4, 1, font);
+		fseek(font, 0x34, SEEK_SET);
+		tileWidth = fgetc(font);
+		fseek(font, 0x35, SEEK_SET);
+		tileHeight = fgetc(font);
+		fseek(font, 0x36, SEEK_SET);
+		fread(&tileSize, 2, 1, font);
 
-	while(locPAMC < fileSize) {
-		u16 firstChar, lastChar;
-		fseek(font, locPAMC, SEEK_SET);
-		fread(&firstChar, 2, 1, font);
-		fread(&lastChar, 2, 1, font);
-		fread(&mapType, 4, 1, font);
+		// Load character glyphs
+		int tileAmount = ((chunkSize-0x10)/tileSize);
+		fontTiles = std::vector<char>(tileSize*tileAmount);
+		fseek(font, 0x3C, SEEK_SET);
+		fread(fontTiles.data(), tileSize, tileAmount, font);
+
+		// Fix top row
+		for(int i=0;i<tileAmount;i++) {
+			fontTiles[i*tileSize] = 0;
+			fontTiles[i*tileSize+1] = 0;
+			fontTiles[i*tileSize+2] = 0;
+		}
+
+		// Load character widths
+		fseek(font, 0x24, SEEK_SET);
+		u32 locHDWC;
+		fread(&locHDWC, 4, 1, font);
+		fseek(font, locHDWC-4, SEEK_SET);
+		fread(&chunkSize, 4, 1, font);
+		fseek(font, 8, SEEK_CUR);
+		fontWidths = std::vector<char>(3*tileAmount);
+		fread(fontWidths.data(), 3, tileAmount, font);
+
+		// Load character maps
+		fontMap = std::vector<u16>(tileAmount);
+		fseek(font, 0x28, SEEK_SET);
+		u32 locPAMC, mapType;
 		fread(&locPAMC, 4, 1, font);
 
-		switch(mapType) {
-			case 0: {
-				u16 firstTile;
-				fread(&firstTile, 2, 1, font);
-				for(unsigned i=firstChar;i<=lastChar;i++) {
-					fontMap[firstTile+(i-firstChar)] = i;
+		while(locPAMC < fileSize) {
+			u16 firstChar, lastChar;
+			fseek(font, locPAMC, SEEK_SET);
+			fread(&firstChar, 2, 1, font);
+			fread(&lastChar, 2, 1, font);
+			fread(&mapType, 4, 1, font);
+			fread(&locPAMC, 4, 1, font);
+
+			switch(mapType) {
+				case 0: {
+					u16 firstTile;
+					fread(&firstTile, 2, 1, font);
+					for(unsigned i=firstChar;i<=lastChar;i++) {
+						fontMap[firstTile+(i-firstChar)] = i;
+					}
+					break;
+				} case 1: {
+					for(int i=firstChar;i<=lastChar;i++) {
+						u16 tile;
+						fread(&tile, 2, 1, font);
+						fontMap[tile] = i;
+					}
+					break;
+				} case 2: {
+					u16 groupAmount;
+					fread(&groupAmount, 2, 1, font);
+					for(int i=0;i<groupAmount;i++) {
+						u16 charNo, tileNo;
+						fread(&charNo, 2, 1, font);
+						fread(&tileNo, 2, 1, font);
+						fontMap[tileNo] = charNo;
+					}
+					break;
 				}
-				break;
-			} case 1: {
-				for(int i=firstChar;i<=lastChar;i++) {
-					u16 tile;
-					fread(&tile, 2, 1, font);
-					fontMap[tile] = i;
-				}
-				break;
-			} case 2: {
-				u16 groupAmount;
-				fread(&groupAmount, 2, 1, font);
-				for(int i=0;i<groupAmount;i++) {
-					u16 charNo, tileNo;
-					fread(&charNo, 2, 1, font);
-					fread(&tileNo, 2, 1, font);
-					fontMap[tileNo] = charNo;
-				}
-				break;
 			}
 		}
+		fclose(font);
 	}
-	fclose(font);
 }
 
 Image loadImage(std::string path) {
 	Image image = {0, 0, {}, {}, 0};
-	FILE *file = fopen(path.c_str(), "rb");
+	FILE *file = fopen((Config::getString("themeDir")+path).c_str(), "rb");
+	if(!file) {
+		file = fopen(("nitro:"+path).c_str(), "rb");
+	}
+
 	if(file) {
 		fseek(file, 4, SEEK_SET);
 		fread(&image.width, 1, 2, file);

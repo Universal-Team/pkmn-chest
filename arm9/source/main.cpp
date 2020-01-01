@@ -42,6 +42,7 @@ int main(int argc, char **argv) {
 	mkdir(sdFound() ? "sd:/_nds/pkmn-chest/backups" : "fat:/_nds/pkmn-chest/backups", 0777);
 	mkdir(sdFound() ? "sd:/_nds/pkmn-chest/in" : "fat:/_nds/pkmn-chest/in", 0777);
 	mkdir(sdFound() ? "sd:/_nds/pkmn-chest/out" : "fat:/_nds/pkmn-chest/out", 0777);
+	mkdir(sdFound() ? "sd:/_nds/pkmn-chest/themes" : "fat:/_nds/pkmn-chest/themes", 0777);
 
 	// Try to init NitroFS from argv provided to the game when it was launched
 	if(!nitroFSInit(argv[0])) {
@@ -65,8 +66,8 @@ int main(int argc, char **argv) {
 	loadLoadingLogo();
 	showLoadingLogo();
 
-	loadFont();
 	Config::load();
+	loadFont();
 	Lang::load(Config::getLang("lang"));
 	printTextCentered(Lang::get("loading"), 0, 32, false, true);
 

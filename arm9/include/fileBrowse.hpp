@@ -40,9 +40,10 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
  * Browse for a file
  * const std::vector<std::string>& extensionList is the extensions to show
  * bool directoryNavigation is whether to allow changing folders
+ * bool canChooseDirs is whether to allow selecting directories as the path (default: false)
  * Returns the selected file
  */
-std::string browseForFile(const std::vector<std::string> &extensionList, bool directoryNavigation);
+std::string browseForFile(const std::vector<std::string> &extensionList, bool directoryNavigation, bool canChooseDirs = false);
 
 /*
  * Browse for a save file
