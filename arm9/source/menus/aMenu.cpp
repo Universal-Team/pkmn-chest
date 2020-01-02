@@ -252,6 +252,12 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 					setSpriteVisibility(arrowID, false, true);
 					drawRectangle(170, 0, 86, 192, CLEAR, false, true);
 					drawAMenuButtons(buttons, buttonMode);
+					// Reset Pokémon sprite positions
+					for(int y=0;y<4;y++) {
+						for(int x=0;x<6;x++) {
+							setSpritePosition((y*6)+x, false, 8+(x*24), 32+(y*24));
+						}
+					}
 					drawBox(false);
 				}
 			} else if(menuSelection == 4) { // Dump box

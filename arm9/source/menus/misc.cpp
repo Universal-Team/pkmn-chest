@@ -568,14 +568,18 @@ int selectPokeball(int currentBall) {
 int selectWallpaper(int currentWallpaper) {
 	// Clear screen
 	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
+	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 
 	// Draw wallpapers
 	for(int y=0;y<4;y++) {
 		for(int x=0;x<6;x++) {
 			Image image = loadImage(boxBgPath(false, (y*6)+x));
-			drawImageScaled((x*36)+28, (y*36)+28, 0.125, 0.125, image, false, false);
+			fillSpriteImageScaled((y*6)+x, false, 32, 0, 0, 32.0f/std::max(image.width, image.height), image);
+			setSpritePosition((y*6)+x, false, (x*40)+12, (y*38)+24);
+			setSpriteVisibility((y*6)+x, false, true);
 		}
 	}
+	updateOam();
 
 	int arrowX = currentWallpaper-((currentWallpaper/6)*6), selection = currentWallpaper/6, pressed, held;
 	// Move arrow to current wallpaper
@@ -614,7 +618,7 @@ int selectWallpaper(int currentWallpaper) {
 			touchRead(&touch);
 			for(int y=0;y<4;y++) {
 				for(int x=0;x<6;x++) {
-					if(touch.px > (x*36)+20 && touch.px < (x*36)+56 && touch.py > (y*36)+20 && touch.py < (y*36)+56) {
+					if(touch.px > (x*40)+12 && touch.px < (x*40)+44 && touch.py > (y*38)+24 && touch.py < (y*38)+56) {
 						if(!(save->generation() != Generation::FIVE && (y*5)+x == 24)) {
 							Sound::play(Sound::click);
 							return (y*6)+x;

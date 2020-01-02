@@ -320,7 +320,7 @@ void fillSpriteImage(int id, bool top, int spriteW, int x, int y, const Image &i
 	for(int i=0;i<image.height;i++) {
 		for(int j=0;j<image.width;j++) {
 			if(!(skipAlpha && image.palette[image.bitmap[(i*image.width)+j]] == 0)) {
-				sprites(top)[id].gfx[((y+i)*spriteW)+(x+j)] = image.palette[image.bitmap[(i*image.width)+j]];
+				sprites(top)[id].gfx[((y+i)*spriteW)+(x+j)] = image.palette[image.bitmap[(i*image.width)+j]-image.palOfs];
 			}
 		}
 	}
@@ -331,7 +331,7 @@ void fillSpriteImageScaled(int id, bool top, int spriteW, int x, int y, float sc
 	else {
 		for(int i=0;i<(image.height*scale);i++) {
 			for(int j=0;j<(image.width*scale);j++) {
-				sprites(top)[id].gfx[(y+i)*32+x+j] = image.palette[image.bitmap[(((int)(i/scale))*image.width)+(j/scale)]];
+				sprites(top)[id].gfx[(y+i)*spriteW+x+j] = image.palette[image.bitmap[(((int)(i/scale))*image.width)+(j/scale)]-image.palOfs];
 			}
 		}
 	}
