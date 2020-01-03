@@ -703,12 +703,14 @@ void manageBoxes(void) {
 				if(partyShown) {
 					arrowX = 0, arrowY = 0;
 					inParty = true;
+					drawPokemonInfo(save->pkm(0));
 				} else {
 					if(inParty) {
 						arrowX = 0;
 						arrowY = 5;
 						inParty = false;
 					}
+					drawPokemonInfo(save->emptyPkm());
 				}
 			}
 		} else if(pressed & KEY_B) {
@@ -716,7 +718,7 @@ void manageBoxes(void) {
 				Sound::play(Sound::back);
 				goto toggleParty;
 			}
-		} else if(pressed & KEY_Y) {
+		} else if(pressed & KEY_Y && !partyShown) {
 			if(heldPokemon.size() == 0) {
 				filter:
 				if(Input::getBool(Lang::get("filter"), Lang::get("sort"))) {
