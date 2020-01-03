@@ -18,10 +18,10 @@ TARGETS		:= $(INPUTS:.bmp=.gfx)
 
 .PHONY	:	bmp2ds clean all directories pokemon
 
-no-pokemon	:	bmp2ds $(TARGETS)
+all	:	bmp2ds $(TARGETS) pokemon
 	@echo graphics ...
 
-all	:	bmp2ds $(TARGETS) pokemon
+no-pokemon	:	bmp2ds $(TARGETS)
 	@echo graphics ...
 
 bmp2ds	:
