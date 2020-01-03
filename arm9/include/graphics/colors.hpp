@@ -23,4 +23,8 @@
 #define RED_TEXT 2
 #define BLUE_TEXT 3
 
+namespace Colors {
+	void load(void);
+}
+
 #endif

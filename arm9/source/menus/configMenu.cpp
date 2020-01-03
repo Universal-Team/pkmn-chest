@@ -311,8 +311,12 @@ void configMenu(void) {
 
 					if(themePath != "") {
 						Config::setString("themeDir", (sdFound() ? "sd:/_nds/pkmn-chest/themes/" : "fat:/_nds/pkmn-chest/themes/") + themePath);
+						Colors::load();
+						loadGraphics();
 					}
 					chdir(startPath);
+					// Clear text
+					drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 					break;
 				}
 			}

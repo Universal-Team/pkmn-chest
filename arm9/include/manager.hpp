@@ -51,7 +51,12 @@ Image loadPokemonSprite(int dexNo);
  */
 void fillArrow(int arrowMode);
 
-// Loads the images into RAM and creates the sprites
+// Inits sprites, run before first loadGraphics(), but should only be run once
+void initSprites(void);
+
+/* Loads the images into RAM and creates the sprites
+ * initSprites() must be run before running this for the first time
+ */
 void loadGraphics(void);
 
 // Draws both boxes and the backgrounds

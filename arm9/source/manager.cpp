@@ -154,6 +154,59 @@ void fillArrow(int arrowMode) {
 	}
 }
 
+void initSprites(void) {
+	// Pokémon Sprites
+	for(int y=0;y<5;y++) {
+		for(int x=0;x<6;x++) {
+			initSprite(true, SpriteSize_32x32);
+			initSprite(false, SpriteSize_32x32);
+			prepareSprite((y*6)+x,  true, 8+(x*24), 32+(y*24), 3);
+			prepareSprite((y*6)+x, false, 8+(x*24), 32+(y*24), 3);
+		}
+	}
+
+	// Menu icon sprites
+	for(int i=0;i<6;i++) {
+		int id = initSprite(false, SpriteSize_32x32);
+		prepareSprite(id, false, 0, 0, 0);
+		setSpriteVisibility(id, false, false);
+		menuIconID.push_back(id);
+	}
+
+	// Party sprites
+	for(int i=0;i<6;i++) {
+		int id = initSprite(false, SpriteSize_32x32);
+		prepareSprite(id, false, 0, 0, 2);
+		setSpriteVisibility(id, false, false);
+		partyIconID.push_back(id);
+	}
+
+	// Bottom arrow sprite
+	initSprite(false, SpriteSize_16x16, arrowID);
+	prepareSprite(arrowID, false, 24, 36, 0);
+	setSpriteVisibility(arrowID, false, false);
+
+	// Top arrow sprite
+	initSprite(true, SpriteSize_16x16, arrowID);
+	prepareSprite(arrowID, true, 24, 36, 0);
+	setSpriteVisibility(arrowID, true, false);
+
+	// Bottom sprite for moving pokemon
+	initSprite(false, SpriteSize_32x32, heldPokemonID);
+	prepareSprite(heldPokemonID, false, 0, 0, 1);
+	setSpriteVisibility(heldPokemonID, false, false);
+
+	// Top sprite for moving pokemon
+	initSprite(true, SpriteSize_32x32, heldPokemonID);
+	prepareSprite(heldPokemonID, true, 0, 0, 1);
+	setSpriteVisibility(heldPokemonID, true, false);
+
+	// Keyboard button sprite
+	initSprite(false, SpriteSize_32x32, keyboardSpriteID);
+	prepareSprite(keyboardSpriteID, false, 0, 0, 0);
+	setSpriteVisibility(keyboardSpriteID, false, false);
+}
+
 void loadGraphics(void) {
 	// Load images into RAM
 	arrowBlue = loadImage("/graphics/arrowBlue.gfx");
@@ -173,68 +226,20 @@ void loadGraphics(void) {
 	search = loadImage("/graphics/search.gfx");
 	shiny = loadImage("/graphics/shiny.gfx");
 
+	// Open Pokémon combo gfx file
+	if(pokemonGFX)	fclose(pokemonGFX);
 	pokemonGFX = fopen((Config::getString("themeDir")+"/graphics/pokemon.combo.gfx").c_str(), "rb");
 	if(!pokemonGFX) {
 		pokemonGFX = fopen("nitro:/graphics/pokemon.combo.gfx", "rb");
 	}
 
-	// Init Pokémon Sprites
-	for(int i=0;i<30;i++) {
-		initSprite(true, SpriteSize_32x32);
-		initSprite(false, SpriteSize_32x32);
-	}
-	// Prepare their locations
-	for(int y=0;y<5;y++) {
-		for(int x=0;x<6;x++) {
-			prepareSprite((y*6)+x,  true, 8+(x*24), 32+(y*24), 3);
-			prepareSprite((y*6)+x, false, 8+(x*24), 32+(y*24), 3);
-		}
+	// Fill menu icon sprites
+	for(int i=1;i<6;i++) { // 0 (party) skiped until I know what to replace it with
+		fillSpriteSegment(menuIconID[i], false, 32, 0, 0, 32, 32, menuIconSheet, 0, i*32);
 	}
 
-	// Prepare menu icon sprites
-	for(int i=0;i<6;i++) {
-		int id = initSprite(false, SpriteSize_32x32);
-		if(i != 0) // 0 (party) skiped until I know what to replace it with
-			fillSpriteSegment(id, false, 32, 0, 0, 32, 32, menuIconSheet, 0, i*32);
-		prepareSprite(id, false, 0, 0, 0);
-		setSpriteVisibility(id, false, false);
-		menuIconID.push_back(id);
-	}
-
-	// Prepare party sprites
-	for(int i=0;i<6;i++) {
-		int id = initSprite(false, SpriteSize_32x32);
-		prepareSprite(id, false, 0, 0, 2);
-		setSpriteVisibility(id, false, false);
-		partyIconID.push_back(id);
-	}
-
-	// Prepare bottom arrow sprite
-	initSprite(false, SpriteSize_16x16, arrowID);
-	prepareSprite(arrowID, false, 24, 36, 0);
-	setSpriteVisibility(arrowID, false, false);
-
-	// Prepare top arrow sprite
-	initSprite(true, SpriteSize_16x16, arrowID);
-	prepareSprite(arrowID, true, 24, 36, 0);
-	setSpriteVisibility(arrowID, true, false);
-
+	// Fill arrow sprites
 	fillArrow(0);
-
-	// Prepare bottom sprite for moving pokemon
-	initSprite(false, SpriteSize_32x32, heldPokemonID);
-	prepareSprite(heldPokemonID, false, 0, 0, 1);
-	setSpriteVisibility(heldPokemonID, false, false);
-
-	// Prepare top sprite for moving pokemon
-	initSprite(true, SpriteSize_32x32, heldPokemonID);
-	prepareSprite(heldPokemonID, true, 0, 0, 1);
-	setSpriteVisibility(heldPokemonID, true, false);
-
-	// Prepare button keyboard sprite
-	initSprite(false, SpriteSize_32x32, keyboardSpriteID);
-	prepareSprite(keyboardSpriteID, false, 0, 0, 0);
-	setSpriteVisibility(keyboardSpriteID, false, false);
 }
 
 void drawBoxScreen(void) {

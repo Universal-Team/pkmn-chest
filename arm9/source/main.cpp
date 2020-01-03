@@ -67,12 +67,14 @@ int main(int argc, char **argv) {
 	showLoadingLogo();
 
 	Config::load();
+	Colors::load();
 	loadFont();
 	Lang::load(Config::getLang("lang"));
 	printTextCentered(Lang::get("loading"), 0, 32, false, true);
 
 	Sound::init();
 	Banks::init();
+	initSprites();
 	loadGraphics();
 
 	hideLoadingLogo();

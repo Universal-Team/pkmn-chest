@@ -68,14 +68,6 @@ void initGraphics(void) {
 	bg2Sub = bgInitSub(2, BgType_Bmp8, BgSize_B8_256x256, 3, 0);
 	bgSetPriority(bg2Sub, 2);
 
-	u16 palette[] = {0, 0xFBDE, 0xBDEF, // WHITE_TEXT
-					 0, 0x8C63, 0xCA52, // GRAY_TEXT
-					 0, (u16)(0x801F & 0xFBDE), (u16)(0x801F & 0xBDEF), // RED_TEXT
-					 0, (u16)(0xFC00 & 0xFBDE), (u16)(0xFC00 & 0xBDEF),
-					 0xE739, 0x98C6, 0x94A5, 0x8842}; // LIGHT_GRAY, DARK_GRAY, DARKER_GRAY, DARKERER_GRAY
-	tonccpy(BG_PALETTE, &palette, sizeof(palette));
-	tonccpy(BG_PALETTE_SUB, &palette, sizeof(palette));
-
 	// Set main background as target for sprite transparency
 	REG_BLDCNT = 1<<11;
 	REG_BLDCNT_SUB = 1<<11;
