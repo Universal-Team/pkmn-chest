@@ -84,21 +84,21 @@ void loadFont(void) {
 		fseek(font, 0, SEEK_END);
 		u32 fileSize = ftell(font);
 
-		// Load font info
-		fseek(font, 0x30, SEEK_SET);
+		// Skip font info
+		fseek(font, 0x14, SEEK_SET);
+		fseek(font, fgetc(font)-1, SEEK_CUR);
+
+		// Load glyph info
 		u32 chunkSize;
 		fread(&chunkSize, 4, 1, font);
-		fseek(font, 0x34, SEEK_SET);
 		tileWidth = fgetc(font);
-		fseek(font, 0x35, SEEK_SET);
 		tileHeight = fgetc(font);
-		fseek(font, 0x36, SEEK_SET);
 		fread(&tileSize, 2, 1, font);
 
 		// Load character glyphs
 		int tileAmount = ((chunkSize-0x10)/tileSize);
 		fontTiles = std::vector<char>(tileSize*tileAmount);
-		fseek(font, 0x3C, SEEK_SET);
+		fseek(font, 4, SEEK_CUR);
 		fread(fontTiles.data(), tileSize, tileAmount, font);
 
 		// Fix top row
