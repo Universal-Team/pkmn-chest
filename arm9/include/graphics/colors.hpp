@@ -1,21 +1,22 @@
 #ifndef COLORS_HPP
 #define COLORS_HPP
 
-// Grayscale
-#define WHITE			0x1
-#define LIGHT_GRAY		0xC
-#define GRAY			0x5
-#define DARK_GRAY		0xD
-#define DARKER_GRAY		0xE
-#define DARKERER_GRAY	0xF
-#define BLACK			0x4
 #define CLEAR			0x0
-
-// Colors
-#define RED			0x7
-#define DARK_RED	0x8
-#define BLUE		0xA
-#define DARK_BLUE	0xB
+#define WHITE			0x1
+#define DARKISH_GRAY	0x2
+#define LIGHT_GRAY		0x3
+// FILLER CLEAR			0x4
+#define BLACK			0x5
+#define GRAY			0x6
+#define DARK_GRAY		0x7
+// FILLER CLEAR			0x8
+#define RED				0x9
+#define DARK_RED		0xA
+#define DARKER_GRAY		0xB
+// FILLER CLEAR			0xC
+#define BLUE			0xD
+#define DARK_BLUE		0xE
+#define DARKERER_GRAY	0xF
 
 // Text
 #define WHITE_TEXT 0

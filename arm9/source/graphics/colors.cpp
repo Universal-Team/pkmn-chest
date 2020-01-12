@@ -7,14 +7,13 @@
 #include "tonccpy.h"
 
 const u16 defaultPalette[] = {
-	0, 0xFBDE, 0xBDEF, // WHITE_TEXT
-	0, 0x8C63, 0xCA52, // GRAY_TEXT
-	0, (u16)(0x801F & 0xFBDE), (u16)(0x801F & 0xBDEF), // RED_TEXT
-	0, (u16)(0xFC00 & 0xFBDE), (u16)(0xFC00 & 0xBDEF), // BLUE_TEXT
-	0xE739, 0x98C6, 0x94A5, 0x8842
+	0, 0xFBDE, 0xBDEF, 0xE739, // WHITE_TEXT
+	0, 0x8C63, 0xCA52, 0x98C6, // GRAY_TEXT
+	0, 0x801E, 0x800F, 0x94A5, // RED_TEXT
+	0, 0xF800, 0xBC00, 0x8842, // BLUE_TEXT
 };
 
-const std::string keys[] = {"CLEAR", "WHITE", "DARKISH_GRAY", "CLEAR", "BLACK", "GRAY", "CLEAR", "RED", "DARK_RED", "CLEAR", "BLUE", "DARK_BLUE", "LIGHT_GRAY", "DARK_GRAY", "DARKER_GRAY", "DARKERER_GRAY"};
+const std::string keys[] = {"CLEAR", "WHITE", "DARKISH_GRAY", "LIGHT_GRAY", "CLEAR2", "BLACK", "GRAY", "DARK_GRAY", "CLEAR3", "RED", "DARK_RED", "DARKER_GRAY", "CLEAR4", "BLUE", "DARK_BLUE", "DARKERER_GRAY"};
 
 void Colors::load(void) {
 	nlohmann::json themeJson;
