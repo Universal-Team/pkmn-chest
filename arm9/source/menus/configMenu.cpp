@@ -313,6 +313,7 @@ void configMenu(void) {
 						Config::setString("themeDir", (sdFound() ? "sd:/_nds/pkmn-chest/themes/" : "fat:/_nds/pkmn-chest/themes/") + themePath);
 						Colors::load();
 						loadGraphics();
+						loadFont();
 					}
 					chdir(startPath);
 					// Clear text
