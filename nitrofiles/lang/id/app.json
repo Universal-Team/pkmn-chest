@@ -66,6 +66,7 @@
 	"metMonth": "Bulan didapatkan",
 	"metYear": "Tahun didapatkan",
 	"money": "Uang",
+	"moneyFormat": "$%li",
 	"move": "Pindah",
 	"moves": "Serangan",
 	"music": "Musik",
