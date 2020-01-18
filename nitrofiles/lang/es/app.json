@@ -32,6 +32,7 @@
 	"dPadGroups": "Grupos de escritura de D-Pad",
 	"dump": "Exportar",
 	"dumpBox": "Exportar caja",
+	"dumpedTo": "Dumped to:\n%s",
 	"edit": "Editar",
 	"elmLab": "Laboratorio de Elm",
 	"ev": "EV",
