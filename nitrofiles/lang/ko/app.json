@@ -32,6 +32,7 @@
 	"dPadGroups": "D-Pad typing groups",
 	"dump": "Dump",
 	"dumpBox": "Dump box",
+	"dumpedTo": "Dumped to:\n%s",
 	"edit": "Edit",
 	"elmLab": "공박사 연구소",
 	"ev": "EV",
