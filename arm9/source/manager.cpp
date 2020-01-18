@@ -313,7 +313,7 @@ void drawBox(bool top) {
 	drawImage(5, 15, bankBox, top, false);
 
 	// Print box name
-	printTextCenteredTintedMaxW((top ? Banks::bank->boxName(currentBankBox) : save->boxName(currentSaveBox)), 110, 1, GRAY_TEXT, -44, 20, top, false);
+	printTextCenteredTintedMaxW((top ? Banks::bank->boxName(currentBankBox) : save->boxName(currentSaveBox)), 110, 1, TextColor::gray, -44, 20, top, false);
 
 	if(!top) {
 		drawImage(boxButton.width+5, 192-search.height, search, false, false);
@@ -334,11 +334,11 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 		// Print Pokédex number
 		char str[9];
 		snprintf(str, sizeof(str), "%s%.3i", Lang::get("dexNo").c_str(), pkm->species());
-		printTextTinted(str, GRAY_TEXT, 170, 8, true, true);
+		printTextTinted(str, TextColor::gray, 170, 8, true, true);
 
 		// Print name
-		if(pkm->nicknamed())	printTextTintedMaxW(pkm->nickname(), 80, 1, (pkm->gender() ? (pkm->gender() == 1 ? RED_TEXT : GRAY_TEXT) : BLUE_TEXT), 170, 25, true, true);
-		else	printTextTintedMaxW(Lang::species[pkm->species()], 80, 1, (pkm->gender() ? (pkm->gender() == 1 ? RED_TEXT : GRAY_TEXT) : BLUE_TEXT), 170, 25, true, true);
+		if(pkm->nicknamed())	printTextTintedMaxW(pkm->nickname(), 80, 1, (pkm->gender() ? (pkm->gender() == 1 ? TextColor::red : TextColor::gray) : TextColor::blue), 170, 25, true, true);
+		else	printTextTintedMaxW(Lang::species[pkm->species()], 80, 1, (pkm->gender() ? (pkm->gender() == 1 ? TextColor::red : TextColor::gray) : TextColor::blue), 170, 25, true, true);
 
 		// Draw types
 		int type = (pkm->generation() == Generation::FOUR && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1();
@@ -349,7 +349,7 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 		}
 
 		// Print Level
-		printTextTinted(Lang::get("lv")+std::to_string(pkm->level()), GRAY_TEXT, 170, 57, true, true);
+		printTextTinted(Lang::get("lv")+std::to_string(pkm->level()), TextColor::gray, 170, 57, true, true);
 	}
 }
 
@@ -616,10 +616,10 @@ void manageBoxes(void) {
 							}
 							fillSpriteColor(heldPokemonID, true, 0); // Fill the sprite with transparency
 							fillSpriteImage(heldPokemonID, true, 32, 16, 16, keyboardKey);
-							fillSpriteText(heldPokemonID, true, StringUtils::UTF8toUTF16(std::to_string(heldPokemon.size())), WHITE_TEXT, 24-(getTextWidth(std::to_string(heldPokemon.size()))/2), 16);
+							fillSpriteText(heldPokemonID, true, StringUtils::UTF8toUTF16(std::to_string(heldPokemon.size())), TextColor::white, 24-(getTextWidth(std::to_string(heldPokemon.size()))/2), 16);
 							fillSpriteColor(heldPokemonID, false, 0); // Fill the sprite with transparency
 							fillSpriteImage(heldPokemonID, false, 32, 16, 16, keyboardKey);
-							fillSpriteText(heldPokemonID, false, StringUtils::UTF8toUTF16(std::to_string(heldPokemon.size())), WHITE_TEXT, 24-(getTextWidth(std::to_string(heldPokemon.size()))/2), 16);
+							fillSpriteText(heldPokemonID, false, StringUtils::UTF8toUTF16(std::to_string(heldPokemon.size())), TextColor::white, 24-(getTextWidth(std::to_string(heldPokemon.size()))/2), 16);
 							setSpriteVisibility(heldPokemonID, topScreen, true);
 							updateOam();
 							heldPokemonBox = currentBox();

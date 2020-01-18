@@ -249,21 +249,21 @@ void drawKeyboard(int layout) {
 
 	if(layout == 0) {
 		for(unsigned i=0;i<(sizeof(keys123)/sizeof(keys123[0]));i++) {
-			printTextTinted(keys123[i].character, GRAY_TEXT, xPos+keys123[i].x+16-(getTextWidth(keys123[i].character)/2), 192-keyboard.height+keys123[i].y+8, false, true);
+			printTextTinted(keys123[i].character, TextColor::gray, xPos+keys123[i].x+16-(getTextWidth(keys123[i].character)/2), 192-keyboard.height+keys123[i].y+8, false, true);
 		}
 	} else if(layout == 1) {
 		for(unsigned i=0;i<(sizeof(keysABC)/sizeof(keysABC[0]));i++) {
-			printTextTinted(keysABC[i].character, GRAY_TEXT, xPos+keysABC[i].x+16-(getTextWidth(keysABC[i].character)/2), 192-keyboard.height+keysABC[i].y+8, false, true);
+			printTextTinted(keysABC[i].character, TextColor::gray, xPos+keysABC[i].x+16-(getTextWidth(keysABC[i].character)/2), 192-keyboard.height+keysABC[i].y+8, false, true);
 		}
-		printTextTinted("a/A", GRAY_TEXT, xPos+keysSpecialKana[0].x+16-(getTextWidth("a/A")/2), 192-keyboard.height+keysSpecialKana[0].y+8, false, true);
+		printTextTinted("a/A", TextColor::gray, xPos+keysSpecialKana[0].x+16-(getTextWidth("a/A")/2), 192-keyboard.height+keysSpecialKana[0].y+8, false, true);
 	} else if(layout == 2) {
 		for(unsigned i=0;i<(sizeof(keysAIU)/sizeof(keysAIU[0]));i++) {
 			std::u16string str;
 			str += (katakana ? tokatakana(keysAIU[i].character[0]) : keysAIU[i].character[0]);
-			printTextTinted(str, GRAY_TEXT, xPos+keysAIU[i].x+16-(getTextWidth(str)/2), 192-keyboard.height+keysAIU[i].y+8, false, true);
+			printTextTinted(str, TextColor::gray, xPos+keysAIU[i].x+16-(getTextWidth(str)/2), 192-keyboard.height+keysAIU[i].y+8, false, true);
 		}
-		printTextTinted(katakana ? "ｯﾞﾟ" : "っﾞﾟ", GRAY_TEXT, xPos+keysSpecialKana[0].x+16-(getTextWidth(katakana ? "ｯﾞﾟ" : "っﾞﾟ")/2), 192-keyboard.height+keysSpecialKana[0].y+8, false, true);
-		printTextTinted(katakana ? "あ" : "ア", GRAY_TEXT, xPos+keysSpecialKana[1].x+16-(getTextWidth(katakana ? "あ" : "ア")/2), 192-keyboard.height+keysSpecialKana[1].y+8, false, true);
+		printTextTinted(katakana ? "ｯﾞﾟ" : "っﾞﾟ", TextColor::gray, xPos+keysSpecialKana[0].x+16-(getTextWidth(katakana ? "ｯﾞﾟ" : "っﾞﾟ")/2), 192-keyboard.height+keysSpecialKana[0].y+8, false, true);
+		printTextTinted(katakana ? "あ" : "ア", TextColor::gray, xPos+keysSpecialKana[1].x+16-(getTextWidth(katakana ? "あ" : "ア")/2), 192-keyboard.height+keysSpecialKana[1].y+8, false, true);
 	} else if(layout == 3) {
 		for(unsigned i=0;i<(sizeof(keysQWE)/sizeof(keysQWE[0]));i++) {
 			std::string str;
@@ -350,7 +350,7 @@ void processInputABC(u16 held, unsigned maxLength) {
 			for(unsigned i=0;i<character->size();i++) {
 				std::u16string str = character->substr(i, 1);
 				if(upper)	std::transform(str.begin(), str.end(), str.begin(), ::toupper);
-				fillSpriteText(keyboardSpriteID, false, str, WHITE_TEXT, offsets[i].first-(getTextWidth(str)/2), offsets[i].second);
+				fillSpriteText(keyboardSpriteID, false, str, TextColor::white, offsets[i].first-(getTextWidth(str)/2), offsets[i].second);
 			}
 		}
 
@@ -439,7 +439,7 @@ void processInputAIU(u16 held, unsigned maxLength) {
 			updateOam();
 
 			std::u16string str; str += isKatakana ? tokatakana(character[0]) : character[0];
-			fillSpriteText(keyboardSpriteID, false, str, WHITE_TEXT, 16-(getTextWidth(str)/2), 8);
+			fillSpriteText(keyboardSpriteID, false, str, TextColor::white, 16-(getTextWidth(str)/2), 8);
 		}
 
 		if(held & (KEY_A | KEY_B | KEY_X | KEY_Y | KEY_START)) {
@@ -566,7 +566,7 @@ void processTouchABC(touchPosition touch, unsigned maxLength) {
 						setSpriteVisibility(keyboardSpriteID, false, true);
 						setSpritePosition(keyboardSpriteID, false, keysABC[i].x+xPos+xOfs, keysABC[i].y+(192-keyboard.height)+yOfs);
 						fillSpriteImageScaled(keyboardSpriteID, false, 32, 0, 0, 2, keyboardKey);
-						fillSpriteText(keyboardSpriteID, false, keysABC[i].character.substr(selection, 1), 0, 16-(getTextWidth(keysABC[i].character.substr(selection, 1))/2), 8);
+						fillSpriteText(keyboardSpriteID, false, keysABC[i].character.substr(selection, 1), TextColor::white, 16-(getTextWidth(keysABC[i].character.substr(selection, 1))/2), 8);
 						} else {
 							setSpriteVisibility(keyboardSpriteID, false, false);
 						}
@@ -678,7 +678,7 @@ void processTouchAIU(touchPosition touch, unsigned maxLength) {
 							fillSpriteImageScaled(keyboardSpriteID, false, 32, 0, 0, 2, keyboardKey);
 							std::u16string character;
 							character += katakana ? tokatakana(keysAIU[i].character[selection]) : keysAIU[i].character[selection];
-							fillSpriteText(keyboardSpriteID, false, character, 0, 16-(getTextWidth(character)/2), 8);
+							fillSpriteText(keyboardSpriteID, false, character, TextColor::white, 16-(getTextWidth(character)/2), 8);
 						} else {
 							setSpriteVisibility(keyboardSpriteID, false, false);
 						}
@@ -1212,8 +1212,8 @@ bool Input::getBool(std::string optionTrue, std::string optionFalse) {
 	drawOutline(138, 75, 70, 41, BLACK, false, true);
 
 	// Print text
-	printTextCenteredTintedMaxW(optionFalse, 60, 1, GRAY_TEXT, -45, 88, false, true);
-	printTextCenteredTintedMaxW(optionTrue, 60, 1, GRAY_TEXT, 45, 88, false, true);
+	printTextCenteredTintedMaxW(optionFalse, 60, 1, TextColor::gray, -45, 88, false, true);
+	printTextCenteredTintedMaxW(optionTrue, 60, 1, TextColor::gray, 45, 88, false, true);
 
 	int pressed;
 	touchPosition touch;
@@ -1265,8 +1265,8 @@ void Input::prompt(std::string message, const std::string &confirm) {
 	drawOutline(164, 96+(8*lines)-19, 68, 18, BLACK, false, true);
 
 	// Print text
-	printTextTinted(message, WHITE_TEXT, 23, 96-(8*lines), false, true);
-	printTextCenteredTintedMaxW(confirm, 64, 1, GRAY_TEXT, 70, 96+(8*lines)-18, false, true);
+	printTextTinted(message, TextColor::white, 23, 96-(8*lines), false, true);
+	printTextCenteredTintedMaxW(confirm, 64, 1, TextColor::gray, 70, 96+(8*lines)-18, false, true);
 
 	int pressed;
 	touchPosition touch;

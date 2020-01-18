@@ -130,7 +130,7 @@ void drawSummaryPage(std::shared_ptr<PKX> pkm, bool background) {
 	drawRectangle(0, 0, 256, 192, 0, false, true);
 
 	// Print Pokémon name
-	printTextTintedMaxW(Lang::species[pkm->species()], 90, 1, (pkm->gender() ? (pkm->gender() == 1 ? RED_TEXT : GRAY_TEXT) : BLUE_TEXT), 165, 8, false, true);
+	printTextTintedMaxW(Lang::species[pkm->species()], 90, 1, (pkm->gender() ? (pkm->gender() == 1 ? TextColor::red : TextColor::gray) : TextColor::blue), 165, 8, false, true);
 
 	// Draw/clear shiny star
 	if(pkm->shiny())	drawImage(150, 45, shiny, false, true);
@@ -159,7 +159,7 @@ void drawSummaryPage(std::shared_ptr<PKX> pkm, bool background) {
 		// OT Name is colored
 		if(i != 8)	printTextMaxW(textC1[i].text, 80, 1, textC1[i].x, textC1[i].y, false, true);
 	}
-	printTextTinted(textC1[8].text, (pkm->otGender() ? RED_TEXT : BLUE_TEXT), textC1[8].x, textC1[8].y, false, true);
+	printTextTinted(textC1[8].text, (pkm->otGender() ? TextColor::red : TextColor::blue), textC1[8].x, textC1[8].y, false, true);
 
 	// Draw buttons // The first 2 don't have buttons
 	for(unsigned i=2;i<sizeof(textC2)/sizeof(textC2[0]);i++) {

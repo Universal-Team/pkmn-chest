@@ -422,18 +422,18 @@ int selectNature(int currentNature) {
 	// Draw labels (not a for loop as speed is 3rd)
 	{
 		int x = -2;
-		printTextCenteredTintedMaxW(Lang::get(statsLabels[1]), 48, 1, BLUE_TEXT, ((x++)*48), 4, false, true);
-		printTextCenteredTintedMaxW(Lang::get(statsLabels[2]), 48, 1, BLUE_TEXT, ((x++)*48), 4, false, true);
-		printTextCenteredTintedMaxW(Lang::get(statsLabels[5]), 48, 1, BLUE_TEXT, ((x++)*48), 4, false, true);
-		printTextCenteredTintedMaxW(Lang::get(statsLabels[3]), 48, 1, BLUE_TEXT, ((x++)*48), 4, false, true);
-		printTextCenteredTintedMaxW(Lang::get(statsLabels[4]), 48, 1, BLUE_TEXT, ((x++)*48), 4, false, true);
+		printTextCenteredTintedMaxW(Lang::get(statsLabels[1]), 48, 1, TextColor::blue, ((x++)*48), 4, false, true);
+		printTextCenteredTintedMaxW(Lang::get(statsLabels[2]), 48, 1, TextColor::blue, ((x++)*48), 4, false, true);
+		printTextCenteredTintedMaxW(Lang::get(statsLabels[5]), 48, 1, TextColor::blue, ((x++)*48), 4, false, true);
+		printTextCenteredTintedMaxW(Lang::get(statsLabels[3]), 48, 1, TextColor::blue, ((x++)*48), 4, false, true);
+		printTextCenteredTintedMaxW(Lang::get(statsLabels[4]), 48, 1, TextColor::blue, ((x++)*48), 4, false, true);
 
 		int y = 0;
-		printTextTintedScaled(Lang::get(statsLabels[1]), 0.8, 0.8, RED_TEXT, 1, ((y++)*32)+22, false, true);
-		printTextTintedScaled(Lang::get(statsLabels[2]), 0.8, 0.8, RED_TEXT, 1, ((y++)*32)+22, false, true);
-		printTextTintedScaled(Lang::get(statsLabels[5]), 0.8, 0.8, RED_TEXT, 1, ((y++)*32)+22, false, true);
-		printTextTintedScaled(Lang::get(statsLabels[3]), 0.8, 0.8, RED_TEXT, 1, ((y++)*32)+22, false, true);
-		printTextTintedScaled(Lang::get(statsLabels[4]), 0.8, 0.8, RED_TEXT, 1, ((y++)*32)+22, false, true);
+		printTextTintedScaled(Lang::get(statsLabels[1]), 0.8, 0.8, TextColor::red, 1, ((y++)*32)+22, false, true);
+		printTextTintedScaled(Lang::get(statsLabels[2]), 0.8, 0.8, TextColor::red, 1, ((y++)*32)+22, false, true);
+		printTextTintedScaled(Lang::get(statsLabels[5]), 0.8, 0.8, TextColor::red, 1, ((y++)*32)+22, false, true);
+		printTextTintedScaled(Lang::get(statsLabels[3]), 0.8, 0.8, TextColor::red, 1, ((y++)*32)+22, false, true);
+		printTextTintedScaled(Lang::get(statsLabels[4]), 0.8, 0.8, TextColor::red, 1, ((y++)*32)+22, false, true);
 	}
 
 	// Print natures
@@ -783,11 +783,11 @@ void drawStatsPage(std::shared_ptr<PKX> pkm, bool background) {
 	{
 		int i = pkm->nature();
 		printText(Lang::get(statsLabels[0]), 20, textStatsC1[0].y, false, true);
-		printTextTintedMaxW(Lang::get(statsLabels[1]), 80, 1, (i!=0&&i<5         ? RED_TEXT : i!=0&&!(i%5)      ? BLUE_TEXT : WHITE_TEXT), 20, textStatsC1[1].y, false, true);
-		printTextTintedMaxW(Lang::get(statsLabels[2]), 80, 1, (i!=6&&i>4&&i<10   ? RED_TEXT : i!=6&&!((i-1)%5)  ? BLUE_TEXT : WHITE_TEXT), 20, textStatsC1[2].y, false, true);
-		printTextTintedMaxW(Lang::get(statsLabels[3]), 80, 1, (i!=18&&i>14&&i<20 ? RED_TEXT : i!=18&&!((i-3)%5) ? BLUE_TEXT : WHITE_TEXT), 20, textStatsC1[3].y, false, true);
-		printTextTintedMaxW(Lang::get(statsLabels[4]), 80, 1, (i!=24&&i>19       ? RED_TEXT : i!=24&&!((i-4)%5) ? BLUE_TEXT : WHITE_TEXT), 20, textStatsC1[4].y, false, true);
-		printTextTintedMaxW(Lang::get(statsLabels[5]), 80, 1, (i!=12&&i>9&&i<15  ? RED_TEXT : i!=12&&!((i-2)%5) ? BLUE_TEXT : WHITE_TEXT), 20, textStatsC1[5].y, false, true);
+		printTextTintedMaxW(Lang::get(statsLabels[1]), 80, 1, (i!=0&&i<5         ? TextColor::red : i!=0&&!(i%5)      ? TextColor::blue : TextColor::white), 20, textStatsC1[1].y, false, true);
+		printTextTintedMaxW(Lang::get(statsLabels[2]), 80, 1, (i!=6&&i>4&&i<10   ? TextColor::red : i!=6&&!((i-1)%5)  ? TextColor::blue : TextColor::white), 20, textStatsC1[2].y, false, true);
+		printTextTintedMaxW(Lang::get(statsLabels[3]), 80, 1, (i!=18&&i>14&&i<20 ? TextColor::red : i!=18&&!((i-3)%5) ? TextColor::blue : TextColor::white), 20, textStatsC1[3].y, false, true);
+		printTextTintedMaxW(Lang::get(statsLabels[4]), 80, 1, (i!=24&&i>19       ? TextColor::red : i!=24&&!((i-4)%5) ? TextColor::blue : TextColor::white), 20, textStatsC1[4].y, false, true);
+		printTextTintedMaxW(Lang::get(statsLabels[5]), 80, 1, (i!=12&&i>9&&i<15  ? TextColor::red : i!=12&&!((i-2)%5) ? TextColor::blue : TextColor::white), 20, textStatsC1[5].y, false, true);
 	}
 
 	// Print column titles
