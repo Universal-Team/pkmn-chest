@@ -32,6 +32,7 @@
 	"dPadGroups": "Steuerkreuz-Tippgruppen",
 	"dump": "Dumpen",
 	"dumpBox": "Box Dumpen",
+	"dumpedTo": "Dumped to:\n%s",
 	"edit": "Editieren",
 	"elmLab": "Prof. Lind's Lab",
 	"ev": "EVs",
