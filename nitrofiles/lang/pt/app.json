@@ -66,6 +66,7 @@
 	"metMonth": "Mês do encontro",
 	"metYear": "Ano do encontro",
 	"money": "Dinheiro",
+	"moneyFormat": "$%li",
 	"move": "Mover",
 	"moves": "Ataques",
 	"music": "Música",
