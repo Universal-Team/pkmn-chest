@@ -66,6 +66,7 @@
 	"metMonth": "Met month",
 	"metYear": "Met year",
 	"money": "용돈",
+	"moneyFormat": "$%li",
 	"move": "잡는다",
 	"moves": "기술",
 	"music": "Music",
