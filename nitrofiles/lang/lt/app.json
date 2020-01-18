@@ -66,6 +66,7 @@
 	"metMonth": "Sutikimo mėnuo",
 	"metYear": "Sutikimo metai",
 	"money": "Pinigai",
+	"moneyFormat": "$%li",
 	"move": "Perkelti",
 	"moves": "Judesiai",
 	"music": "Muzika",
