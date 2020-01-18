@@ -66,6 +66,7 @@
 	"metMonth": "Begegnungsmonat",
 	"metYear": "Begegnungsjahr",
 	"money": "Geld",
+	"moneyFormat": "$%li",
 	"move": "bewegen",
 	"moves": "Attacken",
 	"music": "Musik",
