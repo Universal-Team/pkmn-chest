@@ -66,6 +66,7 @@
 	"metMonth": "Mes que conoció",
 	"metYear": "Año que conoció",
 	"money": "Dinero",
+	"moneyFormat": "$%li",
 	"move": "Mover",
 	"moves": "Ataques",
 	"music": "Música",
