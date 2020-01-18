@@ -32,6 +32,7 @@
 	"dPadGroups": "Jenis ketikan D-Pad",
 	"dump": "Buang",
 	"dumpBox": "Kotak Buangan",
+	"dumpedTo": "Dumped to:\n%s",
 	"edit": "Ubah",
 	"elmLab": "Lab Prof. Elm",
 	"ev": "EV",
