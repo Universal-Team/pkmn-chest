@@ -118,6 +118,8 @@ public:
     void cryptBoxData(bool crypted) override;
     std::string boxName(u8 box) const override;
     void boxName(u8 box, const std::string& name) override;
+    u8 boxWallpaper(u8 box) const override;
+    void boxWallpaper(u8 box, const u8 v) override;
     u8 partyCount(void) const override;
     void partyCount(u8 count) override;
 
@@ -136,7 +138,7 @@ public:
     std::unique_ptr<Item> item(Pouch pouch, u16 slot) const override;
     std::vector<std::pair<Pouch, int>> pouches(void) const override;
     std::map<Pouch, std::vector<int>> validItems(void) const override;
-    std::string pouchName(Language lang, Pouch pouch) const override;
+    std::string pouchName(Pouch pouch) const override;
 
     u8 formCount(u16 species) const override { return PersonalDPPtHGSS::formCount(species); }
 };

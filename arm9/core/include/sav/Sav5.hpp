@@ -108,6 +108,8 @@ public:
     void cryptMysteryGiftData(void);
     std::string boxName(u8 box) const override;
     void boxName(u8 box, const std::string& name) override;
+    u8 boxWallpaper(u8 box) const override;
+    void boxWallpaper(u8 box, const u8 v) override;
     u8 partyCount(void) const override;
     void partyCount(u8 count) override;
 
@@ -123,7 +125,7 @@ public:
     void item(const Item& item, Pouch pouch, u16 slot) override;
     std::unique_ptr<Item> item(Pouch pouch, u16 slot) const override;
     std::vector<std::pair<Pouch, int>> pouches(void) const override;
-    std::string pouchName(Language lang, Pouch pouch) const override;
+    std::string pouchName(Pouch pouch) const override;
 
     u8 formCount(u16 species) const override { return PersonalBWB2W2::formCount(species); }
 };
