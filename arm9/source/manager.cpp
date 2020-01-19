@@ -13,6 +13,7 @@
 #include "loading.hpp"
 #include "party.hpp"
 #include "PKFilter.hpp"
+#include "PKX.hpp"
 #include "sort.hpp"
 #include "sound.hpp"
 #include "xMenu.hpp"
@@ -524,7 +525,8 @@ void manageBoxes(void) {
 						}
 						if(canPlace) {
 							for(unsigned i=0;i<heldPokemon.size();i++) {
-								if(topScreen || heldPokemon[i].pkm->species() <= save->maxSpecies()) {
+								if(topScreen || save->availableSpecies().count(heldPokemon[i].pkm->species()) == 0) {
+									
 									// If not copying / there isn't a Pokémon at the new spot, move Pokémon
 									// Save the Pokémon at the cursor's postion to a temp variable
 									std::shared_ptr<PKX> tempPkm;

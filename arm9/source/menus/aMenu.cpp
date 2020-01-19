@@ -12,6 +12,8 @@
 #include "manager.hpp"
 #include "misc.hpp"
 #include "party.hpp"
+#include "PKX.hpp"
+#include "random.hpp"
 #include "summary.hpp"
 #include "sound.hpp"
 

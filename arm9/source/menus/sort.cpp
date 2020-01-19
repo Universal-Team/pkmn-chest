@@ -9,6 +9,7 @@
 #include "manager.hpp"
 #include "misc.hpp"
 #include "PKFilter.hpp"
+#include "PKX.hpp"
 #include "sound.hpp"
 
 std::vector<SortType> sortTypes;

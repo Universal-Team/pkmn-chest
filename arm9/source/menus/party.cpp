@@ -5,6 +5,7 @@
 #include "lang.hpp"
 #include "loader.hpp"
 #include "manager.hpp"
+#include "PKX.hpp"
 #include "summary.hpp"
 #include "sound.hpp"
 

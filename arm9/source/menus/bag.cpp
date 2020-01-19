@@ -5,6 +5,7 @@
 #include "flashcard.hpp"
 #include "graphics.hpp"
 #include "input.hpp"
+#include "Item.hpp"
 #include "lang.hpp"
 #include "loader.hpp"
 #include "manager.hpp"
@@ -22,7 +23,7 @@ int getMaxItem(int pouchIndex) {
 	return 0;
 }
 
-void drawBag(Pouch pouch, int maxItem, int screenPos, bool background) {
+void drawBag(Sav::Pouch pouch, int maxItem, int screenPos, bool background) {
 	// Clear text
 	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 
@@ -69,7 +70,7 @@ void editBag(void) {
 		} while(!held);
 
 		if(pressed & KEY_A) {
-			if(save->pouches()[selectedPouch].first != Pouch::KeyItem) {
+			if(save->pouches()[selectedPouch].first != Sav::Pouch::KeyItem) {
 				Sound::play(Sound::click);
 				optionSelected = true;
 			}

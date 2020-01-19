@@ -14,21 +14,19 @@ bool loadSave(std::string savePath) {
 	save = nullptr;
 	saveFileName = savePath;
 	FILE* in = fopen(savePath.c_str(), "rb");
-	u8* saveData = nullptr;
 	u32 size;
 	if(in) {
 		fseek(in, 0, SEEK_END);
 		size = ftell(in);
 		fseek(in, 0, SEEK_SET);
-		saveData = new u8[size];
-		fread(saveData, 1, size, in);
+		std::shared_ptr<u8[]> saveData = std::shared_ptr<u8[]>(new u8[size]);
+		fread(saveData.get(), 1, size, in);
+		fclose(in);
+		save = Sav::getSave(saveData, size);
 	} else {
 		saveFileName = "";
 		return false;
 	}
-	fclose(in);
-	save = Sav::getSave(saveData, size);
-	delete[] saveData;
 	if(!save) {
 		saveFileName = "";
 		return false;
@@ -61,9 +59,11 @@ void saveChanges(std::string savePath) {
 		chdir(savDir);
 	}
 
-	save->resign();
-	// No need to check size; if it was read successfully, that means that it has the correct size
+	save->encrypt();
+
 	FILE* out = fopen(savePath.c_str(), "rb+");
-	fwrite(save->rawData(), 1, save->getLength(), out);
+	fwrite(save->rawData().get(), 1, save->getLength(), out);
 	fclose(out);
+
+	save->decrypt();
 }

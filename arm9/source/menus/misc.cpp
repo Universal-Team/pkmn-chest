@@ -9,6 +9,7 @@
 #include "lang.hpp"
 #include "loader.hpp"
 #include "manager.hpp"
+#include "PKX.hpp"
 #include "summary.hpp"
 #include "sound.hpp"
 #include "stat.hpp"
@@ -58,21 +59,21 @@ std::vector<std::string> originLabels = {"metLevel", "metYear", "metMonth", "met
 
 static constexpr Stat statOrder[] = {Stat::HP, Stat::ATK, Stat::DEF, Stat::SPATK, Stat::SPDEF, Stat::SPD};
 
-int pkmLang(void) {
+Language pkmLang(void) {
 	switch(Config::getLang("lang")) {
 		case 0:
-			return 5; // German
+			return Language::DE; // German
 		case 1:
 		default:
-			return 2; // English
+			return Language::EN; // English
 		case 2:
-			return 6; // Spanish
+			return Language::ES; // Spanish
 		case 3:
-			return 3; // French
+			return Language::FR; // French
 		case 4:
-			return 4; // Italian
+			return Language::IT; // Italian
 		case 5:
-			return 1; // Japanese
+			return Language::JP; // Japanese
 	}
 }
 
@@ -228,7 +229,7 @@ int selectForm(int dexNo, int currentForm) {
 	}
 }
 
-void drawItemList(int screenPos, std::vector<std::string> itemList, bool background) {
+void drawItemList(int screenPos, const std::vector<std::string> &itemList, bool background) {
 	if(background) {
 		// Clear the screen
 		drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
@@ -246,18 +247,32 @@ void drawItemList(int screenPos, std::vector<std::string> itemList, bool backgro
 	}
 }
 
+int selectItem(int current, std::set<int> validItems, const std::vector<std::string> &items) {
+	std::vector<std::string> availableSpecies;
+	for(uint i=0;i<Lang::species.size();i++) {
+		if(save->availableSpecies().count(i) != 0) {
+			availableSpecies.push_back(Lang::species[i]);
+		}
+	}
+
+	return selectItem(current, availableSpecies);
+}
 int selectItem(int current, int start, int max, const std::vector<std::string> &items) {
 	if(current < start || current > max)	current = start;
+	return selectItem(current, std::vector<std::string>(&items[start], &items[max]));
+}
+int selectItem(int current, const std::vector<std::string> &items) {
+	std::vector<std::string> itemList = items;
+
 	// Set arrow position
 	setSpritePosition(arrowID, false, 4+getTextWidth(items[current]), -2);
 	setSpriteVisibility(arrowID, false, true);
 	updateOam();
 
 	// Print items
-	std::vector<std::string> itemList(&items[start], &items[max]);
-	drawItemList(current-start, itemList, true);
+	drawItemList(current, itemList, true);
 
-	int held, pressed, screenPos = current-start, newMove = current-start, entriesPerScreen = 9;
+	int held, pressed, screenPos = current, newMove = current, entriesPerScreen = 9;
 	touchPosition touch;
 	while(1) {
 		do {
@@ -269,24 +284,24 @@ int selectItem(int current, int start, int max, const std::vector<std::string> &
 
 		if(held & KEY_UP) {
 			if(newMove > 0)	newMove--;
-			else	newMove = std::min(max-1, (int)itemList.size()-1);
+			else	newMove = itemList.size();
 		} else if(held & KEY_DOWN) {
-			if(newMove < std::min(max-1, (int)itemList.size()-1))	newMove++;
+			if(newMove < (int)itemList.size())	newMove++;
 			else newMove = 0;
 		} else if(held & KEY_LEFT) {
 			newMove -= entriesPerScreen;
 			if(newMove < 0)	newMove = 0;
 		} else if(held & KEY_RIGHT) {
 			newMove += entriesPerScreen;
-			if(newMove > std::min(max-1, (int)itemList.size()-1))	newMove = std::min(max, (int)itemList.size()-1);
+			if(newMove > (int)itemList.size())	newMove = itemList.size();
 		} else if(pressed & KEY_A) {
 			Sound::play(Sound::click);
-			for(int i=0;i<max;i++) {
-				if(itemList[newMove] == items[i]) {
+			// for(int i=0;i<items.size();i++) {
+				// if(itemList[newMove] == items[i]) {
 					drawRectangle(0, 0, 256, 192, CLEAR, false, true);
-					return i;
-				}
-			}
+					return newMove;
+				// }
+			// }
 		} if(pressed & KEY_B) {
 			drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 			Sound::play(Sound::back);
@@ -298,12 +313,12 @@ int selectItem(int current, int start, int max, const std::vector<std::string> &
 			}
 			for(int i=0;i<entriesPerScreen;i++) {
 				if(touch.px >= 4 && touch.px <= 4+getTextWidth(itemList[screenPos+i]) && touch.py >= 4+(i*20) && touch.py <= 4+((i+1)*20)) {
-					for(int j=0;j<max;j++) {
-						if(itemList[screenPos+i] == items[j]) {
+					// for(int j=0;j<max;j++) {
+						// if(itemList[screenPos+i] == items[j]) {
 							drawRectangle(0, 0, 256, 192, CLEAR, false, true);
-							return j;
-						}
-					}
+							return screenPos+i;
+						// }
+					// }
 					break;
 				}
 			}
@@ -314,7 +329,7 @@ int selectItem(int current, int start, int max, const std::vector<std::string> &
 			std::string str = Input::getLine();
 				itemList.clear();
 				if(str != "")	itemList.push_back("-----");
-				for(int i=0;i<max;i++) {
+				for(int i=0;i<(int)itemList.size();i++) {
 					if(strncasecmp(str.c_str(), items[i].c_str(), str.length()) == 0) {
 						itemList.push_back(items[i]);
 					}
@@ -396,7 +411,7 @@ std::shared_ptr<PKX> selectMoves(std::shared_ptr<PKX> pkm) {
 
 		if(optionSelected) {
 			optionSelected = false;
-			pkm->move(selection, selectItem(pkm->move(selection), 0, save->maxMove()+1, Lang::moves));
+			pkm->move(selection, selectItem(pkm->move(selection), save->availableMoves(), Lang::moves));
 
 			// Clear screen
 			drawImageDMA(0, 0, listBg, false, false);
