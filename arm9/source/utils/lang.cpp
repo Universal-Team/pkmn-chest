@@ -54,7 +54,7 @@ void Lang::load(int lang) {
 
 std::string Lang::get(const std::string &key) {
 	if(!langJson.contains(key)) {
-		return "MISSING: " + key;
+		return key;
 	}
 	return langJson.at(key).get_ref<const std::string&>();
 }

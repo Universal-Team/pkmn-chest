@@ -342,10 +342,10 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 		else	printTextTintedMaxW(Lang::species[pkm->species()], 80, 1, (pkm->gender() ? (pkm->gender() == 1 ? RED_TEXT : GRAY_TEXT) : BLUE_TEXT), 170, 25, true, true);
 
 		// Draw types
-		int type = (pkm->generation() == Generation::FOUR && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1();
+		int type = (pkm->generation() < Generation::FIVE && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1();
 		drawImage(170, 42-((types[type].height-12)/2), types[type], true, false);
 		if(pkm->type1() != pkm->type2()) {
-			type = (pkm->generation() == Generation::FOUR && pkm->type2() > 8) ? pkm->type2()-1 : pkm->type2();
+			type = (pkm->generation() < Generation::FIVE && pkm->type2() > 8) ? pkm->type2()-1 : pkm->type2();
 			drawImage(205, 42-((types[type].height-12)/2), types[type], true, false, 4);
 		}
 
@@ -525,8 +525,7 @@ void manageBoxes(void) {
 						}
 						if(canPlace) {
 							for(unsigned i=0;i<heldPokemon.size();i++) {
-								if(topScreen || save->availableSpecies().count(heldPokemon[i].pkm->species()) == 0) {
-									
+								if(topScreen || save->availableSpecies().count(heldPokemon[i].pkm->species()) != 0) {
 									// If not copying / there isn't a Pokémon at the new spot, move Pokémon
 									// Save the Pokémon at the cursor's postion to a temp variable
 									std::shared_ptr<PKX> tempPkm;
@@ -536,10 +535,10 @@ void manageBoxes(void) {
 									if(topScreen) {
 										Banks::bank->pkm(heldPokemon[i].pkm, currentBox(), ((arrowY+heldPokemon[i].y)*6)+arrowX+heldPokemon[i].x);
 									} else if(inParty) {
-										save->pkm(heldPokemon[i].pkm,((arrowY+heldPokemon[i].y)*2)+arrowX+heldPokemon[i].x);
+										save->pkm(save->transfer(heldPokemon[i].pkm), ((arrowY+heldPokemon[i].y)*2)+arrowX+heldPokemon[i].x);
 										save->dex(heldPokemon[i].pkm);
 									} else {
-										save->pkm(heldPokemon[i].pkm, currentBox(), ((arrowY+heldPokemon[i].y)*6)+arrowX+heldPokemon[i].x, false);
+										save->pkm(save->transfer(heldPokemon[i].pkm), currentBox(), ((arrowY+heldPokemon[i].y)*6)+arrowX+heldPokemon[i].x, false);
 										save->dex(heldPokemon[i].pkm);
 									}
 									// If not copying, write the cursor position's previous Pokémon to the held Pokémon's old spot
@@ -547,10 +546,10 @@ void manageBoxes(void) {
 										if(heldPokemonScreen) {
 											Banks::bank->pkm(tempPkm, heldPokemonBox, heldPokemon[i].position);
 										} else if(heldInParty) {
-											save->pkm(tempPkm, heldPokemon[i].position);
+											save->pkm(save->transfer(tempPkm), heldPokemon[i].position);
 											save->dex(tempPkm);
 										} else {
-											save->pkm(tempPkm, heldPokemonBox, heldPokemon[i].position, false);
+											save->pkm(save->transfer(tempPkm), heldPokemonBox, heldPokemon[i].position, false);
 											save->dex(tempPkm);
 										}
 									}

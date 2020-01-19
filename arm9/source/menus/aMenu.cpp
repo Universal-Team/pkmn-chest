@@ -307,19 +307,61 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				chdir(sdFound() ? "sd:/_nds/pkmn-chest/in" : "fat:/_nds/pkmn-chest/in");
 
 				// Get a pk4/5
-				std::vector<std::string> extList = {"pk4", "pk5"};
-				std::string fileName = browseForFile(extList, false);
+				std::string fileName = browseForFile({"pk3", "pk4", "pk5", "pk6", "pk7", "pb7", "pk8"}, false);
 
 				// If the fileName isn't blank, inject the Pokémon
 				if(fileName != "") {
-					FILE* in = fopen(fileName.c_str(), "rb");
-					if(in) {
-						u8 buffer[136];
-						fread(buffer, 1, sizeof(buffer), in);
-						if(topScreen)	Banks::bank->pkm(save->emptyPkm()->getPKM(fileName.substr(fileName.size()-1) == "4" ? Generation::FOUR : Generation::FIVE, buffer), currentBankBox, pkmPos(pkmX, pkmY));
-						else if(inParty)	save->pkm(save->emptyPkm()->getPKM(fileName.substr(fileName.size()-1) == "4" ? Generation::FOUR : Generation::FIVE, buffer), pkmPos(pkmX, pkmY));
-						else	save->pkm(save->emptyPkm()->getPKM(fileName.substr(fileName.size()-1) == "4" ? Generation::FOUR : Generation::FIVE, buffer), currentSaveBox, pkmPos(pkmX, pkmY), false);
-						fclose(in);
+					Generation gen;
+					switch(fileName[fileName.size()-1]) {
+						case '3':
+							gen = Generation::THREE;
+							break;
+						case '4':
+							gen = Generation::FOUR;
+							break;
+						case '5':
+							gen = Generation::FOUR;
+							break;
+						case '6':
+							gen = Generation::SIX;
+							break;
+						case '7':
+							switch(fileName[fileName.size()-2]) {
+								case 'k':
+								case 'K':
+									gen = Generation::SEVEN;
+									break;
+								case 'b':
+								case 'B':
+									gen = Generation::LGPE;
+									break;
+								default:
+									gen = Generation::UNUSED;
+									break;
+							}
+						case '8':
+							gen = Generation::EIGHT;
+							break;
+						default:
+							gen = Generation::UNUSED;
+							break;
+					}
+
+					if(gen != Generation::UNUSED) {
+						FILE* in = fopen(fileName.c_str(), "rb");
+
+						fseek(in, 0, SEEK_END);
+						int size = ftell(in);
+						fseek(in, 0, SEEK_SET);
+
+						if(in) {
+							u8 buffer[size];
+							fread(buffer, 1, sizeof(buffer), in);
+							if(topScreen)	Banks::bank->pkm(save->emptyPkm()->getPKM(gen, buffer), currentBankBox, pkmPos(pkmX, pkmY));
+							else if(inParty)	save->pkm(save->transfer(save->emptyPkm()->getPKM(gen, buffer)), pkmPos(pkmX, pkmY));
+							else	save->pkm(save->transfer(save->emptyPkm()->getPKM(gen, buffer)), currentSaveBox, pkmPos(pkmX, pkmY), false);
+							fclose(in);
+						}
 					}
 				}
 

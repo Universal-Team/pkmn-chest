@@ -94,12 +94,12 @@ void drawMiniBoxes(int currentBox) {
 			if((topScreen ? Banks::bank->pkm(currentBox, j)->species() : save->pkm(currentBox, j)->species()) != 0) {
 				// Type 1
 				int type = topScreen ? Banks::bank->pkm(currentBox, j)->type1() : save->pkm(currentBox, j)->type1();
-				if(((topScreen ? Banks::bank->pkm(currentBox, j)->generation() : save->pkm(currentBox, j)->generation()) == Generation::FOUR) && type > 8)	type--;
+				if(((topScreen ? Banks::bank->pkm(currentBox, j)->generation() : save->pkm(currentBox, j)->generation()) < Generation::FIVE) && type > 8)	type--;
 				drawRectangle(172+((j-((j/6)*6))*6), 12+((j/6)*6)+(i*33), 2, 4, 0xD0+type, false, true);
 
 				// Type 2
 				type = topScreen ? Banks::bank->pkm(currentBox, j)->type2() : save->pkm(currentBox, j)->type2();
-				if(((topScreen ? Banks::bank->pkm(currentBox, j)->generation() : save->pkm(currentBox, j)->generation()) == Generation::FOUR) && type > 8)	type--;
+				if(((topScreen ? Banks::bank->pkm(currentBox, j)->generation() : save->pkm(currentBox, j)->generation()) < Generation::FIVE) && type > 8)	type--;
 				drawRectangle(174+((j-((j/6)*6))*6), 12+((j/6)*6)+(i*33), 2, 4, 0xD0+type, false, true);
 			}
 		}
@@ -517,7 +517,7 @@ int selectPokeball(int currentBall) {
 	// Draw Pokéballs
 	for(int y=0;y<5;y++) {
 		for(int x=0;x<5;x++) {
-			if(!(save->generation() != Generation::FIVE && (y*5)+x == 24)) {
+			if(!(save->generation() < Generation::FIVE && (y*5)+x == 24)) {
 				std::pair<int, int> xy = getPokeballPosition((y*5)+x+1);
 				drawImageSegment((x*48)+24, (y*32)+24, 15, 15, ballSheet, xy.first, xy.second, false, false);
 			}
@@ -552,7 +552,7 @@ int selectPokeball(int currentBall) {
 			if(arrowX < 4)	arrowX++;
 			else arrowX=0;
 		} else if(pressed & KEY_A) {
-			if(!(save->generation() != Generation::FIVE && (selection*5)+arrowX == 24)) {
+			if(!(save->generation() < Generation::FIVE && (selection*5)+arrowX == 24)) {
 				Sound::play(Sound::click);
 				return (selection*5)+arrowX+1;
 			}
@@ -565,7 +565,7 @@ int selectPokeball(int currentBall) {
 			for(int y=0;y<5;y++) {
 				for(int x=0;x<5;x++) {
 					if(touch.px > (x*48)+8 && touch.px < (x*48)+56 && touch.py > (y*32)+8 && touch.py < (y*32)+56) {
-						if(!(save->generation() != Generation::FIVE && (y*5)+x == 24)) {
+						if(!(save->generation() < Generation::FIVE && (y*5)+x == 24)) {
 							Sound::play(Sound::click);
 							return (y*5)+x+1;
 						}
@@ -634,10 +634,8 @@ int selectWallpaper(int currentWallpaper) {
 			for(int y=0;y<4;y++) {
 				for(int x=0;x<6;x++) {
 					if(touch.px > (x*40)+12 && touch.px < (x*40)+44 && touch.py > (y*38)+24 && touch.py < (y*38)+56) {
-						if(!(save->generation() != Generation::FIVE && (y*5)+x == 24)) {
-							Sound::play(Sound::click);
-							return (y*6)+x;
-						}
+						Sound::play(Sound::click);
+						return (y*6)+x;
 					}
 				}
 			}
