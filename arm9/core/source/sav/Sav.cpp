@@ -30,13 +30,13 @@
 #include "SavBW.hpp"
 #include "SavDP.hpp"
 #include "SavHGSS.hpp"
-#include "SavLGPE.hpp"
-#include "SavORAS.hpp"
+// #include "SavLGPE.hpp"
+// #include "SavORAS.hpp"
 #include "SavPT.hpp"
-#include "SavSUMO.hpp"
-#include "SavSWSH.hpp"
-#include "SavUSUM.hpp"
-#include "SavXY.hpp"
+// #include "SavSUMO.hpp"
+// #include "SavSWSH.hpp"
+// #include "SavUSUM.hpp"
+// #include "SavXY.hpp"
 #include "endian.hpp"
 
 u16 Sav::ccitt16(const u8* buf, u32 len)
@@ -61,20 +61,20 @@ std::unique_ptr<Sav> Sav::getSave(std::shared_ptr<u8[]> dt, size_t length)
     switch (length)
     {
         case 0x6CC00:
-            return std::make_unique<SavUSUM>(dt);
+            // return std::make_unique<SavUSUM>(dt);
         case 0x6BE00:
-            return std::make_unique<SavSUMO>(dt);
+            // return std::make_unique<SavSUMO>(dt);
         case 0x76000:
-            return std::make_unique<SavORAS>(dt);
+            // return std::make_unique<SavORAS>(dt);
         case 0x65600:
-            return std::make_unique<SavXY>(dt);
+            // return std::make_unique<SavXY>(dt);
         case 0x80000:
             return checkDSType(dt);
         case 0xB8800:
         case 0x100000:
-            return std::make_unique<SavLGPE>(dt);
+            // return std::make_unique<SavLGPE>(dt);
         case 0x17195E:
-            return std::make_unique<SavSWSH>(dt);
+            // return std::make_unique<SavSWSH>(dt);
         default:
             return std::unique_ptr<Sav>(nullptr);
     }
@@ -172,6 +172,8 @@ std::shared_ptr<PKX> Sav::transfer(std::shared_ptr<PKX> pk)
     {
         switch (generation())
         {
+            case Generation::THREE:
+                return pk->convertToG3(*this);
             case Generation::FOUR:
                 return pk->convertToG4(*this);
             case Generation::FIVE:
@@ -219,6 +221,7 @@ u32 Sav::displayTID() const
 {
     switch (generation())
     {
+        case Generation::THREE: // Assuming this is right?
         case Generation::FOUR:
         case Generation::FIVE:
         case Generation::SIX:
@@ -237,6 +240,7 @@ u32 Sav::displaySID() const
 {
     switch (generation())
     {
+        case Generation::THREE: // Assuming this is right?
         case Generation::FOUR:
         case Generation::FIVE:
         case Generation::SIX:

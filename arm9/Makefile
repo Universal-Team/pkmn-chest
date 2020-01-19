@@ -23,16 +23,14 @@ include $(DEVKITARM)/ds_rules
 #---------------------------------------------------------------------------------
 BUILD		:=	build
 SOURCES		:=	source \
-				source/common source/common/utils \
-				core/source core/source/i18n core/source/personal core/source/pkx core/source/sav core/source/utils \
+				core/source core/source/i18n core/source/personal core/source/pkx core/source/sav core/source/utils core/source/wcx \
 				source/graphics \
 				source/lang \
 				source/menus \
 				source/saves \
 				source/utils
 INCLUDES	:=	include \
-				include/common include/common/utils \
-				core/include core/include/i18n core/include/personal core/include/pkx core/include/sav core/include/utils \
+				core/include core/include/i18n core/include/personal core/include/pkx core/include/sav core/include/utils core/include/wcx \
 				include/graphics \
 				include/lang \
 				include/menus \

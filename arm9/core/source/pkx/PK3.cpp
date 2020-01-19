@@ -27,7 +27,7 @@
 #include "PK3.hpp"
 #include "ValueConverter.hpp"
 #include "endian.hpp"
-#include "i18n.hpp"
+#include "lang.hpp"
 #include "random.hpp"
 #include "utils.hpp"
 #include <algorithm>
@@ -671,13 +671,13 @@ std::shared_ptr<PKX> PK3::convertToG4(Sav& save) const
     }
 
     // Yay trash bytes
-    if (u8(language()) - 1 < trashBytes.size())
+    if (u8(language()) - 1U < trashBytes.size())
     {
         auto& trash = trashBytes[u8(language()) - 1];
         std::copy(trash.begin(), trash.end(), pk4->rawData() + 0x48 + 4);
     }
 
-    std::string name = i18n::species(language(), species());
+    std::string name = Lang::species[species()];
     pk4->nickname(egg() ? StringUtils::toUpper(name) : nickname());
     pk4->nicknamed(!egg() && nicknamed());
 
@@ -808,7 +808,7 @@ void PK3::relearnMove(u8 move, u16 v) {}
 
 bool PK3::nicknamed() const
 {
-    std::string target = i18n::species(language(), species());
+    std::string target = Lang::species[species()];
     return nickname() != StringUtils::toUpper(target);
 }
 void PK3::nicknamed(bool v) {}

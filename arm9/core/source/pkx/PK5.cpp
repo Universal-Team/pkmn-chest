@@ -29,7 +29,7 @@
 #include "PK6.hpp"
 #include "Sav.hpp"
 #include "endian.hpp"
-#include "i18n.hpp"
+#include "lang.hpp"
 #include "random.hpp"
 #include "utils.hpp"
 #include <algorithm>
@@ -974,7 +974,7 @@ std::shared_ptr<PKX> PK5::convertToG6(Sav& save) const
     pk6->alternativeForm(alternativeForm());
     pk6->nature(nature());
 
-    pk6->nickname(i18n::species(pk6->language(), pk6->species()));
+    pk6->nickname(Lang::species[pk6->species()]);
     if (nicknamed())
         pk6->nickname(nickname());
 

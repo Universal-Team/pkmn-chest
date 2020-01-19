@@ -28,7 +28,7 @@
 #include "PGT.hpp"
 #include "PK4.hpp"
 #include "endian.hpp"
-#include "i18n.hpp"
+#include "lang.hpp"
 #include "utils.hpp"
 
 void Sav4::GBO(void)
@@ -361,6 +361,42 @@ void Sav4::boxName(u8 box, const std::string& name)
     StringUtils::setString4(data.get(), StringUtils::transString45(name), boxOffset(18, 0) + box * 0x28 + (game == Game::HGSS ? 0x8 : 0), 9);
 }
 
+int adjustWallpaper(int value, int shift)
+{
+    // Pt's  Special Wallpapers 1-8 are shifted by +0x8
+    // HG/SS Special Wallpapers 1-8 (Primo Phrases) are shifted by +0x10
+    if (value >= 0x10) // special
+        return value + shift;
+    return value;
+}
+
+u8 Sav4::boxWallpaper(u8 box) const
+{
+    int offset = boxOffset(maxBoxes(), 0);
+    if (game == Game::HGSS) offset += 0x8;
+    offset += (maxBoxes() * 0x28) + box;
+
+    int v = data[offset];
+
+    if (game != Game::DP)
+        v = adjustWallpaper(v, -(game == Game::Pt ? 0x8 : 0x10));
+    return v;
+}
+
+void Sav4::boxWallpaper(u8 box, u8 v)
+{
+    if (game != Game::DP)
+        v = adjustWallpaper(v, game == Game::Pt ? 0x8 : 0x10);
+
+    int offset = boxOffset(maxBoxes(), 0);
+    if (game == Game::HGSS) offset += 0x8;
+    offset += (maxBoxes() * 0x28) + box;
+
+    if (offset < 0 || box > maxBoxes())
+        return;
+    data[offset] = v;
+}
+
 u8 Sav4::partyCount(void) const
 {
     return data[Party - 4];
@@ -680,7 +716,7 @@ void Sav4::setForms(std::vector<u8> forms, u16 species)
         case 479: // Rotom
         {
             auto values = Endian::convertFrom(setDexFormValues(forms, 3, 6));
-            for (int i = 0; i < values.size(); i++)
+            for (uint i = 0; i < values.size(); i++)
             {
                 data[formOffset2 + i] = values[i];
             }
@@ -872,26 +908,26 @@ std::map<Sav::Pouch, std::vector<int>> Sav4::validItems() const
         {Battle, {55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67}}};
 }
 
-std::string Sav4::pouchName(Language lang, Pouch pouch) const
+std::string Sav4::pouchName(Pouch pouch) const
 {
     switch (pouch)
     {
         case NormalItem:
-            return i18n::localize(lang, "ITEMS");
+            return Lang::get("items");
         case KeyItem:
-            return i18n::localize(lang, "KEY_ITEMS");
+            return Lang::get("keyItems");
         case TM:
-            return i18n::localize(lang, "TMHM");
+            return Lang::get("tmHm");
         case Mail:
-            return i18n::localize(lang, "MAIL");
+            return Lang::get("mail");
         case Medicine:
-            return i18n::localize(lang, "MEDICINE");
+            return Lang::get("medicine");
         case Berry:
-            return i18n::localize(lang, "BERRIES");
+            return Lang::get("berries");
         case Ball:
-            return i18n::localize(lang, "BALLS");
+            return Lang::get("balls");
         case Battle:
-            return i18n::localize(lang, "BATTLE_ITEMS");
+            return Lang::get("battleItems");
         default:
             return "";
     }

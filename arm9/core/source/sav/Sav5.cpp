@@ -28,7 +28,7 @@
 #include "PGF.hpp"
 #include "PK5.hpp"
 #include "endian.hpp"
-#include "i18n.hpp"
+#include "lang.hpp"
 #include "utils.hpp"
 
 u16 Sav5::TID(void) const
@@ -436,6 +436,16 @@ void Sav5::boxName(u8 box, const std::string& name)
     StringUtils::setString(data.get(), StringUtils::transString45(name), PCLayout + 0x28 * box + 4, 9, u'\uFFFF', 0);
 }
 
+u8 Sav5::boxWallpaper(u8 box) const
+{
+    return data[PCLayout + 0x3C4 + box];
+}
+
+void Sav5::boxWallpaper(u8 box, u8 v)
+{
+    data[PCLayout + 0x3C4 + box] = v;
+}
+
 u8 Sav5::partyCount(void) const
 {
     return data[Party + 4];
@@ -561,20 +571,20 @@ std::vector<std::pair<Sav::Pouch, int>> Sav5::pouches() const
     return {{Pouch::NormalItem, 261}, {Pouch::KeyItem, game == Game::BW ? 19 : 27}, {Pouch::TM, 101}, {Pouch::Medicine, 47}, {Pouch::Berry, 64}};
 }
 
-std::string Sav5::pouchName(Language lang, Pouch pouch) const
+std::string Sav5::pouchName(Pouch pouch) const
 {
     switch (pouch)
     {
         case NormalItem:
-            return i18n::localize(lang, "ITEMS");
+            return Lang::get("items");
         case KeyItem:
-            return i18n::localize(lang, "KEY_ITEMS");
+            return Lang::get("keyItems");
         case TM:
-            return i18n::localize(lang, "TMHM");
+            return Lang::get("tmHm");
         case Medicine:
-            return i18n::localize(lang, "MEDICINE");
+            return Lang::get("medicine");
         case Berry:
-            return i18n::localize(lang, "BERRIES");
+            return Lang::get("berries");
         default:
             return "";
     }
