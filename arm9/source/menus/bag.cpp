@@ -131,15 +131,19 @@ void editBag(void) {
 				goto search;
 			}
 			for(int i=0;i<entriesPerScreen;i++) {
-				if(touch.px >= 4 && touch.px <= 4+getTextWidth(std::to_string(save->item(save->pouches()[selectedPouch].first, selection)->count())) && touch.py >= 16+(i*16) && touch.py <= 16+((i+1)*16)) {
+				if(touch.px <= 30 && touch.py >= 16+(i*16) && touch.py <= 16+((i+1)*16)) {
 					column = 0;
-					selection = i;
-					optionSelected = true;
+					selection = screenPos+i;
+					if(save->pouches()[selectedPouch].first != Sav::Pouch::KeyItem) {
+						optionSelected = true;
+					}
 					break;
-				} else if(touch.px >= 4 && touch.px <= 30+getTextWidth(Lang::items[save->item(save->pouches()[selectedPouch].first, selection)->id()]) && touch.py >= 16+(i*16) && touch.py <= 16+((i+1)*16)) {
+				} else if(touch.px > 30 && touch.px <= 160 && touch.py >= 16+(i*16) && touch.py <= 16+((i+1)*16)) {
 					column = 1;
-					selection = i;
-					optionSelected = true;
+					selection = screenPos+i;
+					if(save->pouches()[selectedPouch].first != Sav::Pouch::KeyItem) {
+						optionSelected = true;
+					}
 					break;
 				}
 			}
@@ -219,8 +223,8 @@ void editBag(void) {
 
 
 		// Move cursor
-		if(column == 0)	setSpritePosition(arrowID, false, 4+getTextWidth(std::to_string(save->item(save->pouches()[selectedPouch].first, selection)->count()))+2, (16*(selection-screenPos)+15));
-		else if(column == 1)	setSpritePosition(arrowID, false, 30+getTextWidth(Lang::items[save->item(save->pouches()[selectedPouch].first, selection)->id()])+2, (16*(selection-screenPos)+15));
+		if(column == 0)	setSpritePosition(arrowID, false, 4+getTextWidth(std::to_string(save->item(save->pouches()[selectedPouch].first, selection)->count()))+2, (16*(selection-screenPos)+10));
+		else if(column == 1)	setSpritePosition(arrowID, false, 30+getTextWidth(Lang::items[save->item(save->pouches()[selectedPouch].first, selection)->id()])+2, (16*(selection-screenPos)+10));
 		updateOam();
 	}
 }
