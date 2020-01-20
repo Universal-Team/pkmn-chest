@@ -273,7 +273,7 @@ std::string topMenuSelect(void) {
 	if(!flashcardFound())	topMenuContents.push_back({"card:", false});
 	if(!flashcardFound())	tmSlot1Offset = topMenuContents.size()-1;
 	if(flashcardFound())	topMenuContents.push_back({"cart:", false});
-	if(!flashcardFound())	tmSlot2Offset = topMenuContents.size()-1;
+	if(flashcardFound())	tmSlot2Offset = topMenuContents.size()-1;
 
 	FILE* favs = fopen((sdFound() ? "sd:/_nds/pkmn-chest/favorites.lst" : "fat:/_nds/pkmn-chest/favorites.lst"), "rb");
 
