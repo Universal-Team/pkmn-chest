@@ -120,7 +120,6 @@ void toggleParty(void) {
 	}
 	partyShown = !partyShown;
 	setSpriteVisibility(arrowID, false, true);
-	updateOam();
 }
 
 void moveParty(int arrowMode, bool holdingPokemon) {

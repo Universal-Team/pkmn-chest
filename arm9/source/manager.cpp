@@ -707,6 +707,10 @@ void manageBoxes(void) {
 				toggleParty:
 				toggleParty();
 				if(partyShown) {
+					if(topScreen) {
+						topScreen = false;
+						setSpriteVisibility(arrowID, true, false);
+					}
 					arrowX = 0, arrowY = 0;
 					inParty = true;
 					drawPokemonInfo(save->pkm(0));
