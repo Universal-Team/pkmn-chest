@@ -34,6 +34,8 @@ steps:
   displayName: 'Build Pokémon Chest'
 
 - script: |
+    export DEVKITPRO="/opt/devkitpro"
+    export DEVKITARM="/opt/devkitpro/devkitARM"
     sudo mv tools-osx/make_cia /usr/local/bin
     make -s cia
     cp pkmn-chest.nds $(Build.ArtifactStagingDirectory)
