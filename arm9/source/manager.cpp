@@ -272,6 +272,13 @@ std::string boxBgPath(bool top, int box) {
 	std::string game;
 	switch(save->game) {
 		default:
+		case Game::RS:
+			game = "rs";
+			break;
+		case Game::E:
+			game = "e";
+		case Game::FRLG:
+			game = box < 12 ? "rs" : "lgfr";
 		case Game::DP:
 			game = "dp";
 			break;
@@ -311,7 +318,8 @@ void drawBox(bool top) {
 	updateOam();
 
 	// Draw box image
-	drawImage(5, 15, bankBox, top, false);
+	drawImage(5, save->generation() == Generation::THREE ? 40 : 15, bankBox, top, false);
+	// TODO: Add top bar for gen 3, it has additional palettes so it has to be split
 
 	// Print box name
 	printTextCenteredTintedMaxW((top ? Banks::bank->boxName(currentBankBox) : save->boxName(currentSaveBox)), 110, 1, TextColor::gray, -44, 20, top, false);

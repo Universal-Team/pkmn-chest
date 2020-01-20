@@ -115,7 +115,7 @@ void drawSummaryPage(std::shared_ptr<PKX> pkm, bool background) {
 		drawOutline(0, 128, 160, 65, LIGHT_GRAY, false, false);
 		// Draw Pokémon
 		Image image = loadPokemonSprite(getPokemonIndex(pkm));
-		drawImageScaled(169, 22, 2, 2, image, false, false, 0xC0);
+		drawImageScaled(169, 22, 2, 2, image, false, false, 0xB0);
 		// Draw Poké ball
 		std::pair<int, int> xy = getPokeballPosition(pkm->ball());
 		drawImageSegment(148, 8, 15, 15, ballSheet, xy.first, xy.second, false, false);
