@@ -1,7 +1,7 @@
 #ifndef CART_SAVES_HPP
 #define CART_SAVES_HPP
 
-#define cartSave "sd:/_nds/pkmn-chest/backups/cart.sav"
+#define cartSave "/_nds/pkmn-chest/backups/cart.sav"
 
 extern char slot2Name[13];
 extern char slot2ID[5];

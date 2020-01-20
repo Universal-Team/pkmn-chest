@@ -2,7 +2,7 @@
 #define CARD_SAVES_HPP
 #include "auxspi.hpp"
 
-#define cardSave "sd:/_nds/pkmn-chest/backups/card.sav"
+#define cardSave "/_nds/pkmn-chest/backups/card.sav"
 
 extern auxspi_extra card_type;
 extern sNDSHeader nds;
