@@ -34,7 +34,8 @@ steps:
   displayName: 'Build Pokémon Chest'
 
 - script: |
-    tools-osx/make_cia --srl="pkmn-chest.nds"
+    sudo mv tools-osx/make_cia /usr/local/bin
+    make -s cia
     cp pkmn-chest.nds $(Build.ArtifactStagingDirectory)
     cp pkmn-chest.cia $(Build.ArtifactStagingDirectory)
     echo '##vso[task.setvariable variable=COMMIT_TAG]'$(git log --format=%h -1)

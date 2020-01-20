@@ -48,6 +48,13 @@ $(TARGET).nds	: graphics $(NITRO_FILES) arm9/$(TARGET).elf
 arm9/$(TARGET).elf:
 	$(MAKE) -C arm9
 
+cia	:	arm9/$(TARGET).elf
+	ndstool	-c $(TARGET).temp -9 arm9/$(TARGET).elf \
+	-b1 icon.bmp "$(GAME_TITLE);$(GAME_SUBTITLE1)" \
+	-z 80040000 -u 00030004 -a 00000138
+	make_cia --srl="pkmn-chest.temp"
+	rm pkmn-chest.temp
+
 #---------------------------------------------------------------------------------
 clean:
 	$(MAKE) -C arm9 clean
