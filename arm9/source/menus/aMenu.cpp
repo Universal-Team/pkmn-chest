@@ -338,7 +338,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				chdir(sdFound() ? "sd:/_nds/pkmn-chest/in" : "fat:/_nds/pkmn-chest/in");
 
 				// Get a pk4/5
-				std::string fileName = browseForFile({"pk3", "pk4", "pk5", "pk6", "pk7", "pb7", "pk8"}, false);
+				std::string fileName = browseForFile({"pk3", "pk4", "pk5", "pk6", "pk7"}, false);
 
 				// If the fileName isn't blank, inject the Pokémon
 				if(fileName != "") {
@@ -362,7 +362,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 								case 'K':
 									gen = Generation::SEVEN;
 									break;
-								case 'b':
+								case 'b': // Not currently supported
 								case 'B':
 									gen = Generation::LGPE;
 									break;
@@ -371,18 +371,15 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 									break;
 							}
 							break;
-						case '8':
+						case '8': // Not currently supported
 							gen = Generation::EIGHT;
 							break;
 						default:
 							gen = Generation::UNUSED;
 							break;
 					}
-					if(gen > Generation::SEVEN) {
-						char str[256];
-						snprintf(str, sizeof(str), Lang::get("sorryNoHigherThan7").c_str(), genToCstring(gen));
-						Input::prompt(str, Lang::get("ok"));
-					} else if(gen != Generation::UNUSED) {
+					
+					if(gen != Generation::UNUSED) {
 						FILE* in = fopen(fileName.c_str(), "rb");
 
 						fseek(in, 0, SEEK_END);
