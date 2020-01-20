@@ -130,7 +130,7 @@ void editBag(void) {
 			if(touch.px >= 256-search.width && touch.py <= search.height) {
 				goto search;
 			}
-			for(int i=0;i<std::min(entriesPerScreen, maxItem);i++) {
+			for(int i=0;i<std::min(entriesPerScreen, maxItem+1);i++) {
 				if(touch.px <= 30 && touch.py >= 16+(i*16) && touch.py <= 16+((i+1)*16)) {
 					column = 0;
 					selection = screenPos+i;
