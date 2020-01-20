@@ -112,7 +112,8 @@ public:
         Candy,
         ZCrystals,
         Treasure,
-        Ingredient
+        Ingredient,
+        PCItem
     };
 
     struct giftData

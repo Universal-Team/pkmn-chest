@@ -30,6 +30,7 @@
 #include "coretypes.h"
 #include "generation.hpp"
 
+class Item3;
 class Item4;
 class Item5;
 class Item6;
@@ -48,12 +49,44 @@ public:
     virtual std::pair<u8*, int> bytes(void) const = 0;
     virtual void id(u16 id)                       = 0;
     virtual void count(u16 id)                    = 0;
+    virtual operator Item3(void) const;
     virtual operator Item4(void) const;
     virtual operator Item5(void) const;
     virtual operator Item6(void) const;
     virtual operator Item7(void) const;
     virtual operator Item7b(void) const;
     virtual operator Item8(void) const;
+};
+
+// TODO: Make sure this is actually right
+class Item3 : public Item
+{
+private:
+    struct
+    {
+        u16 id;
+        u16 count;
+    } itemData;
+
+public:
+    Item3(u8* data = nullptr)
+    {
+        if (data)
+        {
+            std::copy(data, data + 4, (u8*)&itemData);
+        }
+        else
+        {
+            itemData = {0, 0};
+        }
+    }
+    Generation generation(void) const override { return Generation::THREE; }
+    u16 maxCount(void) const override { return 0xFFFF; } // TODO: Should this be 99 (RS/E) / 999 (FRLG)?
+    u16 id(void) const override { return itemData.id; }
+    void id(u16 v) override { itemData.id = v; }
+    u16 count(void) const override { return itemData.count; }
+    void count(u16 v) override { itemData.count = v; }
+    std::pair<u8*, int> bytes(void) const override { return {(u8*)&itemData, sizeof(itemData)}; }
 };
 
 class Item4 : public Item

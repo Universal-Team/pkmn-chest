@@ -39,7 +39,10 @@ enum class Game
     SM,
     USUM,
     LGPE,
-    SWSH
+    SWSH,
+    RS,
+    E,
+    FRLG
 };
 
 #endif
