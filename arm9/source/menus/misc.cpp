@@ -248,20 +248,30 @@ void drawItemList(int screenPos, const std::vector<std::string> &itemList, bool 
 }
 
 int selectItem(int current, std::set<int> validItems, const std::vector<std::string> &items) {
-	std::vector<std::string> availableSpecies;
-	for(uint i=0;i<Lang::species.size();i++) {
-		if(save->availableSpecies().count(i) != 0) {
-			availableSpecies.push_back(Lang::species[i]);
+	std::vector<std::string> availableItems;
+	for(unsigned int i=0;i<items.size();i++) {
+		if(validItems.count(i) != 0) {
+			availableItems.push_back(items[i]);
 		}
 	}
 
-	return selectItem(current, availableSpecies);
+	std::string selection = selectItem(current, availableItems);
+
+	for(unsigned int i=0;i<items.size();i++) {
+		if(items[i] == selection)	return i;
+	}
+	return 0;
 }
 int selectItem(int current, int start, int max, const std::vector<std::string> &items) {
 	if(current < start || current > max)	current = start;
-	return selectItem(current, std::vector<std::string>(&items[start], &items[max]));
+	std::string selection = selectItem(current, std::vector<std::string>(&items[start], &items[max]));
+
+	for(unsigned int i=0;i<items.size();i++) {
+		if(items[i] == selection)	return i;
+	}
+	return 0;
 }
-int selectItem(int current, const std::vector<std::string> &items) {
+std::string selectItem(int current, const std::vector<std::string> &items) {
 	std::vector<std::string> itemList = items;
 
 	// Set arrow position
@@ -284,28 +294,26 @@ int selectItem(int current, const std::vector<std::string> &items) {
 
 		if(held & KEY_UP) {
 			if(newMove > 0)	newMove--;
-			else	newMove = itemList.size();
+			else	newMove = itemList.size()-1;
 		} else if(held & KEY_DOWN) {
-			if(newMove < (int)itemList.size())	newMove++;
+			if(newMove < (int)itemList.size()-1)	newMove++;
 			else newMove = 0;
 		} else if(held & KEY_LEFT) {
 			newMove -= entriesPerScreen;
 			if(newMove < 0)	newMove = 0;
 		} else if(held & KEY_RIGHT) {
 			newMove += entriesPerScreen;
-			if(newMove > (int)itemList.size())	newMove = itemList.size();
+			if(newMove > (int)itemList.size()-1)	newMove = itemList.size()-1;
 		} else if(pressed & KEY_A) {
 			Sound::play(Sound::click);
-			// for(int i=0;i<items.size();i++) {
-				// if(itemList[newMove] == items[i]) {
-					drawRectangle(0, 0, 256, 192, CLEAR, false, true);
-					return newMove;
-				// }
-			// }
+			for(unsigned int i=0;i<items.size();i++) {
+				drawRectangle(0, 0, 256, 192, CLEAR, false, true);
+				return itemList[newMove];
+			}
 		} if(pressed & KEY_B) {
 			drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 			Sound::play(Sound::back);
-			return current;
+			return itemList[current];
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
 			if(touch.px >= 256-search.width && touch.py <= search.height) {
@@ -313,12 +321,8 @@ int selectItem(int current, const std::vector<std::string> &items) {
 			}
 			for(int i=0;i<entriesPerScreen;i++) {
 				if(touch.px >= 4 && touch.px <= 4+getTextWidth(itemList[screenPos+i]) && touch.py >= 4+(i*20) && touch.py <= 4+((i+1)*20)) {
-					// for(int j=0;j<max;j++) {
-						// if(itemList[screenPos+i] == items[j]) {
-							drawRectangle(0, 0, 256, 192, CLEAR, false, true);
-							return screenPos+i;
-						// }
-					// }
+					drawRectangle(0, 0, 256, 192, CLEAR, false, true);
+					return itemList[screenPos+i];
 					break;
 				}
 			}
@@ -329,7 +333,7 @@ int selectItem(int current, const std::vector<std::string> &items) {
 			std::string str = Input::getLine();
 				itemList.clear();
 				if(str != "")	itemList.push_back("-----");
-				for(int i=0;i<(int)itemList.size();i++) {
+				for(int i=0;i<(int)items.size();i++) {
 					if(strncasecmp(str.c_str(), items[i].c_str(), str.length()) == 0) {
 						itemList.push_back(items[i]);
 					}

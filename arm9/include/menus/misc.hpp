@@ -16,7 +16,7 @@ int selectItem(int current, std::set<int> validItems, const std::vector<std::str
 int selectItem(int current, int start, int max, const std::vector<std::string> &items);
 
 // Shows a list of items in a vector to select from
-int selectItem(int current, const std::vector<std::string> &items);
+std::string selectItem(int current, const std::vector<std::string> &items);
 
 // Shows the move editing menu
 std::shared_ptr<PKX> selectMoves(std::shared_ptr<PKX> pkm);
