@@ -180,7 +180,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				char str[PATH_MAX];
 				snprintf(str, sizeof(str), Lang::get("dumpedTo").c_str(), path);
 
-				Input::prompt(str, Lang::get("back"));
+				Input::prompt(str, Lang::get("ok"));
 
 				drawAMenuButtons(buttons, buttonMode);
 				setSpriteVisibility(arrowID, false, true);
@@ -308,7 +308,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				char str[PATH_MAX];
 				snprintf(str, sizeof(str), Lang::get("dumpedTo").c_str(), path);
 
-				Input::prompt(str, Lang::get("back"));
+				Input::prompt(str, Lang::get("ok"));
 
 				drawAMenuButtons(buttons, buttonMode);
 				setSpriteVisibility(arrowID, false, true);
@@ -370,6 +370,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 									gen = Generation::UNUSED;
 									break;
 							}
+							break;
 						case '8':
 							gen = Generation::EIGHT;
 							break;
@@ -377,8 +378,11 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 							gen = Generation::UNUSED;
 							break;
 					}
-
-					if(gen != Generation::UNUSED) {
+					if(gen > Generation::SEVEN) {
+						char str[256];
+						snprintf(str, sizeof(str), Lang::get("sorryNoHigherThan7").c_str(), genToCstring(gen));
+						Input::prompt(str, Lang::get("ok"));
+					} else if(gen != Generation::UNUSED) {
 						FILE* in = fopen(fileName.c_str(), "rb");
 
 						fseek(in, 0, SEEK_END);

@@ -349,7 +349,7 @@ void fillSpriteText(int id, bool top, const std::u16string &text, TextColor pale
 			image.bitmap.push_back(fontTiles[i+(t*tileSize)] & 3);
 		}
 
-		tonccpy(image.palette.data(), BG_PALETTE+(palette*4), 8);
+		tonccpy(image.palette.data(), BG_PALETTE+(int(palette)*4), 8);
 
 		xPos += fontWidths[t*3];
 		fillSpriteImage(id, top, 32, xPos, yPos, image, true);
@@ -432,7 +432,7 @@ void printTextTinted(const std::u16string &text, TextColor palette, int xPos, in
 			x = xPos+fontWidths[t*3];
 			yPos += tileHeight;
 		}
-		drawImage(x, yPos, image, top, layer, palette*4);
+		drawImage(x, yPos, image, top, layer, int(palette)*4);
 		x += fontWidths[(t*3)+1];
 	}
 }
@@ -496,7 +496,7 @@ void printTextTintedScaled(const std::u16string &text, float scaleX, float scale
 			x = xPos+fontWidths[t*3];
 			yPos += tileHeight;
 		}
-		drawImageScaled(x, yPos, scaleX, scaleY, image, top, layer, palette*4);
+		drawImageScaled(x, yPos, scaleX, scaleY, image, top, layer, int(palette)*4);
 		x += fontWidths[(t*3)+1]*scaleX;
 	}
 }
