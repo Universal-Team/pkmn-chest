@@ -3,6 +3,7 @@
 #include "bag.hpp"
 #include "banks.hpp"
 #include "cardSaves.hpp"
+#include "cartSaves.hpp"
 #include "colors.hpp"
 #include "config.hpp"
 #include "configMenu.hpp"
@@ -56,7 +57,9 @@ void savePrompt(void) {
 		save->cryptBoxData(true);
 		if(savePath == cardSave) {
 			updateCardInfo();
-			restoreSave();
+			restoreSlot1();
+		} else if(savePath == cartSave) {
+			restoreSlot2();
 		}
 	}
 

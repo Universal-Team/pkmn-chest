@@ -5,10 +5,10 @@
 
 auxspi_extra card_type = AUXSPI_FLASH_CARD;
 sNDSHeader nds;
-char gamename[13];
-char gameid[5];
+char slot1Name[13];
+char slot1ID[5];
 
-std::vector<std::string> goodTids = {
+const std::vector<std::string> goodTids = {
 	"ADA", // Diamond
 	"APA", // Pearl
 	"CPU", // Platinum
@@ -20,7 +20,7 @@ std::vector<std::string> goodTids = {
 	"IRD", // White 2
 };
 
-bool isValidTid(char* tid) {
+bool isValidDSTid(char *tid) {
 	for(unsigned i=0;i<goodTids.size(); i++) {
 		if(strncmp(tid, goodTids[i].c_str(), 3) == 0)	return true;
 	}
@@ -28,12 +28,10 @@ bool isValidTid(char* tid) {
 }
 
 bool updateCardInfo(void) {
-	// nds.gameCode[0] = 0;
-	// nds.gameTitle[0] = 0;
-	return updateCardInfo(&nds, &gameid[0], &gamename[0], &card_type);
+	return updateCardInfo(&nds, slot1ID, slot1Name, &card_type);
 }
 
-bool updateCardInfo(sNDSHeader* nds, char* gameid, char* gamename, auxspi_extra* card_type) {
+bool updateCardInfo(sNDSHeader *nds, char *gameid, char *gamename, auxspi_extra *card_type) {
 	cardReadHeader((uint8*)nds);
 	*card_type = auxspi_has_extra();
 	int type = cardEepromGetType();
@@ -48,10 +46,10 @@ bool updateCardInfo(sNDSHeader* nds, char* gameid, char* gamename, auxspi_extra*
 	return true;
 }
 
-void dumpSave(void) {
-	FILE* out = fopen(cardSave, "wb");
+void dumpSlot1(void) {
+	FILE *out = fopen(cardSave, "wb");
 	if(out) {
-		unsigned char* buffer;
+		unsigned char *buffer;
 		if(card_type == AUXSPI_INFRARED) {
 			int size = auxspi_save_size_log_2(card_type);
 			int type = auxspi_save_type(card_type);
@@ -76,11 +74,11 @@ void dumpSave(void) {
 	}
 }
 
-bool restoreSave(void) {
+bool restoreSlot1(void) {
 	bool auxspi = card_type == AUXSPI_INFRARED;
-	FILE* in = fopen(cardSave, "rb");
+	FILE *in = fopen(cardSave, "rb");
 	if(in) {
-		unsigned char* buffer;
+		unsigned char *buffer;
 		int size;
 		int type;
 		int length;

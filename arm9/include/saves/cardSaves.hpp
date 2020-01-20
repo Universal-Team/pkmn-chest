@@ -6,15 +6,15 @@
 
 extern auxspi_extra card_type;
 extern sNDSHeader nds;
-extern char gamename[13];
-extern char gameid[5];
+extern char slot1Name[13];
+extern char slot1ID[5];
 
-bool isValidTid(char* tid);
+bool isValidDSTid(char *tid);
 
 bool updateCardInfo(void);
-bool updateCardInfo(sNDSHeader* nds, char* gameid, char* gamename, auxspi_extra* card_type);
+bool updateCardInfo(sNDSHeader *nds, char *gameid, char *gamename, auxspi_extra *card_type);
 
-void dumpSave(void);
-bool restoreSave(void);
+void dumpSlot1(void);
+bool restoreSlot1(void);
 
 #endif
