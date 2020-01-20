@@ -22,8 +22,10 @@ bool isValidGBATid(char* tid) {
 }
 
 bool updateCartInfo(void) {
-	strcpy(slot2Name, (char*)0x080000A0);
-	strcpy(slot2ID, (char*)0x080000AC);
+	strncpy(slot2Name, (char*)0x080000A0, sizeof(slot2Name)-1);
+	slot2Name[sizeof(slot2Name)-1] = '\0';
+	strncpy(slot2ID, (char*)0x080000AC, sizeof(slot2ID)-1);
+	slot2Name[sizeof(slot2Name)-1] = '\0';
 
 	return true;
 }

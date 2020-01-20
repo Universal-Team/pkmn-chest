@@ -17,7 +17,8 @@
 int main(int argc, char **argv) {
 	initGraphics();
 	keysSetRepeat(25,5);
-	sysSetCardOwner(BUS_OWNER_ARM9); // Give ARM9 access to Slot-1 (for dumping/injecting saves)
+	sysSetCardOwner(BUS_OWNER_ARM9); // Set ARM9 as Slot-1 owner (for dumping/injecting DS saves)
+	sysSetCartOwner(BUS_OWNER_ARM9); // Set ARM9 as Slot-2 owner (for dumping/injecting GBA saves)
 	defaultExceptionHandler();
 	scanKeys(); // So it doesn't open the SD if A is held
 	srand(time(NULL));
