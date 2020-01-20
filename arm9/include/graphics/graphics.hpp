@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+#include "colors.hpp"
 #include "utils.hpp"
 
 struct Image {
@@ -196,11 +197,11 @@ void fillSpriteSegment(int id, bool top, int spriteW, int x, int y, int w, int h
  * Fills a sprite with text
  * int id is the sprite to print to
  * std::string text is the text that will be printed
- * int palette is the color to tint the text
+ * TextColor palette is the color to tint the text
  * int xPos is the X position to print at
  * int yPos is the Y position to print at
  */
-void fillSpriteText(int id, bool top, const std::string &text, int palette, int xPos, int yPos);
+void fillSpriteText(int id, bool top, const std::string &text, TextColor palette, int xPos, int yPos);
 
 /**
  * Fills a sprite with text
@@ -210,7 +211,7 @@ void fillSpriteText(int id, bool top, const std::string &text, int palette, int 
  * int xPos is the X position to print at
  * int yPos is the Y position to print at
  */
-void fillSpriteText(int id, bool top, const std::u16string &text, int palette, int xPos, int yPos);
+void fillSpriteText(int id, bool top, const std::u16string &text, TextColor palette, int xPos, int yPos);
 
 /*
  * Sets the sprite to be drawn
@@ -307,42 +308,42 @@ void printTextCentered(const std::u16string &text, int xOffset, int yPos, bool t
 
 /**
  * Prints colored text centered on a screen
- * int palette is the color to tint the text
+ * TextColor palette is the color to tint the text
  * std::string text is the text that will be printed
  * int xOffset is the X offset from the center to center on
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
  * */
-void printTextCenteredTinted(const std::string &text, int palette, int xOffset, int yPos, bool top, bool layer);
+void printTextCenteredTinted(const std::string &text, TextColor palette, int xOffset, int yPos, bool top, bool layer);
 /**
  * Prints colored text centered on a screen
- * int palette is the color to tint the text
+ * TextColor palette is the color to tint the text
  * std::string text is the text that will be printed
  * int xOffset is the X offset from the center to center on
  * int y is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
  * */
-void printTextCenteredTinted(std::u16string text, int palette, int xOffset, int yPos, bool top, bool layer);
+void printTextCenteredTinted(std::u16string text, TextColor palette, int xOffset, int yPos, bool top, bool layer);
 
 /**
  * Prints colored text to the a screen
- * int palette is the color to tint the text
+ * TextColor palette is the color to tint the text
  * std::string text is the text that will be printed
  * int xPos is the X position to print at
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
  * */
-void printTextTinted(const std::string &text, int palette, int xPos, int yPos, bool top, bool layer);
+void printTextTinted(const std::string &text, TextColor palette, int xPos, int yPos, bool top, bool layer);
 
 /**
  * Prints colored text to the a screen
- * int palette is the color to tint the text
+ * TextColor palette is the color to tint the text
  * std::u16string text is the text that will be printed
  * int xPos is the X position to print at
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
  * */
-void printTextTinted(const std::u16string &text, int palette, int xPos, int yPos, bool top, bool layer);
+void printTextTinted(const std::u16string &text, TextColor palette, int xPos, int yPos, bool top, bool layer);
 
 /**
  * Prints text to the a screen with a max width
@@ -437,96 +438,96 @@ void printTextCenteredScaled(const std::u16string &text, float scaleX, float sca
  * std::string text is the text that will be printed
  * float w is the max width the text should be drawn at
  * float scaleY is the height scale the text should be draw at
- * int palette is the color to tint the text
+ * TextColor palette is the color to tint the text
  * int xOffset is the X offset from the center to center on
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
  * */
-void printTextCenteredTintedMaxW(const std::string &text, float w, float scaleY, int palette, int xOffset, int yPos, bool top, bool layer);
+void printTextCenteredTintedMaxW(const std::string &text, float w, float scaleY, TextColor palette, int xOffset, int yPos, bool top, bool layer);
 
 /**
  * Prints centered colored text to the a screen with a max width
  * std::u16string text is the text that will be printed
  * float w is the max width the text should be drawn at
  * float scaleY is the height scale the text should be draw at
- * int palette is the color to tint the text
+ * TextColor palette is the color to tint the text
  * int xOffset is the X offset from the center to center on
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
  * */
-void printTextCenteredTintedMaxW(std::u16string text, float w, float scaleY, int palette, int xOffset, int yPos, bool top, bool layer);
+void printTextCenteredTintedMaxW(std::u16string text, float w, float scaleY, TextColor palette, int xOffset, int yPos, bool top, bool layer);
 
 /**
  * Prints centered colored text to the a screen at a scaled size
  * std::string text is the text that will be printed
  * float scaleX is the width scale the text should be draw at
  * float scaleY is the height scale the text should be draw at
- * int palette is the color to tint the text
+ * TextColor palette is the color to tint the text
  * int xOffset is the X offset from the center to center on
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
  * */
-void printTextCenteredTintedScaled(const std::string &text, float scaleX, float scaleY, int palette, int xOffset, int yPos, bool top, bool layer);
+void printTextCenteredTintedScaled(const std::string &text, float scaleX, float scaleY, TextColor palette, int xOffset, int yPos, bool top, bool layer);
 
 /**
  * Prints centered colored text to the a screen at a scaled size
  * std::u16string text is the text that will be printed
  * float scaleX is the width scale the text should be draw at
  * float scaleY is the height scale the text should be draw at
- * int palette is the color to tint the text
+ * TextColor palette is the color to tint the text
  * int xOffset is the X offset from the center to center on
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
  * */
-void printTextCenteredTintedScaled(std::u16string text, float scaleX, float scaleY, int palette, int xOffset, int yPos, bool top, bool layer);
+void printTextCenteredTintedScaled(std::u16string text, float scaleX, float scaleY, TextColor palette, int xOffset, int yPos, bool top, bool layer);
 
 /**
  * Prints colored text to the a screen with a max width
  * std::string text is the text that will be printed
  * float w is the max width the text should be drawn at
  * float scaleY is the height scale the text should be draw at
- * int palette is the color to tint the text
+ * TextColor palette is the color to tint the text
  * int xPos is the X position to print at
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
  * */
-void printTextTintedMaxW(const std::string &text, float w, float scaleY, int palette, int xPos, int yPos, bool top, bool layer);
+void printTextTintedMaxW(const std::string &text, float w, float scaleY, TextColor palette, int xPos, int yPos, bool top, bool layer);
 
 /**
  * Prints colored text to the a screen with a max width
  * std::u16string text is the text that will be printed
  * float w is the max width the text should be drawn at
  * float scaleY is the height scale the text should be draw at
- * int palette is the color to tint the text
+ * TextColor palette is the color to tint the text
  * int xPos is the X position to print at
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
  * */
-void printTextTintedMaxW(const std::u16string &text, float w,  float scaleY, int palette, int xPos, int yPos, bool top, bool layer);
+void printTextTintedMaxW(const std::u16string &text, float w,  float scaleY, TextColor palette, int xPos, int yPos, bool top, bool layer);
 
 /**
  * Prints colored text to the a screen at a scaled size
  * std::string text is the text that will be printed
  * float w is the width the text should be drawn at
  * float scaleY is the height scale the text should be draw at
- * int palette is the color to tint the text
+ * TextColor palette is the color to tint the text
  * int xPos is the X position to print at
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
  * */
-void printTextTintedScaled(const std::string &text, float scaleX, float scaleY, int palette, int xPos, int yPos, bool top, bool layer);
+void printTextTintedScaled(const std::string &text, float scaleX, float scaleY, TextColor palette, int xPos, int yPos, bool top, bool layer);
 
 /**
  * Prints colored text to the a screen at a scaled size
  * std::u16string text is the text that will be printed
  * float scaleX is the width scale the text should be draw at
  * float scaleY is the height scale the text should be draw at
- * int palette is the color to tint the text
+ * TextColor palette is the color to tint the text
  * int xPos is the X position to print at
  * int yPos is the Y position to print at
  * bool top is whether to draw on the top or bottom screen
  * */
-void printTextTintedScaled(const std::u16string &text, float scaleX, float scaleY, int palette, int xPos, int yPos, bool top, bool layer);
+void printTextTintedScaled(const std::u16string &text, float scaleX, float scaleY, TextColor palette, int xPos, int yPos, bool top, bool layer);
 
 /**
  * Gets the width of a std::string of text with a max

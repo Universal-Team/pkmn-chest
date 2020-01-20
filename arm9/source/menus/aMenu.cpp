@@ -158,7 +158,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 					fillPartySprites();
 				}
 			} else if(menuSelection == 4) { // Dump
-				char path[256];
+				char path[PATH_MAX];
 				if(currentPokemon(pkmX, pkmY)->alternativeForm())
 					snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%i-%i - %s - %x%lx.pk%i", sdFound() ? "sd" : "fat", currentPokemon(pkmX, pkmY)->species(), currentPokemon(pkmX, pkmY)->alternativeForm(), currentPokemon(pkmX, pkmY)->nickname().c_str(), currentPokemon(pkmX, pkmY)->checksum(), currentPokemon(pkmX, pkmY)->encryptionConstant(), currentPokemon(pkmX, pkmY)->genNumber());
 				else
@@ -168,6 +168,23 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 					fwrite(currentPokemon(pkmX, pkmY)->rawData(), 1, 136, out);
 					fclose(out);
 				}
+
+				setSpriteVisibility(arrowID, false, false);
+				updateOam();
+
+				// Get formatted path for prompt
+				if(currentPokemon(pkmX, pkmY)->alternativeForm())
+					snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%i-%i -\n%s -\n%x%lx.pk%i", sdFound() ? "sd" : "fat", currentPokemon(pkmX, pkmY)->species(), currentPokemon(pkmX, pkmY)->alternativeForm(), currentPokemon(pkmX, pkmY)->nickname().c_str(), currentPokemon(pkmX, pkmY)->checksum(), currentPokemon(pkmX, pkmY)->encryptionConstant(), currentPokemon(pkmX, pkmY)->genNumber());
+				else
+					snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%i -\n%s -\n%x%lx.pk%i", sdFound() ? "sd" : "fat", currentPokemon(pkmX, pkmY)->species(), currentPokemon(pkmX, pkmY)->nickname().c_str(), currentPokemon(pkmX, pkmY)->checksum(), currentPokemon(pkmX, pkmY)->encryptionConstant(), currentPokemon(pkmX, pkmY)->genNumber());
+				char str[PATH_MAX];
+				snprintf(str, sizeof(str), Lang::get("dumpedTo").c_str(), path);
+
+				Input::prompt(str, Lang::get("back"));
+
+				drawAMenuButtons(buttons, buttonMode);
+				setSpriteVisibility(arrowID, false, true);
+				updateOam();
 			} else if(menuSelection == 5) { // Back
 				back:
 				if(topScreen) {
@@ -282,6 +299,20 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 						}
 					}
 				}
+
+				setSpriteVisibility(arrowID, false, false);
+				updateOam();
+
+				// Get formatted path for prompt
+				snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/\n%s/", sdFound() ? "sd" : "fat", topScreen ? Banks::bank->boxName(currentBankBox).c_str() : save->boxName(currentSaveBox).c_str());
+				char str[PATH_MAX];
+				snprintf(str, sizeof(str), Lang::get("dumpedTo").c_str(), path);
+
+				Input::prompt(str, Lang::get("back"));
+
+				drawAMenuButtons(buttons, buttonMode);
+				setSpriteVisibility(arrowID, false, true);
+				updateOam();
 			} else if(menuSelection == 5) { // Back
 				goto back;
 			}

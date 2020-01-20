@@ -1,6 +1,4 @@
 #include "lang.hpp"
-#include "graphics.hpp"
-#include "lang.hpp"
 #include "manager.hpp"
 #include "json.hpp"
 

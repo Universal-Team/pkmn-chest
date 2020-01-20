@@ -40,7 +40,7 @@ const std::vector<std::string> songs = {"off", "center1", "center4", "center5", 
 
 std::vector<std::string> optionsText;
 
-const std::vector<std::string> langNames = {"Bruh", "Deutsche", "English", "Español", "Français", "Bahasa Indonesia", "Italiano", "Lietuvių", "Português", "Русский", "日本語", "한국"};
+const std::vector<std::string> langNames = {"Bruh", "Deutsch", "English", "Español", "Français", "Bahasa Indonesia", "Italiano", "Lietuvių", "Português", "Русский", "日本語", "한국"};
 
 void drawChestFileMenu(void) {
 	// Draw background

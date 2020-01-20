@@ -40,13 +40,13 @@ void drawTrainerCard(void) {
 	snprintf(textTP1[0].text, sizeof(textTP1[0].text), "%s", save->otName().c_str());
 	snprintf(textTP1[1].text, sizeof(textTP1[1].text), "%.5i", save->TID());
 	snprintf(textTP1[2].text, sizeof(textTP1[2].text), "%.5i", save->SID());
-	snprintf(textTP1[3].text, sizeof(textTP1[3].text), "$%li", save->money());
+	snprintf(textTP1[3].text, sizeof(textTP1[3].text), Lang::get("moneyFormat").c_str(), save->money());
 	snprintf(textTP1[4].text, sizeof(textTP1[4].text), "%li", save->BP());
 	snprintf(textTP1[5].text, sizeof(textTP1[5].text), "%i", save->badges());
 	snprintf(textTP1[6].text, sizeof(textTP1[6].text), "%i:%i:%i", save->playedHours(), save->playedMinutes(), save->playedSeconds());
 	
 	// Print info
-	printTextTinted(textTP1[0].text, (save->gender() ? RED_TEXT : BLUE_TEXT), textTP1[0].x+getTextWidth(Lang::get(trainerText[0]))+8, textTP1[0].y, false, true);
+	printTextTinted(textTP1[0].text, (save->gender() ? TextColor::red : TextColor::blue), textTP1[0].x+getTextWidth(Lang::get(trainerText[0]))+8, textTP1[0].y, false, true);
 	for(unsigned i=1;i<(sizeof(textTP1)/sizeof(textTP1[0]));i++) {
 		printText(textTP1[i].text, textTP1[i].x+getTextWidth(Lang::get(trainerText[i]))+8, textTP1[i].y, false, true);
 	}
