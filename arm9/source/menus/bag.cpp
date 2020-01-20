@@ -52,7 +52,7 @@ void drawBag(Sav::Pouch pouch, int maxItem, int screenPos, bool background) {
 
 void editBag(void) {
 	setSpriteVisibility(arrowID, false, true);
-	setSpritePosition(arrowID, false, 4+getTextWidth(std::to_string(save->item(save->pouches()[0].first, 0)->count()))+2, 15);
+	setSpritePosition(arrowID, false, 4+getTextWidth(std::to_string(save->item(save->pouches()[0].first, 0)->count()))+2, 10);
 	updateOam();
 
 	int maxItem = getMaxItem(0);
@@ -130,7 +130,7 @@ void editBag(void) {
 			if(touch.px >= 256-search.width && touch.py <= search.height) {
 				goto search;
 			}
-			for(int i=0;i<entriesPerScreen;i++) {
+			for(int i=0;i<std::min(entriesPerScreen, maxItem);i++) {
 				if(touch.px <= 30 && touch.py >= 16+(i*16) && touch.py <= 16+((i+1)*16)) {
 					column = 0;
 					selection = screenPos+i;
@@ -220,7 +220,6 @@ void editBag(void) {
 			screenPos = selection - entriesPerScreen + 1;
 			drawBag(save->pouches()[selectedPouch].first, maxItem, screenPos, false);
 		}
-
 
 		// Move cursor
 		if(column == 0)	setSpritePosition(arrowID, false, 4+getTextWidth(std::to_string(save->item(save->pouches()[selectedPouch].first, selection)->count()))+2, (16*(selection-screenPos)+10));
