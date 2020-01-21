@@ -17,7 +17,6 @@ struct Text {
 };
 
 Text textC1[] {
-	{64, 0},
 	{64, 16},
 	{64, 32},
 	{64, 48},
@@ -40,7 +39,7 @@ Text textC2[] = {
 };
 
 int summaryPage = 0;
-std::vector<std::string> summaryLabels = {"species", "name", "level", "ability", "nature", "item", "shiny", "pokerus", "origTrainer", "trainerID", "secretID", "friendship"};
+std::vector<std::string> summaryLabels = {"species", "level", "ability", "nature", "item", "shiny", "pokerus", "origTrainer", "trainerID", "secretID", "friendship"};
 
 std::pair<int, int> getPokeballPosition(u8 ball) {
 	if(ball > 25)	return {0, 0};
@@ -126,11 +125,17 @@ void drawSummaryPage(std::shared_ptr<PKX> pkm, bool background) {
 			type = (pkm->generation() < Generation::FIVE && pkm->type2() > 8) ? pkm->type2()-1 : pkm->type2();
 			drawImage(186, 25-((types[type].height-12)/2), types[type], false, false, 4);
 		}
+		// Draw set to self button
+		drawImage(232, 10, setToSelf, false, false);
+
+		// Print title
+		printText(Lang::get("pokemonInfo"), 4, 0, false, false);
 	}
 	drawRectangle(0, 0, 256, 192, 0, false, true);
 
 	// Print Pokémon name
-	printTextTintedMaxW(Lang::species[pkm->species()], 90, 1, (pkm->gender() ? (pkm->gender() == 1 ? TextColor::red : TextColor::gray) : TextColor::blue), 165, 8, false, true);
+	const std::string &name = pkm->nicknamed() ? pkm->nickname() : Lang::species[pkm->species()];
+	printTextTintedMaxW(name, 65, 1, (pkm->gender() ? (pkm->gender() == 1 ? TextColor::red : TextColor::gray) : TextColor::blue), 165, 8, false, true);
 
 	// Draw/clear shiny star
 	if(pkm->shiny())	drawImage(150, 45, shiny, false, true);
@@ -142,26 +147,24 @@ void drawSummaryPage(std::shared_ptr<PKX> pkm, bool background) {
 	}
 
 	// Print Pokémon and trainer info
-	snprintf(textC1[0].text,  sizeof(textC1[0].text), "%.3i", pkm->species());
-	if(pkm->nicknamed())	snprintf(textC1[1].text,  sizeof(textC1[1].text), "%s", pkm->nickname().c_str());
-	else	snprintf(textC1[1].text,  sizeof(textC1[1].text), "%s", Lang::species[pkm->species()].c_str());
-	snprintf(textC1[2].text,  sizeof(textC1[2].text), "%i", pkm->level());
-	snprintf(textC1[3].text,  sizeof(textC1[3].text), "%s", Lang::abilities[pkm->ability()].c_str());
-	snprintf(textC1[4].text,  sizeof(textC1[4].text), "%s", Lang::natures[pkm->nature()].c_str());
-	snprintf(textC1[5].text,  sizeof(textC1[5].text), "%s", Lang::items[pkm->heldItem()].c_str());
-	snprintf(textC1[6].text,  sizeof(textC1[6].text), "%s", pkm->shiny() ? Lang::get("yes").c_str() : Lang::get("no").c_str());
-	snprintf(textC1[7].text,  sizeof(textC1[7].text), "%s", pkm->pkrs() ? Lang::get("yes").c_str() : Lang::get("no").c_str());
-	snprintf(textC1[8].text,  sizeof(textC1[8].text), "%s", pkm->otName().c_str());
+	snprintf(textC1[0].text,  sizeof(textC1[0].text), "%s", Lang::species[pkm->species()].c_str());
+	snprintf(textC1[1].text,  sizeof(textC1[1].text), "%i", pkm->level());
+	snprintf(textC1[2].text,  sizeof(textC1[2].text), "%s", Lang::abilities[pkm->ability()].c_str());
+	snprintf(textC1[3].text,  sizeof(textC1[3].text), "%s", Lang::natures[pkm->nature()].c_str());
+	snprintf(textC1[4].text,  sizeof(textC1[4].text), "%s", Lang::items[pkm->heldItem()].c_str());
+	snprintf(textC1[5].text,  sizeof(textC1[5].text), "%s", pkm->shiny() ? Lang::get("yes").c_str() : Lang::get("no").c_str());
+	snprintf(textC1[6].text,  sizeof(textC1[6].text), "%s", pkm->pkrs() ? Lang::get("yes").c_str() : Lang::get("no").c_str());
+	snprintf(textC1[7].text,  sizeof(textC1[7].text), "%s", pkm->otName().c_str());
+	snprintf(textC1[8].text,  sizeof(textC1[8].text), "%.5i", pkm->TID());
+	snprintf(textC1[9].text,  sizeof(textC1[9].text),"%.5i", pkm->SID());
+	snprintf(textC1[10].text, sizeof(textC1[10].text),"%i", pkm->otFriendship());
 	for(unsigned i=0;i<(sizeof(textC1)/sizeof(textC1[0]));i++) {
-	snprintf(textC1[9].text,  sizeof(textC1[9].text), "%.5i", pkm->TID());
-	snprintf(textC1[10].text, sizeof(textC1[10].text),"%.5i", pkm->SID());
-	snprintf(textC1[11].text, sizeof(textC1[11].text),"%i", pkm->otFriendship());
 		// OT Name is colored
-		if(i != 8)	printTextMaxW(textC1[i].text, 80, 1, textC1[i].x, textC1[i].y, false, true);
+		if(i != 7)	printTextMaxW(textC1[i].text, 80, 1, textC1[i].x, textC1[i].y, false, true);
 	}
-	printTextTinted(textC1[8].text, (pkm->otGender() ? TextColor::red : TextColor::blue), textC1[8].x, textC1[8].y, false, true);
+	printTextTinted(textC1[7].text, (pkm->otGender() ? TextColor::red : TextColor::blue), textC1[7].x, textC1[7].y, false, true);
 
-	// Draw buttons // The first 2 don't have buttons
+	// Draw buttons (The first 2 don't have buttons)
 	for(unsigned i=2;i<sizeof(textC2)/sizeof(textC2[0]);i++) {
 		drawImage(textC2[i].x-4, textC2[i].y-4, boxButton, false, true);
 	}
@@ -198,11 +201,17 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 		} else if(held & KEY_DOWN) {
 			if(selection < (int)(column == 0 ? (sizeof(textC1)/sizeof(textC1[0])) : (sizeof(textC2)/sizeof(textC2[0])))-1)	selection++;
 		} else if(pressed & KEY_LEFT) {
-			if(column > 0)	column--;
-			selection = 0;
+			if(column > 0 && selection == 0)	column--;
+			else if(column > 0) {
+				column = 0;
+				selection = 0;
+			}
 		} else if(held & KEY_RIGHT) {
-			if(column < 1)	column++;
-			selection = 0;
+			if(column < 3 && selection == 0)	column++;
+			else if(column < 1) {
+				column = 1;
+				selection = 0;
+			}
 		} else if(pressed & KEY_A) {
 			optionSelected = true;
 		} else if(pressed & KEY_B) {
@@ -223,9 +232,17 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 				column = 1;
 				selection = 0;
 				optionSelected = true;
-			} else if(touch.px >= 146 && touch.py >= 16 && touch.py <= 80) { // Pokémon
+			} else if(touch.px >= 146 && touch.py >= 25 && touch.py <= 80) { // Pokémon
 				column = 1;
 				selection = 1;
+				optionSelected = true;
+			} else if(touch.px >= 166 && touch.px < 232 && touch.py <= 25) { // Pokémon name
+				column = 2;
+				selection = 0;
+				optionSelected = true;
+			} else if(touch.px >= 232 && touch.py <= 25) { // Set to self
+				column = 3;
+				selection = 0;
 				optionSelected = true;
 			}
 			for(unsigned i=2;i<(sizeof(textC2)/sizeof(textC2[0]));i++) { // Buttons
@@ -246,7 +263,7 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 			if(column == 0) {
 				switch(selection) {
 					case 0: {
-						int num = selectItem(pkm->species(), save->availableSpecies(), Lang::species);
+						int num = selectItem(std::max(pkm->species()-1, 0), save->availableSpecies(), Lang::species);
 						if(num > 0) {
 							pkm->species(num);
 							if(!pkm->nicknamed())	pkm->nickname(Lang::species[num]);
@@ -260,72 +277,80 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 						drawSummaryPage(pkm, true);
 						break;
 					} case 1: {
-						std::string name = Input::getLine(10);
-						if(name != "") {
-							pkm->nickname(name);
-							pkm->nicknamed(name != Lang::species[pkm->species()]);
-						}
-						if(pkm->genderType() == 255)	pkm->gender(2);
-						else if(pkm->genderType() == 0)	pkm->gender(0);
-						else if(pkm->genderType() == 254)	pkm->gender(1);
-						else {
-							drawSummaryPage(pkm, false);
-							pkm->gender(Input::getBool(Lang::get("female"), Lang::get("male")));
-							pkm->PID(PKX::getRandomPID(pkm->species(), pkm->gender(), pkm->version(), pkm->nature(), pkm->alternativeForm(), pkm->abilityNumber(), pkm->PID(), pkm->generation()));
-						}
-						drawSummaryPage(pkm, false);
-						break;
-					} case 2: {
 						int num = Input::getInt(100);
 						if(num > 0)	pkm->level(num);
 						drawSummaryPage(pkm, false);
 						break;
-					} case 3: {
+					} case 2: {
 						changeAbility(pkm);
 						drawSummaryPage(pkm, false);
 						break;
-					} case 4: {
+					} case 3: {
 						int num = selectNature(pkm->nature());
 						if(num != -1)	pkm->nature(num);
 						drawSummaryPage(pkm, true);
 						break;
-					} case 5: {
+					} case 4: {
 						int num = selectItem(pkm->heldItem(), save->availableItems(), Lang::items);
 						if(num != -1)	pkm->heldItem(num);
 						drawSummaryPage(pkm, true);
 						break;
-					} case 6: {
+					} case 5: {
 						pkm->shiny(!pkm->shiny());
 						drawSummaryPage(pkm, false);
 						break;
-					} case 7: {
+					} case 6: {
 						pkm->pkrs(pkm->pkrs() ? 0 : 0xF4);
 						drawSummaryPage(pkm, false);
 						break;
-					} case 8: {
+					} case 7: {
 						std::string name = Input::getLine(7);
 						if(name != "")	pkm->otName(name);
 						drawSummaryPage(pkm, false);
 						pkm->otGender(Input::getBool(Lang::get("female"), Lang::get("male")));
 						drawSummaryPage(pkm, false);
 						break;
-					} case 9: {
+					} case 8: {
 						int num = Input::getInt(65535);
 						if(num != -1)	pkm->TID(num);
 						drawSummaryPage(pkm, false);
 						break;
-					} case 10: {
+					} case 9: {
 						int num = Input::getInt(65535);
 						if(num != -1)	pkm->SID(num);
 						drawSummaryPage(pkm, false);
 						break;
-					} case 11: {
+					} case 10: {
 						int num = Input::getInt(255);
 						if(num != -1)	pkm->otFriendship(num);
 						drawSummaryPage(pkm, false);
 						break;
 					}
 				}
+			} else if(column == 2 && selection == 0) {
+				std::string name = Input::getLine(10);
+				if(name != "") {
+					pkm->nickname(name);
+					pkm->nicknamed(name != Lang::species[pkm->species()]);
+				}
+				if(pkm->genderType() == 255)	pkm->gender(2);
+				else if(pkm->genderType() == 0)	pkm->gender(0);
+				else if(pkm->genderType() == 254)	pkm->gender(1);
+				else {
+					drawSummaryPage(pkm, false);
+					pkm->gender(Input::getBool(Lang::get("female"), Lang::get("male")));
+					pkm->PID(PKX::getRandomPID(pkm->species(), pkm->gender(), pkm->version(), pkm->nature(), pkm->alternativeForm(), pkm->abilityNumber(), pkm->PID(), pkm->generation()));
+				}
+				drawSummaryPage(pkm, false);
+			} else if(column == 3 && selection == 0) {
+				bool isShiny = pkm->shiny();
+				pkm->otName(save->otName());
+				pkm->otGender(save->gender());
+				pkm->TID(save->TID());
+				pkm->SID(save->SID());
+				pkm->shiny(isShiny);
+
+				drawSummaryPage(pkm, false);
 			} else {
 				switch(selection) {
 					case 0: {
@@ -357,6 +382,10 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 
 		if(column == 0) {
 			setSpritePosition(arrowID, false, textC1[selection].x+getTextWidthMaxW(textC1[selection].text, 80), textC1[selection].y-6);
+		} else if(column == 2 && selection == 0) { // 1, 2, & 3 behave the same after selection 0
+			setSpritePosition(arrowID, false, 165+getTextWidthMaxW(pkm->nicknamed() ? pkm->nickname() : Lang::species[pkm->species()], 65), 2);
+		} else if(column == 3 && selection == 0) {
+			setSpritePosition(arrowID, false, 233+16, 2);
 		} else {
 			setSpritePosition(arrowID, false, textC2[selection].x+getTextWidthMaxW(textC2[selection].text, 80), textC2[selection].y-6);
 		}

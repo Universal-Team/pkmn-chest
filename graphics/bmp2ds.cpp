@@ -31,6 +31,10 @@ Image loadBmp16(std::string path, int paletteOffset, int paletteCount) {
 		fseek(file, (uint8_t)fgetc(file)-2, SEEK_CUR); // Seek to palette start location
 		fread(palTemp, 4, 16, file);
 		for(int i=0;i<16;i++) {
+			if(palTemp[i] == 0) { // To allow blank palette (use whatever's there) images 
+				image.palette.resize(i);
+				break;
+			}
 			int r = round((((palTemp[i]>>24)&0xff)*31)/255.0);
 			int g = round((((palTemp[i]>>16)&0xff)*31)/255.0);
 			int b = round((((palTemp[i]>>8)&0xff)*31)/255.0);
