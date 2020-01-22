@@ -201,7 +201,7 @@ bool updateSlot2Text(int &cardWait, bool valid) {
 		cardWait = 30;
 		if(!noCartMessageSet) {
 			drawRectangle(10, ((tmSlot2Offset-tmScreenOffset)+1)*16, 246, 16, CLEAR, false, true);
-			printText("Slot-2: (No cart inserted)", 10, ((tmSlot2Offset-tmScreenOffset)+1)*16, false, true);
+			printTextTinted("Slot-2: (No cart inserted)", TextColor::red, 10, ((tmSlot2Offset-tmScreenOffset)+1)*16, false, true);
 			noCartMessageSet = true;
 			return false;
 		}

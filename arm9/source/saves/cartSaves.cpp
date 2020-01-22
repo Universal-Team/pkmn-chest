@@ -32,24 +32,31 @@ bool updateCartInfo(void) {
 
 void dumpSlot2(void) {
 	// Check that its the right save type
-	if(strcmp("FLASH1M_V103", (char*)0x08654F00)) {
+	if(strcmp("FLASH1M_V103", (char*)0x08654F00) == 0) {
+		std::shared_ptr<u8[]> buffer = std::shared_ptr<u8[]>(new u8[0x20000]);
+		u8 *dst = buffer.get();
+		for (int bank = 0; bank < 2; bank++) {
+			// FLASH - must be opened by register magic, then blind copy
+			// we need to wait a few cycles before the hardware reacts!
+			*(u8*)0x0A005555 = 0xAA;
+			swiDelay(10);
+			*(u8*)0x0A002AAA = 0x55;
+			swiDelay(10);
+			*(u8*)0x0A005555 = 0xB0;
+			swiDelay(10);
+			*(u8*)0x0A000000 = (u8)bank;
+			swiDelay(10);
+
+			u8* src = (u8*)0x0A000000;
+			sysSetBusOwners(true, true);
+			for(u32 i=0;i < 0x10000;i++) {
+				*dst++ = *src++;
+			}
+		}
+
 		FILE *file = fopen(cartSave, "wb");
 		if(file) {
-			for (int i = 0; i < 2; i++) {
-				// FLASH - must be opened by register magic, then blind copy
-				// we need to wait a few cycles before the hardware reacts!
-				*(u8*)0x0A005555 = 0xAA;
-				swiDelay(10);
-				*(u8*)0x0A002AAA = 0x55;
-				swiDelay(10);
-				*(u8*)0x0A005555 = 0xB0;
-				swiDelay(10);
-				*(u8*)0x0A000000 = (u8)i;
-				swiDelay(10);
-
-				sysSetBusOwners(true, true);
-				fwrite((void*)0x0A000000, 1, 0x10000, file);
-			}
+			fwrite(buffer.get(), 1, 0x20000, file);
 			fclose(file);
 		}
 	}
@@ -57,24 +64,27 @@ void dumpSlot2(void) {
 
 bool restoreSlot2(void) {
 	// Check that its the right save type
-	if(strcmp("FLASH1M_V103", (char*)0x08654F00)) {
+	if(strcmp("FLASH1M_V103", (char*)0x08654F00) == 0) {
 		FILE *file = fopen(cartSave, "wb");
 		if(file) {
+			// Draw progress bar outline
+			drawOutline(5, 39, 247, 18, DARKERER_GRAY, false, true);
+
 			// FLASH - must be opened by register magic, erased and then rewritten
 			// FIXME: currently, you can only write "all or nothing"
-			for (int i = 0; i < 2; i++) {
+			for (int bank = 0; bank < 2; bank++) {
 				*(u8*)0x0A005555 = 0xAA;
 				swiDelay(10);
 				*(u8*)0x0A002AAA = 0x55;
 				swiDelay(10);
 				*(u8*)0x0A005555 = 0xB0;
 				swiDelay(10);
-				*(u8*)0x0A000000 = (u8)i;
+				*(u8*)0x0A000000 = (u8)bank;
 				swiDelay(10);
 
-				u8 *tmpdst = (u8*)0x0A000000;
+				u8 *dst = (u8*)0x0A000000;
 				sysSetBusOwners(true, true);
-				for (u32 i = 0; i < 0x10000; i++, tmpdst++) {
+				for (u32 i = 0; i < 0x10000; i++, dst++) {
 					// we need to wait a few cycles before the hardware reacts!
 					*(u8*)0x0a005555 = 0xaa;
 					swiDelay(10);
@@ -85,8 +95,11 @@ bool restoreSlot2(void) {
 
 					u8 src = fgetc(file);
 
-					*tmpdst = src;
-					while(*tmpdst != src)	swiDelay(10);
+					*dst = src;
+					while(*dst != src)	swiDelay(10);
+
+					// Draw progress bar
+					drawRectangle((((float)((0x10000*bank)+i)/0x20000)*245)+6, 40, 1, 16, LIGHT_GRAY, false, true);
 				}
 			}
 			fclose(file);
