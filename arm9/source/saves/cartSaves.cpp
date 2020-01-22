@@ -3,6 +3,11 @@
 #include "graphics.hpp"
 #include "lang.hpp"
 
+#define MAGIC_EEPR 0x52504545
+#define MAGIC_SRAM 0x4D415253
+#define MAGIC_FLAS 0x53414C46
+#define MAGIC_H1M_ 0x5F4D3148
+
 char slot2Name[13];
 char slot2ID[5];
 
@@ -30,9 +35,30 @@ bool updateCartInfo(void) {
 	return true;
 }
 
+bool isCorrectType(void) {
+	// Search for a save version string in the ROM
+	u32 *data = (u32*)0x08000000;
+
+	for(int i=0;i<(0x02000000 >> 2); i++, data++) {
+		switch(*data) {
+			case MAGIC_EEPR:
+				return false;
+			case MAGIC_SRAM:
+				return false;
+			case MAGIC_FLAS:
+				if(*(data+1) == MAGIC_H1M_)	return true;
+				else return false;
+			default:
+				break;
+		}
+	}
+
+	return false;
+}
+
 void dumpSlot2(void) {
 	// Check that its the right save type
-	if(strcmp("FLASH1M_V103", (char*)0x08654F00) == 0) {
+	if(isCorrectType()) {
 		std::shared_ptr<u8[]> buffer = std::shared_ptr<u8[]>(new u8[0x20000]);
 		u8 *dst = buffer.get();
 		for (int bank = 0; bank < 2; bank++) {
@@ -64,7 +90,7 @@ void dumpSlot2(void) {
 
 bool restoreSlot2(void) {
 	// Check that its the right save type
-	if(strcmp("FLASH1M_V103", (char*)0x08654F00) == 0) {
+	if(isCorrectType()) {
 		FILE *file = fopen(cartSave, "wb");
 		if(file) {
 			// Draw progress bar outline

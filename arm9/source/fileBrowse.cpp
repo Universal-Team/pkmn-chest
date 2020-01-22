@@ -175,7 +175,7 @@ bool updateSlot1Text(int &cardWait, bool valid) {
 		cardWait = 30;
 		if(!noCardMessageSet) {
 			drawRectangle(10, ((tmSlot1Offset-tmScreenOffset)+1)*16, 246, 16, CLEAR, false, true);
-			printText("Slot-1: (No card inserted)", 10, ((tmSlot1Offset-tmScreenOffset)+1)*16, false, true);
+			printTextTinted("Slot-1: (No card inserted)", TextColor::red, 10, ((tmSlot1Offset-tmScreenOffset)+1)*16, false, true);
 			noCardMessageSet = true;
 			return false;
 		}
