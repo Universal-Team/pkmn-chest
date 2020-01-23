@@ -352,7 +352,7 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 					} case 1: {
 						int num = selectForm(pkm->species(), pkm->alternativeForm());
 						if(num != -1)	pkm->alternativeForm(num);
-						drawSummaryPage(pkm, false);
+						drawSummaryPage(pkm, true);
 						break;
 					} case 2: {
 						selectMoves(pkm);

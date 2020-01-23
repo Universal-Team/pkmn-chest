@@ -39,4 +39,7 @@ std::shared_ptr<PKX> selectOrigin(std::shared_ptr<PKX> pkm);
 // Shows the stat editing menu
 std::shared_ptr<PKX> selectStats(std::shared_ptr<PKX> pkm);
 
+// Shows the type selection menu
+int selectHPType(int current);
+
 #endif

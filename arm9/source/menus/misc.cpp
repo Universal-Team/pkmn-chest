@@ -82,6 +82,8 @@ void resetPokemonSpritesPos(void) {
 	for(int y=0;y<5;y++) {
 		for(int x=0;x<6;x++) {
 			setSpritePosition((y*6)+x, false, 8+(x*24), 32+(y*24));
+			setSpritePriority((y*6)+x, false, 3);
+			setSpriteVisibility((y*6)+x, false, false);
 		}
 	}
 }
@@ -190,10 +192,13 @@ int selectForm(int dexNo, int currentForm) {
 
 	// Draw forms
 	for(int i=0;i<formCounts[altIndex].noForms;i++) {
-		// TODO: Steal the party sprites or something
 		Image image = loadPokemonSprite(getPokemonIndex(dexNo, i));
-		drawImage((i*32)+(128-((32*formCounts[altIndex].noForms)/2)), 80, image, false, true, 0xC0);
+		fillSpriteImage(i, false, 32, 0, 0, image);
+		setSpritePosition(i, false, (i*32)+(128-((32*formCounts[altIndex].noForms)/2)), 80);
+		setSpritePriority(i, false, 1);
+		setSpriteVisibility(i, false, true);
 	}
+	updateOam();
 
 	// Move arrow to current form
 	setSpriteVisibility(arrowID, false, true);
@@ -217,9 +222,11 @@ int selectForm(int dexNo, int currentForm) {
 			else currentForm=0;
 		} else if(pressed & KEY_A) {
 			Sound::play(Sound::click);
+			resetPokemonSpritesPos();
 			return currentForm;
 		} else if(pressed & KEY_B) {
 			Sound::play(Sound::back);
+			resetPokemonSpritesPos();
 			return -1;
 		} else if(pressed & KEY_TOUCH) {
 			touchPosition touch;
@@ -227,6 +234,7 @@ int selectForm(int dexNo, int currentForm) {
 			for(int i=0;i<5;i++) {
 				if(touch.px > (i*32)+(128-((32*formCounts[altIndex].noForms)/2)) && touch.px < (i*32)+(128-((32*formCounts[altIndex].noForms)/2))+32 && touch.py > 72 && touch.py < 104) {
 					Sound::play(Sound::click);
+					resetPokemonSpritesPos();
 					return i;
 				}
 			}
@@ -914,7 +922,7 @@ std::shared_ptr<PKX> selectStats(std::shared_ptr<PKX> pkm) {
 			setSpriteVisibility(arrowID, false, false);
 			updateOam();
 			if(selection == 6) { // Hidden Power Type
-				int num = Input::getInt(15); // TODO: Add proper selector
+				int num = selectHPType(pkm->hpType());
 				if(num != -1)	pkm->hpType(num);
 			} else if(column == 0) { // IV
 				int num = Input::getInt(31);
@@ -939,6 +947,76 @@ std::shared_ptr<PKX> selectStats(std::shared_ptr<PKX> pkm) {
 		} else {
 			setSpritePosition(arrowID, false, 128+(textStatsC3[selection].x+(getTextWidth(textStatsC3[selection].text)/2))+2, textStatsC3[selection].y-6);
 		}
+		updateOam();
+	}
+}
+
+int selectHPType(int current) {
+	// Clear screen
+	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
+	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
+
+	// Draw types
+	for(int y=0;y<4;y++) {
+		for(int x=0;x<4;x++) {
+			fillSpriteColor((y*4)+x, false, CLEAR);
+			fillSpriteImage((y*4)+x, false, 32, 0, 0, types[(y*4)+x+1]);
+			setSpritePosition((y*4)+x, false, (x*52)+34+((32-types[0].width)/2), (y*32)+42+((12-types[0].height)/2));
+			setSpriteVisibility((y*4)+x, false, true);
+		}
+	}
+	updateOam();
+
+	int arrowX = current-((current/4)*4), selection = current/4, pressed, held;
+	// Move arrow to current wallpaper
+	setSpriteVisibility(arrowID, false, true);
+	setSpritePosition(arrowID, false, (arrowX*52)+34+types[0].width+2, (selection*32)+34);
+	updateOam();
+
+	while(1) {
+		do {
+			swiWaitForVBlank();
+			scanKeys();
+			pressed = keysDown();
+			held = keysDownRepeat();
+		} while(!held);
+
+		if(held & KEY_UP) {
+			if(selection > 0)	selection--;
+			else	selection = 3;
+		} else if(held & KEY_DOWN) {
+			if(selection < 3)	selection++;
+			else	selection = 0;
+		} else if(held & KEY_LEFT) {
+			if(arrowX > 0)	arrowX--;
+			else	arrowX = 3;
+		} else if(held & KEY_RIGHT) {
+			if(arrowX < 3)	arrowX++;
+			else arrowX = 0;
+		} else if(pressed & KEY_A) {
+			Sound::play(Sound::click);
+			resetPokemonSpritesPos();
+			return (selection*4)+arrowX;
+		} else if(pressed & KEY_B) {
+			Sound::play(Sound::back);
+			resetPokemonSpritesPos();
+			return -1;
+		} else if(pressed & KEY_TOUCH) {
+			touchPosition touch;
+			touchRead(&touch);
+			for(int y=0;y<4;y++) {
+				for(int x=0;x<4;x++) {
+					if(touch.px > (x*52)+34 && touch.px < (x*52)+34+types[0].width && touch.py > (y*32)+42 && touch.py < (y*32)+42+types[0].height) {
+						Sound::play(Sound::click);
+						resetPokemonSpritesPos();
+						return (y*4)+x;
+					}
+				}
+			}
+		}
+
+		// Move arrow
+		setSpritePosition(arrowID, false, (arrowX*52)+34+types[0].width+2, (selection*32)+34);
 		updateOam();
 	}
 }
