@@ -81,7 +81,10 @@ int main(int argc, char **argv) {
 	hideLoadingLogo();
 
 	while(1) {
-		if(!loadSave(savePath = browseForSave())) {
+		savePath = browseForSave();
+		if(savePath == "%EXIT%")	break;
+
+		if(!loadSave(savePath)) {
 			drawRectangle(20, 20, 216, 152, DARK_RED, true, true);
 			printTextCentered(Lang::get("invalidSave"), 0, 24, true, true);
 			for(int i=0;i<120;i++)	swiWaitForVBlank();

@@ -384,6 +384,8 @@ std::string topMenuSelect(void) {
 				}
 				showTopMenu(topMenuContents);
 			}
+		} else if(pressed & KEY_START) {
+			return "%EXIT%";
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
 			for(int i=0;i<std::min(ENTRIES_PER_SCREEN, (int)topMenuContents.size());i++) {
