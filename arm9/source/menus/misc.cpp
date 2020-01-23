@@ -79,7 +79,7 @@ Language pkmLang(void) {
 
 void resetPokemonSpritesPos(void) {
 	// Reset Pokémon sprite positions
-	for(int y=0;y<4;y++) {
+	for(int y=0;y<5;y++) {
 		for(int x=0;x<6;x++) {
 			setSpritePosition((y*6)+x, false, 8+(x*24), 32+(y*24));
 		}
