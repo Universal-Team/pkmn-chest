@@ -390,7 +390,7 @@ void manageBoxes(void) {
 		} while(!held);
 
 		if(!inParty) {
-			if(held & KEY_UP) {	
+			if(held & KEY_UP) {
 				if(arrowY > (topScreen ? -1 : -2))	arrowY--;
 			} else if(held & KEY_DOWN) {
 				if(arrowY < 5)	arrowY++;
@@ -423,7 +423,7 @@ void manageBoxes(void) {
 			} else if(held & KEY_RIGHT && arrowY == -1) {
 				goto switchBoxRight;
 			}
-			if(held & KEY_L || (touch.px > 6 && touch.px < 26 && touch.py > 19 && touch.py < 37)) {
+			if(held & KEY_L) {
 				switchBoxLeft:
 				if(currentBox() > 0)
 					(topScreen ? currentBankBox : currentSaveBox)--;
@@ -435,7 +435,8 @@ void manageBoxes(void) {
 						setSpriteVisibility(heldPokemon[i].position, heldPokemonScreen, false);
 					}
 				}
-			} else if(held & KEY_R || (touch.px > 141 && touch.px < 161 && touch.py > 19 && touch.py < 37)) {
+				goto afterInput;
+			} else if(held & KEY_R) {
 				switchBoxRight:
 				if((topScreen ? currentBankBox < Banks::bank->boxes()-1 : currentSaveBox < save->maxBoxes()-1))
 					(topScreen ? currentBankBox : currentSaveBox)++;
@@ -446,6 +447,7 @@ void manageBoxes(void) {
 						setSpriteVisibility(heldPokemon[i].position, heldPokemonScreen, false);
 					}
 				}
+				goto afterInput;
 			}
 		} else { // Cursor movement in party tray
 			if(held & KEY_UP) {
@@ -570,7 +572,7 @@ void manageBoxes(void) {
 
 							// Hide the moving Pokémon
 							setSpriteVisibility(heldPokemonID, topScreen, false);
-							
+
 							// Update the box(es) for the moved Pokémon
 							drawBox(topScreen);
 							if(heldPokemonScreen != topScreen)	drawBox(heldPokemonScreen);
@@ -739,9 +741,15 @@ void manageBoxes(void) {
 				Sound::play(Sound::back);
 				goto toggleParty;
 			}
+		} else if(pressed & KEY_X && heldPokemon.size() == 0 && !partyShown) {
+			Sound::play(Sound::click);
+			drawRectangle(0, 0, 256, 192, CLEAR, false, true);
+			if(!xMenu())	break;
 		} else if(pressed & KEY_Y && !partyShown) {
 			if(heldPokemon.size() == 0) {
 				filter:
+				setSpriteVisibility(arrowID, false, false);
+				updateOam();
 				if(Input::getBool(Lang::get("filter"), Lang::get("sort"))) {
 					drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 					changeFilter(filter);
@@ -780,10 +788,14 @@ void manageBoxes(void) {
 						}
 					}
 				}
-				if((touch.px > 26 && touch.px < 141 && touch.py > 19 && touch.py < 37)) {
+				if(touch.px > 26 && touch.px < 141 && touch.py > 19 && touch.py < 37) { // Box title
 					arrowY = -1;
 					goto selection;
-				} else if(touch.px >= boxButton.width+5 && touch.px <= boxButton.width+5+search.width && touch.py >= 192-search.height) {
+				} else if(touch.px > 6 && touch.px < 26 && touch.py > 19 && touch.py < 37) { // Switch to previous box
+					goto switchBoxLeft;
+				} else if(touch.px > 141 && touch.px < 161 && touch.py > 19 && touch.py < 37) { // Switch to next box
+					goto switchBoxRight;
+				} else if(touch.px >= boxButton.width+5 && touch.px <= boxButton.width+5+search.width && touch.py >= 192-search.height) { // Filter button
 					goto filter;
 				}
 			}
@@ -812,11 +824,7 @@ void manageBoxes(void) {
 			}
 		}
 
-		if(pressed & KEY_X && heldPokemon.size() == 0 && !partyShown) {
-			Sound::play(Sound::click);
-			drawRectangle(0, 0, 256, 192, CLEAR, false, true);
-			if(!xMenu())	break;
-		}
+		afterInput:
 
 		if(arrowY == -2) {
 			// If the Arrow Y is at -2, switch to the top screen
@@ -863,7 +871,7 @@ void manageBoxes(void) {
 			}
 		}
 
-		if((held & KEY_UP || held & KEY_DOWN || held & KEY_LEFT || held & KEY_RIGHT || held & KEY_L || held & KEY_R || held & KEY_TOUCH) && heldPokemon.size() == 0) {
+		if((held & (KEY_UP | KEY_DOWN | KEY_LEFT | KEY_RIGHT | KEY_L | KEY_R | KEY_TOUCH)) && heldPokemon.size() == 0) {
 			// If the cursor is moved and we're not holding a Pokémon, draw the new one
 			if(arrowY != -1)	drawPokemonInfo(currentPokemon(arrowX, arrowY));
 			else	drawPokemonInfo(save->emptyPkm());
