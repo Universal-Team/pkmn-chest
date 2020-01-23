@@ -7,7 +7,9 @@ endif
 include $(DEVKITARM)/ds_rules
 
 
-GRAPHICS	:=	graphics graphics/box graphics/box/b2w2 graphics/box/bw graphics/box/dp graphics/box/e graphics/box/frlg graphics/box/hgss graphics/box/pt graphics/box/rs \
+GRAPHICS	:=	graphics \
+				graphics/ball \
+				graphics/box graphics/box/b2w2 graphics/box/bw graphics/box/dp graphics/box/e graphics/box/frlg graphics/box/hgss graphics/box/pt graphics/box/rs \
 				lang/br/types lang/de/types lang/en/types lang/es/types lang/fr/types lang/it/types lang/jp/types lang/ko/types
 
 OUT			:=	../nitrofiles

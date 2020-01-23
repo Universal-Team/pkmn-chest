@@ -22,7 +22,7 @@ bool topScreen, inParty;
 int arrowID = 126, currentSaveBox, currentBankBox, heldPokemonID = 125, keyboardSpriteID = 124, arrowMode = 0;
 std::vector<int> menuIconID, partyIconID;
 std::string savePath;
-Image arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, boxBgTop, boxButton, infoBox, keyboardKey, listBg, menuBg, menuButton, menuButtonBlue, party, search, setToSelf, shiny;
+Image arrowBlue, arrowRed, arrowYellow, ball[BALL_COUNT], bankBox, boxBgTop, boxButton, infoBox, keyboardKey, listBg, menuBg, menuButton, menuButtonBlue, party, search, setToSelf, shiny;
 std::vector<Image> types;
 FILE* pokemonGFX;
 std::shared_ptr<PKFilter> filter = std::make_shared<PKFilter>();
@@ -213,7 +213,9 @@ void loadGraphics(void) {
 	arrowBlue = loadImage("/graphics/arrowBlue.gfx");
 	arrowRed = loadImage("/graphics/arrowRed.gfx");
 	arrowYellow = loadImage("/graphics/arrowYellow.gfx");
-	ballSheet = loadImage("/graphics/ballSheet.gfx");
+	for(int i=0;i<BALL_COUNT;i++) {
+		ball[i] = loadImage("/graphics/ball/"+std::to_string(i)+".gfx");
+	}
 	boxBgTop = loadImage("/graphics/boxBgTop.gfx");
 	boxButton = loadImage("/graphics/boxButton.gfx");
 	infoBox = loadImage("/graphics/infoBox.gfx");

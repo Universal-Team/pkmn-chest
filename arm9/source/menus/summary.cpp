@@ -41,14 +41,6 @@ Text textC2[] = {
 int summaryPage = 0;
 std::vector<std::string> summaryLabels = {"species", "level", "ability", "nature", "item", "shiny", "pokerus", "origTrainer", "trainerID", "secretID", "friendship"};
 
-std::pair<int, int> getPokeballPosition(u8 ball) {
-	if(ball > 25)	return {0, 0};
-	std::pair<int, int> xy;
-	xy.second = (ball/9)*15;
-	xy.first = (ball-((ball/9)*9))*15;
-	return xy;
-}
-
 void changeAbility(std::shared_ptr<PKX> &pkm) {
 	if(pkm->generation() == Generation::FOUR) {
 		u8 setAbility = pkm->ability();
@@ -116,8 +108,7 @@ void drawSummaryPage(std::shared_ptr<PKX> pkm, bool background) {
 		Image image = loadPokemonSprite(getPokemonIndex(pkm));
 		drawImageScaled(169, 22, 2, 2, image, false, false, 0xB0);
 		// Draw Poké ball
-		std::pair<int, int> xy = getPokeballPosition(pkm->ball());
-		drawImageSegment(148, 8, 15, 15, ballSheet, xy.first, xy.second, false, false);
+		drawImage(148, 7, ball[pkm->ball()], false, false);
 		// Draw types
 		int type = (pkm->generation() < Generation::FIVE && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1();
 		drawImage(150, 25-((types[type].height-12)/2), types[type], false, false);

@@ -77,6 +77,15 @@ Language pkmLang(void) {
 	}
 }
 
+void resetPokemonSpritesPos(void) {
+	// Reset Pokémon sprite positions
+	for(int y=0;y<4;y++) {
+		for(int x=0;x<6;x++) {
+			setSpritePosition((y*6)+x, false, 8+(x*24), 32+(y*24));
+		}
+	}
+}
+
 void drawMiniBoxes(int currentBox) {
 	if(currentBox < 0)	currentBox = (topScreen ? Banks::bank->boxes()-1 : save->maxBoxes()-1)+currentBox;
 	// Clear text
@@ -521,12 +530,13 @@ int selectPokeball(int currentBall) {
 	// Draw Pokéballs
 	for(int y=0;y<5;y++) {
 		for(int x=0;x<5;x++) {
-			if(!(save->generation() < Generation::FIVE && (y*5)+x == 24)) {
-				std::pair<int, int> xy = getPokeballPosition((y*5)+x+1);
-				drawImageSegment((x*48)+24, (y*32)+24, 15, 15, ballSheet, xy.first, xy.second, false, false);
-			}
+			fillSpriteColor((y*5)+x, false, CLEAR);
+			fillSpriteImage((y*5)+x, false, 32, 0, 0, ball[(y*5)+x+1]);
+			setSpritePosition((y*5)+x, false, (x*48)+24, (y*32)+23);
+			setSpriteVisibility((y*5)+x, false, true);
 		}
 	}
+	updateOam();
 
 	currentBall--;
 	int arrowX = currentBall-((currentBall/5)*5), selection = currentBall/5, pressed, held;
@@ -558,10 +568,12 @@ int selectPokeball(int currentBall) {
 		} else if(pressed & KEY_A) {
 			if(!(save->generation() < Generation::FIVE && (selection*5)+arrowX == 24)) {
 				Sound::play(Sound::click);
+				resetPokemonSpritesPos();
 				return (selection*5)+arrowX+1;
 			}
 		} else if(pressed & KEY_B) {
 			Sound::play(Sound::back);
+			resetPokemonSpritesPos();
 			return -1;
 		} else if(pressed & KEY_TOUCH) {
 			touchPosition touch;
@@ -571,6 +583,7 @@ int selectPokeball(int currentBall) {
 					if(touch.px > (x*48)+8 && touch.px < (x*48)+56 && touch.py > (y*32)+8 && touch.py < (y*32)+56) {
 						if(!(save->generation() < Generation::FIVE && (y*5)+x == 24)) {
 							Sound::play(Sound::click);
+							resetPokemonSpritesPos();
 							return (y*5)+x+1;
 						}
 					}
@@ -628,9 +641,11 @@ int selectWallpaper(int currentWallpaper) {
 			else arrowX=0;
 		} else if(pressed & KEY_A) {
 			Sound::play(Sound::click);
+			resetPokemonSpritesPos();
 			return (selection*6)+arrowX;
 		} else if(pressed & KEY_B) {
 			Sound::play(Sound::back);
+			resetPokemonSpritesPos();
 			return -1;
 		} else if(pressed & KEY_TOUCH) {
 			touchPosition touch;
@@ -639,6 +654,7 @@ int selectWallpaper(int currentWallpaper) {
 				for(int x=0;x<6;x++) {
 					if(touch.px > (x*40)+12 && touch.px < (x*40)+44 && touch.py > (y*38)+24 && touch.py < (y*38)+56) {
 						Sound::play(Sound::click);
+						resetPokemonSpritesPos();
 						return (y*6)+x;
 					}
 				}
