@@ -306,39 +306,39 @@ void changeFilter(std::shared_ptr<PKFilter> &filter) {
 				}
 			} else if(column == 2) {
 				switch(selection) {
-					case 0: // Species
+					case 0: { // Species
 						filter->species(selectItem(filter->species(), save->availableSpecies(), Lang::species));
 						break;
-					case 1: // Nature
-						filter->nature(selectNature(filter->nature()));
+					} case 1: { // Nature
+						int num = selectNature(filter->nature());
+						if(num != -1)	filter->nature();
 						break;
-					case 2: // Ability
+					} case 2: { // Ability
 						filter->ability(selectItem(filter->ability(), save->availableAbilities(), Lang::abilities));
 						break;
-					case 3: // Gender
-						{
-							std::vector<std::string> genderList = {Lang::get("male"), Lang::get("female"), Lang::get("unknown")};
-							filter->gender(selectItem(filter->gender(), 0, genderList.size(), genderList));
-							break;
-						}
-					case 4: // Held item
+					} case 3: { // Gender
+						std::vector<std::string> genderList = {Lang::get("male"), Lang::get("female"), Lang::get("unknown")};
+						filter->gender(selectItem(filter->gender(), 0, genderList.size(), genderList));
+						break;
+					} case 4: { // Held item
 						filter->heldItem(selectItem(filter->heldItem(), save->availableItems(), Lang::items));
 						break;
-					case 5: // Ball
+					} case 5: { // Ball
 						filter->ball(selectPokeball(filter->ball()));
 						break;
-					case 6: // Alt. form
+					} case 6: { // Alt. form
 						filter->alternativeForm(Input::getInt(28));
 						break;
-					case 7: // Level
+					} case 7: { // Level
 						filter->level(Input::getInt(100));
 						break;
-					case 8: // Moves
+					} case 8: { // Moves
 						selectMoves(filter);
 						break;
-					case 9: // Shiny
+					} case 9: { // Shiny
 						filter->shiny(!filter->shiny());
 						break;
+					}
 				}
 			}
 			drawFilterMenu(filter);
