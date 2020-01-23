@@ -270,11 +270,7 @@ void drawRectangle(int x, int y, int w, int h, u8 color, bool top, bool layer) {
 void drawRectangle(int x, int y, int w, int h, u8 color1, u8 color2, bool top, bool layer) {
 	u8 *dst = gfxPointer(top, layer);
 	for(int i=0;i<h;i++) {
-		if(w > 1) {
-			dmaFillHalfWords(((i%2) ? color1 : color2) | ((i%2) ? color1 : color2) << 8, dst+((y+i)*256+x), w);
-		} else {
-			toncset(dst+((y+i)*256+x), ((i%2) ? color1 : color2), w);
-		}
+		toncset(dst+((y+i)*256+x), ((i%2) ? color1 : color2), w);
 	}
 }
 

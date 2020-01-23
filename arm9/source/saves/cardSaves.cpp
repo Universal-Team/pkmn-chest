@@ -1,6 +1,7 @@
 #include "cardSaves.hpp"
 #include "colors.hpp"
 #include "graphics.hpp"
+#include "gui.hpp"
 #include "lang.hpp"
 
 auxspi_extra card_type = AUXSPI_FLASH_CARD;
@@ -109,10 +110,7 @@ bool restoreSlot1(void) {
 		length = ftell(in);
 		fseek(in, 0, SEEK_SET);
 		if(length != (auxspi ? (int)(LEN*num_blocks) : size)) {
-			drawRectangle(20, 20, 216, 152, DARK_RED, true, true);
-			printTextCentered(Lang::get("wrongSaveSize"), 0, 24, true, true);
-			for(int i=0;i<120;i++)	swiWaitForVBlank();
-			drawRectangle(20, 20, 216, 152, CLEAR, true, true);
+			Gui::warn(Lang::get("wrongSaveCard"));
 			fclose(in);
 			return false;
 		}

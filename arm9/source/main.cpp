@@ -6,6 +6,7 @@
 #include "fileBrowse.hpp"
 #include "flashcard.hpp"
 #include "graphics.hpp"
+#include "gui.hpp"
 #include "lang.hpp"
 #include "lang.hpp"
 #include "loader.hpp"
@@ -85,10 +86,7 @@ int main(int argc, char **argv) {
 		if(savePath == "%EXIT%")	break;
 
 		if(!loadSave(savePath)) {
-			drawRectangle(20, 20, 216, 152, DARK_RED, true, true);
-			printTextCentered(Lang::get("invalidSave"), 0, 24, true, true);
-			for(int i=0;i<120;i++)	swiWaitForVBlank();
-			drawRectangle(20, 20, 216, 152, CLEAR, true, true);
+			Gui::warn(Lang::get("invalidSave"));
 			continue;
 		}
 		currentSaveBox = save->currentBox();

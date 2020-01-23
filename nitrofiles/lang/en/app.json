@@ -13,7 +13,7 @@
 	"berries": "Berries",
 	"bp": "BP",
 	"cancel": "Cancel",
-	"cantDeleteCurrentChest": "You can not delete\nthe current chest.",
+	"cantDeleteCurrentChest": "You cannot delete\nthe current chest.",
 	"center1": "Pokémon center (Gen. 1)",
 	"center4": "Pokémon center (Gen. 4)",
 	"center5": "Pokémon center (Gen. 5)",
@@ -119,6 +119,8 @@
 	"unknown": "Unknown",
 	"unlimited": "Unlimited",
 	"wallpaper": "Wallpaper",
-	"wrongSaveSize": "Warning: The size of the save\ndoesn't match the size of the\ncurrent gamecard! Write stopped.",
+	"warning": "Warning!",
+	"wrongSaveCard": "The size of the save\ndoesn't match the size of the\ncurrent gamecard!\nWrite stopped.",
+	"wrongSaveCart": "The type of the save\ndoesn't match the type of the\ncurrent cartridge!\nWrite stopped.",
 	"yes": "Yes"
 }

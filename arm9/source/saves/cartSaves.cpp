@@ -131,6 +131,8 @@ bool restoreSlot2(void) {
 			fclose(file);
 			return 1;
 		}
+	} else {
+		Lang::get("wrongSaveCart");
 	}
 	return 0;
 }

@@ -6,6 +6,7 @@
 #include "fileBrowse.hpp"
 #include "flashcard.hpp"
 #include "graphics.hpp"
+#include "gui.hpp"
 #include "input.hpp"
 #include "lang.hpp"
 #include "loader.hpp"
@@ -180,7 +181,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				char str[PATH_MAX];
 				snprintf(str, sizeof(str), Lang::get("dumpedTo").c_str(), path);
 
-				Input::prompt(str, Lang::get("ok"));
+				Gui::prompt(str, Lang::get("ok"));
 
 				drawAMenuButtons(buttons, buttonMode);
 				setSpriteVisibility(arrowID, false, true);
@@ -302,7 +303,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				char str[PATH_MAX];
 				snprintf(str, sizeof(str), Lang::get("dumpedTo").c_str(), path);
 
-				Input::prompt(str, Lang::get("ok"));
+				Gui::prompt(str, Lang::get("ok"));
 
 				drawAMenuButtons(buttons, buttonMode);
 				setSpriteVisibility(arrowID, false, true);
