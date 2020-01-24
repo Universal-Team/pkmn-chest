@@ -12,7 +12,7 @@ pr:
 name:  $[format('{0:yyyyMMdd\-HHmmss}', pipeline.startTime)]
 
 pool:
-  vmImage: 'macOS-10.13'
+  vmImage: 'macOS-latest'
 
 variables:
   CURRENT_DATE: $[format('{0:yyyyMMdd\-HHmmss}', pipeline.startTime)]
