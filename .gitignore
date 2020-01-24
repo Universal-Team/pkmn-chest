@@ -4,6 +4,7 @@
 *.nds
 *.elf
 *.gfx
+*.msl
 graphics/bmp2ds
 
 *.DS_Store

@@ -4,9 +4,8 @@
 
 namespace Sound {
 	extern mm_sound_effect click, back;
-	void init(void);
+	void load(const char *path);
 	void play(mm_sound_effect &sound);
-	void playBgm(int song);
 }
 
 

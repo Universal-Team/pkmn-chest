@@ -36,7 +36,7 @@ std::vector<Label> textChestFile {
 	{12, 80, "change"}, // Change
 };
 
-const std::vector<std::string> songs = {"off", "center1", "center4", "center5", "twinleafTown", "elmLab", "oakLab", "gameCorner"};
+std::vector<std::string> songs = {"off", "center1", "center4", "center5", "twinleafTown", "elmLab", "oakLab", "gameCorner", "theme"};
 
 std::vector<std::string> optionsText;
 
@@ -287,11 +287,21 @@ void configMenu(void) {
 					if(pressed & KEY_LEFT) {
 						if(Config::getInt("music") > 0)	Config::setInt("music", Config::getInt("music")-1);
 						else	Config::setInt("music", songs.size()-1);
-					} else {
+					} else if(pressed & KEY_RIGHT) {
 						if(Config::getInt("music") < (int)songs.size()-1)	Config::setInt("music", Config::getInt("music")+1);
 						else	Config::setInt("music", 0);
+					} else {
+						std::vector<std::string> names;
+						for(auto str : songs) {
+							names.push_back(Lang::get(str));
+						}
+						Config::setInt("music", selectItem(Config::getInt("music"), 0, names.size(), names));
 					}
-					Sound::playBgm(Config::getInt("music"));
+					if(Config::getInt("music") == (int)songs.size()-1) {
+						Sound::load((Config::getString("themeDir")+"/sound.msl").c_str());
+					} else {
+						Sound::load(("nitro:/sound/"+songs[Config::getInt("music")]+".msl").c_str());
+					}
 					break;
 				} case 5: { // Sound FX
 					Config::setBool("playSfx", !Config::getBool("playSfx"));
@@ -314,6 +324,9 @@ void configMenu(void) {
 						Colors::load();
 						loadGraphics();
 						loadFont();
+						if(Config::getInt("music") == (int)songs.size()-1) {
+							Sound::load((Config::getString("themeDir")+"/sound.msl").c_str());
+						}
 					}
 					chdir(startPath);
 					// Clear text

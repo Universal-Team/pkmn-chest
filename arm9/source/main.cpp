@@ -14,6 +14,8 @@
 #include "nitrofs.h"
 #include "sound.hpp"
 
+extern std::vector<std::string> songs;
+
 int main(int argc, char **argv) {
 	initGraphics();
 	keysSetRepeat(25,5);
@@ -72,7 +74,12 @@ int main(int argc, char **argv) {
 	Lang::load(Config::getLang("lang"));
 	printTextCentered(Lang::get("loading"), 0, 32, false, true);
 
-	Sound::init();
+	if(Config::getInt("music") == (int)songs.size()-1) {
+		Sound::load((Config::getString("themeDir")+"/sound.msl").c_str());
+	} else {
+		Sound::load(("nitro:/sound/"+songs[Config::getInt("music")]+".msl").c_str());
+	}
+
 	Banks::init();
 	initSprites();
 	loadGraphics();
