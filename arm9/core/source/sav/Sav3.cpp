@@ -342,6 +342,7 @@ u8 Sav3::badges(void) const
             break;
         case Game::RS:
             startFlag = 0x807;
+            break;
         case Game::E:
             startFlag = 0x867;
         default:

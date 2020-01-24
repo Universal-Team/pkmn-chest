@@ -38,7 +38,7 @@ void loadFont(void);
  * Loads a .gfx image into an Image struct
  * std::string path is the path to the .gfx file
  */
-Image loadImage(std::string path);
+Image loadImage(const std::string &path);
 
 /*
  * Draws an image to the screen from an Image

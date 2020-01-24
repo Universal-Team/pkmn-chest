@@ -14,10 +14,9 @@ bool loadSave(std::string savePath) {
 	save = nullptr;
 	saveFileName = savePath;
 	FILE* in = fopen(savePath.c_str(), "rb");
-	u32 size;
 	if(in) {
 		fseek(in, 0, SEEK_END);
-		size = ftell(in);
+		u32 size = ftell(in);
 		fseek(in, 0, SEEK_SET);
 		std::shared_ptr<u8[]> saveData = std::shared_ptr<u8[]>(new u8[size]);
 		fread(saveData.get(), 1, size, in);

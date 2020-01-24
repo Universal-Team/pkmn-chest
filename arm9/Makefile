@@ -25,14 +25,12 @@ BUILD		:=	build
 SOURCES		:=	source \
 				core/source core/source/i18n core/source/personal core/source/pkx core/source/sav core/source/utils core/source/wcx \
 				source/graphics \
-				source/lang \
 				source/menus \
 				source/saves \
 				source/utils
 INCLUDES	:=	include \
 				core/include core/include/i18n core/include/personal core/include/pkx core/include/sav core/include/utils core/include/wcx \
 				include/graphics \
-				include/lang \
 				include/menus \
 				include/saves \
 				include/utils
@@ -151,3 +149,8 @@ soundbank.bin : $(AUDIOFILES)
 #---------------------------------------------------------------------------------------
 endif
 #---------------------------------------------------------------------------------------
+
+cppcheck:
+	@rm -f ../cppcheck.log
+	@cppcheck . --enable=all $(INCLUDE) -UJSON_CATCH_USER -U_Check_return_ -U_MSC_VER -U_Ret_notnull_ -U__INTEL_COMPILER -U__PGI -U__SUNPRO_CC -UJSON_INTERNAL_CATCH_USER -UJSON_THROW_USER -UJSON_TRY_USER -U__IBMCPP__ -U__SUNPRO_CC -D__GNUC__=9 -D__GNUC_MINOR__=1 -DNULL=nullptr --force 2> ../cppcheck.log
+	@echo build/cppcheck.log file created...

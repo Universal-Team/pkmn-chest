@@ -111,7 +111,7 @@ void selectMoves(std::shared_ptr<PKFilter> &filter) {
 	}
 }
 
-void drawFilterMenu(std::shared_ptr<PKFilter> &filter) {
+void drawFilterMenu(const std::shared_ptr<PKFilter> &filter) {
 	// Clear screen
 	drawImageDMA(0, 0, listBg, false, false);
 	printText(Lang::get("filter"), 4, 0, false, false);

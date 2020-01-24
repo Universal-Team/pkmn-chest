@@ -91,7 +91,7 @@ void dumpSlot2(void) {
 bool restoreSlot2(void) {
 	// Check that its the right save type
 	if(isCorrectType()) {
-		FILE *file = fopen(cartSave, "wb");
+		FILE *file = fopen(cartSave, "rb");
 		if(file) {
 			// Draw progress bar outline
 			drawOutline(5, 39, 247, 18, DARKERER_GRAY, false, true);
