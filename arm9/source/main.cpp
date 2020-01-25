@@ -74,10 +74,10 @@ int main(int argc, char **argv) {
 	Lang::load(Config::getLang("lang"));
 	printTextCentered(Lang::get("loading"), 0, 32, false, true);
 
-	if(Config::getInt("music") == (int)songs.size()-1) {
+	if(Config::getString("music") == "theme") {
 		Sound::load((Config::getString("themeDir")+"/sound.msl").c_str());
 	} else {
-		Sound::load(("nitro:/sound/"+songs[Config::getInt("music")]+".msl").c_str());
+		Sound::load(("nitro:/sound/"+Config::getString("music")+".msl").c_str());
 	}
 
 	Banks::init();

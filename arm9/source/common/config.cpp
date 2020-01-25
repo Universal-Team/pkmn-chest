@@ -40,7 +40,7 @@ void Config::save() {
 }
 
 bool Config::getBool(const std::string &key) {
-	if(!configJson.contains(key)) {
+	if(!configJson.contains(key) || !configJson[key].is_boolean()) {
 		return false;
 	}
 	return configJson.at(key).get_ref<const bool&>();
@@ -50,7 +50,7 @@ void Config::setBool(const std::string &key, bool v) {
 }
 
 int Config::getInt(const std::string &key) {
-	if(!configJson.contains(key)) {
+	if(!configJson.contains(key) || !configJson[key].is_number()) {
 		return 0;
 	}
 	return configJson.at(key).get_ref<const int64_t&>();
@@ -60,7 +60,7 @@ void Config::setInt(const std::string &key, int v) {
 }
 
 std::string Config::getString(const std::string &key) {
-	if(!configJson.contains(key)) {
+	if(!configJson.contains(key) || !configJson[key].is_string()) {
 		return "";
 	}
 	return configJson.at(key).get_ref<const std::string&>();
@@ -70,7 +70,7 @@ void Config::setString(const std::string &key, const std::string &v) {
 }
 
 int Config::getLang(const std::string &key) {
-	if(!configJson.contains(key)) {
+	if(!configJson.contains(key) || !configJson[key].is_number()) {
 		return sysLang();
 	}
 	return configJson.at(key).get_ref<const int64_t&>();

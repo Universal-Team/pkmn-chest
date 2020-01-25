@@ -3,12 +3,12 @@ OUT			:=	../nitrofiles/sound
 
 WAVFILES	:=	$(foreach dir,$(notdir $(wildcard $(MUSIC)/*.wav)),$(MUSIC)/$(dir))
 MODFILES	:=	$(foreach dir,$(notdir $(wildcard $(MUSIC)/*.mod)),$(MUSIC)/$(dir))
-MODFILES	:=	$(foreach dir,$(notdir $(wildcard $(MUSIC)/*.s3m)),$(MUSIC)/$(dir))
+MODFILES	+=	$(foreach dir,$(notdir $(wildcard $(MUSIC)/*.s3m)),$(MUSIC)/$(dir))
 MODFILES	+=	$(foreach dir,$(notdir $(wildcard $(MUSIC)/*.it)),$(MUSIC)/$(dir))
 MODFILES	+=	$(foreach dir,$(notdir $(wildcard $(MUSIC)/*.xm)),$(MUSIC)/$(dir))
 
 TARGETS		:= $(MODFILES:.mod=.msl)
-TARGETS		:= $(MODFILES:.s3m=.msl)
+TARGETS		+= $(MODFILES:.s3m=.msl)
 TARGETS		+= $(MODFILES:.it=.msl)
 TARGETS		+= $(MODFILES:.xm=.msl)
 
