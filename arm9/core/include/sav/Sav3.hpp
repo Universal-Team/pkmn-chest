@@ -22,10 +22,13 @@ protected:
 
     void initialize();
 
+    const u16 CRC32(u8 *data, int start, int length);
+    void setChecksums(void);
+
     static constexpr int SIZE_BLOCK = 0x1000;
     static constexpr int BLOCK_COUNT = 14;
     static constexpr int SIZE_RESERVED = 0x10000; // unpacked box data will start after the save data
-    // const int SIZE_BLOCK_USED = 0xF80;
+    static constexpr int SIZE_BLOCK_USED = 0xF80;
 
     std::array<int, BLOCK_COUNT> blockOrder, blockOfs;
     std::vector<int> seenFlagOffsets;

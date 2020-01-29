@@ -82,10 +82,6 @@ Sav3::Sav3(std::shared_ptr<u8[]> dt) : Sav(dt, 0x20000)
 {
     loadBlocks();
 
-    for(int i=0;i<BLOCK_COUNT;i++) {
-        blockOfs[i] = i;
-    }
-
     // Japanese games are limited to 5 character OT names; any unused characters are 0xFF.
     // 5 for JP, 7 for INT. There's always 1 terminator, thus we can check 0x6-0x7 being 0xFFFF = INT
     // OT name is stored at the top of the first block.
@@ -168,8 +164,52 @@ void Sav3::initialize(void)
     // SeenFlagOffsets = SeenFlagOffsets.Where(z => z >= 0).ToArray(); // TODO: What does this do?
 }
 
-void Sav3::resign(void) {
-    // TODO
+void Sav3::resign(void)
+{
+    // Copy Box data back
+    for (int i = 5; i < BLOCK_COUNT; i++)
+    {
+        int blockIndex = std::find(blockOrder.begin(), blockOrder.end(), i)-blockOrder.begin();
+        if (blockIndex == blockOrder.size()) // block empty
+            continue;
+        memcpy(data.get() + (blockIndex * SIZE_BLOCK) + ABO(), Box.get() + ((i - 5) * 0xF80), chunkLength[i]);
+    }
+
+    setChecksums();
+}
+
+// TODO: Maybe move this elsewhere?
+const u16 Sav3::CRC32(u8 *dt, int start, int length)
+{
+    unsigned int val = 0;
+    for (int i = start; i < start + length; i += 4)
+        val += Endian::convertTo<u32>(&dt[i]);
+    return (u16)(val + (val >> 16));
+}
+
+void Sav3::setChecksums(void)
+{
+    // TODO: Is this working? Everythings's a bad egg
+    for (int i = 0; i < BLOCK_COUNT; i++)
+    {
+        int ofs = ABO() + (i * SIZE_BLOCK);
+        int index = blockOrder[i];
+        if (index == -1)
+            continue;
+        int len = chunkLength[index];
+        u16 chk = CRC32(data.get(), ofs, len);
+        Endian::convertFrom<u16>(&data[ofs + 0xFF6], chk);
+    }
+
+    // Hall of Fame Checksums
+    {
+        u16 chk = CRC32(data.get(), 0x1C000, SIZE_BLOCK_USED);
+        Endian::convertFrom<u16>(&data[0x1CFF4], chk);
+    }
+    {
+        u16 chk = CRC32(data.get(), 0x1D000, SIZE_BLOCK_USED);
+        Endian::convertFrom<u16>(&data[0x1DFF4], chk);
+    }
 }
 
 u32 Sav3::securityKey(void) const
