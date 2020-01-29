@@ -781,7 +781,7 @@ u8 PK3::gender() const
 }
 void PK3::gender(u8 v)
 {
-    PID(PKX::getRandomPID(species(), gender(), version(), nature(), alternativeForm(), abilityBit() ? 2 : 1, PID(), Generation::THREE));
+    PID(PKX::getRandomPID(species(), v, version(), nature(), alternativeForm(), abilityBit() ? 2 : 1, PID(), Generation::THREE));
 }
 
 u16 PK3::alternativeForm() const
