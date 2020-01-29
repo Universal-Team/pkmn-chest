@@ -282,7 +282,7 @@ std::string boxBgPath(bool top, int box) {
 			game = "e";
 			break;
 		case Game::FRLG:
-			game = box < 12 ? "rs" : "lgfr";
+			game = box < 12 ? "rs" : "frlg";
 			break;
 		case Game::DP:
 			game = "dp";

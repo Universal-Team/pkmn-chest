@@ -3,12 +3,12 @@
 
 #include "Sav.hpp"
 #include "personal.hpp"
+#include <array>
 
 class Sav3 : public Sav
 {
 protected:
     bool japanese;
-    Game game;
     int maxSpecies(void) const override { return 386; } // Index 412
     int maxMove(void) const override { return 354; }
     int maxItem(void) const override { return 374; }
@@ -18,21 +18,23 @@ protected:
 
     mutable std::set<int> items, moves, species, abilities, balls;
 
-    int *blockOrder, *blockOfs;
-    std::vector<int> seenFlagOffsets;
+    std::shared_ptr<u8[]> Box; // TODO: Rename this?
 
     void initialize();
 
-    void loadBlocks();
-    int *getBlockOrder(int ofs);
-    int getActiveSaveIndex(int *BlockOrder1, int *BlockOrder2);
-    Game getVersion();
-    const int SIZE_BLOCK = 0x1000;
-    const int BLOCK_COUNT = 14;
-    const int SIZE_RESERVED = 0x10000; // unpacked box data will start after the save data
+    static constexpr int SIZE_BLOCK = 0x1000;
+    static constexpr int BLOCK_COUNT = 14;
+    static constexpr int SIZE_RESERVED = 0x10000; // unpacked box data will start after the save data
     // const int SIZE_BLOCK_USED = 0xF80;
 
-    const u16 chunkLength[14] =
+    std::array<int, BLOCK_COUNT> blockOrder, blockOfs;
+    std::vector<int> seenFlagOffsets;
+
+    const void loadBlocks();
+    static std::array<int, BLOCK_COUNT> getBlockOrder(std::shared_ptr<u8[]> dt, int ofs);
+    const static int getActiveSaveIndex(std::shared_ptr<u8[]> dt, std::array<int, BLOCK_COUNT> &blockOrder1, std::array<int, BLOCK_COUNT> &blockOrder2);
+
+    static constexpr u16 chunkLength[14] =
     {
         0xf2c, // 0 | Small Block (Trainer Info)
         0xf80, // 1 | Large Block Part 1
@@ -50,8 +52,8 @@ protected:
         0x7d0  // D | PC Block 8
     };
 
-    const unsigned int SIZE_STORED = 80;
-    const unsigned int SIZE_PARTY = 100;
+    static constexpr unsigned int SIZE_STORED = 80;
+    static constexpr unsigned int SIZE_PARTY = 100;
 
     int ABO() { return activeSAV * SIZE_BLOCK * 0xE; };
 
@@ -74,17 +76,9 @@ protected:
     bool getSeen(int species) const;
     void setSeen(int species, bool seen);
 
-
-    std::vector<int> validNormalItems = {13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 63, 64, 65, 66, 67, 68, 69, 70, 71, 73, 74, 75, 76, 77, 78, 79, 80, 81, 83, 84, 85, 86, 93, 94, 95, 96, 97, 98, 103, 104, 106, 107, 108, 109, 110, 111, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 254, 255, 256, 257, 258},
-                     validBalls = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
-                     validKeyItemsRS = {259, 260, 261, 262, 263, 264, 265, 266, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288},
-                     validKeyItemsFRLG = {349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374},
-                     validKeyItemsE = {375, 376},
-                     validTMs = {289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346},
-                     validBerries = {133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175};
-
 public:
-    Sav3(std::shared_ptr<u8[]> data, u32 length) : Sav(data, length) {}
+    static Game getVersion(std::shared_ptr<u8[]> dt);
+
     Sav3(std::shared_ptr<u8[]> data);
     virtual ~Sav3() {}
     void resign(void);
@@ -165,7 +159,7 @@ public:
     void item(const Item& item, Pouch pouch, u16 slot) override;
     std::unique_ptr<Item> item(Pouch pouch, u16 slot) const override;
     std::vector<std::pair<Pouch, int>> pouches(void) const override;
-    std::map<Pouch, std::vector<int>> validItems(void) const override;
+    std::map<Pouch, std::vector<int>> validItems(void) const;
     std::string pouchName(Pouch pouch) const override;
 
     u8 formCount(u16 species) const override { return 0; } // TODO: Do this somehow?

@@ -4,82 +4,92 @@
 #include "lang.hpp"
 #include "PK3.hpp"
 #include "utils.hpp"
+#include <algorithm>
 
-void Sav3::loadBlocks()
+const void Sav3::loadBlocks()
 {
-    int *o1 = getBlockOrder(0);
-    if (length > 0x10000)
-    {
-        int *o2 = getBlockOrder(0xE000);
-        activeSAV = getActiveSaveIndex(o1, o2);
-        blockOrder = activeSAV == 0 ? o1 : o2;
-    }
-    else
-    {
-        activeSAV = 0;
-        blockOrder = o1;
-    }
+    std::array<int, BLOCK_COUNT> o1 = getBlockOrder(data, 0);
+    // I removed a length > 0x10000, since length should always be 0x20000 I think that's fine?
+    std::array<int, BLOCK_COUNT> o2 = getBlockOrder(data, 0xE000);
+    activeSAV = getActiveSaveIndex(data, o1, o2);
+    blockOrder = activeSAV == 0 ? o1 : o2;
 
-    blockOfs = new int[BLOCK_COUNT];
     for (int i = 0; i < BLOCK_COUNT; i++)
     {
-        int index = blockOrder[i];
-        blockOfs[i] = index < 0 ? -1 /*was int.MinValue*/ : (index * SIZE_BLOCK) + ABO();
+        int index = std::find(blockOrder.begin(), blockOrder.end(), i)-blockOrder.begin();
+        blockOfs[i] = index == blockOrder.size() ? -1 /*was int.MinValue*/ : (index * SIZE_BLOCK) + ABO();
     }
 }
 
-int *Sav3::getBlockOrder(int ofs)
+auto Sav3::getBlockOrder(std::shared_ptr<u8[]> dt, int ofs) -> std::array<int, BLOCK_COUNT>
 {
-    int *order = new int[BLOCK_COUNT];
+    std::array<int, BLOCK_COUNT> order;
     for (int i = 0; i < BLOCK_COUNT; i++)
-        order[i] = Endian::convertTo<s16>(&data[ofs + (i * SIZE_BLOCK) + 0xFF4]);
+        order[i] = Endian::convertTo<s16>(&dt[ofs + (i * SIZE_BLOCK) + 0xFF4]);
     return order;
 }
 
-int Sav3::getActiveSaveIndex(int *BlockOrder1, int *BlockOrder2)
+const int Sav3::getActiveSaveIndex(std::shared_ptr<u8[]> dt, std::array<int, BLOCK_COUNT> &blockOrder1, std::array<int, BLOCK_COUNT> &blockOrder2)
 {
-    int zeroBlock1 = BlockOrder1[0];
-    int zeroBlock2 = BlockOrder2[0];
-    if (zeroBlock2 < 0)
+    int zeroBlock1 = std::find(blockOrder1.begin(), blockOrder1.end(), 0)-blockOrder1.begin();
+    int zeroBlock2 = std::find(blockOrder2.begin(), blockOrder2.end(), 0)-blockOrder2.begin();
+    if (zeroBlock2 == blockOrder2.size())
         return 0;
-    if (zeroBlock1 < 0)
+    if (zeroBlock1 == blockOrder1.size())
         return 1;
-    u32 count1 = Endian::convertTo<u32>(&data[(zeroBlock1 * SIZE_BLOCK) + 0x0FFC]);
-    u32 count2 = Endian::convertTo<u32>(&data[(zeroBlock2 * SIZE_BLOCK) + 0xEFFC]);
+    u32 count1 = Endian::convertTo<u32>(&dt[(zeroBlock1 * SIZE_BLOCK) + 0x0FFC]);
+    u32 count2 = Endian::convertTo<u32>(&dt[(zeroBlock2 * SIZE_BLOCK) + 0xEFFC]);
     return count1 > count2 ? 0 : 1;
 }
 
-Game Sav3::getVersion()
+Game Sav3::getVersion(std::shared_ptr<u8[]> dt)
 {
-    u32 gameCode = Endian::convertTo<u32>(&data[blockOfs[0] + 0xAC]);
+    // Get block offsets
+    std::array<int, BLOCK_COUNT> o1 = getBlockOrder(dt, 0);
+    std::array<int, BLOCK_COUNT> o2 = getBlockOrder(dt, 0xE000);
+    int activeSAV = getActiveSaveIndex(dt, o1, o2);
+    std::array<int, BLOCK_COUNT> &order = activeSAV == 0 ? o1 : o2;
+
+    int ABO = activeSAV * SIZE_BLOCK * 0xE;
+
+    std::array<int, BLOCK_COUNT> offsets;
+    for (int i = 0; i < BLOCK_COUNT; i++)
+    {
+        int index = order[i];
+        offsets[i] = index < 0 ? -1 /*was int.MinValue*/ : (index * SIZE_BLOCK) + ABO;
+    }
+
+    // Get version
+    u32 gameCode = Endian::convertTo<u32>(&dt[offsets[0] + 0xAC]);
     switch (gameCode)
     {
         case 1: return Game::FRLG; // fixed value
         case 0: return Game::RS; // no battle tower record data
-        // case uint.MaxValue: return GameVersion.Unknown; // what a hack // Is this needed?
         default:
             // Ruby doesn't set data as far down as Emerald.
             // 00 FF 00 00 00 00 00 00 00 FF 00 00 00 00 00 00
             // ^ byte pattern in Emerald saves, is all zero in Ruby/Sapphire as far as I can tell.
             // Some saves have had data @ 0x550
-            if (Endian::convertTo<u64>(&data[blockOfs[0] + 0xEE0]) != 0)
+            if (Endian::convertTo<u64>(&dt[offsets[0] + 0xEE0]) != 0)
                 return Game::E;
-            if (Endian::convertTo<u64>(&data[blockOfs[0] + 0xEE8]) != 0)
+            if (Endian::convertTo<u64>(&dt[offsets[0] + 0xEE8]) != 0)
                 return Game::E;
             return Game::RS;
     }
 }
 
-Sav3::Sav3(std::shared_ptr<u8[]> dt) : Sav3(dt, 0x20000)
+Sav3::Sav3(std::shared_ptr<u8[]> dt) : Sav(dt, 0x20000)
 {
     loadBlocks();
+
+    for(int i=0;i<BLOCK_COUNT;i++) {
+        blockOfs[i] = i;
+    }
 
     // Japanese games are limited to 5 character OT names; any unused characters are 0xFF.
     // 5 for JP, 7 for INT. There's always 1 terminator, thus we can check 0x6-0x7 being 0xFFFF = INT
     // OT name is stored at the top of the first block.
     japanese = Endian::convertTo<s16>(&data[blockOfs[0]+0x6]) == 0;
-
-    game = getVersion();
 
     PokeDex = blockOfs[0] + 0x18;
 
@@ -101,18 +111,16 @@ Sav3::Sav3(std::shared_ptr<u8[]> dt) : Sav3(dt, 0x20000)
 
 void Sav3::initialize(void)
 {
-    // Set up PC data buffer beyond end of save file.
-    Box = length;
-    // TODO: Resize or something
-    // Array.Resize(ref Data, Data.Length + SIZE_RESERVED); // More than enough empty space.
+    // Set up PC data buffer
+    Box = std::shared_ptr<u8[]>(new u8[SIZE_RESERVED]);
 
     // Copy chunk to the allocated location
     for (int i = 5; i < BLOCK_COUNT; i++)
     {
-        int blockIndex = blockOrder[i];
-        if (blockIndex == -1) // block empty
+        int blockIndex = std::find(blockOrder.begin(), blockOrder.end(), i)-blockOrder.begin();
+        if (blockIndex == blockOrder.size()) // block empty
             continue;
-        memcpy((u8*)Box + ((i - 5) * 0xF80), data.get() + (blockIndex * SIZE_BLOCK) + ABO(), chunkLength[i]);
+        memcpy(Box.get() + ((i - 5) * 0xF80), data.get() + (blockIndex * SIZE_BLOCK) + ABO(), chunkLength[i]);
     }
 
     switch (game)
@@ -216,29 +224,29 @@ void Sav3::gender(u8 v)
 
 u8 Sav3::subRegion(void) const
 {
-    return 0; // TODO: Confirm this is unused
+    return 0;
 }
-void Sav3::subRegion(u8)
+void Sav3::subRegion(u8 v)
 {
-    // TODO: Confirm this is unused
+    (void)v;
 }
 
 u8 Sav3::country(void) const
 {
-    return 0; // TODO: Confirm this is unused
+    return 0;
 }
-void Sav3::country(u8)
+void Sav3::country(u8 v)
 {
-    // TODO: Confirm this is unused
+    (void)v;
 }
 
 u8 Sav3::consoleRegion(void) const
 {
-    return 0; // TODO: Confirm this is unused
+    return 0;
 }
-void Sav3::consoleRegion(u8)
+void Sav3::consoleRegion(u8 v)
 {
-    // TODO: Confirm this is unused
+    (void)v;
 }
 
 Language Sav3::language(void) const
@@ -390,16 +398,16 @@ void Sav3::playedSeconds(u8 v)
 
 u8 Sav3::currentBox(void) const
 {
-    return data[Box];
+    return Box[0];
 }
 void Sav3::currentBox(u8 v)
 {
-    data[Box] = v;
+    Box[0] = v;
 }
 
 u32 Sav3::boxOffset(u8 box, u8 slot) const
 {
-    return Box + 4 + (SIZE_STORED * box * 30);
+    return 4 + (SIZE_STORED * box * 30) + (SIZE_STORED * slot);
 }
 
 u32 Sav3::partyOffset(u8 slot) const
@@ -409,35 +417,34 @@ u32 Sav3::partyOffset(u8 slot) const
 
 std::shared_ptr<PKX> Sav3::pkm(u8 slot) const
 {
-    return std::make_shared<PK3>(&data[partyOffset(slot), true]);
+    return std::make_shared<PK3>(&Box[partyOffset(slot), true]);
 }
 std::shared_ptr<PKX> Sav3::pkm(u8 box, u8 slot) const
 {
-    return std::make_shared<PK3>(&data[boxOffset(box, slot)]);
+    return std::make_shared<PK3>(&Box[boxOffset(box, slot)]);
 }
 
 void Sav3::pkm(std::shared_ptr<PKX> pk, u8 slot)
 {
-    // TODO: Not sure why the std::make_unique<PK3> has an error...
-    // if(pk->generation() == Generation::THREE)
-    // {
-    //     u8 buf[SIZE_PARTY] = {0};
-    //     std::copy(pk->rawData(), pk->rawData() + pk->getLength(), buf);
-    //     std::unique_ptr<PK3> pk3 = std::make_unique<PK3>(buf, true, true);
+    if(pk->generation() == Generation::THREE)
+    {
+        u8 buf[SIZE_PARTY] = {0};
+        std::copy(pk->rawData(), pk->rawData() + pk->getLength(), buf);
+        std::unique_ptr<PK3> pk3 = std::make_unique<PK3>(buf, true, true);
 
-    //     if (pk->getLength() != SIZE_PARTY)
-    //     {
-    //         for (int i = 0; i < 6; i++)
-    //         {
-    //             pk3->partyStat(Stat(i), pk3->stat(Stat(i)));
-    //         }
-    //         pk3->partyLevel(pk3->level());
-    //         pk3->partyCurrHP(pk3->stat(Stat::HP));
-    //     }
+        if (pk->getLength() != SIZE_PARTY)
+        {
+            for (int i = 0; i < 6; i++)
+            {
+                pk3->partyStat(Stat(i), pk3->stat(Stat(i)));
+            }
+            pk3->partyLevel(pk3->level());
+            pk3->partyCurrHP(pk3->stat(Stat::HP));
+        }
 
-    //     pk3->encrypt();
-    //     std::copy(pk3->rawData(), pk3->rawData() + pk3->getLength(), &data[partyOffset(slot)]);
-    // }
+        pk3->encrypt();
+        std::copy(pk3->rawData(), pk3->rawData() + pk3->getLength(), &data[partyOffset(slot)]);
+    }
 }
 void Sav3::pkm(std::shared_ptr<PKX> pk, u8 box, u8 slot, bool applyTrade)
 {
@@ -448,7 +455,7 @@ void Sav3::pkm(std::shared_ptr<PKX> pk, u8 box, u8 slot, bool applyTrade)
             trade(pk);
         }
 
-        std::copy(pk->rawData(), pk->rawData() + SIZE_STORED, &data[boxOffset(box, slot)]);
+        std::copy(pk->rawData(), pk->rawData() + SIZE_STORED, &Box[boxOffset(box, slot)]);
     }
 }
 
@@ -472,10 +479,8 @@ bool Sav3::canSetDex(int species)
         return false;
     if (species > maxSpecies())
         return false;
-    // if (game == GameVersion.Invalid) // TODO:? I didn't add invalid game
-    //     return false;
-    // if (blockOfs.Any(z => z < 0))    // TODO: I've got no clue what this means
-    //     return false;
+    if (std::find_if(blockOfs.begin(), blockOfs.end(), [](const int& val){ return val < 0; }) != blockOfs.end())
+        return false;
     return true;
 }
 
@@ -575,24 +580,27 @@ int Sav3::dexCaught(void) const
     return ret;
 }
 
+// Unused
 int Sav3::emptyGiftLocation(void) const
 {
-    // TODO
+    return 0;
 }
 
+// Unused
 std::vector<Sav::giftData> Sav3::currentGifts(void) const
 {
-    // TODO
+    return std::vector<giftData>();
 }
 
+// Unused
 void Sav3::mysteryGift(WCX& wc, int& pos)
 {
-    // TODO
 }
 
+// Unused
 std::unique_ptr<WCX> Sav3::mysteryGift(int pos) const
 {
-    // TODO
+    // TODO: return a null WCX
 }
 
 void Sav3::cryptBoxData(bool crypted)
@@ -602,11 +610,11 @@ void Sav3::cryptBoxData(bool crypted)
 
 std::string Sav3::boxName(u8 box) const
 {   
-    return StringUtils::getString3(data.get(), boxOffset(maxBoxes(), 0) + (box * 9), 9, japanese);
+    return StringUtils::getString3(Box.get(), boxOffset(maxBoxes(), 0) + (box * 9), 9, japanese);
 }
 void Sav3::boxName(u8 box, const std::string &v)
 {
-    return StringUtils::setString3(data.get(), v, boxOffset(maxBoxes(), 0) + (box * 9), 9, japanese);
+    return StringUtils::setString3(Box.get(), v, boxOffset(maxBoxes(), 0) + (box * 9), 9, japanese);
 }
 
 // Note: This is needed for pkmn-chest, but not in PKSM's core currently
@@ -741,33 +749,26 @@ std::vector<std::pair<Sav::Pouch, int>> Sav3::pouches(void) const
     };
 }
 
+// Copy of RS, should this be virtual somehow?
 std::map<Sav::Pouch, std::vector<int>> Sav3::validItems() const
 {
-    std::vector<int> keyItems, pcItems;
+    std::map<Sav::Pouch, std::vector<int>> items = {
+        {NormalItem, {13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 63, 64, 65, 66, 67, 68, 69, 70, 71, 73, 74, 75, 76, 77, 78, 79, 80, 81, 83, 84, 85, 86, 93, 94, 95, 96, 97, 98, 103, 104, 106, 107, 108, 109, 110, 111, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 254, 255, 256, 257, 258}},
+        {Ball, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}},
+        {KeyItem, {259, 260, 261, 262, 263, 264, 265, 266, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288}},
+        {TM, {289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346}},
+        {Berry, {133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175}},
+        {PCItem, {}}
+    };
 
-    switch (game)
-    {
-        case Game::FRLG:
-            keyItems = validKeyItemsRS;
-            keyItems.insert(keyItems.end(), validKeyItemsFRLG.begin(), validKeyItemsFRLG.end());
-            break;
-        case Game::E:
-            keyItems = validKeyItemsRS;
-            keyItems.insert(keyItems.end(), validKeyItemsFRLG.begin(), validKeyItemsFRLG.end());
-            keyItems.insert(keyItems.end(), validKeyItemsE.begin(), validKeyItemsE.end());
-            break;
-        default:
-            keyItems = validKeyItemsRS;
-            break;
-    }
+    // PC can hold any item // TODO: Except maybe the orbs? gotta check PKHeX
+    items[PCItem].insert(items[PCItem].end(), items[NormalItem].begin(), items[NormalItem].end());
+    items[PCItem].insert(items[PCItem].end(), items[Ball].begin(), items[Ball].end());
+    items[PCItem].insert(items[PCItem].end(), items[KeyItem].begin(), items[KeyItem].end());
+    items[PCItem].insert(items[PCItem].end(), items[TM].begin(), items[TM].end());
+    items[PCItem].insert(items[PCItem].end(), items[Berry].begin(), items[Berry].end());
 
-    pcItems.insert(pcItems.begin(), validNormalItems.begin(), validNormalItems.end());
-    pcItems.insert(pcItems.begin(), validBalls.begin(), validBalls.end());
-    pcItems.insert(pcItems.begin(), keyItems.begin(), keyItems.end());
-    pcItems.insert(pcItems.begin(), validTMs.begin(), validTMs.end());
-    pcItems.insert(pcItems.begin(), validBerries.begin(), validBerries.end());
-
-    return {{NormalItem, validNormalItems}, {Ball, validBalls}, {KeyItem, keyItems}, {TM, validTMs}, {Berry, validBerries}, {PCItem, pcItems}};
+    return items;
 }
 
 std::string Sav3::pouchName(Pouch pouch) const

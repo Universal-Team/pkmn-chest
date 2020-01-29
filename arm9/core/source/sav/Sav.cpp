@@ -30,10 +30,13 @@
 #include "SavB2W2.hpp"
 #include "SavBW.hpp"
 #include "SavDP.hpp"
+#include "SavE.hpp"
+#include "SavFRLG.hpp"
 #include "SavHGSS.hpp"
 // #include "SavLGPE.hpp"
 // #include "SavORAS.hpp"
 #include "SavPT.hpp"
+#include "SavRS.hpp"
 // #include "SavSUMO.hpp"
 // #include "SavSWSH.hpp"
 // #include "SavUSUM.hpp"
@@ -72,12 +75,27 @@ std::unique_ptr<Sav> Sav::getSave(std::shared_ptr<u8[]> dt, size_t length)
         case 0x80000:
             return checkDSType(dt);
         case 0x20000:
-            return std::make_unique<Sav3>(dt);
+            return checkGBAType(dt);
         case 0xB8800:
         case 0x100000:
             // return std::make_unique<SavLGPE>(dt);
         case 0x17195E:
             // return std::make_unique<SavSWSH>(dt);
+        default:
+            return std::unique_ptr<Sav>(nullptr);
+    }
+}
+
+std::unique_ptr<Sav> Sav::checkGBAType(std::shared_ptr<u8[]> dt)
+{
+    switch(Sav3::getVersion(dt))
+    {
+        case Game::RS:
+            return std::make_unique<Sav3>(dt);
+        case Game::E:
+            return std::make_unique<Sav3>(dt);
+        case Game::FRLG:
+            return std::make_unique<Sav3>(dt);
         default:
             return std::unique_ptr<Sav>(nullptr);
     }

@@ -79,6 +79,7 @@ public: // Is there a reason this isn't public?
     Game game;
 protected:
     static u16 ccitt16(const u8* buf, u32 len);
+    static std::unique_ptr<Sav> checkGBAType(std::shared_ptr<u8[]> dt);
     static std::unique_ptr<Sav> checkDSType(std::shared_ptr<u8[]> dt);
     static bool validSequence(std::shared_ptr<u8[]> dt, size_t offset);
 
