@@ -272,6 +272,8 @@ int selectItem(int current, std::set<int> validItems, const std::vector<std::str
 		}
 	}
 
+	if(current < 0)	current = 0;
+	else if(current > (int)availableItems.size()-1)	current = availableItems.size()-1;
 	std::string selection = selectItem(current, availableItems);
 
 	for(unsigned int i=0;i<items.size();i++) {
@@ -614,9 +616,11 @@ int selectWallpaper(int currentWallpaper) {
 	for(int y=0;y<4;y++) {
 		for(int x=0;x<6;x++) {
 			Image image = loadImage(boxBgPath(false, (y*6)+x));
-			fillSpriteImageScaled((y*6)+x, false, 32, 0, 0, 32.0f/std::max(image.width, image.height), image);
-			setSpritePosition((y*6)+x, false, (x*40)+12, (y*38)+24);
-			setSpriteVisibility((y*6)+x, false, true);
+			if(!(image.width == 0 || image.height == 0)) {
+				fillSpriteImageScaled((y*6)+x, false, 32, 0, 0, 32.0f/std::max(image.width, image.height), image);
+				setSpritePosition((y*6)+x, false, (x*40)+12, (y*38)+24);
+				setSpriteVisibility((y*6)+x, false, true);
+			}
 		}
 	}
 	updateOam();
@@ -685,6 +689,7 @@ void drawOriginPage(std::shared_ptr<PKX> pkm, std::vector<std::string> &varText)
 		std::to_string(pkm->metYear()+2000),
 		std::to_string(pkm->metMonth()),
 		std::to_string(pkm->metDay()),
+		// TODO: gen 3
 		pkm->gen4() ? (pkm->metLocation() > Lang::locations4.size() ? "" : Lang::locations4[pkm->metLocation()])
 		: (pkm->metLocation() > Lang::locations5.size() ? "" : Lang::locations5[pkm->metLocation()]),
 		Lang::games[pkm->version()],

@@ -3,7 +3,7 @@
 
 #include "Sav3.hpp"
 
-class SavE : Sav3
+class SavE : public Sav3
 {
 public:
     SavE(std::shared_ptr<u8[]> dt);

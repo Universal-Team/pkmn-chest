@@ -254,7 +254,7 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 			if(column == 0) {
 				switch(selection) {
 					case 0: {
-						int num = selectItem(std::max(pkm->species()-1, 0), save->availableSpecies(), Lang::species);
+						int num = selectItem(pkm->species()-1, save->availableSpecies(), Lang::species);
 						if(num > 0) {
 							pkm->species(num);
 							if(!pkm->nicknamed())	pkm->nickname(Lang::species[num]);

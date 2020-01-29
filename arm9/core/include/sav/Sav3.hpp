@@ -151,7 +151,7 @@ public:
     void partyCount(u8 count) override;
 
     int maxBoxes(void) const override { return 14; }
-    size_t maxWondercards(void) const override { return 8; } //TODO
+    size_t maxWondercards(void) const override { return 0; }
     Generation generation(void) const override { return Generation::THREE; }
     const std::set<int>& availableItems(void) const override;
     const std::set<int>& availableMoves(void) const override;

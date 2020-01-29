@@ -16,7 +16,7 @@ const void Sav3::loadBlocks()
 
     for (int i = 0; i < BLOCK_COUNT; i++)
     {
-        int index = std::find(blockOrder.begin(), blockOrder.end(), i)-blockOrder.begin();
+        unsigned int index = std::find(blockOrder.begin(), blockOrder.end(), i)-blockOrder.begin();
         blockOfs[i] = index == blockOrder.size() ? -1 /*was int.MinValue*/ : (index * SIZE_BLOCK) + ABO();
     }
 }
@@ -113,7 +113,7 @@ void Sav3::initialize(void)
     // Copy chunk to the allocated location
     for (int i = 5; i < BLOCK_COUNT; i++)
     {
-        int blockIndex = std::find(blockOrder.begin(), blockOrder.end(), i)-blockOrder.begin();
+        unsigned int blockIndex = std::find(blockOrder.begin(), blockOrder.end(), i)-blockOrder.begin();
         if (blockIndex == blockOrder.size()) // block empty
             continue;
         memcpy(Box.get() + ((i - 5) * 0xF80), data.get() + (blockIndex * SIZE_BLOCK) + ABO(), chunkLength[i]);
@@ -161,7 +161,11 @@ void Sav3::initialize(void)
     // LoadEReaderBerryData();
 
     // Sanity Check SeenFlagOffsets -- early saves may not have block 4 initialized yet
-    // SeenFlagOffsets = SeenFlagOffsets.Where(z => z >= 0).ToArray(); // TODO: What does this do?
+    std::vector<int> seenFlagOffsetsTemp;
+    for(auto seenFlagOffset : seenFlagOffsets) {
+        if(seenFlagOffset >= 0) seenFlagOffsetsTemp.push_back(seenFlagOffset);
+    }
+    seenFlagOffsets = seenFlagOffsetsTemp;
 }
 
 void Sav3::resign(void)
@@ -169,7 +173,7 @@ void Sav3::resign(void)
     // Copy Box data back
     for (int i = 5; i < BLOCK_COUNT; i++)
     {
-        int blockIndex = std::find(blockOrder.begin(), blockOrder.end(), i)-blockOrder.begin();
+        unsigned int blockIndex = std::find(blockOrder.begin(), blockOrder.end(), i)-blockOrder.begin();
         if (blockIndex == blockOrder.size()) // block empty
             continue;
         memcpy(data.get() + (blockIndex * SIZE_BLOCK) + ABO(), Box.get() + ((i - 5) * 0xF80), chunkLength[i]);
@@ -181,7 +185,7 @@ void Sav3::resign(void)
 // TODO: Maybe move this elsewhere?
 const u16 Sav3::CRC32(u8 *dt, int start, int length)
 {
-    unsigned int val = 0;
+    u32 val = 0;
     for (int i = start; i < start + length; i += 4)
         val += Endian::convertTo<u32>(&dt[i]);
     return (u16)(val + (val >> 16));
@@ -189,7 +193,6 @@ const u16 Sav3::CRC32(u8 *dt, int start, int length)
 
 void Sav3::setChecksums(void)
 {
-    // TODO: Is this working? Everythings's a bad egg
     for (int i = 0; i < BLOCK_COUNT; i++)
     {
         int ofs = ABO() + (i * SIZE_BLOCK);
@@ -301,11 +304,11 @@ void Sav3::language(Language v)
 
 std::string Sav3::otName(void) const
 {
-    return StringUtils::getString3(data.get(), blockOfs[0] + 0x10, japanese ? 5 : 7, japanese);
+    return StringUtils::getString3(data.get(), blockOfs[0], japanese ? 5 : 7, japanese);
 }
 void Sav3::otName(const std::string &v)
 {
-    StringUtils::setString3(data.get(), v, blockOfs[0] + 0x10, japanese ? 5 : 7, japanese);
+    StringUtils::setString3(data.get(), v, blockOfs[0], japanese ? 5 : 7, japanese);
 }
 
 u32 Sav3::money(void) const
@@ -313,11 +316,11 @@ u32 Sav3::money(void) const
     switch (game) {
         case Game::RS:
         case Game::E:
-            return Endian::convertTo<u32>(&data[blockOfs[1] + 0x0490]) ^ securityKey();
+            return Endian::convertTo<u32>(&data[blockOfs[1] + 0x490]);// ^ securityKey();
         case Game::FRLG:
-            return Endian::convertTo<u32>(&data[blockOfs[1] + 0x0290]) ^ securityKey();
+            return Endian::convertTo<u32>(&data[blockOfs[1] + 0x290]) ^ securityKey();
         default:
-            return 0;
+            return int(game);
     }
 }
 void Sav3::money(u32 v)
@@ -457,7 +460,7 @@ u32 Sav3::partyOffset(u8 slot) const
 
 std::shared_ptr<PKX> Sav3::pkm(u8 slot) const
 {
-    return std::make_shared<PK3>(&Box[partyOffset(slot), true]);
+    return std::make_shared<PK3>(&data[partyOffset(slot)], true);
 }
 std::shared_ptr<PKX> Sav3::pkm(u8 box, u8 slot) const
 {
@@ -466,7 +469,7 @@ std::shared_ptr<PKX> Sav3::pkm(u8 box, u8 slot) const
 
 void Sav3::pkm(std::shared_ptr<PKX> pk, u8 slot)
 {
-    if(pk->generation() == Generation::THREE)
+    if (pk->generation() == Generation::THREE)
     {
         u8 buf[SIZE_PARTY] = {0};
         std::copy(pk->rawData(), pk->rawData() + pk->getLength(), buf);
@@ -592,7 +595,7 @@ void Sav3::setSeen(int species, bool seen)
     int bit = species - 1;
     int ofs = bit >> 3;
 
-    for(int o : seenFlagOffsets)
+    for (int o : seenFlagOffsets)
         FlagUtil::setFlag(data.get(), o + ofs, bit & 7, seen);
 }
 
@@ -645,7 +648,17 @@ std::unique_ptr<WCX> Sav3::mysteryGift(int pos) const
 
 void Sav3::cryptBoxData(bool crypted)
 {
-    // TODO
+    for (u8 box = 0; box < maxBoxes(); box++)
+    {
+        for (u8 slot = 0; slot < 30; slot++)
+        {
+            std::unique_ptr<PKX> pk3 = std::make_unique<PK3>(&Box[boxOffset(box, slot)], false, true);
+            if (!crypted)
+            {
+                pk3->encrypt();
+            }
+        }
+    }
 }
 
 std::string Sav3::boxName(u8 box) const
@@ -662,13 +675,13 @@ u8 Sav3::boxWallpaper(u8 box) const
 {
     int offset = boxOffset(maxBoxes(), 0);
     offset += (maxBoxes() * 0x9) + box;
-    return data[offset];
+    return Box[offset];
 }
 void Sav3::boxWallpaper(u8 box, u8 v)
 {
     int offset = boxOffset(maxBoxes(), 0);
     offset += (maxBoxes() * 0x9) + box;
-    data[offset] = v;
+    Box[offset] = v;
 }
 
 u8 Sav3::partyCount(void) const
