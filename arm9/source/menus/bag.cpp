@@ -164,7 +164,7 @@ void editBag(void) {
 			setSpriteVisibility(arrowID, false, false);
 			updateOam();
 			if(column == 0) {
-				int num = Input::getInt(999);
+				int num = Input::getInt(save->item(save->pouches()[selectedPouch].first, selection)->maxCount());
 				if(num != -1) {
 					std::unique_ptr<Item> item = save->item(save->pouches()[selectedPouch].first, selection);
 					item->count(num);

@@ -58,8 +58,6 @@ public:
     virtual operator Item7b(void) const;
     virtual operator Item8(void) const;
 };
-
-// TODO: Make sure this is actually right
 class Item3 : public Item
 {
 private:

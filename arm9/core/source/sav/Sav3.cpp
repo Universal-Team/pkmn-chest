@@ -191,11 +191,11 @@ void Sav3::SID(u16 v)
 
 u8 Sav3::version(void) const
 {
-    // TODO
+    return game == Game::RS ? 1 : game == Game::E ? 3 : 4;
 }
-void Sav3::version(u8)
+void Sav3::version(u8 v)
 {
-    // TODO
+    (void)v;
 }
 
 u8 Sav3::gender(void) const
@@ -683,7 +683,6 @@ const std::set<int>& Sav3::availableBalls(void) const
 
 void Sav3::item(const Item& item, Pouch pouch, u16 slot)
 {
-    // TODO: Make sure those are actually the right offsets
     Item3 inject = (Item3)item;
     if(pouch != Pouch::PCItem)
         inject.count(inject.count() ^ (u16)securityKey());
@@ -714,7 +713,6 @@ void Sav3::item(const Item& item, Pouch pouch, u16 slot)
 }
 std::unique_ptr<Item> Sav3::item(Pouch pouch, u16 slot) const
 {
-    // TODO: Make sure those are actually the right offsets
     switch (pouch)
     {
         case NormalItem:

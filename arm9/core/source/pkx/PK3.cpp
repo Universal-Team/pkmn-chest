@@ -339,7 +339,7 @@ u32 PK3::experience(void) const
 }
 void PK3::experience(u32 v)
 {
-    Endian::convertFrom<u16>(data + 0x24, v);
+    Endian::convertFrom<u32>(data + 0x24, v);
 }
 
 u8 PK3::PPUp(u8 move) const
@@ -762,7 +762,7 @@ u8 PK3::nature() const
 }
 void PK3::nature(u8 v)
 {
-    PID(PKX::getRandomPID(species(), gender(), version(), nature(), alternativeForm(), abilityBit() ? 2 : 1, PID(), Generation::THREE));
+    PID(PKX::getRandomPID(species(), gender(), version(), v, alternativeForm(), abilityBit() ? 2 : 1, PID(), Generation::THREE));
 }
 
 u8 PK3::gender() const
