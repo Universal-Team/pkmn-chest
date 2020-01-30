@@ -77,17 +77,6 @@ Language pkmLang(void) {
 	}
 }
 
-void resetPokemonSpritesPos(void) {
-	// Reset Pokémon sprite positions
-	for(int y=0;y<5;y++) {
-		for(int x=0;x<6;x++) {
-			setSpritePosition((y*6)+x, false, 8+(x*24), 32+(y*24));
-			setSpritePriority((y*6)+x, false, 3);
-			setSpriteVisibility((y*6)+x, false, false);
-		}
-	}
-}
-
 void drawMiniBoxes(int currentBox) {
 	if(currentBox < 0)	currentBox = (topScreen ? Banks::bank->boxes()-1 : save->maxBoxes()-1)+currentBox;
 	// Clear text

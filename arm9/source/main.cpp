@@ -94,7 +94,6 @@ int main(int argc, char **argv) {
 		// Decrypt the box data
 		save->cryptBoxData(true);
 
-		drawBoxScreen();
 		manageBoxes();
 	}
 

@@ -47,6 +47,9 @@ int getPokemonIndex(int species, int alternativeForm = 0, int gender = 0, bool e
  */
 Image loadPokemonSprite(int dexNo);
 
+// Resets the Pokémon sprites to their positions for the box
+void resetPokemonSpritesPos(void);
+
 /*
  * Fills the arrow sprite with the desired color
  * int arrowMode is the desired color, 0 = red, 1 = blue, 2 = yellow
