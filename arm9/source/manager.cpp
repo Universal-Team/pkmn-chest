@@ -323,7 +323,7 @@ void drawBox(bool top) {
 	updateOam();
 
 	// Draw box image
-	drawImage(5, (save->generation() == Generation::THREE && !top) ? 40 : 15, bankBox, top, false);
+	drawImage(5, 15, bankBox, top, false);
 	// TODO: Add top bar for gen 3, it has additional palettes so it has to be split
 
 	// Print box name

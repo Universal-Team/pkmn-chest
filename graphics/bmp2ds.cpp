@@ -4,8 +4,8 @@
 #include <vector>
 
 struct Image {
-	uint16_t height;
-	uint16_t width;
+	uint32_t height;
+	uint32_t width;
 	std::vector<uint8_t> bitmap;
 	std::vector<uint16_t> palette;
 };
@@ -16,24 +16,27 @@ Image loadBmp16(std::string path, int paletteOffset, int paletteCount) {
 
 	if(file) {
 		// Get width and height on image
-		char buffer[4];
-		fseek(file, 0x12, SEEK_SET); // Width
-		fread(buffer, 4, 1, file);
-		image.width = *(int*)&buffer[0];
-		fseek(file, 0x16, SEEK_SET); // Height
-		fread(buffer, 4, 1, file);
-		image.height = *(int*)&buffer[0];
+		fseek(file, 0x12, SEEK_SET);
+		fread(&image.width, 4, 1, file); // Width
+		fread(&image.height, 4, 1, file); // Height
+		fseek(file, 2, SEEK_CUR); // Skip color planes
+		uint16_t bitDepth;
+		fread(&bitDepth, 2, 1, file); // Bit depth
+		uint32_t numColors;
+		fseek(file, 0x2E, SEEK_SET); // Skip to palette count
+		fread(&numColors, 4, 1, file); // Palette count
+		if(numColors == 0)	numColors = pow(2, bitDepth);
 
 		// Load palette
-		uint32_t palTemp[16];
-		image.palette = std::vector<uint16_t>(16);
+		uint32_t palTemp[numColors];
+		image.palette = std::vector<uint16_t>(numColors);
 		fseek(file, 0x0E, SEEK_SET);
 		fseek(file, (uint8_t)fgetc(file)-2, SEEK_CUR); // Seek to palette start location
-		fread(palTemp, 4, 16, file);
+		fread(palTemp, 4, numColors, file);
 		if(palTemp[0] == 0) { // To allow blank palette (use whatever's there) images 
 			image.palette.resize(0);
 		} else {
-			for(int i=0;i<16;i++) {
+			for(int i=0;i<numColors;i++) {
 				int r = round((((palTemp[i]>>24)&0xff)*31)/255.0);
 				int g = round((((palTemp[i]>>16)&0xff)*31)/255.0);
 				int b = round((((palTemp[i]>>8)&0xff)*31)/255.0);
@@ -51,26 +54,31 @@ Image loadBmp16(std::string path, int paletteOffset, int paletteCount) {
 		// }
 		// printf("\n");
 
-		int rowWidth = image.width;
-		while(rowWidth%8)	rowWidth++;
+		int ppb = 2/(bitDepth/4); // Pixels Per Byte
+		int rowWidth = ((bitDepth*image.width+31)/32)*4;
 
 		// Load pixels
 		fseek(file, 0xA, SEEK_SET); // Get pixel start location
 		int pixelStart = (uint8_t)fgetc(file);
 		// printf("W: %d, rW: %d, H: %d, P: 0x%x\n", image.width, rowWidth, image.height, pixelStart);
 		fseek(file, pixelStart, SEEK_SET); // Seek to pixel start location
-		uint8_t bmpImageBuffer[(image.height*rowWidth)];
-		fread(bmpImageBuffer, 1, (image.height*rowWidth), file);
+		uint8_t bmpImageBuffer[image.height*rowWidth];
+		fread(bmpImageBuffer, 1, image.height*rowWidth, file);
 		for(int y=image.height-1; y>=0; y--) {
-			uint8_t* src = bmpImageBuffer+(y*(rowWidth/2));
-			for(unsigned x=0;x<image.width;x+=2) {
+			// if(ppb == 1)image.bitmap.push_back(0);
+			uint8_t* src = bmpImageBuffer+(y*rowWidth);
+			for(unsigned int x=0;x<image.width;x+=ppb) {
 				uint8_t val = *(src++);
+				if(ppb == 1) {
+					image.bitmap.push_back(val);
+				} else if(ppb == 2) {
 					image.bitmap.push_back(val>>4);  // First nibble
 					// printf("%x", val>>4);
 					if(!(image.width%2 && x == image.width-1)) {
 						image.bitmap.push_back(val&0xF); // Second nibble
 						// printf("%x", val&0xF);
 					}
+				}
 			}
 			// printf("|\n");
 		}
