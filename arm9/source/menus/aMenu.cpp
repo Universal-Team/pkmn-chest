@@ -232,6 +232,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				drawBox(topScreen);
 			} else if(menuSelection == 2) { // Swap
 				std::vector<std::shared_ptr<PKX>> tempBox;
+				bool shouldCopy[30];
 				// Copy save Pokémon to a buffer
 				for(int i=0;i<30;i++) {
 					if(save->pkm(currentSaveBox, i)->species() != 0)
@@ -243,16 +244,25 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				// Copy bank Pokémon to the save and add it to the Pokédex
 				for(int i=0;i<30;i++) {
 					if(Banks::bank->pkm(currentBankBox, i)->species() != 0) {
-						save->pkm(Banks::bank->pkm(currentBankBox, i), currentSaveBox, i, false);
-						save->dex(Banks::bank->pkm(currentBankBox, i));
+						if(save->availableSpecies().count(Banks::bank->pkm(currentBankBox, i)->species()) != 0) {
+							save->pkm(save->transfer(Banks::bank->pkm(currentBankBox, i)), currentSaveBox, i, false);
+							save->dex(Banks::bank->pkm(currentBankBox, i));
+							shouldCopy[i] = true;
+						} else {
+							shouldCopy[i] = false;
+						}
 					} else {
 						save->pkm(save->emptyPkm(), currentSaveBox, i, false);
+						shouldCopy[i] = true;
 					}
 				}
 
 				// Copy the save Pokémon from their buffer to the bank
-				for(int i=0;i<30;i++)
-					Banks::bank->pkm(tempBox[i], currentBankBox, i);
+				for(int i=0;i<30;i++) {
+					if(shouldCopy[i]) {
+						Banks::bank->pkm(tempBox[i], currentBankBox, i);
+					}
+				}
 
 				// Update the boxes
 				drawBox(true);

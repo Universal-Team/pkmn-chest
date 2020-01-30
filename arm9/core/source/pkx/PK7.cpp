@@ -895,6 +895,21 @@ u16 PK7::stat(Stat stat) const
     return calc * mult / 10;
 }
 
+std::shared_ptr<PKX> PK7::convertToG3(Sav& save) const
+{
+    if (auto pk6 = convertToG6(save))
+    {
+        if (auto pk5 = pk6->convertToG5(save))
+        {
+            if (auto pk4 = pk5->convertToG4(save))
+            {
+                return pk4->convertToG3(save);
+            }
+        }
+    }
+    return nullptr;
+}
+
 std::shared_ptr<PKX> PK7::convertToG4(Sav& save) const
 {
     if (auto pk6 = convertToG6(save))

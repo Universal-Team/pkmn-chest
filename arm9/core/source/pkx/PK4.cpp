@@ -24,10 +24,12 @@
  *         reasonable ways as different from the original version.
  */
 
+#include "PK3.hpp"
 #include "PK4.hpp"
 #include "PK5.hpp"
 #include "Sav.hpp"
 #include "endian.hpp"
+#include "lang.hpp"
 #include "utils.hpp"
 #include <algorithm>
 
@@ -848,6 +850,134 @@ void PK4::partyLevel(u8 v)
     {
         *(data + 0x8C) = v;
     }
+}
+
+std::shared_ptr<PKX> PK4::convertToG3(Sav& save) const
+{
+    // TODO: Not sure how to do ribbons or if trash bytes are needed
+    // static constexpr std::array<std::array<u8, 18>, 7> trashBytes = {{
+    //     {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+    //     {0x18, 0x20, 0x0D, 0x02, 0x42, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x48, 0xA1, 0x0C, 0x02, 0xE0, 0xFF},
+    //     {0x74, 0x20, 0x0D, 0x02, 0x42, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xA4, 0xA1, 0x0C, 0x02, 0xE0, 0xFF},
+    //     {0x54, 0x20, 0x0D, 0x02, 0x42, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x84, 0xA1, 0x0C, 0x02, 0xE0, 0xFF},
+    //     {0x74, 0x20, 0x0D, 0x02, 0x42, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xA4, 0xA1, 0x0C, 0x02, 0xE0, 0xFF},
+    //     {}, // Unused
+    //     {0x74, 0x20, 0x0D, 0x02, 0x42, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xA4, 0xA1, 0x0C, 0x02, 0xE0, 0xFF},
+    // }};
+
+    time_t t              = time(NULL);
+    struct tm* timeStruct = gmtime((const time_t*)&t);
+
+    std::shared_ptr<PKX> pk3 = std::make_shared<PK3>();
+
+    pk3->PID(PID());
+    pk3->species(species());
+    pk3->TID(TID());
+    pk3->SID(SID());
+    pk3->experience(egg() ? expTable(5, expType()) : experience());
+    pk3->gender(gender());
+    pk3->alternativeForm(alternativeForm());
+    pk3->egg(false);
+    pk3->otFriendship(70);
+    pk3->markValue(markValue());
+    pk3->language(language());
+    pk3->ev(Stat::HP, ev(Stat::HP));
+    pk3->ev(Stat::ATK, ev(Stat::ATK));
+    pk3->ev(Stat::DEF, ev(Stat::DEF));
+    pk3->ev(Stat::SPD, ev(Stat::SPD));
+    pk3->ev(Stat::SPATK, ev(Stat::SPATK));
+    pk3->ev(Stat::SPDEF, ev(Stat::SPDEF));
+    pk3->contest(0, contest(0));
+    pk3->contest(1, contest(1));
+    pk3->contest(2, contest(2));
+    pk3->contest(3, contest(3));
+    pk3->contest(4, contest(4));
+    pk3->contest(5, contest(5));
+    pk3->move(0, move(0));
+    pk3->move(1, move(1));
+    pk3->move(2, move(2));
+    pk3->move(3, move(3));
+    pk3->PPUp(0, PPUp(0));
+    pk3->PPUp(1, PPUp(1));
+    pk3->PPUp(2, PPUp(2));
+    pk3->PPUp(3, PPUp(3));
+    pk3->iv(Stat::HP, iv(Stat::HP));
+    pk3->iv(Stat::ATK, iv(Stat::ATK));
+    pk3->iv(Stat::DEF, iv(Stat::DEF));
+    pk3->iv(Stat::SPD, iv(Stat::SPD));
+    pk3->iv(Stat::SPATK, iv(Stat::SPATK));
+    pk3->iv(Stat::SPDEF, iv(Stat::SPDEF));
+    pk3->ability(ability());
+    pk3->version(version());
+    pk3->ball(ball());
+    pk3->pkrsStrain(pkrsStrain());
+    pk3->pkrsDays(pkrsDays());
+    pk3->otGender(otGender());
+    pk3->metYear(timeStruct->tm_year - 100);
+    pk3->metMonth(timeStruct->tm_mon + 1);
+    pk3->metDay(timeStruct->tm_mday);
+    pk3->metLevel(level());
+    pk3->metLocation(0xFD); // (gift egg) // Not sure if this is the best, it seemed the most generic
+    pk3->fatefulEncounter(fatefulEncounter());
+
+    // for (u8 rib = 0; rib < 12; rib++)
+    // {
+    //     pk4->ribbon(6 + (rib + 4) / 8, rib + 4, ribbon(1 + (rib + 7) / 8, rib + 7) ? 1 : 0);
+    // }
+
+    // Contest ribbons
+    // for (u8 contest = 0; contest < 5; contest++)
+    // {
+    //     u8 contestCount = contestRibbonCount(contest);
+    //     if (contestCount > 0)
+    //     {
+    //         pk4->ribbon(4 + contest / 2, (contest % 2) * 4, 1);
+    //     }
+    //     if (contestCount > 1)
+    //     {
+    //         pk4->ribbon(4 + contest / 2, (contest % 2) * 4 + 1, 1);
+    //     }
+    //     if (contestCount > 2)
+    //     {
+    //         pk4->ribbon(4 + contest / 2, (contest % 2) * 4 + 2, 1);
+    //     }
+    //     if (contestCount > 3)
+    //     {
+    //         pk4->ribbon(4 + contest / 2, (contest % 2) * 4 + 3, 1);
+    //     }
+    // }
+
+    // Yay trash bytes
+    // if (u8(language()) - 1U < trashBytes.size())
+    // {
+    //     auto& trash = trashBytes[u8(language()) - 1];
+    //     std::copy(trash.begin(), trash.end(), pk3->rawData() + 0x48 + 4);
+    // }
+
+    std::string name = Lang::species[species()];
+    pk3->nickname((egg() || !nicknamed()) ? StringUtils::toUpper(name) : nickname());
+
+    // Copy nickname trash into OT name
+    // std::copy(pk3->rawData() + 0x48, pk3->rawData() + 0x48 + 0x10, pk3->rawData() + 0x68);
+    pk3->otName(otName());
+
+    pk3->heldItem(heldItem());
+
+    // Remove HM
+    u16 moves[4] = {move(0), move(1), move(2), move(3)};
+
+    for (int i = 0; i < 4; i++)
+    {
+        if (std::find(banned, banned + 8, moves[i]) != banned + 8)
+        {
+            moves[i] = 0;
+        }
+        pk3->move(i, moves[i]);
+    }
+    pk3->fixMoves();
+
+    pk3->refreshChecksum();
+    return pk3;
 }
 
 std::shared_ptr<PKX> PK4::convertToG5(Sav& save) const

@@ -44,7 +44,7 @@ public:
     PK4(u8* dt, bool party = false, bool directAccess = false);
     virtual ~PK4() {}
 
-    // std::shared_ptr<PKX> convertToG3(Sav& save) const override;
+    std::shared_ptr<PKX> convertToG3(Sav& save) const override;
     std::shared_ptr<PKX> convertToG5(Sav& save) const override;
     std::shared_ptr<PKX> convertToG6(Sav& save) const override;
     std::shared_ptr<PKX> convertToG7(Sav& save) const override;
