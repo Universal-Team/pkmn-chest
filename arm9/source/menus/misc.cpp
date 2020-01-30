@@ -683,15 +683,27 @@ void drawOriginPage(std::shared_ptr<PKX> pkm, std::vector<std::string> &varText)
 	// Clear screen
 	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 
+	std::vector<std::string> *locations;
+	switch(pkm->generation()) {
+		case Generation::THREE:
+			locations = &Lang::locations3;
+			break;
+		case Generation::FOUR:
+			locations = &Lang::locations4;
+			break;
+		default:
+		case Generation::FIVE:
+			locations = &Lang::locations5;
+			break;
+	}
+
 	// Print text
 	varText = { 
 		std::to_string(pkm->metLevel()),
 		std::to_string(pkm->metYear()+2000),
 		std::to_string(pkm->metMonth()),
 		std::to_string(pkm->metDay()),
-		// TODO: gen 3
-		pkm->gen4() ? (pkm->metLocation() > Lang::locations4.size() ? "" : Lang::locations4[pkm->metLocation()])
-		: (pkm->metLocation() > Lang::locations5.size() ? "" : Lang::locations5[pkm->metLocation()]),
+		(pkm->metLocation() > locations->size() ? "" : (*locations)[pkm->metLocation()]),
 		Lang::games[pkm->version()],
 	};
 	printText(Lang::get("origin"), 4, 0, false, true);

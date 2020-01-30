@@ -3,6 +3,18 @@
 SavRS::SavRS(std::shared_ptr<u8[]> dt) : Sav3(dt)
 {
     game = Game::RS;
+
+    seenFlagOffsets = std::vector<int>({ PokeDex + 0x44, blockOfs[1] + 0x938, blockOfs[4] + 0xC0C });
+
+    OFS_PCItem = blockOfs[1] + 0x0498;
+    OFS_PouchHeldItem = blockOfs[1] + 0x0560;
+    OFS_PouchKeyItem = blockOfs[1] + 0x05B0;
+    OFS_PouchBalls = blockOfs[1] + 0x0600;
+    OFS_PouchTMHM = blockOfs[1] + 0x0640;
+    OFS_PouchBerry = blockOfs[1] + 0x0740;
+    eventFlag = blockOfs[2] + 0x2A0;
+    // EventConst = EventFlag + (EventFlagMax / 8);
+    // DaycareOffset = blockOfs[4] + 0x11C;
 }
 
 std::map<Sav::Pouch, std::vector<int>> SavRS::validItems() const

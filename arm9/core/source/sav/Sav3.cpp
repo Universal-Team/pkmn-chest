@@ -44,7 +44,7 @@ const int Sav3::getActiveSaveIndex(std::shared_ptr<u8[]> dt, std::array<int, BLO
 
 Game Sav3::getVersion(std::shared_ptr<u8[]> dt)
 {
-    // Get block offsets
+    // Get block 0 offset
     std::array<int, BLOCK_COUNT> o1 = getBlockOrder(dt, 0);
     std::array<int, BLOCK_COUNT> o2 = getBlockOrder(dt, 0xE000);
     int activeSAV = getActiveSaveIndex(dt, o1, o2);
@@ -52,15 +52,10 @@ Game Sav3::getVersion(std::shared_ptr<u8[]> dt)
 
     int ABO = activeSAV * SIZE_BLOCK * 0xE;
 
-    std::array<int, BLOCK_COUNT> offsets;
-    for (int i = 0; i < BLOCK_COUNT; i++)
-    {
-        int index = order[i];
-        offsets[i] = index < 0 ? -1 /*was int.MinValue*/ : (index * SIZE_BLOCK) + ABO;
-    }
+    int blockOfs0 = ((std::find(order.begin(), order.end(), 0)-order.begin()) * SIZE_BLOCK) + ABO;
 
     // Get version
-    u32 gameCode = Endian::convertTo<u32>(&dt[offsets[0] + 0xAC]);
+    u32 gameCode = Endian::convertTo<u32>(&dt[blockOfs0 + 0xAC]);
     switch (gameCode)
     {
         case 1: return Game::FRLG; // fixed value
@@ -70,9 +65,9 @@ Game Sav3::getVersion(std::shared_ptr<u8[]> dt)
             // 00 FF 00 00 00 00 00 00 00 FF 00 00 00 00 00 00
             // ^ byte pattern in Emerald saves, is all zero in Ruby/Sapphire as far as I can tell.
             // Some saves have had data @ 0x550
-            if (Endian::convertTo<u64>(&dt[offsets[0] + 0xEE0]) != 0)
+            if (Endian::convertTo<u64>(&dt[blockOfs0 + 0xEE0]) != 0)
                 return Game::E;
-            if (Endian::convertTo<u64>(&dt[offsets[0] + 0xEE8]) != 0)
+            if (Endian::convertTo<u64>(&dt[blockOfs0 + 0xEE8]) != 0)
                 return Game::E;
             return Game::RS;
     }
@@ -89,19 +84,6 @@ Sav3::Sav3(std::shared_ptr<u8[]> dt) : Sav(dt, 0x20000)
 
     PokeDex = blockOfs[0] + 0x18;
 
-    switch (game)
-    {
-        case Game::RS:
-            seenFlagOffsets = std::vector<int>({ PokeDex + 0x44, blockOfs[1] + 0x938, blockOfs[4] + 0xC0C });
-            break;
-        case Game::E:
-            seenFlagOffsets = std::vector<int>({ PokeDex + 0x44, blockOfs[1] + 0x988, blockOfs[4] + 0xCA4 });
-            break;
-        default:
-            seenFlagOffsets = std::vector<int>({ PokeDex + 0x44, blockOfs[1] + 0x5F8, blockOfs[4] + 0xB98 });
-            break;
-    }
-
     initialize();
 }
 
@@ -117,45 +99,6 @@ void Sav3::initialize(void)
         if (blockIndex == blockOrder.size()) // block empty
             continue;
         memcpy(Box.get() + ((i - 5) * 0xF80), data.get() + (blockIndex * SIZE_BLOCK) + ABO(), chunkLength[i]);
-    }
-
-    switch (game)
-    {
-        case Game::RS:
-            OFS_PCItem = blockOfs[1] + 0x0498;
-            OFS_PouchHeldItem = blockOfs[1] + 0x0560;
-            OFS_PouchKeyItem = blockOfs[1] + 0x05B0;
-            OFS_PouchBalls = blockOfs[1] + 0x0600;
-            OFS_PouchTMHM = blockOfs[1] + 0x0640;
-            OFS_PouchBerry = blockOfs[1] + 0x0740;
-            eventFlag = blockOfs[2] + 0x2A0;
-            // EventConst = EventFlag + (EventFlagMax / 8);
-            // DaycareOffset = blockOfs[4] + 0x11C;
-            break;
-        case Game::E:
-            OFS_PCItem = blockOfs[1] + 0x0498;
-            OFS_PouchHeldItem = blockOfs[1] + 0x0560;
-            OFS_PouchKeyItem = blockOfs[1] + 0x05D8;
-            OFS_PouchBalls = blockOfs[1] + 0x0650;
-            OFS_PouchTMHM = blockOfs[1] + 0x0690;
-            OFS_PouchBerry = blockOfs[1] + 0x0790;
-            eventFlag = blockOfs[2] + 0x2F0;
-            // EventConst = EventFlag + (EventFlagMax / 8);
-            // DaycareOffset = blockOfs[4] + 0x1B0;
-            break;
-        case Game::FRLG:
-            OFS_PCItem = blockOfs[1] + 0x0298;
-            OFS_PouchHeldItem = blockOfs[1] + 0x0310;
-            OFS_PouchKeyItem = blockOfs[1] + 0x03B8;
-            OFS_PouchBalls = blockOfs[1] + 0x0430;
-            OFS_PouchTMHM = blockOfs[1] + 0x0464;
-            OFS_PouchBerry = blockOfs[1] + 0x054C;
-            eventFlag = blockOfs[1] + 0xEE0;
-            // EventConst = blockOfs[2] + 0x80;
-            // DaycareOffset = blockOfs[4] + 0x100;
-            break;
-        default:
-            break;
     }
 
     // LoadEReaderBerryData();
@@ -308,7 +251,7 @@ std::string Sav3::otName(void) const
 }
 void Sav3::otName(const std::string &v)
 {
-    StringUtils::setString3(data.get(), v, blockOfs[0], japanese ? 5 : 7, japanese);
+    StringUtils::setString3(data.get(), v, blockOfs[0], japanese ? 5 : 7, japanese, japanese ? 5 : 7, 0xFF);
 }
 
 u32 Sav3::money(void) const
@@ -667,7 +610,7 @@ std::string Sav3::boxName(u8 box) const
 }
 void Sav3::boxName(u8 box, const std::string &v)
 {
-    return StringUtils::setString3(Box.get(), v, boxOffset(maxBoxes(), 0) + (box * 9), 9, japanese);
+    return StringUtils::setString3(Box.get(), v, boxOffset(maxBoxes(), 0) + (box * 9), 8, japanese, 9);
 }
 
 // Note: This is needed for pkmn-chest, but not in PKSM's core currently
@@ -742,26 +685,28 @@ void Sav3::item(const Item& item, Pouch pouch, u16 slot)
 {
     // TODO: Make sure those are actually the right offsets
     Item3 inject = (Item3)item;
+    if(pouch != Pouch::PCItem)
+        inject.count(inject.count() ^ (u16)securityKey());
     auto write   = inject.bytes();
     switch (pouch)
     {
         case NormalItem:
-            std::copy(write.first, write.first + write.second, &data[OFS_PouchHeldItem + slot * 4]);
+            std::copy(write.first, write.first + write.second, &data[OFS_PouchHeldItem + (slot * 4)]);
             break;
         case KeyItem:
-            std::copy(write.first, write.first + write.second, &data[OFS_PouchKeyItem + slot * 4]);
+            std::copy(write.first, write.first + write.second, &data[OFS_PouchKeyItem + (slot * 4)]);
             break;
         case Ball:
-            std::copy(write.first, write.first + write.second, &data[OFS_PouchBalls + slot * 4]);
+            std::copy(write.first, write.first + write.second, &data[OFS_PouchBalls + (slot * 4)]);
             break;
         case TM:
-            std::copy(write.first, write.first + write.second, &data[OFS_PouchTMHM + slot * 4]);
+            std::copy(write.first, write.first + write.second, &data[OFS_PouchTMHM + (slot * 4)]);
             break;
         case Berry:
-            std::copy(write.first, write.first + write.second, &data[OFS_PouchBerry + slot * 4]);
+            std::copy(write.first, write.first + write.second, &data[OFS_PouchBerry + (slot * 4)]);
             break;
         case PCItem:
-            std::copy(write.first, write.first + write.second, &data[OFS_PCItem + slot * 4]);
+            std::copy(write.first, write.first + write.second, &data[OFS_PCItem + (slot * 4)]);
             break;
         default:
             return;
@@ -773,17 +718,17 @@ std::unique_ptr<Item> Sav3::item(Pouch pouch, u16 slot) const
     switch (pouch)
     {
         case NormalItem:
-            return std::make_unique<Item3>(&data[OFS_PouchHeldItem + slot * 4]);
+            return std::make_unique<Item3>(&data[OFS_PouchHeldItem + (slot * 4)], securityKey());
         case KeyItem:
-            return std::make_unique<Item3>(&data[OFS_PouchKeyItem + slot * 4]);
+            return std::make_unique<Item3>(&data[OFS_PouchKeyItem + (slot * 4)], securityKey());
         case Ball:
-            return std::make_unique<Item3>(&data[OFS_PouchBalls + slot * 4]);
+            return std::make_unique<Item3>(&data[OFS_PouchBalls + (slot * 4)], securityKey());
         case TM:
-            return std::make_unique<Item3>(&data[OFS_PouchTMHM + slot * 4]);
+            return std::make_unique<Item3>(&data[OFS_PouchTMHM + (slot * 4)], securityKey());
         case Berry:
-            return std::make_unique<Item3>(&data[OFS_PouchBerry + slot * 4]);
+            return std::make_unique<Item3>(&data[OFS_PouchBerry + (slot * 4)], securityKey());
         case PCItem:
-            return std::make_unique<Item3>(&data[OFS_PCItem + slot * 4]);
+            return std::make_unique<Item3>(&data[OFS_PCItem + (slot * 4)]);
         default:
             return nullptr;
     }

@@ -570,7 +570,7 @@ std::string StringUtils::getString3(const u8* data, int ofs, int len, bool jp)
     return StringUtils::UTF16toUTF8(outString);
 }
 
-void StringUtils::setString3(u8* data, const std::string& v, int ofs, int len, bool jp)
+void StringUtils::setString3(u8* data, const std::string& v, int ofs, int len, bool jp, int padTo, u16 padWith)
 {
     auto& characters   = jp ? G3_JP : G3_EN;
     std::u16string str = StringUtils::UTF8toUTF16(v);
@@ -590,6 +590,12 @@ void StringUtils::setString3(u8* data, const std::string& v, int ofs, int len, b
     }
 
     data[outPos >= (size_t)len ? len - 1 : outPos] = 0xFF;
+
+    while(outPos < padTo)
+    {
+        data[ofs + outPos] = 0xFF;
+        outPos++;
+    }
 }
 
 std::string& StringUtils::toUpper(std::string& in)

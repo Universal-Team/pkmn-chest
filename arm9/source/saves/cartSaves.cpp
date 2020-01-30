@@ -98,6 +98,24 @@ bool restoreSlot2(void) {
 
 			// FLASH - must be opened by register magic, erased and then rewritten
 			// FIXME: currently, you can only write "all or nothing"
+
+			// Erase save
+			*(u8*)0x0A005555 = 0xAA;
+			swiDelay(10);
+			*(u8*)0x0A002AAA = 0x55;
+			swiDelay(10);
+			*(u8*)0x0A005555 = 0x80; // Erase command
+			swiDelay(10);
+			*(u8*)0x0A005555 = 0xAA;
+			swiDelay(10);
+			*(u8*)0x0A002AAA = 0x55;
+			swiDelay(10);
+			*(u8*)0x0A005555 = 0x10; // Erase entire chip
+			swiDelay(10);
+			while (*(u8*)0x0A000000 != 0xFF)
+				swiDelay(10);
+
+			// Write new save
 			for (int bank = 0; bank < 2; bank++) {
 				*(u8*)0x0A005555 = 0xAA;
 				swiDelay(10);
@@ -111,12 +129,12 @@ bool restoreSlot2(void) {
 				u8 *dst = (u8*)0x0A000000;
 				sysSetBusOwners(true, true);
 				for (u32 i = 0; i < 0x10000; i++, dst++) {
-					// we need to wait a few cycles before the hardware reacts!
-					*(u8*)0x0a005555 = 0xaa;
+					// We need to wait a few cycles before the hardware reacts!
+					*(u8*)0x0A005555 = 0xAA;
 					swiDelay(10);
-					*(u8*)0x0a002aaa = 0x55;
+					*(u8*)0x0A002AAA = 0x55;
 					swiDelay(10);
-					*(u8*)0x0a005555 = 0xA0; // write byte command
+					*(u8*)0x0A005555 = 0xA0; // Write byte command
 					swiDelay(10);
 
 					u8 src = fgetc(file);

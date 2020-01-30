@@ -2,16 +2,19 @@
 #include "manager.hpp"
 #include "json.hpp"
 
-std::vector<std::string> Lang::abilities, Lang::games, Lang::items, Lang::locations4, Lang::locations5, Lang::moves, Lang::natures, Lang::species;
+std::vector<std::string> Lang::abilities, Lang::games, Lang::items, Lang::items3, Lang::locations3, Lang::locations4, Lang::locations5, Lang::moves, Lang::natures, Lang::species;
 const std::string langs[] = {"br", "de", "en", "es", "fr", "id", "it", "lt", "pt", "ru", "jp", "ko"};
 nlohmann::json langJson;
 
-void loadToVector(std::string path, std::vector<std::string> &vec) {
+void loadToVector(const std::string &filename, int lang, std::vector<std::string> &vec) {
+	// Check if the language has game info
+	int tempLang = (access(("nitro:/lang/"+langs[lang]+"/"+filename).c_str(), F_OK) == 0) ? lang : Lang::en;
+
 	char* line = NULL;
 	size_t len = 0;
 	vec.clear();
 
-	FILE* in = fopen(path.c_str(), "r");
+	FILE* in = fopen(("nitro:/lang/"+langs[tempLang]+"/"+filename).c_str(), "r");
 	if(in) {
 		while(__getline(&line, &len, in) != -1) {
 			if(line[strlen(line)-1] == '\n')	line[strlen(line)-1] = '\0';
@@ -22,21 +25,20 @@ void loadToVector(std::string path, std::vector<std::string> &vec) {
 }
 
 void Lang::load(int lang) {
-	// Check if the language has game info
-	int tempLang = (access(("nitro:/lang/"+langs[lang]+"/abilities.txt").c_str(), F_OK) == 0) ? lang : Lang::en;
-
 	// Fill vectors from files
-	loadToVector("nitro:/lang/"+langs[tempLang]+"/abilities.txt", Lang::abilities);
-	loadToVector("nitro:/lang/"+langs[tempLang]+"/games.txt", Lang::games);
-	loadToVector("nitro:/lang/"+langs[tempLang]+"/items.txt", Lang::items);
-	loadToVector("nitro:/lang/"+langs[tempLang]+"/locations4.txt", Lang::locations4);
-	loadToVector("nitro:/lang/"+langs[tempLang]+"/locations5.txt", Lang::locations5);
-	loadToVector("nitro:/lang/"+langs[tempLang]+"/moves.txt", Lang::moves);
-	loadToVector("nitro:/lang/"+langs[tempLang]+"/natures.txt", Lang::natures);
-	loadToVector("nitro:/lang/"+langs[tempLang]+"/species.txt", Lang::species);
+	loadToVector("abilities.txt", lang, Lang::abilities);
+	loadToVector("games.txt", lang, Lang::games);
+	loadToVector("items.txt", lang, Lang::items);
+	loadToVector("items3.txt", lang, Lang::items3);
+	loadToVector("locations3.txt", lang, Lang::locations3);
+	loadToVector("locations4.txt", lang, Lang::locations4);
+	loadToVector("locations5.txt", lang, Lang::locations5);
+	loadToVector("moves.txt", lang, Lang::moves);
+	loadToVector("natures.txt", lang, Lang::natures);
+	loadToVector("species.txt", lang, Lang::species);
 
 	// Load types picture
-	tempLang = (access(("nitro:/lang/"+langs[lang]+"/types/0.gfx").c_str(), F_OK) == 0) ? lang : Lang::en;
+	int tempLang = (access(("nitro:/lang/"+langs[lang]+"/types/0.gfx").c_str(), F_OK) == 0) ? lang : Lang::en;
 	types.clear();
 	for(int i=0;i<17;i++) {
 		types.push_back(loadImage("/lang/"+langs[tempLang]+"/types/"+std::to_string(i)+".gfx"));

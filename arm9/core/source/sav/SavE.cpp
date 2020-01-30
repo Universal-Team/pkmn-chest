@@ -3,6 +3,18 @@
 SavE::SavE(std::shared_ptr<u8[]> dt) : Sav3(dt)
 {
     game = Game::E;
+
+    seenFlagOffsets = std::vector<int>({ PokeDex + 0x44, blockOfs[1] + 0x988, blockOfs[4] + 0xCA4 });
+
+    OFS_PCItem = blockOfs[1] + 0x0498;
+    OFS_PouchHeldItem = blockOfs[1] + 0x0560;
+    OFS_PouchKeyItem = blockOfs[1] + 0x05D8;
+    OFS_PouchBalls = blockOfs[1] + 0x0650;
+    OFS_PouchTMHM = blockOfs[1] + 0x0690;
+    OFS_PouchBerry = blockOfs[1] + 0x0790;
+    eventFlag = blockOfs[2] + 0x2F0;
+    // EventConst = EventFlag + (EventFlagMax / 8);
+    // DaycareOffset = blockOfs[4] + 0x1B0;
 }
 
 std::map<Sav::Pouch, std::vector<int>> SavE::validItems() const

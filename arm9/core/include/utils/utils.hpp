@@ -48,7 +48,7 @@ namespace StringUtils
     std::string getString4(const u8* data, int ofs, int len);
     void setString4(u8* data, const std::string& v, int ofs, int len);
     std::string getString3(const u8* data, int ofs, int len, bool jp);
-    void setString3(u8* data, const std::string& v, int ofs, int len, bool jp);
+    void setString3(u8* data, const std::string& v, int ofs, int len, bool jp, int padTo = 0, u16 padWith = 0);
     std::vector<u16> stringToG4(const std::string& v);
     std::string& toLower(std::string& in);
     std::string& toUpper(std::string& in);

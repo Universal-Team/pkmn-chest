@@ -28,6 +28,7 @@
 #define ITEM_HPP
 
 #include "coretypes.h"
+#include "endian.hpp"
 #include "generation.hpp"
 
 class Item3;
@@ -69,11 +70,12 @@ private:
     } itemData;
 
 public:
-    Item3(u8* data = nullptr)
+    Item3(u8* data = nullptr, u16 securityKey = 0)
     {
         if (data)
         {
-            std::copy(data, data + 4, (u8*)&itemData);
+            itemData.id = Endian::convertTo<u16>(data);
+            itemData.count = Endian::convertTo<u16>(data+2) ^ securityKey;
         }
         else
         {

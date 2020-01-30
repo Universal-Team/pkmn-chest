@@ -1,0 +1,377 @@
+Ningún
+Master Ball
+Ultra Ball
+Super Ball
+Poké Ball
+Safari Ball
+Malla Ball
+Buceo Ball
+Nido Ball
+Acopio Ball
+Turno Ball
+Lujo Ball
+Honor Ball
+Poción
+Antídoto
+Antiquemar
+Antihielo
+Despertar
+Antiparalizador
+Restaurar Todo
+Poción Máxima
+Hiperpoción
+Superpoción
+Cura Total
+Revivir
+Revivir Máximo
+Agua Fresca
+Refresco
+Limonada
+Leche Mu-mu
+Polvo Energía
+Raíz Energía
+Polvo Curación
+Hierba Revivir
+Éter
+Éter Máximo
+Elixir
+Elixir Máximo
+Galleta Lava
+Flauta Azul
+Flauta Amarilla
+Flauta Roja
+Flauta Negra
+Flauta Blanca
+Zumo de Baya
+Ceniza Sagrada
+Sal Cardumen
+Concha Cardumen
+Parte Roja
+Parte Azul
+Parte Amarilla
+Parte Verde
+???
+???
+???
+???
+???
+???
+???
+???
+???
+???
+???
+Más PS
+Proteína
+Hierro
+Carburante
+Calcio
+Caramelo Raro
+Más PP
+Zinc
+PP Máximos
+???
+Protec. Especial
+Directo
+Ataque X
+Defensa X
+Velocidad X
+Precisión X
+Especial X
+Poké Muñeco
+Cola Skitty
+???
+Superrepelente
+Repelente Máximo
+Cuerda Huida
+Repelente
+???
+???
+???
+???
+???
+???
+Piedra Solar
+Piedra Lunar
+Piedra Fuego
+Piedra Trueno
+Piedra Agua
+Piedra Hoja
+???
+???
+???
+???
+Mini Seta
+Seta Grande
+???
+Perla
+Perla Grande
+Polvoestelar
+Trozo Estrella
+Pepita
+Escama Corazón
+???
+???
+???
+???
+???
+???
+???
+???
+???
+Carta Naranja
+Carta Puerto
+Carta Brillo
+Carta Imán
+Carta Madera
+Carta Ola
+Carta Imagen
+Carta Sombra
+Carta Tropical
+Carta Sueño
+Carta Fabulosa
+Carta Retro
+Baya Zreza
+Baya Atania
+Baya Meloc
+Baya Safre
+Baya Perasi
+Baya Zanama
+Baya Aranja
+Baya Caquic
+Baya Ziuela
+Baya Zidra
+Baya Higog
+Baya Wiki
+Baya Ango
+Baya Guaya
+Baya Pabaya
+Baya Frambu
+Baya Oram
+Baya Latano
+Baya Peragu
+Baya Pinia
+Baya Grana
+Baya Algama
+Baya Ispero
+Baya Meluce
+Baya Uvav
+Baya Tamate
+Baya Mais
+Baya Aostan
+Baya Rautan
+Baya Monli
+Baya Wikano
+Baya Plama
+Baya Sambia
+Baya Rudion
+Baya Andano
+Baya Lichi
+Baya Gonlan
+Baya Aslac
+Baya Yapati
+Baya Aricoc
+Baya Zonlan
+Baya Arabol
+Baya Enigma
+???
+???
+???
+Polvo Brillo
+Hierba Blanca
+Brazal Firme
+Repartir Exp
+Garra Rápida
+Campana Alivio
+Hierba Mental
+Cinta Elegida
+Roca del Rey
+Polvo Plata
+Moneda Amuleto
+Amuleto
+Rocío Bondad
+Diente Marino
+Escama Marina
+Bola Humo
+Piedra Eterna
+Cinta Focus
+Huevo Suerte
+Periscopio
+Revest. Metálico
+Restos
+Escamadragón
+Bolaluminosa
+Arena Fina
+Piedra Dura
+Semilla Milagro
+Gafas de Sol
+Cinturón Negro
+Imán
+Agua Mística
+Pico Afilado
+Flecha Venenosa
+Antiderretir
+Hechizo
+Cuchara Torcida
+Carbón
+Colmillo Dragón
+Pañuelo Seda
+Mejora
+Campana Concha
+Incienso Marino
+Incienso Suave
+Puño Suerte
+Polvo Metálico
+Hueso Grueso
+Palo
+???
+???
+???
+???
+???
+???
+???
+???
+???
+???
+???
+???
+???
+???
+???
+???
+???
+???
+???
+???
+???
+???
+???
+???
+???
+???
+???
+???
+Pañuelo Rojo
+Pañuelo Azul
+Pañuelo Rosa
+Pañuelo Verde
+Pañuelo Amarillo
+Bici carrera
+Monedero
+Buscaobjetos
+Caña Vieja
+Caña Buena
+Supercaña
+Ticket Barco
+Pase Concurso
+???
+Cubo Wailmer
+Piezas Devon
+Saco hollín
+Llave sótano
+Bici acrobática
+Tubo pokécubos
+Carta
+Ticket eón
+Esfera roja
+Esfera azul
+Escáner
+Gafas aislantes
+Meteorito
+Llave cabina 1
+Llave cabina 2
+Llave cabina 4
+Llave cabina 6
+Llave almacén
+Fósil raíz
+Fósil garra
+Detector Devon
+MT01
+MT02
+MT03
+MT04
+MT05
+MT06
+MT07
+MT08
+MT09
+MT10
+MT11
+MT12
+MT13
+MT14
+MT15
+MT16
+MT17
+MT18
+MT19
+MT20
+MT21
+MT22
+MT23
+MT24
+MT25
+MT26
+MT27
+MT28
+MT29
+MT30
+MT31
+MT32
+MT33
+MT34
+MT35
+MT36
+MT37
+MT38
+MT39
+MT40
+MT41
+MT42
+MT43
+MT44
+MT45
+MT46
+MT47
+MT48
+MT49
+MT50
+MO01
+MO02
+MO03
+MO04
+MO05
+MO06
+MO07
+MO08
+???
+???
+Correo Oak
+Poké flauta
+Llave secreta
+Bono bici
+Dientes oro
+Ámbar viejo
+Llave magnética
+Llave ascensor
+Fósil hélix
+Fósil domo
+Scope Silph
+Bicicleta
+Mapa
+Buscapelea
+Memorín
+Tubo MT/MO
+Saco bayas
+Poké Tele
+Tri-Ticket
+Iris-Ticket
+Té
+Misti-Ticket
+Ori-Ticket
+Bote polvos
+Rubí
+Zafiro
+Signo Magma
+Mapa viejo
