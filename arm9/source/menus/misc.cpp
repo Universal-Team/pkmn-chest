@@ -186,6 +186,7 @@ int selectForm(int dexNo, int currentForm) {
 		setSpritePosition(i, false, (i*32)+(128-((32*formCounts[altIndex].noForms)/2)), 80);
 		setSpritePriority(i, false, 1);
 		setSpriteVisibility(i, false, true);
+		setSpriteAlpha(i, false, 15);
 	}
 	updateOam();
 
@@ -533,6 +534,7 @@ int selectPokeball(int currentBall) {
 			fillSpriteImage((y*5)+x, false, 32, 0, 0, ball[(y*5)+x+1]);
 			setSpritePosition((y*5)+x, false, (x*48)+24, (y*32)+23);
 			setSpriteVisibility((y*5)+x, false, true);
+			setSpriteAlpha((y*5)+x, false, 15);
 		}
 	}
 	updateOam();
@@ -609,6 +611,7 @@ int selectWallpaper(int currentWallpaper) {
 				fillSpriteImageScaled((y*6)+x, false, 32, 0, 0, 32.0f/std::max(image.width, image.height), image);
 				setSpritePosition((y*6)+x, false, (x*40)+12, (y*38)+24);
 				setSpriteVisibility((y*6)+x, false, true);
+				setSpriteAlpha((y*6)+x, false, 15);
 			}
 		}
 	}
@@ -969,6 +972,7 @@ int selectHPType(int current) {
 			fillSpriteImage((y*4)+x, false, 32, 0, 0, types[(y*4)+x+1]);
 			setSpritePosition((y*4)+x, false, (x*52)+34+((32-types[0].width)/2), (y*32)+42+((12-types[0].height)/2));
 			setSpriteVisibility((y*4)+x, false, true);
+			setSpriteAlpha((y*4)+x, false, 15);
 		}
 	}
 	updateOam();
