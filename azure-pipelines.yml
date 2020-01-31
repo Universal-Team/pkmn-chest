@@ -21,6 +21,14 @@ variables:
 
 steps:
 - script: |
+    git submodule init
+    git submodule update
+    cd arm9/core
+    git submodule init
+    git submodule update
+  displayName: 'Clone submodules'
+
+- script: |
     curl -L https://github.com/devkitPro/pacman/releases/download/devkitpro-pacman-1.0.1/devkitpro-pacman-installer.pkg -o devkitpro-pacman-installer.pkg
     sudo installer -pkg devkitpro-pacman-installer.pkg -target /
     sudo dkp-pacman -Sy
