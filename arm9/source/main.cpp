@@ -7,7 +7,7 @@
 #include "flashcard.hpp"
 #include "graphics.hpp"
 #include "gui.hpp"
-#include "lang.hpp"
+#include "i18n.hpp"
 #include "lang.hpp"
 #include "loader.hpp"
 #include "loading.hpp"
@@ -72,6 +72,7 @@ int main(int argc, char **argv) {
 	Colors::load();
 	loadFont();
 	Lang::load(Config::getLang("lang"));
+	i18n::init(Language::EN); // TODO: Other languages
 	printTextCentered(Lang::get("loading"), 0, 32, false, true);
 
 	Sound::init();

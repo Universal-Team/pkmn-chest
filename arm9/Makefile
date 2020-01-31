@@ -23,12 +23,14 @@ include $(DEVKITARM)/ds_rules
 #---------------------------------------------------------------------------------
 BUILD		:=	build
 SOURCES		:=	source \
+				core/memecrypto core/swshcrypto \
 				core/source core/source/i18n core/source/personal core/source/pkx core/source/sav core/source/utils core/source/wcx \
 				source/graphics \
 				source/menus \
 				source/saves \
 				source/utils
 INCLUDES	:=	include \
+				core/memecrypto core/swshcrypto \
 				core/include core/include/i18n core/include/personal core/include/pkx core/include/sav core/include/utils core/include/wcx \
 				include/graphics \
 				include/menus \
@@ -48,7 +50,8 @@ CFLAGS	:=	-g -Wall -Wno-psabi -O2\
 			$(ARCH)
 
 CFLAGS	+=	$(INCLUDE) -DARM9
-CXXFLAGS	:=	$(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++17
+# Exeptions needed on for swshcrypto
+CXXFLAGS	:=	$(CFLAGS) -fno-rtti -fexceptions -std=gnu++17
 
 ASFLAGS	:=	-g $(ARCH) -march=armv5te -mtune=arm946e-s
 

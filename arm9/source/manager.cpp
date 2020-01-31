@@ -284,30 +284,36 @@ void drawBoxScreen(void) {
 std::string boxBgPath(bool top, int box) {
 	if(top)	return "/graphics/box/chest.gfx";
 	std::string game;
-	switch(save->game) {
-		default:
-		case Game::RS:
+	switch(save->version()) {
+		case 1: // Sapphire
+		case 2: // Ruby
 			game = "rs";
 			break;
-		case Game::E:
+		case 3: // Emerald
 			game = "e";
 			break;
-		case Game::FRLG:
+		case 4: // FireRed
+		case 5: // LeafGreen
 			game = box < 12 ? "rs" : "frlg";
 			break;
-		case Game::DP:
+		case 10: // Diamond
+		case 11: // Pearl
 			game = "dp";
 			break;
-		case Game::Pt:
+		case 12: // Platinum
 			game = box < 16 ? "dp" : "pt";
 			break;
-		case Game::HGSS:
+		case 7: // HeartGold
+		case 8: // SoulSilver
 			game = box < 16 ? "dp" : "hgss";
 			break;
-		case Game::BW:
+		case 20: // White
+		case 21: // Black
 			game = "bw";
 			break;
-		case Game::B2W2:
+		case 22: // White 2
+		case 23: // Black 2
+		default:
 			game = box < 16 ? "bw" : "b2w2";
 			break;
 	}

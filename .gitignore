@@ -6,6 +6,8 @@
 *.gfx
 *.cia
 graphics/bmp2ds
+nitrofiles/lang/forms.json
+nitrofiles/lang/**/*.txt
 
 *.DS_Store
 .vscode/ipch
