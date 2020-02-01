@@ -8,7 +8,6 @@
 #include "filter.hpp"
 #include "flashcard.hpp"
 #include "input.hpp"
-#include "lang.hpp"
 #include "loader.hpp"
 #include "loading.hpp"
 #include "party.hpp"
@@ -17,6 +16,8 @@
 #include "sort.hpp"
 #include "sound.hpp"
 #include "xMenu.hpp"
+
+#include "gui.hpp"
 
 bool topScreen, inParty;
 int arrowID = 126, currentSaveBox, currentBankBox, heldPokemonID = 125, keyboardSpriteID = 124, arrowMode = 0, boxTitleX = 0, boxTitleY = 0, pkmnX = 0, pkmnY = 0;
@@ -163,6 +164,16 @@ void fillArrow(int arrowMode) {
 	} else {
 		fillSpriteImage(arrowID, false, 16, 0, 0, arrowYellow);
 		fillSpriteImage(arrowID, true, 16, 0, 0, arrowYellow);
+	}
+}
+
+void loadTypes(Language lang) {
+	std::string langStr = i18n::langString(lang);
+	Language tempLang = (access(("nitro:/i18n/"+StringUtils::toLower(langStr)+"/types/0.gfx").c_str(), F_OK) == 0) ? lang : Language::ENG;
+	langStr = i18n::langString(tempLang);
+	types.clear();
+	for(int i=0;i<17;i++) {
+		types.push_back(loadImage("/i18n/"+StringUtils::toLower(langStr)+"/types/"+std::to_string(i)+".gfx"));
 	}
 }
 
@@ -349,7 +360,7 @@ void drawBox(bool top) {
 	if(!top) {
 		drawImage(boxButton.width+5, 192-search.height, search, false, false);
 		drawImage(0, 192-boxButton.height, boxButton, false, false);
-		printTextMaxW(Lang::get("party"), boxButton.width-8, 1, 4, 192-boxButton.height+4, false, false);
+		printTextMaxW(i18n::localize(Config::getLang("lang"), "party"), boxButton.width-8, 1, 4, 192-boxButton.height+4, false, false);
 	}
 }
 
@@ -364,12 +375,12 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 
 		// Print Pokédex number
 		char str[9];
-		snprintf(str, sizeof(str), "%s%.3i", Lang::get("dexNo").c_str(), pkm->species());
+		snprintf(str, sizeof(str), "%s%.3i", i18n::localize(Config::getLang("lang"), "dexNo").c_str(), pkm->species());
 		printTextTinted(str, TextColor::gray, 170, 8, true, true);
 
 		// Print name
 		if(pkm->nicknamed())	printTextTintedMaxW(pkm->nickname(), 80, 1, (pkm->gender() ? (pkm->gender() == 1 ? TextColor::red : TextColor::gray) : TextColor::blue), 170, 25, true, true);
-		else	printTextTintedMaxW(Lang::species[pkm->species()], 80, 1, (pkm->gender() ? (pkm->gender() == 1 ? TextColor::red : TextColor::gray) : TextColor::blue), 170, 25, true, true);
+		else	printTextTintedMaxW(i18n::species(Config::getLang("lang"), pkm->species()), 80, 1, (pkm->gender() ? (pkm->gender() == 1 ? TextColor::red : TextColor::gray) : TextColor::blue), 170, 25, true, true);
 
 		// Draw types
 		int type = (pkm->generation() < Generation::FIVE && pkm->type1() > 8) ? pkm->type1()-1 : pkm->type1();
@@ -380,7 +391,8 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 		}
 
 		// Print Level
-		printTextTinted(Lang::get("lv")+std::to_string(pkm->level()), TextColor::gray, 170, 57, true, true);
+		printTextTinted(i18n::localize(Config::getLang("lang"), "lv")+std::to_string(pkm->level()), TextColor::gray, 170, 57, true, true);
+
 	}
 }
 
@@ -792,7 +804,7 @@ void manageBoxes(void) {
 				filter:
 				setSpriteVisibility(arrowID, false, false);
 				updateOam();
-				if(Input::getBool(Lang::get("filter"), Lang::get("sort"))) {
+				if(Input::getBool(i18n::localize(Config::getLang("lang"), "filter"), i18n::localize(Config::getLang("lang"), "sort"))) {
 					drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 					changeFilter(filter);
 				} else {
@@ -934,8 +946,8 @@ void manageBoxes(void) {
 			if(heldPokemon.size())	setSpritePosition(heldPokemonID, topScreen, (arrowX*24)+x+8, (arrowY*24)+y);
 		} else {
 			// Or move it to Party button
-			setSpritePosition(arrowID, topScreen, getTextWidth(Lang::get("party"))+6, 191-boxButton.height);
-			if(heldPokemon.size())	setSpritePosition(heldPokemonID, topScreen, getTextWidth(Lang::get("party"))-2, 191-boxButton.height-4);
+			setSpritePosition(arrowID, topScreen, getTextWidth(i18n::localize(Config::getLang("lang"), "party"))+6, 191-boxButton.height);
+			if(heldPokemon.size())	setSpritePosition(heldPokemonID, topScreen, getTextWidth(i18n::localize(Config::getLang("lang"), "party"))-2, 191-boxButton.height-4);
 		}
 		updateOam();
 	}

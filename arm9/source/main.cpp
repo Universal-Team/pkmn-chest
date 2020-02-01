@@ -8,7 +8,6 @@
 #include "graphics.hpp"
 #include "gui.hpp"
 #include "i18n.hpp"
-#include "lang.hpp"
 #include "loader.hpp"
 #include "loading.hpp"
 #include "manager.hpp"
@@ -71,14 +70,14 @@ int main(int argc, char **argv) {
 	Config::load();
 	Colors::load();
 	loadFont();
-	Lang::load(Config::getLang("lang"));
-	i18n::init(Language::EN); // TODO: Other languages
-	printTextCentered(Lang::get("loading"), 0, 32, false, true);
+	i18n::init(Config::getLang("lang"));
+	printTextCentered(i18n::localize(Config::getLang("lang"), "loading"), 0, 32, false, true);
 
 	Sound::init();
 	Banks::init();
 	initSprites();
 	loadGraphics();
+	loadTypes(Config::getLang("lang"));
 
 	hideLoadingLogo();
 
@@ -87,7 +86,7 @@ int main(int argc, char **argv) {
 		if(savePath == "%EXIT%")	break;
 
 		if(!loadSave(savePath)) {
-			Gui::warn(Lang::get("invalidSave"));
+			Gui::warn(i18n::localize(Config::getLang("lang"), "invalidSave"));
 			continue;
 		}
 		currentSaveBox = save->currentBox();

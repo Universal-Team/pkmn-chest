@@ -2,7 +2,6 @@
 #include "colors.hpp"
 #include "flashcard.hpp"
 #include "graphics.hpp"
-#include "lang.hpp"
 #include "loader.hpp"
 #include "manager.hpp"
 #include "PKX.hpp"

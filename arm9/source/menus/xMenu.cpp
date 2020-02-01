@@ -9,7 +9,6 @@
 #include "configMenu.hpp"
 #include "flashcard.hpp"
 #include "input.hpp"
-#include "lang.hpp"
 #include "loader.hpp"
 #include "manager.hpp"
 #include "party.hpp"
@@ -33,21 +32,21 @@ void savePrompt(void) {
 	drawRectangle(0, 34, 256, 2, DARK_GRAY, false, false);
 	drawRectangle(0, 36, 256, 1, DARKERER_GRAY, false, false);
 
-	printTextTinted(Lang::get("saveMsgChest"), TextColor::gray, 5, 0, false, true);
-	if(Input::getBool(Lang::get("save"), Lang::get("discard"))) {
+	printTextTinted(i18n::localize(Config::getLang("lang"), "saveMsgChest"), TextColor::gray, 5, 0, false, true);
+	if(Input::getBool(i18n::localize(Config::getLang("lang"), "save"), i18n::localize(Config::getLang("lang"), "discard"))) {
 		drawRectangle(0, 0, 256, 32, CLEAR, false, true);
-		printTextTinted(Lang::get("reopenIfFrozen"), TextColor::gray, 5, 0, false, true);
+		printTextTinted(i18n::localize(Config::getLang("lang"), "reopenIfFrozen"), TextColor::gray, 5, 0, false, true);
 		Banks::bank->backup();
 		Banks::bank->save();
 	}
 
 	drawRectangle(0, 0, 256, 32, CLEAR, false, true);
-	if(savePath == cardSave)	printTextTinted(Lang::get("saveMsgCard"), TextColor::gray, 5, 0, false, true);
-	else	printTextTinted(Lang::get("saveMsgSave"), TextColor::gray, 5, 0, false, true);
+	if(savePath == cardSave)	printTextTinted(i18n::localize(Config::getLang("lang"), "saveMsgCard"), TextColor::gray, 5, 0, false, true);
+	else	printTextTinted(i18n::localize(Config::getLang("lang"), "saveMsgSave"), TextColor::gray, 5, 0, false, true);
 
-	if(Input::getBool(Lang::get("save"), Lang::get("discard"))) {
+	if(Input::getBool(i18n::localize(Config::getLang("lang"), "save"), i18n::localize(Config::getLang("lang"), "discard"))) {
 		drawRectangle(0, 0, 256, 32, CLEAR, false, true);
-		printTextTinted(Lang::get("reopenIfFrozen"), TextColor::gray, 5, 0, false, true);
+		printTextTinted(i18n::localize(Config::getLang("lang"), "reopenIfFrozen"), TextColor::gray, 5, 0, false, true);
 		// Re-encrypt the box data
 		save->cryptBoxData(false);
 		// Save changes to save file
@@ -73,7 +72,7 @@ void drawXMenuButtons(unsigned menuSelection) {
 	for(unsigned i=0;i<xMenuButtons.size();i++) {
 		drawImage(xMenuButtons[i].x, xMenuButtons[i].y, menuSelection == i ? menuButtonBlue : menuButton, false, false);
 		if(i != 0) // skipping 0 (party) until I replace it with something
-			printText((i==3) ? xMenuButtons[i].label : Lang::get(xMenuButtons[i].label), xMenuButtons[i].x+47, xMenuButtons[i].y+14, false, true);
+			printText((i==3) ? xMenuButtons[i].label : i18n::localize(Config::getLang("lang"), xMenuButtons[i].label), xMenuButtons[i].x+47, xMenuButtons[i].y+14, false, true);
 		setSpriteAlpha(menuIconID[i], false, menuSelection == i ? 8 : 15);
 		updateOam();
 	}

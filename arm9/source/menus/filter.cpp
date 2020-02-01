@@ -1,9 +1,10 @@
 #include "filter.hpp"
 #include "colors.hpp"
+#include "config.hpp"
 #include "flashcard.hpp"
 #include "graphics.hpp"
+#include "i18n.hpp"
 #include "input.hpp"
-#include "lang.hpp"
 #include "loader.hpp"
 #include "manager.hpp"
 #include "misc.hpp"
@@ -18,12 +19,12 @@ std::vector<std::string> genders = {"male", "female", "unknown"}, filterLabels =
 void selectMoves(std::shared_ptr<PKFilter> &filter) {
 	// Clear screen
 	drawImageDMA(0, 0, listBg, false, false);
-	printText(Lang::get("moves"), 4, 0, false, false);
+	printText(i18n::localize(Config::getLang("lang"), "moves"), 4, 0, false, false);
 
 	// Print moves
 	for(int i=0;i<4;i++) {
 		printText(filter->moveEnabled(i) ? "√" : "x", 4, 16+(i*16), false, false);
-		printTextMaxW(Lang::moves[filter->move(i)], 100, 1, 20, 16+(i*16), false, false);
+		printTextMaxW(i18n::move(Config::getLang("lang"), filter->move(i)), 100, 1, 20, 16+(i*16), false, false);
 		printText(filter->moveInversed(i) ? "≠" : "=", 120, 16+(i*16), false, false);
 	}
 
@@ -65,7 +66,7 @@ void selectMoves(std::shared_ptr<PKFilter> &filter) {
 					optionSelected = true;
 					break;
 				}
-				if(touch.px >= 20 && touch.px <= 20+getTextWidth(Lang::moves[filter->move(selection)]) && touch.py >= 15+(i*16) && touch.py <= 15+((i+1)*16)) {
+				if(touch.px >= 20 && touch.px <= 20+getTextWidth(i18n::move(Config::getLang("lang"), filter->move(selection))) && touch.py >= 15+(i*16) && touch.py <= 15+((i+1)*16)) {
 					column = 1;
 					selection = i;
 					optionSelected = true;
@@ -86,26 +87,26 @@ void selectMoves(std::shared_ptr<PKFilter> &filter) {
 			if(column == 0) {
 				filter->moveEnabled(selection, !filter->moveEnabled(selection));
 			} else if(column == 1) {
-				filter->move(selection, selectItem(filter->move(selection), save->availableMoves(), Lang::moves));
+				filter->move(selection, selectItem(filter->move(selection), save->availableMoves(), i18n::rawMoves(Config::getLang("lang"))));
 			} else if(column == 2) {
 				filter->moveInversed(selection, !filter->moveInversed(selection));
 			}
 
 			// Clear screen
 			drawImageDMA(0, 0, listBg, false, false);
-			printText(Lang::get("moves"), 4, 0, false, false);
+			printText(i18n::localize(Config::getLang("lang"), "moves"), 4, 0, false, false);
 
 			// Print moves
 			for(int i=0;i<4;i++) {
 				printText(filter->moveEnabled(i) ? "√" : "x", 4, 16+(i*16), false, false);
-				printTextMaxW(Lang::moves[filter->move(i)], 100, 1, 20, 16+(i*16), false, false);
+				printTextMaxW(i18n::move(Config::getLang("lang"), filter->move(i)), 100, 1, 20, 16+(i*16), false, false);
 				printText(filter->moveInversed(i) ? "≠" : "=", 120, 16+(i*16), false, false);
 			}
 		}
 
 		// Move cursor
 		if(column == 0)	setSpritePosition(arrowID, false, 4+getTextWidth(filter->moveEnabled(selection) ? "√" : "x")+2, (16*(selection)+15));
-		else if(column == 1)	setSpritePosition(arrowID, false, 20+getTextWidth(Lang::moves[filter->move(selection)])+2, (16*(selection)+15));
+		else if(column == 1)	setSpritePosition(arrowID, false, 20+getTextWidth(i18n::move(Config::getLang("lang"), filter->move(selection)))+2, (16*(selection)+15));
 		else if(column == 2)	setSpritePosition(arrowID, false, 120+getTextWidth(filter->moveInversed(selection) ? "≠" : "=")+2, (16*(selection)+15));
 		updateOam();
 	}
@@ -114,20 +115,20 @@ void selectMoves(std::shared_ptr<PKFilter> &filter) {
 void drawFilterMenu(const std::shared_ptr<PKFilter> &filter) {
 	// Clear screen
 	drawImageDMA(0, 0, listBg, false, false);
-	printText(Lang::get("filter"), 4, 0, false, false);
+	printText(i18n::localize(Config::getLang("lang"), "filter"), 4, 0, false, false);
 
 	// Fill filterValues
 	filterValues.clear();
-	filterValues.push_back(Lang::species[filter->species()]);
-	filterValues.push_back(Lang::natures[filter->nature()]);
-	filterValues.push_back(Lang::abilities[filter->ability()]);
-	filterValues.push_back(Lang::get(genders[filter->gender()]));
-	filterValues.push_back(Lang::items[filter->heldItem()]);
+	filterValues.push_back(i18n::species(Config::getLang("lang"), filter->species()));
+	filterValues.push_back(i18n::nature(Config::getLang("lang"), filter->nature()));
+	filterValues.push_back(i18n::ability(Config::getLang("lang"), filter->ability()));
+	filterValues.push_back(i18n::localize(Config::getLang("lang"), genders[filter->gender()]));
+	filterValues.push_back(i18n::item(Config::getLang("lang"), filter->heldItem()));
 	filterValues.push_back(std::to_string(filter->ball()));
 	filterValues.push_back(std::to_string(filter->alternativeForm()));
 	filterValues.push_back(std::to_string(filter->level()));
 	filterValues.push_back("……");
-	filterValues.push_back(filter->shiny() ? Lang::get("yes") : Lang::get("no"));
+	filterValues.push_back(filter->shiny() ? i18n::localize(Config::getLang("lang"), "yes") : i18n::localize(Config::getLang("lang"), "no"));
 
 	// Fill filterEnabled
 	filterEnabled.clear();
@@ -158,7 +159,7 @@ void drawFilterMenu(const std::shared_ptr<PKFilter> &filter) {
 	// Print items
 	for(unsigned i=0;i<filterLabels.size();i++) {
 		printText(filterEnabled[i] ? "o" : "x", 4, 16+(i*16), false, false);
-		printTextMaxW(Lang::get(filterLabels[i]), 100, 1, 20, 16+(i*16), false, false);
+		printTextMaxW(i18n::localize(Config::getLang("lang"), filterLabels[i]), 100, 1, 20, 16+(i*16), false, false);
 		printText(filterInversed[i] ? "≠" : "=", 120, 16+(i*16), false, false);
 		printTextMaxW(filterValues[i], 100, 1, 136, 16+(i*16), false, false);
 	}
@@ -217,7 +218,7 @@ void changeFilter(std::shared_ptr<PKFilter> &filter) {
 					optionSelected = true;
 					break;
 				}
-				if(touch.px >= 136 && touch.px <= 136+getTextWidth(Lang::moves[filter->move(selection)]) && touch.py >= 15+(i*16) && touch.py <= 15+((i+1)*16)) {
+				if(touch.px >= 136 && touch.px <= 136+getTextWidth(i18n::move(Config::getLang("lang"), filter->move(selection))) && touch.py >= 15+(i*16) && touch.py <= 15+((i+1)*16)) {
 					column = 2;
 					selection = i;
 					optionSelected = true;
@@ -307,21 +308,21 @@ void changeFilter(std::shared_ptr<PKFilter> &filter) {
 			} else if(column == 2) {
 				switch(selection) {
 					case 0: { // Species
-						filter->species(selectItem(filter->species(), save->availableSpecies(), Lang::species));
+						filter->species(selectItem(filter->species(), save->availableSpecies(), i18n::rawSpecies(Config::getLang("lang"))));
 						break;
 					} case 1: { // Nature
 						int num = selectNature(filter->nature());
 						if(num != -1)	filter->nature();
 						break;
 					} case 2: { // Ability
-						filter->ability(selectItem(filter->ability(), save->availableAbilities(), Lang::abilities));
+						filter->ability(selectItem(filter->ability(), save->availableAbilities(), i18n::rawAbilities(Config::getLang("lang"))));
 						break;
 					} case 3: { // Gender
-						std::vector<std::string> genderList = {Lang::get("male"), Lang::get("female"), Lang::get("unknown")};
+						std::vector<std::string> genderList = {i18n::localize(Config::getLang("lang"), "male"), i18n::localize(Config::getLang("lang"), "female"), i18n::localize(Config::getLang("lang"), "unknown")};
 						filter->gender(selectItem(filter->gender(), 0, genderList.size(), genderList));
 						break;
 					} case 4: { // Held item
-						filter->heldItem(selectItem(filter->heldItem(), save->availableItems(), Lang::items));
+						filter->heldItem(selectItem(filter->heldItem(), save->availableItems(), i18n::rawItems(Config::getLang("lang"))));
 						break;
 					} case 5: { // Ball
 						filter->ball(selectPokeball(filter->ball()));

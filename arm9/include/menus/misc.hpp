@@ -3,9 +3,6 @@
 
 #include "Sav.hpp"
 
-// Returns the language in the correct order for a Pokémon
-Language pkmLang(void);
-
 // Shows the form selection menu
 int selectForm(int dexNo, int currentForm);
 

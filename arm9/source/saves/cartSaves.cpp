@@ -1,7 +1,7 @@
 #include "cartSaves.hpp"
 #include "colors.hpp"
+#include "config.hpp"
 #include "graphics.hpp"
-#include "lang.hpp"
 
 #define MAGIC_EEPR 0x52504545
 #define MAGIC_SRAM 0x4D415253
@@ -150,7 +150,7 @@ bool restoreSlot2(void) {
 			return 1;
 		}
 	} else {
-		Lang::get("wrongSaveCart");
+		i18n::localize(Config::getLang("lang"), "wrongSaveCart");
 	}
 	return 0;
 }

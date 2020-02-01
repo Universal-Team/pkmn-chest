@@ -25,7 +25,14 @@ struct Sprite {
 	int y;
 };
 
-extern std::vector<u16> font;
+
+// Position & label struct
+struct Label {
+	int x;
+	int y;
+	std::string label;
+};
+
 extern int bg3Main, bg2Main, bg3Sub, bg2Sub, bg1Sub;
 
 // Initializes the screens for drawing

@@ -2,19 +2,18 @@
 #include <strings.h>
 
 #include "colors.hpp"
+#include "config.hpp"
 #include "flashcard.hpp"
 #include "graphics.hpp"
+#include "i18n.hpp"
 #include "input.hpp"
 #include "Item.hpp"
-#include "lang.hpp"
 #include "loader.hpp"
 #include "manager.hpp"
 #include "misc.hpp"
 #include "sound.hpp"
 
 #define entriesPerScreen 11
-
-std::vector<std::string> *items;
 
 int getMaxItem(int pouchIndex) {
 	for(int i=save->pouches()[pouchIndex].second;i>0;i--) {
@@ -48,7 +47,7 @@ void drawBag(Sav::Pouch pouch, int maxItem, int screenPos, bool background) {
 
 	// Print items
 	for(int i=0;i<std::min(entriesPerScreen, maxItem+1);i++) {
-		printTextMaxW((*items)[save->item(pouch, screenPos+i)->id()], 127, 1, 30, 16+(i*16), false, true);
+		printTextMaxW(i18n::item(Config::getLang("lang"), save->item(pouch, screenPos+i)->id()), 127, 1, 30, 16+(i*16), false, true);
 		printText(std::to_string(save->item(pouch, screenPos+i)->count()), 4, 16+(i*16), false, true);
 	}
 }
@@ -57,8 +56,6 @@ void editBag(void) {
 	setSpriteVisibility(arrowID, false, true);
 	setSpritePosition(arrowID, false, 4+getTextWidth(std::to_string(save->item(save->pouches()[0].first, 0)->count()))+2, 10);
 	updateOam();
-
-	items = save->generation() == Generation::THREE ? &Lang::items3 : &Lang::items;
 
 	int maxItem = getMaxItem(0);
 	drawBag(save->pouches()[0].first, maxItem, 0, true);
@@ -90,7 +87,7 @@ void editBag(void) {
 			std::string str = Input::getLine(-1);
 			if(str != "") {
 				for(int i=0;i<save->pouches()[selectedPouch].second;i++) {
-					if(strncasecmp(str.c_str(), (*items)[save->item(save->pouches()[selectedPouch].first, i)->id()].c_str(), str.size()) == 0) {
+					if(strncasecmp(str.c_str(), i18n::item(Config::getLang("lang"), save->item(save->pouches()[selectedPouch].first, i)->id()).c_str(), str.size()) == 0) {
 						selection = i;
 						break;
 					}
@@ -177,9 +174,9 @@ void editBag(void) {
 				// Create list of valid items
 				int currentItem = 0;
 				std::vector<std::string> validItems;
-				validItems.push_back((*items)[0]);
+				validItems.push_back(i18n::item(Config::getLang("lang"), 0));
 				for(unsigned i=0;i<save->validItems()[save->pouches()[selectedPouch].first].size();i++) {
-					validItems.push_back((*items)[save->validItems()[save->pouches()[selectedPouch].first][i]]);
+					validItems.push_back(i18n::item(Config::getLang("lang"), save->validItems()[save->pouches()[selectedPouch].first][i]));
 					if(save->validItems()[save->pouches()[selectedPouch].first][i] == item->id()) {
 						currentItem = i+1;
 					}
@@ -198,8 +195,8 @@ void editBag(void) {
 						maxItem--;
 					} else {
 						// Convert back from the valid item list to the real item list
-						for(unsigned i=0;i<items->size();i++) {
-							if((*items)[i] == validItems[num]) {
+						for(unsigned i=0;i<i18n::rawItems(Config::getLang("lang")).size();i++) {
+							if(i18n::item(Config::getLang("lang"), i) == validItems[num]) {
 								num = i;
 								break;
 							}
@@ -228,7 +225,7 @@ void editBag(void) {
 
 		// Move cursor
 		if(column == 0)	setSpritePosition(arrowID, false, 4+getTextWidth(std::to_string(save->item(save->pouches()[selectedPouch].first, selection)->count()))+2, (16*(selection-screenPos)+10));
-		else if(column == 1)	setSpritePosition(arrowID, false, 30+getTextWidth((*items)[save->item(save->pouches()[selectedPouch].first, selection)->id()])+2, (16*(selection-screenPos)+10));
+		else if(column == 1)	setSpritePosition(arrowID, false, 30+getTextWidth(i18n::item(Config::getLang("lang"), save->item(save->pouches()[selectedPouch].first, selection)->id()))+2, (16*(selection-screenPos)+10));
 		updateOam();
 	}
 }

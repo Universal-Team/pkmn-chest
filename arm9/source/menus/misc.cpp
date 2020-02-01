@@ -6,7 +6,6 @@
 #include "config.hpp"
 #include "flashcard.hpp"
 #include "input.hpp"
-#include "lang.hpp"
 #include "loader.hpp"
 #include "manager.hpp"
 #include "PKX.hpp"
@@ -58,24 +57,6 @@ std::vector<std::string> statsLabels = {"hp", "attack", "defense", "spAtk", "spD
 std::vector<std::string> originLabels = {"metLevel", "metYear", "metMonth", "metDay", "metLocation", "originGame"};
 
 static constexpr Stat statOrder[] = {Stat::HP, Stat::ATK, Stat::DEF, Stat::SPATK, Stat::SPDEF, Stat::SPD};
-
-Language pkmLang(void) {
-	switch(Config::getLang("lang")) {
-		case 0:
-			return Language::DE; // German
-		case 1:
-		default:
-			return Language::EN; // English
-		case 2:
-			return Language::ES; // Spanish
-		case 3:
-			return Language::FR; // French
-		case 4:
-			return Language::IT; // Italian
-		case 5:
-			return Language::JP; // Japanese
-	}
-}
 
 void drawMiniBoxes(int currentBox) {
 	if(currentBox < 0)	currentBox = (topScreen ? Banks::bank->boxes()-1 : save->maxBoxes()-1)+currentBox;
@@ -373,15 +354,15 @@ std::shared_ptr<PKX> selectMoves(std::shared_ptr<PKX> pkm) {
 	// Clear screen
 	drawImageDMA(0, 0, listBg, false, false);
 	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
-	printText(Lang::get("moves"), 4, 0, false, true);
+	printText(i18n::localize(Config::getLang("lang"), "moves"), 4, 0, false, true);
 
 	// Print moves
 	for(int i=0;i<4;i++) {
-		printText(Lang::moves[pkm->move(i)], 4, 16+(i*16), false, true);
+		printText(i18n::move(Config::getLang("lang"), pkm->move(i)), 4, 16+(i*16), false, true);
 	}
 
 	// Set arrow position
-	setSpritePosition(arrowID, false, 4+getTextWidth(Lang::moves[pkm->move(0)]), 10);
+	setSpritePosition(arrowID, false, 4+getTextWidth(i18n::move(Config::getLang("lang"), pkm->move(0))), 10);
 	setSpriteVisibility(arrowID, false, true);
 	updateOam();
 
@@ -414,7 +395,7 @@ std::shared_ptr<PKX> selectMoves(std::shared_ptr<PKX> pkm) {
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
 			for(unsigned i=0;i<4;i++) {
-				if(touch.px >= 4 && touch.px <= 4+getTextWidth(Lang::moves[pkm->move(i)]) && touch.py >= 16+(i*16) && touch.py <= 16+((i+1)*16)) {
+				if(touch.px >= 4 && touch.px <= 4+getTextWidth(i18n::move(Config::getLang("lang"), pkm->move(i))) && touch.py >= 16+(i*16) && touch.py <= 16+((i+1)*16)) {
 					selection = i;
 					optionSelected = true;
 					break;
@@ -424,20 +405,20 @@ std::shared_ptr<PKX> selectMoves(std::shared_ptr<PKX> pkm) {
 
 		if(optionSelected) {
 			optionSelected = false;
-			pkm->move(selection, selectItem(pkm->move(selection), save->availableMoves(), Lang::moves));
+			pkm->move(selection, selectItem(pkm->move(selection), save->availableMoves(), i18n::rawMoves(Config::getLang("lang"))));
 
 			// Clear screen
 			drawImageDMA(0, 0, listBg, false, false);
 			drawRectangle(0, 0, 256, 192, CLEAR, false, true);
-			printText(Lang::get("moves"), 4, 0, false, true);
+			printText(i18n::localize(Config::getLang("lang"), "moves"), 4, 0, false, true);
 
 			// Print moves
 			for(int i=0;i<4;i++) {
-				printText(Lang::moves[pkm->move(i)], 4, 16+(i*16), false, true);
+				printText(i18n::move(Config::getLang("lang"), pkm->move(i)), 4, 16+(i*16), false, true);
 			}
 		}
 
-		setSpritePosition(arrowID, false, 4+getTextWidth(Lang::moves[pkm->move(selection)]), (selection*16)+10);
+		setSpritePosition(arrowID, false, 4+getTextWidth(i18n::move(Config::getLang("lang"), pkm->move(selection))), (selection*16)+10);
 		updateOam();
 	}
 }
@@ -450,31 +431,31 @@ int selectNature(int currentNature) {
 	// Draw labels (not a for loop as speed is 3rd)
 	{
 		int x = -2;
-		printTextCenteredTintedMaxW(Lang::get(statsLabels[1]), 48, 1, TextColor::blue, ((x++)*48), 4, false, false);
-		printTextCenteredTintedMaxW(Lang::get(statsLabels[2]), 48, 1, TextColor::blue, ((x++)*48), 4, false, false);
-		printTextCenteredTintedMaxW(Lang::get(statsLabels[5]), 48, 1, TextColor::blue, ((x++)*48), 4, false, false);
-		printTextCenteredTintedMaxW(Lang::get(statsLabels[3]), 48, 1, TextColor::blue, ((x++)*48), 4, false, false);
-		printTextCenteredTintedMaxW(Lang::get(statsLabels[4]), 48, 1, TextColor::blue, ((x++)*48), 4, false, false);
+		printTextCenteredTintedMaxW(i18n::localize(Config::getLang("lang"), statsLabels[1]), 48, 1, TextColor::blue, ((x++)*48), 4, false, false);
+		printTextCenteredTintedMaxW(i18n::localize(Config::getLang("lang"), statsLabels[2]), 48, 1, TextColor::blue, ((x++)*48), 4, false, false);
+		printTextCenteredTintedMaxW(i18n::localize(Config::getLang("lang"), statsLabels[5]), 48, 1, TextColor::blue, ((x++)*48), 4, false, false);
+		printTextCenteredTintedMaxW(i18n::localize(Config::getLang("lang"), statsLabels[3]), 48, 1, TextColor::blue, ((x++)*48), 4, false, false);
+		printTextCenteredTintedMaxW(i18n::localize(Config::getLang("lang"), statsLabels[4]), 48, 1, TextColor::blue, ((x++)*48), 4, false, false);
 
 		int y = 0;
-		printTextTintedScaled(Lang::get(statsLabels[1]), 0.8, 0.8, TextColor::red, 1, ((y++)*32)+22, false, false);
-		printTextTintedScaled(Lang::get(statsLabels[2]), 0.8, 0.8, TextColor::red, 1, ((y++)*32)+22, false, false);
-		printTextTintedScaled(Lang::get(statsLabels[5]), 0.8, 0.8, TextColor::red, 1, ((y++)*32)+22, false, false);
-		printTextTintedScaled(Lang::get(statsLabels[3]), 0.8, 0.8, TextColor::red, 1, ((y++)*32)+22, false, false);
-		printTextTintedScaled(Lang::get(statsLabels[4]), 0.8, 0.8, TextColor::red, 1, ((y++)*32)+22, false, false);
+		printTextTintedScaled(i18n::localize(Config::getLang("lang"), statsLabels[1]), 0.8, 0.8, TextColor::red, 1, ((y++)*32)+22, false, false);
+		printTextTintedScaled(i18n::localize(Config::getLang("lang"), statsLabels[2]), 0.8, 0.8, TextColor::red, 1, ((y++)*32)+22, false, false);
+		printTextTintedScaled(i18n::localize(Config::getLang("lang"), statsLabels[5]), 0.8, 0.8, TextColor::red, 1, ((y++)*32)+22, false, false);
+		printTextTintedScaled(i18n::localize(Config::getLang("lang"), statsLabels[3]), 0.8, 0.8, TextColor::red, 1, ((y++)*32)+22, false, false);
+		printTextTintedScaled(i18n::localize(Config::getLang("lang"), statsLabels[4]), 0.8, 0.8, TextColor::red, 1, ((y++)*32)+22, false, false);
 	}
 
 	// Print natures
 	for(int y=0;y<5;y++) {
 		for(int x=0;x<5;x++) {
-			printTextCenteredMaxW(Lang::natures[(y*5)+x], 48, 1, ((x-2)*48), (y*32)+32, false, false);
+			printTextCenteredMaxW(i18n::nature(Config::getLang("lang"), (y*5)+x), 48, 1, ((x-2)*48), (y*32)+32, false, false);
 		}
 	}
 
 	int arrowX = currentNature-((currentNature/5)*5), selection = currentNature/5, pressed, held;
 	// Move arrow to current nature
 	setSpriteVisibility(arrowID, false, true);
-	setSpritePosition(arrowID, false, (arrowX*48)+(getTextWidthMaxW(Lang::natures[currentNature], 48)/2)+28, (selection*32)+24);
+	setSpritePosition(arrowID, false, (arrowX*48)+(getTextWidthMaxW(i18n::nature(Config::getLang("lang"), currentNature), 48)/2)+28, (selection*32)+24);
 	updateOam();
 
 	while(1) {
@@ -517,7 +498,7 @@ int selectNature(int currentNature) {
 		}
 
 		// Move arrow
-		setSpritePosition(arrowID, false, (arrowX*48)+(getTextWidthMaxW(Lang::natures[(selection*5)+arrowX], 48)/2)+28, (selection*32)+24);
+		setSpritePosition(arrowID, false, (arrowX*48)+(getTextWidthMaxW(i18n::nature(Config::getLang("lang"), (selection*5)+arrowX), 48)/2)+28, (selection*32)+24);
 		updateOam();
 	}
 }
@@ -675,32 +656,18 @@ void drawOriginPage(std::shared_ptr<PKX> pkm, std::vector<std::string> &varText)
 	// Clear screen
 	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 
-	std::vector<std::string> *locations;
-	switch(pkm->generation()) {
-		case Generation::THREE:
-			locations = &Lang::locations3;
-			break;
-		case Generation::FOUR:
-			locations = &Lang::locations4;
-			break;
-		default:
-		case Generation::FIVE:
-			locations = &Lang::locations5;
-			break;
-	}
-
 	// Print text
 	varText = { 
 		std::to_string(pkm->metLevel()),
 		std::to_string(pkm->metYear()+2000),
 		std::to_string(pkm->metMonth()),
 		std::to_string(pkm->metDay()),
-		(pkm->metLocation() > locations->size() ? "" : (*locations)[pkm->metLocation()]),
-		Lang::games[pkm->version()],
+		i18n::location(Config::getLang("lang"), pkm->metLocation(), pkm->version()),
+		i18n::game(Config::getLang("lang"), pkm->version()),
 	};
-	printText(Lang::get("origin"), 4, 0, false, true);
+	printText(i18n::localize(Config::getLang("lang"), "origin"), 4, 0, false, true);
 	for(unsigned i=0;i<originLabels.size();i++) {
-		printText(Lang::get(originLabels[i])+": "+varText[i], 4, (i+1)*16, false, true);
+		printText(i18n::localize(Config::getLang("lang"), originLabels[i])+": "+varText[i], 4, (i+1)*16, false, true);
 	}
 }
 
@@ -710,7 +677,7 @@ std::shared_ptr<PKX> selectOrigin(std::shared_ptr<PKX> pkm) {
 	drawOriginPage(pkm, varText);
 
 	setSpriteVisibility(arrowID, false, true);
-	setSpritePosition(arrowID, false, 4+getTextWidth(Lang::get(originLabels[0])+": "+varText[0]), 10);
+	setSpritePosition(arrowID, false, 4+getTextWidth(i18n::localize(Config::getLang("lang"), originLabels[0])+": "+varText[0]), 10);
 	updateOam();
 
 	bool optionSelected = false;
@@ -794,10 +761,27 @@ std::shared_ptr<PKX> selectOrigin(std::shared_ptr<PKX> pkm) {
 					if(num != -1)	pkm->metDay(num);
 					break;
 				} case 4: { // Location
-					pkm->metLocation(selectItem(pkm->metLocation(), 0, pkm->gen4() ? Lang::locations4.size() : Lang::locations5.size(), pkm->gen4() ? Lang::locations4 : Lang::locations5));
+					std::vector<std::string> locations;
+					int location = 0, i = 0;
+					for(std::map<u16, std::string>::const_iterator it = i18n::locations(Config::getLang("lang"), pkm->generation()).begin();it != i18n::locations(Config::getLang("lang"), pkm->generation()).end();it++) {
+						locations.push_back(it->second);
+						if(it->first == pkm->metLocation())	location = i;
+						i++;
+					}
+
+					int num = selectItem(location, 0, locations.size(), locations);
+
+
+					for(std::map<u16, std::string>::const_iterator it = i18n::locations(Config::getLang("lang"), pkm->generation()).begin();it != i18n::locations(Config::getLang("lang"), pkm->generation()).end();it++) {
+						if(it->second == locations[num]) {
+							pkm->metLocation(it->first);
+							break;
+						}
+					}
+
 					break;
 				} case 5: { // Game
-					pkm->version(selectItem(pkm->version(), 0, Lang::games.size(), Lang::games));
+					pkm->version(selectItem(pkm->version(), 0, i18n::rawGames(Config::getLang("lang")).size(), i18n::rawGames(Config::getLang("lang"))));
 					break;
 				}
 			}
@@ -807,7 +791,7 @@ std::shared_ptr<PKX> selectOrigin(std::shared_ptr<PKX> pkm) {
 		}
 
 		// Move arrow
-		setSpritePosition(arrowID, false, 4+getTextWidth(Lang::get(originLabels[selection])+": "+varText[selection]), (selection*16)+10);
+		setSpritePosition(arrowID, false, 4+getTextWidth(i18n::localize(Config::getLang("lang"), originLabels[selection])+": "+varText[selection]), (selection*16)+10);
 		updateOam();
 	}
 }
@@ -832,19 +816,19 @@ void drawStatsPage(std::shared_ptr<PKX> pkm, bool background) {
 	// Print stat info labels
 	{
 		int i = pkm->nature();
-		printText(Lang::get(statsLabels[0]), 20, textStatsC1[0].y, false, true);
-		printTextTintedMaxW(Lang::get(statsLabels[1]), 80, 1, (i!=0&&i<5         ? TextColor::red : i!=0&&!(i%5)      ? TextColor::blue : TextColor::white), 20, textStatsC1[1].y, false, true);
-		printTextTintedMaxW(Lang::get(statsLabels[2]), 80, 1, (i!=6&&i>4&&i<10   ? TextColor::red : i!=6&&!((i-1)%5)  ? TextColor::blue : TextColor::white), 20, textStatsC1[2].y, false, true);
-		printTextTintedMaxW(Lang::get(statsLabels[3]), 80, 1, (i!=18&&i>14&&i<20 ? TextColor::red : i!=18&&!((i-3)%5) ? TextColor::blue : TextColor::white), 20, textStatsC1[3].y, false, true);
-		printTextTintedMaxW(Lang::get(statsLabels[4]), 80, 1, (i!=24&&i>19       ? TextColor::red : i!=24&&!((i-4)%5) ? TextColor::blue : TextColor::white), 20, textStatsC1[4].y, false, true);
-		printTextTintedMaxW(Lang::get(statsLabels[5]), 80, 1, (i!=12&&i>9&&i<15  ? TextColor::red : i!=12&&!((i-2)%5) ? TextColor::blue : TextColor::white), 20, textStatsC1[5].y, false, true);
+		printText(i18n::localize(Config::getLang("lang"), statsLabels[0]), 20, textStatsC1[0].y, false, true);
+		printTextTintedMaxW(i18n::localize(Config::getLang("lang"), statsLabels[1]), 80, 1, (i!=0&&i<5         ? TextColor::red : i!=0&&!(i%5)      ? TextColor::blue : TextColor::white), 20, textStatsC1[1].y, false, true);
+		printTextTintedMaxW(i18n::localize(Config::getLang("lang"), statsLabels[2]), 80, 1, (i!=6&&i>4&&i<10   ? TextColor::red : i!=6&&!((i-1)%5)  ? TextColor::blue : TextColor::white), 20, textStatsC1[2].y, false, true);
+		printTextTintedMaxW(i18n::localize(Config::getLang("lang"), statsLabels[3]), 80, 1, (i!=18&&i>14&&i<20 ? TextColor::red : i!=18&&!((i-3)%5) ? TextColor::blue : TextColor::white), 20, textStatsC1[3].y, false, true);
+		printTextTintedMaxW(i18n::localize(Config::getLang("lang"), statsLabels[4]), 80, 1, (i!=24&&i>19       ? TextColor::red : i!=24&&!((i-4)%5) ? TextColor::blue : TextColor::white), 20, textStatsC1[4].y, false, true);
+		printTextTintedMaxW(i18n::localize(Config::getLang("lang"), statsLabels[5]), 80, 1, (i!=12&&i>9&&i<15  ? TextColor::red : i!=12&&!((i-2)%5) ? TextColor::blue : TextColor::white), 20, textStatsC1[5].y, false, true);
 	}
 
 	// Print column titles
-	printTextCenteredMaxW(Lang::get(statsLabels[6]), 30, 1, textStatsC1[0].x, textStatsC1[0].y-16, false, true);
-	printTextCentered(Lang::get(statsLabels[7]), textStatsC2[0].x, textStatsC2[0].y-16, false, true);
-	printTextCentered(Lang::get(statsLabels[8]), textStatsC3[0].x, textStatsC3[0].y-16, false, true);
-	printTextCenteredMaxW(Lang::get(statsLabels[9]), 30, 1, textStatsC4[0].x, textStatsC4[0].y-16, false, true);
+	printTextCenteredMaxW(i18n::localize(Config::getLang("lang"), statsLabels[6]), 30, 1, textStatsC1[0].x, textStatsC1[0].y-16, false, true);
+	printTextCentered(i18n::localize(Config::getLang("lang"), statsLabels[7]), textStatsC2[0].x, textStatsC2[0].y-16, false, true);
+	printTextCentered(i18n::localize(Config::getLang("lang"), statsLabels[8]), textStatsC3[0].x, textStatsC3[0].y-16, false, true);
+	printTextCenteredMaxW(i18n::localize(Config::getLang("lang"), statsLabels[9]), 30, 1, textStatsC4[0].x, textStatsC4[0].y-16, false, true);
 
 	// Set base stat info
 	snprintf(textStatsC1[0].text,  sizeof(textStatsC1[0].text), "%i", pkm->baseHP());
@@ -867,8 +851,8 @@ void drawStatsPage(std::shared_ptr<PKX> pkm, bool background) {
 	}
 
 	// Draw Hidden Power type
-	printText(Lang::get("hpType")+":", 20, 118, false, true);
-	drawImage(24+getTextWidth(Lang::get("hpType")+":"), 120, types[pkm->hpType()+1], false, true);
+	printText(i18n::localize(Config::getLang("lang"), "hpType")+":", 20, 118, false, true);
+	drawImage(24+getTextWidth(i18n::localize(Config::getLang("lang"), "hpType")+":"), 120, types[pkm->hpType()+1], false, true);
 
 }
 
@@ -920,7 +904,7 @@ std::shared_ptr<PKX> selectStats(std::shared_ptr<PKX> pkm) {
 					break;
 				}
 			}
-			if(touch.px > 24+getTextWidth(Lang::get("hpType")+":") && touch.px < 24+getTextWidth(Lang::get("hpType")+":")+types[pkm->hpType()+1].width && touch.py > 120 && touch.py < 132) {
+			if(touch.px > 24+getTextWidth(i18n::localize(Config::getLang("lang"), "hpType")+":") && touch.px < 24+getTextWidth(i18n::localize(Config::getLang("lang"), "hpType")+":")+types[pkm->hpType()+1].width && touch.py > 120 && touch.py < 132) {
 				selection = 6;
 				optionSelected = true;
 			}
@@ -950,7 +934,7 @@ std::shared_ptr<PKX> selectStats(std::shared_ptr<PKX> pkm) {
 		}
 
 		if(selection == 6) { // Hidden Power type
-			setSpritePosition(arrowID, false, 25+getTextWidth(Lang::get("hpType")+":")+types[pkm->hpType()+1].width+2, 112);
+			setSpritePosition(arrowID, false, 25+getTextWidth(i18n::localize(Config::getLang("lang"), "hpType")+":")+types[pkm->hpType()+1].width+2, 112);
 		} else if(column == 0) {
 			setSpritePosition(arrowID, false, 128+(textStatsC2[selection].x+(getTextWidth(textStatsC2[selection].text)/2))+2, textStatsC2[selection].y-6);
 		} else {

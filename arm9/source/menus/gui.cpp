@@ -70,7 +70,7 @@ void Gui::warn(std::string message, const std::string &confirm) {
 	drawOutline(233-okWidth-8, 96+(8*lines)-18, okWidth+8, 18, BLACK, false, true);
 
 	// Print text
-	printTextTinted(Lang::get("warning"), TextColor::red, 23, 96-(8*lines), false, true);
+	printTextTinted(i18n::localize(Config::getLang("lang"), "warning"), TextColor::red, 23, 96-(8*lines), false, true);
 	printTextTinted(message, TextColor::white, 23, 96-(8*(lines))+16, false, true);
 	printTextTinted(confirm, TextColor::gray, 233-okWidth-4, 96+(8*lines)-17, false, true);
 

@@ -3,23 +3,22 @@
 
 #include "json.hpp"
 #include "flashcard.hpp"
-#include "lang.hpp"
 
 nlohmann::json configJson;
 
-Lang::Language sysLang() {
+Language sysLang() {
 	switch(PersonalData->language) {
 		case 0:
-			return Lang::jp;
+			return Language::JPN;
 		case 1:
 		default:
-			return Lang::en;
+			return Language::ENG;
 		case 2:
-			return Lang::fr;
+			return Language::FRE;
 		case 3:
-			return Lang::de;
+			return Language::GER;
 		case 4:
-			return Lang::es;
+			return Language::SPA;
 	}
 }
 
@@ -69,9 +68,12 @@ void Config::setString(const std::string &key, const std::string &v) {
 	configJson[key] = v;
 }
 
-int Config::getLang(const std::string &key) {
-	if(!configJson.contains(key)) {
+Language Config::getLang(const std::string &key) {
+	if(!configJson.contains(key) || !configJson[key].is_string()) {
 		return sysLang();
 	}
-	return configJson.at(key).get_ref<const int64_t&>();
+	return i18n::langFromString(configJson.at(key).get_ref<const std::string&>());
+}
+void Config::setLang(const std::string &key, Language lang) {
+	configJson[key] = i18n::langString(lang);
 }

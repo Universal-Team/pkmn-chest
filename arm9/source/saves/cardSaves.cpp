@@ -2,7 +2,6 @@
 #include "colors.hpp"
 #include "graphics.hpp"
 #include "gui.hpp"
-#include "lang.hpp"
 
 auxspi_extra card_type = AUXSPI_FLASH_CARD;
 sNDSHeader nds;
@@ -110,7 +109,7 @@ bool restoreSlot1(void) {
 		length = ftell(in);
 		fseek(in, 0, SEEK_SET);
 		if(length != (auxspi ? (int)(LEN*num_blocks) : size)) {
-			Gui::warn(Lang::get("wrongSaveCard"));
+			Gui::warn(i18n::localize(Config::getLang("lang"), "wrongSaveCard"));
 			fclose(in);
 			return false;
 		}

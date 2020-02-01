@@ -5,11 +5,12 @@
 #include <strings.h>
 #include <unistd.h>
 
-#include "flashcard.hpp"
 #include "colors.hpp"
+#include "config.hpp"
+#include "flashcard.hpp"
 #include "graphics.hpp"
+#include "i18n.hpp"
 #include "input.hpp"
-#include "lang.hpp"
 #include "loader.hpp"
 #include "manager.hpp"
 #include "cardSaves.hpp"
@@ -361,7 +362,7 @@ std::string topMenuSelect(void) {
 			&& topMenuContents[tmCurPos].name != "sd:"
 			&& topMenuContents[tmCurPos].name != "card:"
 			&& topMenuContents[tmCurPos].name != "cart:") {
-				if(Input::getBool(Lang::get("remove"), Lang::get("cancel"))) {
+				if(Input::getBool(i18n::localize(Config::getLang("lang"), "remove"), i18n::localize(Config::getLang("lang"), "cancel"))) {
 					topMenuContents.erase(topMenuContents.begin()+tmCurPos);
 
 					FILE* out = fopen((sdFound() ? "sd:/_nds/pkmn-chest/favorites.lst" : "fat:/_nds/pkmn-chest/favorites.lst"), "wb");

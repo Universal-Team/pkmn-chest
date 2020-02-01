@@ -3,12 +3,11 @@
 
 #include "banks.hpp"
 #include "colors.hpp"
+#include "config.hpp"
 #include "fileBrowse.hpp"
 #include "flashcard.hpp"
-#include "graphics.hpp"
 #include "gui.hpp"
 #include "input.hpp"
-#include "lang.hpp"
 #include "loader.hpp"
 #include "manager.hpp"
 #include "misc.hpp"
@@ -45,12 +44,12 @@ std::vector<Label> aMenuTopBarButtons = {
 void drawAMenuButtons(std::vector<Label>& buttons, int buttonMode) {
 	for(unsigned i=0;i<buttons.size();i++) {
 		drawImage(buttons[i].x, buttons[i].y, boxButton, false, true);
-		printTextMaxW(Lang::get(buttons[i].label), 80, 1, buttons[i].x+4, buttons[i].y+4, false, true);
+		printTextMaxW(i18n::localize(Config::getLang("lang"), buttons[i].label), 80, 1, buttons[i].x+4, buttons[i].y+4, false, true);
 	}
 }
 
 int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
-	setSpritePosition(arrowID, false, buttons[0].x+getTextWidthMaxW(Lang::get(buttons[0].label), 80)+4, buttons[0].y);
+	setSpritePosition(arrowID, false, buttons[0].x+getTextWidthMaxW(i18n::localize(Config::getLang("lang"), buttons[0].label), 80)+4, buttons[0].y);
 	setSpriteVisibility(arrowID, true, false);
 	setSpriteVisibility(arrowID, false, true);
 	updateOam();
@@ -139,7 +138,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 					}
 					updateOam();
 				}
-				if(Input::getBool(Lang::get("release"), Lang::get("cancel"))) {
+				if(Input::getBool(i18n::localize(Config::getLang("lang"), "release"), i18n::localize(Config::getLang("lang"), "cancel"))) {
 					if(topScreen)	Banks::bank->pkm(save->emptyPkm(), currentBankBox, pkmPos(pkmX, pkmY));
 					else if(inParty)	save->pkm(save->emptyPkm(), pkmPos(pkmX, pkmY));
 					else	save->pkm(save->emptyPkm(), currentSaveBox, pkmPos(pkmX, pkmY), false);
@@ -179,9 +178,9 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				else
 					snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%i -\n%s -\n%x%lx.pk%i", sdFound() ? "sd" : "fat", currentPokemon(pkmX, pkmY)->species(), currentPokemon(pkmX, pkmY)->nickname().c_str(), currentPokemon(pkmX, pkmY)->checksum(), currentPokemon(pkmX, pkmY)->encryptionConstant(), currentPokemon(pkmX, pkmY)->genNumber());
 				char str[PATH_MAX];
-				snprintf(str, sizeof(str), Lang::get("dumpedTo").c_str(), path);
+				snprintf(str, sizeof(str), i18n::localize(Config::getLang("lang"), "dumpedTo").c_str(), path);
 
-				Gui::prompt(str, Lang::get("ok"));
+				Gui::prompt(str, i18n::localize(Config::getLang("lang"), "ok"));
 
 				drawAMenuButtons(buttons, buttonMode);
 				setSpriteVisibility(arrowID, false, true);
@@ -311,9 +310,9 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				// Get formatted path for prompt
 				snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/\n%s/", sdFound() ? "sd" : "fat", topScreen ? Banks::bank->boxName(currentBankBox).c_str() : save->boxName(currentSaveBox).c_str());
 				char str[PATH_MAX];
-				snprintf(str, sizeof(str), Lang::get("dumpedTo").c_str(), path);
+				snprintf(str, sizeof(str), i18n::localize(Config::getLang("lang"), "dumpedTo").c_str(), path);
 
-				Gui::prompt(str, Lang::get("ok"));
+				Gui::prompt(str, i18n::localize(Config::getLang("lang"), "ok"));
 
 				drawAMenuButtons(buttons, buttonMode);
 				setSpriteVisibility(arrowID, false, true);
@@ -453,7 +452,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				}
 				pkm->fixMoves();
 				pkm->PID(PKX::getRandomPID(pkm->species(), pkm->gender(), pkm->version(), pkm->nature(), pkm->alternativeForm(), pkm->abilityNumber(), pkm->PID(), pkm->generation()));
-				pkm->language(pkmLang());
+				pkm->language(Config::getLang("lang"));
 				const time_t current = time(NULL);
 				pkm->metDay(gmtime(&current)->tm_mday);
 				pkm->metMonth(gmtime(&current)->tm_mon + 1);
@@ -480,7 +479,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 			}
 		}
 
-		setSpritePosition(arrowID, false, buttons[menuSelection].x+getTextWidthMaxW(Lang::get(buttons[menuSelection].label), 80)+4, buttons[menuSelection].y);
+		setSpritePosition(arrowID, false, buttons[menuSelection].x+getTextWidthMaxW(i18n::localize(Config::getLang("lang"), buttons[menuSelection].label), 80)+4, buttons[menuSelection].y);
 		updateOam();
 	}
 	return false;

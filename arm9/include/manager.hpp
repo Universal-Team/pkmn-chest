@@ -56,6 +56,12 @@ void resetPokemonSpritesPos(void);
  */
 void fillArrow(int arrowMode);
 
+/* 
+ * Loads type images
+ * Language lang is the language to try load, if it fails English will be used
+ */
+void loadTypes(Language lang);
+
 // Inits sprites, run before first loadGraphics(), but should only be run once
 void initSprites(void);
 

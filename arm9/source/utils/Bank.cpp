@@ -27,8 +27,8 @@
 #include "Bank.hpp"
 #include <unistd.h>
 
+#include "config.hpp"
 #include "flashcard.hpp"
-#include "lang.hpp"
 #include "PB7.hpp"
 #include "PK3.hpp"
 #include "PK4.hpp"
@@ -258,7 +258,7 @@ bool Bank::backup() const {
 
 std::string Bank::boxName(int box) const {
 	std::string name = boxNames[box].get<std::string>();
-	if(name.substr(0, 7) == "%CHEST%")	name = Lang::get("chest") + name.substr(7);
+	if(name.substr(0, 7) == "%CHEST%")	name = i18n::localize(Config::getLang("lang"), "chest") + name.substr(7);
 	return name;
 }
 
