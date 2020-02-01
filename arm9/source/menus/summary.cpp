@@ -52,37 +52,34 @@ void changeAbility(std::shared_ptr<PKX> &pkm) {
 		}
 	} else if(pkm->generation() == Generation::FIVE) {
 		PK5* pk5 = (PK5*)pkm.get();
-		switch (pkm->abilityNumber() >> 1) {
+		switch(pkm->abilityNumber() >> 1) {
 			case 0:
 				if(pkm->abilities(1) != pkm->ability() && pkm->abilities(1) != 0) {
-					pkm->ability(pkm->abilities(1));
-					if(pkm->abilities(1) == pkm->abilities(2)) {
+					pkm->setAbility(1);
+					if(pk5->abilities(1) == pk5->abilities(2)) {
 						pk5->hiddenAbility(true);
 					}
 				} else if(pkm->abilities(2) != 0) {
-					pkm->ability(pkm->abilities(2));
-					pk5->hiddenAbility(true);
+					pkm->setAbility(2);
 				}
 				break;
 			case 1:
 				if(pkm->abilities(2) != pkm->ability() && pkm->abilities(2) != 0) {
-					pkm->ability(pkm->abilities(2));
-					pk5->hiddenAbility(true);
-				} else if(pkm->abilities(0) != 0) {
-					pkm->ability(pkm->abilities(0));
-					pk5->hiddenAbility(false);
+					pkm->setAbility(2);
+				}
+				else if(pkm->abilities(0) != 0)
+				{
+					pkm->setAbility(0);
 				}
 				break;
 			case 2:
-				if(pkm->abilities(0) != pkm->ability() && pkm->abilities(0) != 0) {
-					pkm->ability(pkm->abilities(0));
-					pk5->hiddenAbility(false);
+				if(pkm->abilities(0) != pkm->ability() && pkm->abilities(0) != 0)
+				{
+					pkm->setAbility(0);
 				} else if(pkm->abilities(1) != 0) {
-					pkm->ability(pkm->abilities(1));
+					pkm->setAbility(1);
 					if(pkm->abilities(1) == pkm->abilities(2)) {
 						pk5->hiddenAbility(true);
-					} else {
-						pk5->hiddenAbility(false);
 					}
 				}
 				break;
