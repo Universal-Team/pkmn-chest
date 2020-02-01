@@ -352,7 +352,6 @@ void drawBox(bool top) {
 
 	// Draw box image
 	drawImage(5, 15, bankBox, top, false);
-	// TODO: Add top bar for gen 3, it has additional palettes so it has to be split
 
 	// Print box name
 	printTextCenteredTintedMaxW((top ? Banks::bank->boxName(currentBankBox) : save->boxName(currentSaveBox)), 110, 1, TextColor::gray, boxTitleX, boxTitleY, top, false);
