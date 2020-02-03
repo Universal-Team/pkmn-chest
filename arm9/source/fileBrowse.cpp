@@ -343,11 +343,17 @@ std::string topMenuSelect(void) {
 				return "";
 			} else if(topMenuContents[tmCurPos].name == "card:" && topMenuContents[tmSlot1Offset].valid) {
 				Sound::play(Sound::click);
+				drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
+				drawRectangle(0, 0, 256, 192, CLEAR, false, true);
+				printTextCentered(i18n::localize(Config::getLang("lang"), "dumpingSave"), 0, 50, false, false);
 				dumpSlot1();
 				showTopMenuOnExit = 1;
 				return cardSave;
 			} else if(topMenuContents[tmCurPos].name == "cart:" && topMenuContents[tmSlot2Offset].valid) {
 				Sound::play(Sound::click);
+				drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
+				drawRectangle(0, 0, 256, 192, CLEAR, false, true);
+				printTextCentered(i18n::localize(Config::getLang("lang"), "dumpingSave"), 0, 50, false, false);
 				dumpSlot2();
 				showTopMenuOnExit = 1;
 				return cartSave;

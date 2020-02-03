@@ -33,6 +33,7 @@
 	"dump": "Dump",
 	"dumpBox": "Dump box",
 	"dumpedTo": "Dumped to:\n%s",
+	"dumpingSave": "Dumping save...\nPlease wait",
 	"edit": "Edit",
 	"elmLab": "Prof. Elm's Lab",
 	"ev": "EV",
