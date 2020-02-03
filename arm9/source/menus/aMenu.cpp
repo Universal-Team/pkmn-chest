@@ -452,7 +452,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				}
 				pkm->fixMoves();
 				pkm->PID(PKX::getRandomPID(pkm->species(), pkm->gender(), pkm->version(), pkm->nature(), pkm->alternativeForm(), pkm->abilityNumber(), pkm->PID(), pkm->generation()));
-				pkm->language(Config::getLang("lang"));
+				pkm->language(getSafeLanguage(pkm->generation(), Config::getLang("lang")));
 				const time_t current = time(NULL);
 				pkm->metDay(gmtime(&current)->tm_mday);
 				pkm->metMonth(gmtime(&current)->tm_mon + 1);
