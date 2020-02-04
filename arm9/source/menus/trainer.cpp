@@ -6,12 +6,13 @@
 #include "input.hpp"
 #include "loader.hpp"
 #include "manager.hpp"
+#include "Sav3.hpp"
 #include "sound.hpp"
 
 struct Text {
 	int x;
 	int y;
-	char text[14];
+	char text[18];
 };
 
 Text textTP1[] {
@@ -22,9 +23,11 @@ Text textTP1[] {
 	{4, 80},
 	{4, 96},
 	{4, 112},
+	{4, 128},
+	{4, 144},
 };
 
-std::vector<std::string> trainerText = {"name", "trainerID", "secretID", "money", "bp", "badges", "playTime"};
+std::vector<std::string> trainerText = {"name", "trainerID", "secretID", "money", "bp", "badges", "playTime", "rtcInitial", "rtcElapsed"};
 
 void drawTrainerCard(void) {
 	// Draw background
@@ -44,6 +47,11 @@ void drawTrainerCard(void) {
 	snprintf(textTP1[4].text, sizeof(textTP1[4].text), "%li", save->BP());
 	snprintf(textTP1[5].text, sizeof(textTP1[5].text), "%i", save->badges());
 	snprintf(textTP1[6].text, sizeof(textTP1[6].text), "%i:%i:%i", save->playedHours(), save->playedMinutes(), save->playedSeconds());
+	if(save->generation() == Generation::THREE) {
+		Sav3 *sav3 = (Sav3*)save.get();
+		snprintf(textTP1[7].text, sizeof(textTP1[7].text), "%i:%i:%i:%i", sav3->rtcInitialDay(), sav3->rtcInitialHour(), sav3->rtcInitialMinute(), sav3->rtcInitialSecond());
+		snprintf(textTP1[8].text, sizeof(textTP1[8].text), "%i:%i:%i:%i", sav3->rtcElapsedDay(), sav3->rtcElapsedHour(), sav3->rtcElapsedMinute(), sav3->rtcElapsedSecond());
+	}
 	
 	// Print info
 	printTextTinted(textTP1[0].text, (save->gender() ? TextColor::red : TextColor::blue), textTP1[0].x+getTextWidth(i18n::localize(Config::getLang("lang"), trainerText[0]))+8, textTP1[0].y, false, true);
@@ -132,6 +140,28 @@ void showTrainerCard(void) {
 					if(num != -1)	save->playedMinutes(num);
 					num = Input::getInt(59);
 					if(num != -1)	save->playedSeconds(num);
+					break;
+				} case 7: {
+					Sav3 *sav3 = (Sav3*)save.get();
+					int num = Input::getInt(65535);
+					if(num != -1)	sav3->rtcInitialDay(num);
+					num = Input::getInt(255);
+					if(num != -1)	sav3->rtcInitialHour(num);
+					num = Input::getInt(255);
+					if(num != -1)	sav3->rtcInitialMinute(num);
+					num = Input::getInt(255);
+					if(num != -1)	sav3->rtcInitialSecond(num);
+					break;
+				} case 8: {
+					Sav3 *sav3 = (Sav3*)save.get();
+					int num = Input::getInt(65535);
+					if(num != -1)	sav3->rtcElapsedDay(num);
+					num = Input::getInt(255);
+					if(num != -1)	sav3->rtcElapsedHour(num);
+					num = Input::getInt(255);
+					if(num != -1)	sav3->rtcElapsedMinute(num);
+					num = Input::getInt(255);
+					if(num != -1)	sav3->rtcElapsedSecond(num);
 					break;
 				}
 			}
