@@ -18,6 +18,8 @@ Language sysLang() {
 		case 3:
 			return Language::GER;
 		case 4:
+			return Language::ITA;
+		case 5:
 			return Language::SPA;
 	}
 }
