@@ -180,7 +180,9 @@ void drawConfigMenu(void) {
 		optionsText[3] = i18n::localize(Config::getLang("lang"), "unlimited");
 	else
 		optionsText[3] = std::to_string(Config::getInt("backupAmount"));
-	optionsText[4] = i18n::localize(Config::getLang("lang"), Config::getString("music"));
+	std::string songName = Config::getString("music");
+	if(songName == "")	songName = "off";
+	optionsText[4] = i18n::localize(Config::getLang("lang"), songName);
 	optionsText[5] = Config::getBool("playSfx") ? i18n::localize(Config::getLang("lang"), "yes") : i18n::localize(Config::getLang("lang"), "no");
 	optionsText[6] = Config::getBool("keyboardDirections") ? "4" : "8";
 	optionsText[7] = Config::getBool("keyboardGroupAmount") ? "ABCD" : "ABC.";

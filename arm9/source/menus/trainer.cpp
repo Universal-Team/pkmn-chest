@@ -35,7 +35,7 @@ void drawTrainerCard(void) {
 	printText(i18n::localize(Config::getLang("lang"), "trainerInfo"), 4, 0, false, true);
 
 	// Print labels
-	for(unsigned i=0;i<sizeof(textTP1)/sizeof(textTP1[0]);i++) {
+	for(unsigned i=0;i<sizeof(textTP1)/sizeof(textTP1[0]) - (save->generation() == Generation::THREE ? 0 : 2);i++) {
 		printText(i18n::localize(Config::getLang("lang"), trainerText[i])+":", textTP1[i].x, textTP1[i].y, false, true);
 	}
 
@@ -55,7 +55,7 @@ void drawTrainerCard(void) {
 	
 	// Print info
 	printTextTinted(textTP1[0].text, (save->gender() ? TextColor::red : TextColor::blue), textTP1[0].x+getTextWidth(i18n::localize(Config::getLang("lang"), trainerText[0]))+8, textTP1[0].y, false, true);
-	for(unsigned i=1;i<(sizeof(textTP1)/sizeof(textTP1[0]));i++) {
+	for(unsigned i=1;i<(sizeof(textTP1)/sizeof(textTP1[0])) - (save->generation() == Generation::THREE ? 0 : 2);i++) {
 		printText(textTP1[i].text, textTP1[i].x+getTextWidth(i18n::localize(Config::getLang("lang"), trainerText[i]))+8, textTP1[i].y, false, true);
 	}
 }
