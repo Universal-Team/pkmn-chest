@@ -33,7 +33,7 @@
 	"dPadGroups": "Groupe de saisie sur le D-pad",
 	"dump": "Dump",
 	"dumpBox": "Dump la boite",
-	"dumpedTo": "Copiée vers: %s",
+	"dumpedTo": "Copiée vers:\n%s",
 	"dumpingSave": "Dumping save...\nPlease wait",
 	"edit": "Editer",
 	"elmLab": "Labo Pokémon du Prof. Orme",
