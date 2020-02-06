@@ -251,9 +251,14 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 				switch(selection) {
 					case 0: {
 						int num = selectItem(pkm->species()-1, save->availableSpecies(), i18n::rawSpecies(Config::getLang("lang")));
+						bool nicknamed = pkm->nicknamed(); // Gotta check before changing species for G3
 						if(num > 0) {
 							pkm->species(num);
-							if(!pkm->nicknamed())	pkm->nickname(i18n::species(Config::getLang("lang"), num));
+							if(!nicknamed) {
+								std::string speciesName = i18n::species(Config::getLang("lang"), num);
+								if(pkm->generation() == Generation::THREE)	speciesName = StringUtils::toUpper(speciesName);
+								pkm->nickname(speciesName);
+							}
 							pkm->setAbility(0);
 							pkm->alternativeForm(0);
 							if(pkm->genderType() == 255)	pkm->gender(2);

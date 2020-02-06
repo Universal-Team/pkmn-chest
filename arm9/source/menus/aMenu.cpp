@@ -457,7 +457,12 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				pkm->metDay(gmtime(&current)->tm_mday);
 				pkm->metMonth(gmtime(&current)->tm_mon + 1);
 				pkm->metYear(gmtime(&current)->tm_year - 100);
-				pkm->metLevel(1);
+				pkm->metLevel(pkm->generation() <= Generation::THREE ? 5 : 1);
+				if(pkm->generation() == Generation::THREE) {
+					pkm->level(5); // There was no level 1 before gen 4
+					std::string name = i18n::species(Config::getLang("lang"), pkm->species());
+					pkm->nickname(StringUtils::toUpper(name));
+				}
 
 				if(topScreen)	Banks::bank->pkm(showPokemonSummary(pkm), currentBankBox, pkmPos(pkmX, pkmY));
 				else if(inParty)	save->pkm(showPokemonSummary(pkm), pkmPos(pkmX, pkmY));
