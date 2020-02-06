@@ -19,7 +19,7 @@ These can be installed by getting [devkitPro pacman](https://devkitpro.org/wiki/
 
 ### Cloning the repo
 To clone the repo run `git clone --recursive https://github.com/Universal-Team/pkmn-chest.git` (Note the `--recursive`, that is needed to clone the submodules)
-If you already have the repo without the submodules you can run `git submodule init` and `git submodule update` in ***both***  the repo root and `arm9/core` *after* getting the core submodule.
+If you already have the repo without the submodules you can run `git submodule update --init --recursive` to get the core submodule and the memecrypto submodule inside it.
 
 ### Compiling
 Simply run `make` in the pkmn-chest source directory
