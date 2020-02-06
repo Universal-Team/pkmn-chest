@@ -50,6 +50,7 @@ You can also talk on the [GBAtemp thread](https://gbatemp.net/threads/release-pk
 - [edo9300](https://github.com/edo9300): [ndsi-savedumper](https://github.com/edo9300/ndsi-savedumper)'s gamecard save dumping and injecting code
 - [Flagbrew](https://github.com/FlagBrew), [piepie62](https://github.com/piepie62): [PKSM](https://github.com/FlagBrew/PKSM), [PKSM-Core](https://github.com/FlagBrew/PKSM-Core)'s save and bank management code
 - [Kurt](https://github.com/kwsch): [PKHeX](https://github.com/kwsch/PKHeX) which was a major reference for the generation 3 code
+- Pokedoc: [savegame-manager](https://code.google.com/archive/p/savegame-manager/source)'s GBA save dumping and injecting
 - [RocketRobz](https://github.com/RocketRobz): Adding flashcard and SD being used together and code from [TWiLight Menu++](https://github.com/DS-Homebrew/TWiLightMenu)
 - [StackZ](https://github.com/SuperSaiyajinStackZ): Idea to make a Pokémon Bank for the DS(i)
 - [TotallyNotGuy](https://github.com/TotallyNotGuy): Finding & making graphics and the Pokémon Center generation 4 song
