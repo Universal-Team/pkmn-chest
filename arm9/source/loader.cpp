@@ -58,11 +58,11 @@ void saveChanges(std::string savePath) {
 		chdir(savDir);
 	}
 
-	save->encrypt();
+	save->finishEditing();
 
 	FILE* out = fopen(savePath.c_str(), "rb+");
 	fwrite(save->rawData().get(), 1, save->getLength(), out);
 	fclose(out);
 
-	save->decrypt();
+	save->beginEditing();
 }
