@@ -40,11 +40,11 @@ You can also talk on the [GBAtemp thread](https://gbatemp.net/threads/release-pk
 - [cimo95](https://github.com/cimo95): Indonesian
 - [David Pires](https://github.com/DavidPires): Portuguese
 - [edo9300](https://github.com/edo9300): Italian
-- [Epicpkmn11](https://github.com/Epicpkmn11): English and Japanese
+- [Pk11](https://github.com/Epicpkmn11): English and Japanese
 - [Extocine](https://twitter.com/@ExtocineN): Russian
 - [lemonnade0](https://steamcommunity.com/profiles/76561198276444028): Lithuanian
 - [NightYoshi370](https://github.com/NightYoshi370/): French
-- [VoltZ](https://github.com/SuperSaiyajinVoltZ): German
+- [StackZ](https://github.com/SuperSaiyajinStackZ): German
 ### Others
 - [devkitPro](https://github.com/devkitPro), [WinterMute](https://github.com/WinterMute): devkitARM, libnds, and libfat.
 - [edo9300](https://github.com/edo9300): [ndsi-savedumper](https://github.com/edo9300/ndsi-savedumper)'s gamecard save dumping and injecting code
