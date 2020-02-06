@@ -181,7 +181,7 @@ void drawConfigMenu(void) {
 	else
 		optionsText[3] = std::to_string(Config::getInt("backupAmount"));
 	optionsText[4] = i18n::localize(Config::getLang("lang"), Config::getString("music"));
-	optionsText[5] = Config::getBool("playSfx") ? Lang::get("yes") : Lang::get("no");
+	optionsText[5] = Config::getBool("playSfx") ? i18n::localize(Config::getLang("lang"), "yes") : i18n::localize(Config::getLang("lang"), "no");
 	optionsText[6] = Config::getBool("keyboardDirections") ? "4" : "8";
 	optionsText[7] = Config::getBool("keyboardGroupAmount") ? "ABCD" : "ABC.";
 	optionsText[8] = Config::getString("themeDir").substr(Config::getString("themeDir").find_last_of("/") == std::string::npos ? 0 : Config::getString("themeDir").find_last_of("/")+1);
@@ -310,7 +310,7 @@ void configMenu(void) {
 					} else {
 						std::vector<std::string> names;
 						for(auto str : songs) {
-							names.push_back(Lang::get(str));
+							names.push_back(i18n::localize(Config::getLang("lang"), str));
 						}
 						Config::setString("music", songs[selectItem(current, 0, names.size(), names)]);
 					}
