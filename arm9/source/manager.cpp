@@ -354,7 +354,7 @@ void drawBox(bool top) {
 	drawImage(5, 15, bankBox, top, false);
 
 	// Print box name
-	printTextCenteredTintedMaxW((top ? Banks::bank->boxName(currentBankBox) : save->boxName(currentSaveBox)), 110, 1, TextColor::gray, boxTitleX, boxTitleY, top, false);
+	printTextCenteredTintedMaxW((top ? Banks::bank->boxName(currentBankBox) : save->boxName(currentSaveBox)), 110, 1, TextColor::gray, boxTitleX, top ? 20 : boxTitleY, top, false);
 
 	if(!top) {
 		drawImage(boxButton.width+5, 192-search.height, search, false, false);
@@ -565,6 +565,7 @@ void manageBoxes(void) {
 				if(heldPokemon.size() > 0) {
 					if(heldPokemon[0].position == (arrowY*6)+arrowX && heldPokemonBox == currentBox() && heldPokemonScreen == topScreen) {
 						// If in the held Pokémon's previous spot, just put held Pokémon back down
+						returnPokemon:
 						for(unsigned i=0;i<heldPokemon.size();i++) {
 							if(heldInParty)	setSpriteVisibility(partyIconID[heldPokemon[i].position], heldPokemonScreen, heldPokemon[i].pkm->species());
 							else	setSpriteVisibility(heldPokemon[i].position, heldPokemonScreen, heldPokemon[i].pkm->species());
@@ -655,8 +656,9 @@ void manageBoxes(void) {
 				} else if(arrowMode == 2) {
 					bankBox = loadImage(boxBgPath(topScreen));
 					int startX = arrowX, startY = arrowY;
+					int x = topScreen ? 8 : pkmnX, y = topScreen ? 32 : pkmnY;
 					if(inParty)	drawOutline(PARTY_TRAY_X+(partySpritePos[(startY*2)+startX].first), PARTY_TRAY_Y+(partySpritePos[(startY*2)+startX].second)+8, 32, 24, DARKER_GRAY, topScreen, true);
-					else	drawOutline(8+(startX*24), 40+(startY*24), (((arrowX+1)-startX)*24)+8, 24, WHITE, topScreen, false);
+					else	drawOutline(x+(startX*24), y+8+(startY*24), (((arrowX+1)-startX)*24)+8, 24, WHITE, topScreen, false);
 					while(1) {
 						do {
 							swiWaitForVBlank();
@@ -742,7 +744,7 @@ void manageBoxes(void) {
 							int x = topScreen ? 8 : pkmnX, y = topScreen ? 32 : pkmnY;
 							drawImageSegment(5, 15+20, bankBox.width, bankBox.height-20, bankBox, 0, 20, topScreen, false);
 							drawOutline(x+(std::min(startX, arrowX)*24), y+8+(std::min(startY, arrowY)*24), ((std::max(arrowX-startX, startX-arrowX)+1)*24)+x, ((std::max(arrowY-startY, startY-arrowY)+1)*24), WHITE, topScreen, false);
-							setSpritePosition(arrowID, topScreen, (arrowX*24)+pkmnX+16, (arrowY*24)+pkmnY+4);
+							setSpritePosition(arrowID, topScreen, (arrowX*24)+x+16, (arrowY*24)+y+4);
 						}
 						updateOam();
 					}
@@ -790,7 +792,27 @@ void manageBoxes(void) {
 				}
 			}
 		} else if(pressed & KEY_B) {
-			if(partyShown) {
+			if(heldPokemon.size() > 0) {
+				Sound::play(Sound::back);
+
+				// Reset postion
+				inParty = heldInParty;
+				arrowX = heldPokemon[0].position-((heldPokemon[0].position/6)*6);
+				arrowY = heldPokemon[0].position/6;
+				topScreen = heldPokemonScreen;
+				if(!inParty) {
+					(topScreen ? currentBankBox : currentSaveBox) = heldPokemonBox;
+					drawBox(topScreen);
+				}
+
+				setSpriteVisibility(arrowID, !topScreen, false);
+				setSpriteVisibility(heldPokemonID, !topScreen, false);
+				setSpriteVisibility(arrowID, topScreen, true);
+				setSpriteVisibility(heldPokemonID, topScreen, true);
+
+				drawPokemonInfo(currentPokemon(arrowX, arrowY));
+				goto returnPokemon;
+			} else if(partyShown) {
 				Sound::play(Sound::back);
 				goto toggleParty;
 			}
