@@ -16,9 +16,9 @@
 			"problemMatcher": "$gcc"
 		},
 		{
-			"label": "Make (skip-graphics)",
+			"label": "Make (skip graphics & sound)",
 			"command": "make",
-			"args": ["-s", "skip-graphics"],
+			"args": ["-s", "skip-gs"],
 			"group": {
 				"kind": "build"
 			},

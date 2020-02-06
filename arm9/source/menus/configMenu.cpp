@@ -36,7 +36,7 @@ std::vector<Label> textChestFile {
 	{12, 80, "change"}, // Change
 };
 
-const std::vector<std::string> songs = {"off", "center1", "center4", "center5", "twinleafTown", "elmLab", "oakLab", "gameCorner"};
+std::vector<std::string> songs = {"off", "center1", "center3", "center4", "center5", "twinleafTown", "elmLab", "oakLab", "gameCorner", "theme"};
 
 std::vector<std::string> optionsText;
 
@@ -180,8 +180,8 @@ void drawConfigMenu(void) {
 		optionsText[3] = i18n::localize(Config::getLang("lang"), "unlimited");
 	else
 		optionsText[3] = std::to_string(Config::getInt("backupAmount"));
-	optionsText[4] = i18n::localize(Config::getLang("lang"), songs[Config::getInt("music")]);
-	optionsText[5] = Config::getBool("playSfx") ? i18n::localize(Config::getLang("lang"), "yes") : i18n::localize(Config::getLang("lang"), "no");
+	optionsText[4] = i18n::localize(Config::getLang("lang"), Config::getString("music"));
+	optionsText[5] = Config::getBool("playSfx") ? Lang::get("yes") : Lang::get("no");
 	optionsText[6] = Config::getBool("keyboardDirections") ? "4" : "8";
 	optionsText[7] = Config::getBool("keyboardGroupAmount") ? "ABCD" : "ABC.";
 	optionsText[8] = Config::getString("themeDir").substr(Config::getString("themeDir").find_last_of("/") == std::string::npos ? 0 : Config::getString("themeDir").find_last_of("/")+1);
@@ -293,14 +293,32 @@ void configMenu(void) {
 					}
 					break;
 				} case 4: { // Music
-					if(pressed & KEY_LEFT) {
-						if(Config::getInt("music") > 0)	Config::setInt("music", Config::getInt("music")-1);
-						else	Config::setInt("music", songs.size()-1);
-					} else {
-						if(Config::getInt("music") < (int)songs.size()-1)	Config::setInt("music", Config::getInt("music")+1);
-						else	Config::setInt("music", 0);
+					int current = 0;
+					for(unsigned int i=0;i<songs.size();i++) {
+						if(songs[i] == Config::getString("music")) {
+							current = i;
+							break;
+						}
 					}
-					Sound::playBgm(Config::getInt("music"));
+
+					if(pressed & KEY_LEFT) {
+						if(current > 0)	Config::setString("music", songs[current-1]);
+						else	Config::setString("music", songs[songs.size()-1]);
+					} else if(pressed & KEY_RIGHT) {
+						if(current < (int)songs.size()-1)	Config::setString("music", songs[current+1]);
+						else	Config::setString("music", songs[0]);
+					} else {
+						std::vector<std::string> names;
+						for(auto str : songs) {
+							names.push_back(Lang::get(str));
+						}
+						Config::setString("music", songs[selectItem(current, 0, names.size(), names)]);
+					}
+					if(Config::getString("music") == "theme") {
+						Sound::load((Config::getString("themeDir")+"/sound.msl").c_str());
+					} else {
+						Sound::load(("nitro:/sound/"+Config::getString("music")+".msl").c_str());
+					}
 					break;
 				} case 5: { // Sound FX
 					Config::setBool("playSfx", !Config::getBool("playSfx"));
@@ -323,6 +341,9 @@ void configMenu(void) {
 						Colors::load();
 						loadGraphics();
 						loadFont();
+						if(Config::getString("music") == "theme") {
+							Sound::load((Config::getString("themeDir")+"/sound.msl").c_str());
+						}
 					}
 					chdir(startPath);
 					// Clear text

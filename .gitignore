@@ -5,6 +5,7 @@
 *.elf
 *.gfx
 *.cia
+*.msl
 graphics/bmp2ds
 nitrofiles/i18n/**/*.txt
 

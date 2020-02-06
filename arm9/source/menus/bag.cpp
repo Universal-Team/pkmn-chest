@@ -16,7 +16,7 @@
 #define entriesPerScreen 11
 
 int getMaxItem(int pouchIndex) {
-	for(int i=save->pouches()[pouchIndex].second;i>0;i--) {
+	for(int i=save->pouches()[pouchIndex].second-1;i>0;i--) {
 		if(save->item(save->pouches()[pouchIndex].first, i)->id() != 0) {
 			return std::min(i+1, save->pouches()[pouchIndex].second);
 		}
