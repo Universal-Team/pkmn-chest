@@ -3,14 +3,17 @@
 
 #include "Sav.hpp"
 
-// Returns the language in the correct order for a Pokémon
-int pkmLang(void);
-
 // Shows the form selection menu
 int selectForm(int dexNo, int currentForm);
 
 // Shows a list of items in a vector to select from
+int selectItem(int current, std::set<int> validItems, const std::vector<std::string> &items);
+
+// Shows a list of items in a vector to select from
 int selectItem(int current, int start, int max, const std::vector<std::string> &items);
+
+// Shows a list of items in a vector to select from
+std::string selectItem(int current, const std::vector<std::string> &items);
 
 // Shows the move editing menu
 std::shared_ptr<PKX> selectMoves(std::shared_ptr<PKX> pkm);
@@ -32,5 +35,8 @@ std::shared_ptr<PKX> selectOrigin(std::shared_ptr<PKX> pkm);
 
 // Shows the stat editing menu
 std::shared_ptr<PKX> selectStats(std::shared_ptr<PKX> pkm);
+
+// Shows the type selection menu
+int selectHPType(int current);
 
 #endif

@@ -1,25 +1,3 @@
-/*-----------------------------------------------------------------
- Copyright(C) 2005 - 2017
-	Michael "Chishm" Chisholm
-	Dave "WinterMute" Murphy
-	Claudio "sverx"
-
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License
- as published by the Free Software Foundation; either version 2
- of the License, or(at your option) any later version.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with this program; if not, write to the Free Software
- Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-
-------------------------------------------------------------------*/
-
 #include "fileBrowse.hpp"
 #include <algorithm>
 #include <dirent.h>
@@ -27,14 +5,16 @@
 #include <strings.h>
 #include <unistd.h>
 
-#include "flashcard.hpp"
 #include "colors.hpp"
+#include "config.hpp"
+#include "flashcard.hpp"
 #include "graphics.hpp"
+#include "i18n.hpp"
 #include "input.hpp"
-#include "lang.hpp"
 #include "loader.hpp"
 #include "manager.hpp"
 #include "cardSaves.hpp"
+#include "cartSaves.hpp"
 #include "sound.hpp"
 #include "utils.hpp"
 
@@ -137,8 +117,8 @@ void showDirectoryContents(const std::vector<DirEntry>& dirContents, int startRo
 	}
 }
 
-bool showTopMenuOnExit = true, noCardMessageSet = false;
-int tmCurPos = 0, tmScreenOffset = 0, tmSlot1Offset = 0;
+bool showTopMenuOnExit = true, noCardMessageSet = false, noCartMessageSet = false;
+int tmCurPos = 0, tmScreenOffset = 0, tmSlot1Offset = 0, tmSlot2Offset = 0;
 
 void updateDriveLabel(bool fat) {
 	if (fat) {
@@ -180,8 +160,14 @@ void drawFatText(int i, bool valid) {
 
 void drawSlot1Text(int i, bool valid) {
 	char slot1Text[34];
-	snprintf(slot1Text, sizeof(slot1Text), "Slot-1: (%s) [%s]", REG_SCFG_MC == 0x11 ? "No card inserted" : gamename, gameid);
+	snprintf(slot1Text, sizeof(slot1Text), "Slot-1: (%s) [%s]", REG_SCFG_MC == 0x11 ? "No card inserted" : slot1Name, slot1ID);
 	printTextTinted(slot1Text, valid ? TextColor::white : TextColor::red, 10, (i+1)*16, false, true);
+}
+
+void drawSlot2Text(int i, bool valid) {
+	char slot2Text[34];
+	snprintf(slot2Text, sizeof(slot2Text), "Slot-2: (%s) [%s]", *(u8*)(0x080000B2) != 0x96 ? "No cart inserted" : slot2Name, slot2ID);
+	printTextTinted(slot2Text, valid ? TextColor::white : TextColor::red, 10, (i+1)*16, false, true);
 }
 
 bool updateSlot1Text(int &cardWait, bool valid) {
@@ -190,7 +176,7 @@ bool updateSlot1Text(int &cardWait, bool valid) {
 		cardWait = 30;
 		if(!noCardMessageSet) {
 			drawRectangle(10, ((tmSlot1Offset-tmScreenOffset)+1)*16, 246, 16, CLEAR, false, true);
-			printText("Slot-1: (No card inserted)", 10, ((tmSlot1Offset-tmScreenOffset)+1)*16, false, true);
+			printTextTinted("Slot-1: (No card inserted)", TextColor::red, 10, ((tmSlot1Offset-tmScreenOffset)+1)*16, false, true);
 			noCardMessageSet = true;
 			return false;
 		}
@@ -201,10 +187,35 @@ bool updateSlot1Text(int &cardWait, bool valid) {
 		cardWait--;
 		enableSlot1();
 		if(updateCardInfo()) {
-			valid = isValidTid(gameid);
+			valid = isValidDSTid(slot1ID);
 			drawRectangle(10, ((tmSlot1Offset-tmScreenOffset)+1)*16, 246, 16, CLEAR, false, true);
 			drawSlot1Text(tmSlot1Offset-tmScreenOffset, valid);
 			noCardMessageSet = false;
+			return valid;
+		}
+	}
+	return valid;
+}
+
+bool updateSlot2Text(int &cardWait, bool valid) {
+	if(*(u8*)(0x080000B2) != 0x96) {
+		cardWait = 30;
+		if(!noCartMessageSet) {
+			drawRectangle(10, ((tmSlot2Offset-tmScreenOffset)+1)*16, 246, 16, CLEAR, false, true);
+			printTextTinted("Slot-2: (No cart inserted)", TextColor::red, 10, ((tmSlot2Offset-tmScreenOffset)+1)*16, false, true);
+			noCartMessageSet = true;
+			return false;
+		}
+	}
+	if(cardWait > 0) {
+		cardWait--;
+	} else if(cardWait == 0) {
+		cardWait--;
+		if(updateCartInfo()) {
+			valid = isValidGBATid(slot2ID);
+			drawRectangle(10, ((tmSlot2Offset-tmScreenOffset)+1)*16, 246, 16, CLEAR, false, true);
+			drawSlot2Text(tmSlot2Offset-tmScreenOffset, valid);
+			noCartMessageSet = false;
 			return valid;
 		}
 	}
@@ -220,6 +231,7 @@ void showTopMenu(std::vector<topMenuItem> topMenuContents) {
 			if(topMenuContents[i+tmScreenOffset].name == "fat:")	drawFatText(i, topMenuContents[i+tmScreenOffset].valid);
 			else if(topMenuContents[i+tmScreenOffset].name == "sd:")	drawSdText(i, topMenuContents[i+tmScreenOffset].valid);
 			else if(topMenuContents[i+tmScreenOffset].name == "card:")	drawSlot1Text(i, topMenuContents[i+tmScreenOffset].valid);
+			else if(topMenuContents[i+tmScreenOffset].name == "cart:")	drawSlot2Text(i, topMenuContents[i+tmScreenOffset].valid);
 			else {
 				std::u16string name = StringUtils::UTF8toUTF16(topMenuContents[i+tmScreenOffset].name);
 				name = name.substr(name.find_last_of(StringUtils::UTF8toUTF16("/"))+1); // Remove path to the file
@@ -261,6 +273,8 @@ std::string topMenuSelect(void) {
 	if(sdFound())	topMenuContents.push_back({"sd:", true});
 	if(!flashcardFound())	topMenuContents.push_back({"card:", false});
 	if(!flashcardFound())	tmSlot1Offset = topMenuContents.size()-1;
+	if(flashcardFound())	topMenuContents.push_back({"cart:", false});
+	if(flashcardFound())	tmSlot2Offset = topMenuContents.size()-1;
 
 	FILE* favs = fopen((sdFound() ? "sd:/_nds/pkmn-chest/favorites.lst" : "fat:/_nds/pkmn-chest/favorites.lst"), "rb");
 
@@ -276,6 +290,7 @@ std::string topMenuSelect(void) {
 
 	int cardWait = 0;
 	if(!flashcardFound())	topMenuContents[tmSlot1Offset].valid = updateSlot1Text(cardWait, topMenuContents[tmSlot1Offset].valid);
+	if(flashcardFound())	topMenuContents[tmSlot2Offset].valid = updateSlot2Text(cardWait, topMenuContents[tmSlot2Offset].valid);
 
 	// Show topMenuContents
 	showTopMenu(topMenuContents);
@@ -297,6 +312,10 @@ std::string topMenuSelect(void) {
 			if(!flashcardFound()) {
 				if(tmScreenOffset <= tmSlot1Offset) {
 					topMenuContents[tmSlot1Offset].valid = updateSlot1Text(cardWait, topMenuContents[tmSlot1Offset].valid);
+				}
+			} else if(flashcardFound()) {
+				if(tmScreenOffset <= tmSlot2Offset) {
+					topMenuContents[tmSlot2Offset].valid = updateSlot2Text(cardWait, topMenuContents[tmSlot2Offset].valid);
 				}
 			}
 
@@ -324,9 +343,20 @@ std::string topMenuSelect(void) {
 				return "";
 			} else if(topMenuContents[tmCurPos].name == "card:" && topMenuContents[tmSlot1Offset].valid) {
 				Sound::play(Sound::click);
-				dumpSave();
+				drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
+				drawRectangle(0, 0, 256, 192, CLEAR, false, true);
+				printTextCentered(i18n::localize(Config::getLang("lang"), "dumpingSave"), 0, 50, false, false);
+				dumpSlot1();
 				showTopMenuOnExit = 1;
 				return cardSave;
+			} else if(topMenuContents[tmCurPos].name == "cart:" && topMenuContents[tmSlot2Offset].valid) {
+				Sound::play(Sound::click);
+				drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
+				drawRectangle(0, 0, 256, 192, CLEAR, false, true);
+				printTextCentered(i18n::localize(Config::getLang("lang"), "dumpingSave"), 0, 50, false, false);
+				dumpSlot2();
+				showTopMenuOnExit = 1;
+				return cartSave;
 			} else if(topMenuContents[tmCurPos].valid) {
 				Sound::play(Sound::click);
 				showTopMenuOnExit = 1;
@@ -334,15 +364,21 @@ std::string topMenuSelect(void) {
 			}
 		} else if(pressed & KEY_X) {
 			Sound::play(Sound::click);
-			if((topMenuContents[tmCurPos].name != "fat:") && (topMenuContents[tmCurPos].name != "sd:") && (topMenuContents[tmCurPos].name != "card:")) {
-				if(Input::getBool(Lang::get("remove"), Lang::get("cancel"))) {
+			if(topMenuContents[tmCurPos].name != "fat:"
+			&& topMenuContents[tmCurPos].name != "sd:"
+			&& topMenuContents[tmCurPos].name != "card:"
+			&& topMenuContents[tmCurPos].name != "cart:") {
+				if(Input::getBool(i18n::localize(Config::getLang("lang"), "remove"), i18n::localize(Config::getLang("lang"), "cancel"))) {
 					topMenuContents.erase(topMenuContents.begin()+tmCurPos);
 
 					FILE* out = fopen((sdFound() ? "sd:/_nds/pkmn-chest/favorites.lst" : "fat:/_nds/pkmn-chest/favorites.lst"), "wb");
 
 					if(out) {
 						for(int i=0;i<(int)topMenuContents.size();i++) {
-							if(topMenuContents[i].name != "fat:" && topMenuContents[i].name != "sd:" && topMenuContents[i].name != "card:") {
+							if(topMenuContents[i].name != "fat:"
+							&& topMenuContents[i].name != "sd:"
+							&& topMenuContents[i].name != "card:"
+							&& topMenuContents[i].name != "cart:") {
 								fwrite((topMenuContents[i].name+"\n").c_str(), 1, (topMenuContents[i].name+"\n").size(), out);
 							}
 						}
@@ -355,6 +391,8 @@ std::string topMenuSelect(void) {
 				}
 				showTopMenu(topMenuContents);
 			}
+		} else if(pressed & KEY_START) {
+			return "%EXIT%";
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
 			for(int i=0;i<std::min(ENTRIES_PER_SCREEN, (int)topMenuContents.size());i++) {

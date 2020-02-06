@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "lang.hpp"
+#include "graphics.hpp"
 
 extern std::vector<Label> aMenuButtons, aMenuEmptySlotButtons, aMenuTopBarButtons;
 

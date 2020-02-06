@@ -23,19 +23,19 @@ include $(DEVKITARM)/ds_rules
 #---------------------------------------------------------------------------------
 BUILD		:=	build
 SOURCES		:=	source \
-				source/common source/common/utils \
-				source/core/ source/core/sav source/core/personal source/core/pkx \
+				core/memecrypto core/swshcrypto \
+				core/source core/source/i18n core/source/personal core/source/pkx core/source/sav core/source/utils core/source/wcx \
 				source/graphics \
-				source/lang \
 				source/menus \
-				source/saves
+				source/saves \
+				source/utils
 INCLUDES	:=	include \
-				include/common include/common/utils \
-				include/core/ include/core/sav include/core/personal include/core/pkx \
+				core/memecrypto core/swshcrypto \
+				core/include core/include/i18n core/include/personal core/include/pkx core/include/sav core/include/utils core/include/wcx \
 				include/graphics \
-				include/lang \
 				include/menus \
-				include/saves
+				include/saves \
+				include/utils
 
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -49,7 +49,8 @@ CFLAGS	:=	-g -Wall -Wno-psabi -O2\
 			$(ARCH)
 
 CFLAGS	+=	$(INCLUDE) -DARM9
-CXXFLAGS	:=	$(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++17
+# Exeptions needed on for swshcrypto
+CXXFLAGS	:=	$(CFLAGS) -fno-rtti -fexceptions -std=gnu++17
 
 ASFLAGS	:=	-g $(ARCH) -march=armv5te -mtune=arm946e-s
 
@@ -141,3 +142,8 @@ $(ARM9ELF)	:	$(OFILES)
 #---------------------------------------------------------------------------------------
 endif
 #---------------------------------------------------------------------------------------
+
+cppcheck:
+	@rm -f ../cppcheck.log
+	@cppcheck . --enable=all $(INCLUDE) -UJSON_CATCH_USER -U_Check_return_ -U_MSC_VER -U_Ret_notnull_ -U__INTEL_COMPILER -U__PGI -U__SUNPRO_CC -UJSON_INTERNAL_CATCH_USER -UJSON_THROW_USER -UJSON_TRY_USER -U__IBMCPP__ -U__SUNPRO_CC -D__GNUC__=9 -D__GNUC_MINOR__=1 -DNULL=nullptr --force 2> ../cppcheck.log
+	@echo build/cppcheck.log file created...

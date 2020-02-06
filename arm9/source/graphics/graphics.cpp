@@ -73,32 +73,32 @@ void initGraphics(void) {
 }
 
 void loadFont(void) {
-	FILE *font = fopen((Config::getString("themeDir")+"/graphics/font.nftr").c_str(), "rb");
-	if(!font) {
-		font = fopen("nitro:/graphics/font.nftr", "rb");
+	FILE *file = fopen((Config::getString("themeDir")+"/graphics/font.nftr").c_str(), "rb");
+	if(!file) {
+		file = fopen("nitro:/graphics/font.nftr", "rb");
 	}
 
-	if(font) {
+	if(file) {
 		// Get file size
-		fseek(font, 0, SEEK_END);
-		u32 fileSize = ftell(font);
+		fseek(file, 0, SEEK_END);
+		u32 fileSize = ftell(file);
 
 		// Skip font info
-		fseek(font, 0x14, SEEK_SET);
-		fseek(font, fgetc(font)-1, SEEK_CUR);
+		fseek(file, 0x14, SEEK_SET);
+		fseek(file, fgetc(file)-1, SEEK_CUR);
 
 		// Load glyph info
 		u32 chunkSize;
-		fread(&chunkSize, 4, 1, font);
-		tileWidth = fgetc(font);
-		tileHeight = fgetc(font);
-		fread(&tileSize, 2, 1, font);
+		fread(&chunkSize, 4, 1, file);
+		tileWidth = fgetc(file);
+		tileHeight = fgetc(file);
+		fread(&tileSize, 2, 1, file);
 
 		// Load character glyphs
 		int tileAmount = ((chunkSize-0x10)/tileSize);
 		fontTiles = std::vector<char>(tileSize*tileAmount);
-		fseek(font, 4, SEEK_CUR);
-		fread(fontTiles.data(), tileSize, tileAmount, font);
+		fseek(file, 4, SEEK_CUR);
+		fread(fontTiles.data(), tileSize, tileAmount, file);
 
 		// Fix top row
 		for(int i=0;i<tileAmount;i++) {
@@ -108,33 +108,33 @@ void loadFont(void) {
 		}
 
 		// Load character widths
-		fseek(font, 0x24, SEEK_SET);
+		fseek(file, 0x24, SEEK_SET);
 		u32 locHDWC;
-		fread(&locHDWC, 4, 1, font);
-		fseek(font, locHDWC-4, SEEK_SET);
-		fread(&chunkSize, 4, 1, font);
-		fseek(font, 8, SEEK_CUR);
+		fread(&locHDWC, 4, 1, file);
+		fseek(file, locHDWC-4, SEEK_SET);
+		fread(&chunkSize, 4, 1, file);
+		fseek(file, 8, SEEK_CUR);
 		fontWidths = std::vector<char>(3*tileAmount);
-		fread(fontWidths.data(), 3, tileAmount, font);
+		fread(fontWidths.data(), 3, tileAmount, file);
 
 		// Load character maps
 		fontMap = std::vector<u16>(tileAmount);
-		fseek(font, 0x28, SEEK_SET);
+		fseek(file, 0x28, SEEK_SET);
 		u32 locPAMC, mapType;
-		fread(&locPAMC, 4, 1, font);
+		fread(&locPAMC, 4, 1, file);
 
 		while(locPAMC < fileSize) {
 			u16 firstChar, lastChar;
-			fseek(font, locPAMC, SEEK_SET);
-			fread(&firstChar, 2, 1, font);
-			fread(&lastChar, 2, 1, font);
-			fread(&mapType, 4, 1, font);
-			fread(&locPAMC, 4, 1, font);
+			fseek(file, locPAMC, SEEK_SET);
+			fread(&firstChar, 2, 1, file);
+			fread(&lastChar, 2, 1, file);
+			fread(&mapType, 4, 1, file);
+			fread(&locPAMC, 4, 1, file);
 
 			switch(mapType) {
 				case 0: {
 					u16 firstTile;
-					fread(&firstTile, 2, 1, font);
+					fread(&firstTile, 2, 1, file);
 					for(unsigned i=firstChar;i<=lastChar;i++) {
 						fontMap[firstTile+(i-firstChar)] = i;
 					}
@@ -142,28 +142,28 @@ void loadFont(void) {
 				} case 1: {
 					for(int i=firstChar;i<=lastChar;i++) {
 						u16 tile;
-						fread(&tile, 2, 1, font);
+						fread(&tile, 2, 1, file);
 						fontMap[tile] = i;
 					}
 					break;
 				} case 2: {
 					u16 groupAmount;
-					fread(&groupAmount, 2, 1, font);
+					fread(&groupAmount, 2, 1, file);
 					for(int i=0;i<groupAmount;i++) {
 						u16 charNo, tileNo;
-						fread(&charNo, 2, 1, font);
-						fread(&tileNo, 2, 1, font);
+						fread(&charNo, 2, 1, file);
+						fread(&tileNo, 2, 1, file);
 						fontMap[tileNo] = charNo;
 					}
 					break;
 				}
 			}
 		}
-		fclose(font);
+		fclose(file);
 	}
 }
 
-Image loadImage(std::string path) {
+Image loadImage(const std::string &path) {
 	Image image = {0, 0, {}, {}, 0};
 	FILE *file = fopen((Config::getString("themeDir")+path).c_str(), "rb");
 	if(!file) {
@@ -270,11 +270,7 @@ void drawRectangle(int x, int y, int w, int h, u8 color, bool top, bool layer) {
 void drawRectangle(int x, int y, int w, int h, u8 color1, u8 color2, bool top, bool layer) {
 	u8 *dst = gfxPointer(top, layer);
 	for(int i=0;i<h;i++) {
-		if(w > 1) {
-			dmaFillHalfWords(((i%2) ? color1 : color2) | ((i%2) ? color1 : color2) << 8, dst+((y+i)*256+x), w);
-		} else {
-			toncset(dst+((y+i)*256+x), ((i%2) ? color1 : color2), w);
-		}
+		toncset(dst+((y+i)*256+x), ((i%2) ? color1 : color2), w);
 	}
 }
 
@@ -349,7 +345,7 @@ void fillSpriteText(int id, bool top, const std::u16string &text, TextColor pale
 			image.bitmap.push_back(fontTiles[i+(t*tileSize)] & 3);
 		}
 
-		tonccpy(image.palette.data(), BG_PALETTE+(palette*4), 8);
+		tonccpy(image.palette.data(), BG_PALETTE+(int(palette)*4), 8);
 
 		xPos += fontWidths[t*3];
 		fillSpriteImage(id, top, 32, xPos, yPos, image, true);
@@ -432,7 +428,7 @@ void printTextTinted(const std::u16string &text, TextColor palette, int xPos, in
 			x = xPos+fontWidths[t*3];
 			yPos += tileHeight;
 		}
-		drawImage(x, yPos, image, top, layer, palette*4);
+		drawImage(x, yPos, image, top, layer, int(palette)*4);
 		x += fontWidths[(t*3)+1];
 	}
 }
@@ -496,7 +492,7 @@ void printTextTintedScaled(const std::u16string &text, float scaleX, float scale
 			x = xPos+fontWidths[t*3];
 			yPos += tileHeight;
 		}
-		drawImageScaled(x, yPos, scaleX, scaleY, image, top, layer, palette*4);
+		drawImageScaled(x, yPos, scaleX, scaleY, image, top, layer, int(palette)*4);
 		x += fontWidths[(t*3)+1]*scaleX;
 	}
 }

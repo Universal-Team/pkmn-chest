@@ -6,9 +6,9 @@
 #include "config.hpp"
 #include "flashcard.hpp"
 #include "input.hpp"
-#include "lang.hpp"
 #include "loader.hpp"
 #include "manager.hpp"
+#include "PKX.hpp"
 #include "summary.hpp"
 #include "sound.hpp"
 #include "stat.hpp"
@@ -58,24 +58,6 @@ std::vector<std::string> originLabels = {"metLevel", "metYear", "metMonth", "met
 
 static constexpr Stat statOrder[] = {Stat::HP, Stat::ATK, Stat::DEF, Stat::SPATK, Stat::SPDEF, Stat::SPD};
 
-int pkmLang(void) {
-	switch(Config::getLang("lang")) {
-		case 0:
-			return 5; // German
-		case 1:
-		default:
-			return 2; // English
-		case 2:
-			return 6; // Spanish
-		case 3:
-			return 3; // French
-		case 4:
-			return 4; // Italian
-		case 5:
-			return 1; // Japanese
-	}
-}
-
 void drawMiniBoxes(int currentBox) {
 	if(currentBox < 0)	currentBox = (topScreen ? Banks::bank->boxes()-1 : save->maxBoxes()-1)+currentBox;
 	// Clear text
@@ -93,12 +75,12 @@ void drawMiniBoxes(int currentBox) {
 			if((topScreen ? Banks::bank->pkm(currentBox, j)->species() : save->pkm(currentBox, j)->species()) != 0) {
 				// Type 1
 				int type = topScreen ? Banks::bank->pkm(currentBox, j)->type1() : save->pkm(currentBox, j)->type1();
-				if(((topScreen ? Banks::bank->pkm(currentBox, j)->generation() : save->pkm(currentBox, j)->generation()) == Generation::FOUR) && type > 8)	type--;
+				if(((topScreen ? Banks::bank->pkm(currentBox, j)->generation() : save->pkm(currentBox, j)->generation()) < Generation::FIVE) && type > 8)	type--;
 				drawRectangle(172+((j-((j/6)*6))*6), 12+((j/6)*6)+(i*33), 2, 4, 0xD0+type, false, true);
 
 				// Type 2
 				type = topScreen ? Banks::bank->pkm(currentBox, j)->type2() : save->pkm(currentBox, j)->type2();
-				if(((topScreen ? Banks::bank->pkm(currentBox, j)->generation() : save->pkm(currentBox, j)->generation()) == Generation::FOUR) && type > 8)	type--;
+				if(((topScreen ? Banks::bank->pkm(currentBox, j)->generation() : save->pkm(currentBox, j)->generation()) < Generation::FIVE) && type > 8)	type--;
 				drawRectangle(174+((j-((j/6)*6))*6), 12+((j/6)*6)+(i*33), 2, 4, 0xD0+type, false, true);
 			}
 		}
@@ -180,10 +162,14 @@ int selectForm(int dexNo, int currentForm) {
 
 	// Draw forms
 	for(int i=0;i<formCounts[altIndex].noForms;i++) {
-		// TODO: Steal the party sprites or something
 		Image image = loadPokemonSprite(getPokemonIndex(dexNo, i));
-		drawImage((i*32)+(128-((32*formCounts[altIndex].noForms)/2)), 80, image, false, true, 0xC0);
+		fillSpriteImage(i, false, 32, 0, 0, image);
+		setSpritePosition(i, false, (i*32)+(128-((32*formCounts[altIndex].noForms)/2)), 80);
+		setSpritePriority(i, false, 1);
+		setSpriteVisibility(i, false, true);
+		setSpriteAlpha(i, false, 15);
 	}
+	updateOam();
 
 	// Move arrow to current form
 	setSpriteVisibility(arrowID, false, true);
@@ -207,9 +193,11 @@ int selectForm(int dexNo, int currentForm) {
 			else currentForm=0;
 		} else if(pressed & KEY_A) {
 			Sound::play(Sound::click);
+			resetPokemonSpritesPos();
 			return currentForm;
 		} else if(pressed & KEY_B) {
 			Sound::play(Sound::back);
+			resetPokemonSpritesPos();
 			return -1;
 		} else if(pressed & KEY_TOUCH) {
 			touchPosition touch;
@@ -217,6 +205,7 @@ int selectForm(int dexNo, int currentForm) {
 			for(int i=0;i<5;i++) {
 				if(touch.px > (i*32)+(128-((32*formCounts[altIndex].noForms)/2)) && touch.px < (i*32)+(128-((32*formCounts[altIndex].noForms)/2))+32 && touch.py > 72 && touch.py < 104) {
 					Sound::play(Sound::click);
+					resetPokemonSpritesPos();
 					return i;
 				}
 			}
@@ -228,7 +217,7 @@ int selectForm(int dexNo, int currentForm) {
 	}
 }
 
-void drawItemList(int screenPos, std::vector<std::string> itemList, bool background) {
+void drawItemList(int screenPos, const std::vector<std::string> &itemList, bool background) {
 	if(background) {
 		// Clear the screen
 		drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
@@ -246,18 +235,44 @@ void drawItemList(int screenPos, std::vector<std::string> itemList, bool backgro
 	}
 }
 
+int selectItem(int current, std::set<int> validItems, const std::vector<std::string> &items) {
+	std::vector<std::string> availableItems;
+	for(unsigned int i=0;i<items.size();i++) {
+		if(validItems.count(i) != 0) {
+			availableItems.push_back(items[i]);
+		}
+	}
+
+	if(current < 0)	current = 0;
+	else if(current > (int)availableItems.size()-1)	current = availableItems.size()-1;
+	std::string selection = selectItem(current, availableItems);
+
+	for(unsigned int i=0;i<items.size();i++) {
+		if(items[i] == selection)	return i;
+	}
+	return 0;
+}
 int selectItem(int current, int start, int max, const std::vector<std::string> &items) {
 	if(current < start || current > max)	current = start;
+	std::string selection = selectItem(current, std::vector<std::string>(&items[start], &items[max]));
+
+	for(unsigned int i=0;i<items.size();i++) {
+		if(items[i] == selection)	return i;
+	}
+	return 0;
+}
+std::string selectItem(int current, const std::vector<std::string> &items) {
+	std::vector<std::string> itemList = items;
+
 	// Set arrow position
 	setSpritePosition(arrowID, false, 4+getTextWidth(items[current]), -2);
 	setSpriteVisibility(arrowID, false, true);
 	updateOam();
 
 	// Print items
-	std::vector<std::string> itemList(&items[start], &items[max]);
-	drawItemList(current-start, itemList, true);
+	drawItemList(current, itemList, true);
 
-	int held, pressed, screenPos = current-start, newMove = current-start, entriesPerScreen = 9;
+	int held, pressed, screenPos = current, newMove = current, entriesPerScreen = 9;
 	touchPosition touch;
 	while(1) {
 		do {
@@ -269,28 +284,26 @@ int selectItem(int current, int start, int max, const std::vector<std::string> &
 
 		if(held & KEY_UP) {
 			if(newMove > 0)	newMove--;
-			else	newMove = std::min(max-1, (int)itemList.size()-1);
+			else	newMove = itemList.size()-1;
 		} else if(held & KEY_DOWN) {
-			if(newMove < std::min(max-1, (int)itemList.size()-1))	newMove++;
+			if(newMove < (int)itemList.size()-1)	newMove++;
 			else newMove = 0;
 		} else if(held & KEY_LEFT) {
 			newMove -= entriesPerScreen;
 			if(newMove < 0)	newMove = 0;
 		} else if(held & KEY_RIGHT) {
 			newMove += entriesPerScreen;
-			if(newMove > std::min(max-1, (int)itemList.size()-1))	newMove = std::min(max, (int)itemList.size()-1);
+			if(newMove > (int)itemList.size()-1)	newMove = itemList.size()-1;
 		} else if(pressed & KEY_A) {
 			Sound::play(Sound::click);
-			for(int i=0;i<max;i++) {
-				if(itemList[newMove] == items[i]) {
-					drawRectangle(0, 0, 256, 192, CLEAR, false, true);
-					return i;
-				}
+			for(unsigned int i=0;i<items.size();i++) {
+				drawRectangle(0, 0, 256, 192, CLEAR, false, true);
+				return itemList[newMove];
 			}
 		} if(pressed & KEY_B) {
 			drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 			Sound::play(Sound::back);
-			return current;
+			return itemList[current];
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
 			if(touch.px >= 256-search.width && touch.py <= search.height) {
@@ -298,12 +311,8 @@ int selectItem(int current, int start, int max, const std::vector<std::string> &
 			}
 			for(int i=0;i<entriesPerScreen;i++) {
 				if(touch.px >= 4 && touch.px <= 4+getTextWidth(itemList[screenPos+i]) && touch.py >= 4+(i*20) && touch.py <= 4+((i+1)*20)) {
-					for(int j=0;j<max;j++) {
-						if(itemList[screenPos+i] == items[j]) {
-							drawRectangle(0, 0, 256, 192, CLEAR, false, true);
-							return j;
-						}
-					}
+					drawRectangle(0, 0, 256, 192, CLEAR, false, true);
+					return itemList[screenPos+i];
 					break;
 				}
 			}
@@ -314,7 +323,7 @@ int selectItem(int current, int start, int max, const std::vector<std::string> &
 			std::string str = Input::getLine();
 				itemList.clear();
 				if(str != "")	itemList.push_back("-----");
-				for(int i=0;i<max;i++) {
+				for(int i=0;i<(int)items.size();i++) {
 					if(strncasecmp(str.c_str(), items[i].c_str(), str.length()) == 0) {
 						itemList.push_back(items[i]);
 					}
@@ -345,15 +354,15 @@ std::shared_ptr<PKX> selectMoves(std::shared_ptr<PKX> pkm) {
 	// Clear screen
 	drawImageDMA(0, 0, listBg, false, false);
 	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
-	printText(Lang::get("moves"), 4, 0, false, true);
+	printText(i18n::localize(Config::getLang("lang"), "moves"), 4, 0, false, true);
 
 	// Print moves
 	for(int i=0;i<4;i++) {
-		printText(Lang::moves[pkm->move(i)], 4, 16+(i*16), false, true);
+		printText(i18n::move(Config::getLang("lang"), pkm->move(i)), 4, 16+(i*16), false, true);
 	}
 
 	// Set arrow position
-	setSpritePosition(arrowID, false, 4+getTextWidth(Lang::moves[pkm->move(0)]), 10);
+	setSpritePosition(arrowID, false, 4+getTextWidth(i18n::move(Config::getLang("lang"), pkm->move(0))), 10);
 	setSpriteVisibility(arrowID, false, true);
 	updateOam();
 
@@ -386,7 +395,7 @@ std::shared_ptr<PKX> selectMoves(std::shared_ptr<PKX> pkm) {
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
 			for(unsigned i=0;i<4;i++) {
-				if(touch.px >= 4 && touch.px <= 4+getTextWidth(Lang::moves[pkm->move(i)]) && touch.py >= 16+(i*16) && touch.py <= 16+((i+1)*16)) {
+				if(touch.px >= 4 && touch.px <= 4+getTextWidth(i18n::move(Config::getLang("lang"), pkm->move(i))) && touch.py >= 16+(i*16) && touch.py <= 16+((i+1)*16)) {
 					selection = i;
 					optionSelected = true;
 					break;
@@ -396,20 +405,20 @@ std::shared_ptr<PKX> selectMoves(std::shared_ptr<PKX> pkm) {
 
 		if(optionSelected) {
 			optionSelected = false;
-			pkm->move(selection, selectItem(pkm->move(selection), 0, save->maxMove()+1, Lang::moves));
+			pkm->move(selection, selectItem(pkm->move(selection), save->availableMoves(), i18n::rawMoves(Config::getLang("lang"))));
 
 			// Clear screen
 			drawImageDMA(0, 0, listBg, false, false);
 			drawRectangle(0, 0, 256, 192, CLEAR, false, true);
-			printText(Lang::get("moves"), 4, 0, false, true);
+			printText(i18n::localize(Config::getLang("lang"), "moves"), 4, 0, false, true);
 
 			// Print moves
 			for(int i=0;i<4;i++) {
-				printText(Lang::moves[pkm->move(i)], 4, 16+(i*16), false, true);
+				printText(i18n::move(Config::getLang("lang"), pkm->move(i)), 4, 16+(i*16), false, true);
 			}
 		}
 
-		setSpritePosition(arrowID, false, 4+getTextWidth(Lang::moves[pkm->move(selection)]), (selection*16)+10);
+		setSpritePosition(arrowID, false, 4+getTextWidth(i18n::move(Config::getLang("lang"), pkm->move(selection))), (selection*16)+10);
 		updateOam();
 	}
 }
@@ -422,31 +431,31 @@ int selectNature(int currentNature) {
 	// Draw labels (not a for loop as speed is 3rd)
 	{
 		int x = -2;
-		printTextCenteredTintedMaxW(Lang::get(statsLabels[1]), 48, 1, TextColor::blue, ((x++)*48), 4, false, true);
-		printTextCenteredTintedMaxW(Lang::get(statsLabels[2]), 48, 1, TextColor::blue, ((x++)*48), 4, false, true);
-		printTextCenteredTintedMaxW(Lang::get(statsLabels[5]), 48, 1, TextColor::blue, ((x++)*48), 4, false, true);
-		printTextCenteredTintedMaxW(Lang::get(statsLabels[3]), 48, 1, TextColor::blue, ((x++)*48), 4, false, true);
-		printTextCenteredTintedMaxW(Lang::get(statsLabels[4]), 48, 1, TextColor::blue, ((x++)*48), 4, false, true);
+		printTextCenteredTintedMaxW(i18n::localize(Config::getLang("lang"), statsLabels[1]), 48, 1, TextColor::blue, ((x++)*48), 4, false, false);
+		printTextCenteredTintedMaxW(i18n::localize(Config::getLang("lang"), statsLabels[2]), 48, 1, TextColor::blue, ((x++)*48), 4, false, false);
+		printTextCenteredTintedMaxW(i18n::localize(Config::getLang("lang"), statsLabels[5]), 48, 1, TextColor::blue, ((x++)*48), 4, false, false);
+		printTextCenteredTintedMaxW(i18n::localize(Config::getLang("lang"), statsLabels[3]), 48, 1, TextColor::blue, ((x++)*48), 4, false, false);
+		printTextCenteredTintedMaxW(i18n::localize(Config::getLang("lang"), statsLabels[4]), 48, 1, TextColor::blue, ((x++)*48), 4, false, false);
 
 		int y = 0;
-		printTextTintedScaled(Lang::get(statsLabels[1]), 0.8, 0.8, TextColor::red, 1, ((y++)*32)+22, false, true);
-		printTextTintedScaled(Lang::get(statsLabels[2]), 0.8, 0.8, TextColor::red, 1, ((y++)*32)+22, false, true);
-		printTextTintedScaled(Lang::get(statsLabels[5]), 0.8, 0.8, TextColor::red, 1, ((y++)*32)+22, false, true);
-		printTextTintedScaled(Lang::get(statsLabels[3]), 0.8, 0.8, TextColor::red, 1, ((y++)*32)+22, false, true);
-		printTextTintedScaled(Lang::get(statsLabels[4]), 0.8, 0.8, TextColor::red, 1, ((y++)*32)+22, false, true);
+		printTextTintedScaled(i18n::localize(Config::getLang("lang"), statsLabels[1]), 0.8, 0.8, TextColor::red, 1, ((y++)*32)+22, false, false);
+		printTextTintedScaled(i18n::localize(Config::getLang("lang"), statsLabels[2]), 0.8, 0.8, TextColor::red, 1, ((y++)*32)+22, false, false);
+		printTextTintedScaled(i18n::localize(Config::getLang("lang"), statsLabels[5]), 0.8, 0.8, TextColor::red, 1, ((y++)*32)+22, false, false);
+		printTextTintedScaled(i18n::localize(Config::getLang("lang"), statsLabels[3]), 0.8, 0.8, TextColor::red, 1, ((y++)*32)+22, false, false);
+		printTextTintedScaled(i18n::localize(Config::getLang("lang"), statsLabels[4]), 0.8, 0.8, TextColor::red, 1, ((y++)*32)+22, false, false);
 	}
 
 	// Print natures
 	for(int y=0;y<5;y++) {
 		for(int x=0;x<5;x++) {
-			printTextCenteredMaxW(Lang::natures[(y*5)+x], 48, 1, ((x-2)*48), (y*32)+32, false, true);
+			printTextCenteredMaxW(i18n::nature(Config::getLang("lang"), (y*5)+x), 48, 1, ((x-2)*48), (y*32)+32, false, false);
 		}
 	}
 
 	int arrowX = currentNature-((currentNature/5)*5), selection = currentNature/5, pressed, held;
 	// Move arrow to current nature
 	setSpriteVisibility(arrowID, false, true);
-	setSpritePosition(arrowID, false, (arrowX*48)+(getTextWidthMaxW(Lang::natures[currentNature], 48)/2)+28, (selection*32)+24);
+	setSpritePosition(arrowID, false, (arrowX*48)+(getTextWidthMaxW(i18n::nature(Config::getLang("lang"), currentNature), 48)/2)+28, (selection*32)+24);
 	updateOam();
 
 	while(1) {
@@ -489,7 +498,7 @@ int selectNature(int currentNature) {
 		}
 
 		// Move arrow
-		setSpritePosition(arrowID, false, (arrowX*48)+(getTextWidthMaxW(Lang::natures[(selection*5)+arrowX], 48)/2)+28, (selection*32)+24);
+		setSpritePosition(arrowID, false, (arrowX*48)+(getTextWidthMaxW(i18n::nature(Config::getLang("lang"), (selection*5)+arrowX), 48)/2)+28, (selection*32)+24);
 		updateOam();
 	}
 }
@@ -502,12 +511,14 @@ int selectPokeball(int currentBall) {
 	// Draw Pokéballs
 	for(int y=0;y<5;y++) {
 		for(int x=0;x<5;x++) {
-			if(!(save->generation() != Generation::FIVE && (y*5)+x == 24)) {
-				std::pair<int, int> xy = getPokeballPosition((y*5)+x+1);
-				drawImageSegment((x*48)+24, (y*32)+24, 15, 15, ballSheet, xy.first, xy.second, false, false);
-			}
+			fillSpriteColor((y*5)+x, false, CLEAR);
+			fillSpriteImage((y*5)+x, false, 32, 0, 0, ball[(y*5)+x+1]);
+			setSpritePosition((y*5)+x, false, (x*48)+24, (y*32)+23);
+			setSpriteVisibility((y*5)+x, false, true);
+			setSpriteAlpha((y*5)+x, false, 15);
 		}
 	}
+	updateOam();
 
 	currentBall--;
 	int arrowX = currentBall-((currentBall/5)*5), selection = currentBall/5, pressed, held;
@@ -537,12 +548,14 @@ int selectPokeball(int currentBall) {
 			if(arrowX < 4)	arrowX++;
 			else arrowX=0;
 		} else if(pressed & KEY_A) {
-			if(!(save->generation() != Generation::FIVE && (selection*5)+arrowX == 24)) {
+			if(!(save->generation() < Generation::FIVE && (selection*5)+arrowX == 24)) {
 				Sound::play(Sound::click);
+				resetPokemonSpritesPos();
 				return (selection*5)+arrowX+1;
 			}
 		} else if(pressed & KEY_B) {
 			Sound::play(Sound::back);
+			resetPokemonSpritesPos();
 			return -1;
 		} else if(pressed & KEY_TOUCH) {
 			touchPosition touch;
@@ -550,8 +563,9 @@ int selectPokeball(int currentBall) {
 			for(int y=0;y<5;y++) {
 				for(int x=0;x<5;x++) {
 					if(touch.px > (x*48)+8 && touch.px < (x*48)+56 && touch.py > (y*32)+8 && touch.py < (y*32)+56) {
-						if(!(save->generation() != Generation::FIVE && (y*5)+x == 24)) {
+						if(!(save->generation() < Generation::FIVE && (y*5)+x == 24)) {
 							Sound::play(Sound::click);
+							resetPokemonSpritesPos();
 							return (y*5)+x+1;
 						}
 					}
@@ -574,9 +588,12 @@ int selectWallpaper(int currentWallpaper) {
 	for(int y=0;y<4;y++) {
 		for(int x=0;x<6;x++) {
 			Image image = loadImage(boxBgPath(false, (y*6)+x));
-			fillSpriteImageScaled((y*6)+x, false, 32, 0, 0, 32.0f/std::max(image.width, image.height), image);
-			setSpritePosition((y*6)+x, false, (x*40)+12, (y*38)+24);
-			setSpriteVisibility((y*6)+x, false, true);
+			if(!(image.width == 0 || image.height == 0)) {
+				fillSpriteImageScaled((y*6)+x, false, 32, 0, 0, 32.0f/std::max(image.width, image.height), image);
+				setSpritePosition((y*6)+x, false, (x*40)+12, (y*38)+24);
+				setSpriteVisibility((y*6)+x, false, true);
+				setSpriteAlpha((y*6)+x, false, 15);
+			}
 		}
 	}
 	updateOam();
@@ -609,9 +626,11 @@ int selectWallpaper(int currentWallpaper) {
 			else arrowX=0;
 		} else if(pressed & KEY_A) {
 			Sound::play(Sound::click);
+			resetPokemonSpritesPos();
 			return (selection*6)+arrowX;
 		} else if(pressed & KEY_B) {
 			Sound::play(Sound::back);
+			resetPokemonSpritesPos();
 			return -1;
 		} else if(pressed & KEY_TOUCH) {
 			touchPosition touch;
@@ -619,10 +638,9 @@ int selectWallpaper(int currentWallpaper) {
 			for(int y=0;y<4;y++) {
 				for(int x=0;x<6;x++) {
 					if(touch.px > (x*40)+12 && touch.px < (x*40)+44 && touch.py > (y*38)+24 && touch.py < (y*38)+56) {
-						if(!(save->generation() != Generation::FIVE && (y*5)+x == 24)) {
-							Sound::play(Sound::click);
-							return (y*6)+x;
-						}
+						Sound::play(Sound::click);
+						resetPokemonSpritesPos();
+						return (y*6)+x;
 					}
 				}
 			}
@@ -644,13 +662,12 @@ void drawOriginPage(std::shared_ptr<PKX> pkm, std::vector<std::string> &varText)
 		std::to_string(pkm->metYear()+2000),
 		std::to_string(pkm->metMonth()),
 		std::to_string(pkm->metDay()),
-		pkm->gen4() ? (pkm->metLocation() > Lang::locations4.size() ? "" : Lang::locations4[pkm->metLocation()])
-		: (pkm->metLocation() > Lang::locations5.size() ? "" : Lang::locations5[pkm->metLocation()]),
-		Lang::games[pkm->version()],
+		i18n::location(Config::getLang("lang"), pkm->metLocation(), pkm->version()),
+		i18n::game(Config::getLang("lang"), pkm->version()),
 	};
-	printText(Lang::get("origin"), 4, 0, false, true);
+	printText(i18n::localize(Config::getLang("lang"), "origin"), 4, 0, false, true);
 	for(unsigned i=0;i<originLabels.size();i++) {
-		printText(Lang::get(originLabels[i])+": "+varText[i], 4, (i+1)*16, false, true);
+		printText(i18n::localize(Config::getLang("lang"), originLabels[i])+": "+varText[i], 4, (i+1)*16, false, true);
 	}
 }
 
@@ -660,7 +677,7 @@ std::shared_ptr<PKX> selectOrigin(std::shared_ptr<PKX> pkm) {
 	drawOriginPage(pkm, varText);
 
 	setSpriteVisibility(arrowID, false, true);
-	setSpritePosition(arrowID, false, 4+getTextWidth(Lang::get(originLabels[0])+": "+varText[0]), 10);
+	setSpritePosition(arrowID, false, 4+getTextWidth(i18n::localize(Config::getLang("lang"), originLabels[0])+": "+varText[0]), 10);
 	updateOam();
 
 	bool optionSelected = false;
@@ -744,10 +761,27 @@ std::shared_ptr<PKX> selectOrigin(std::shared_ptr<PKX> pkm) {
 					if(num != -1)	pkm->metDay(num);
 					break;
 				} case 4: { // Location
-					pkm->metLocation(selectItem(pkm->metLocation(), 0, pkm->gen4() ? Lang::locations4.size() : Lang::locations5.size(), pkm->gen4() ? Lang::locations4 : Lang::locations5));
+					std::vector<std::string> locations;
+					int location = 0, i = 0;
+					for(std::map<u16, std::string>::const_iterator it = i18n::locations(Config::getLang("lang"), pkm->generation()).begin();it != i18n::locations(Config::getLang("lang"), pkm->generation()).end();it++) {
+						locations.push_back(it->second);
+						if(it->first == pkm->metLocation())	location = i;
+						i++;
+					}
+
+					int num = selectItem(location, 0, locations.size(), locations);
+
+
+					for(std::map<u16, std::string>::const_iterator it = i18n::locations(Config::getLang("lang"), pkm->generation()).begin();it != i18n::locations(Config::getLang("lang"), pkm->generation()).end();it++) {
+						if(it->second == locations[num]) {
+							pkm->metLocation(it->first);
+							break;
+						}
+					}
+
 					break;
 				} case 5: { // Game
-					pkm->version(selectItem(pkm->version(), 0, Lang::games.size(), Lang::games));
+					pkm->version(selectItem(pkm->version(), 0, i18n::rawGames(Config::getLang("lang")).size(), i18n::rawGames(Config::getLang("lang"))));
 					break;
 				}
 			}
@@ -757,7 +791,7 @@ std::shared_ptr<PKX> selectOrigin(std::shared_ptr<PKX> pkm) {
 		}
 
 		// Move arrow
-		setSpritePosition(arrowID, false, 4+getTextWidth(Lang::get(originLabels[selection])+": "+varText[selection]), (selection*16)+10);
+		setSpritePosition(arrowID, false, 4+getTextWidth(i18n::localize(Config::getLang("lang"), originLabels[selection])+": "+varText[selection]), (selection*16)+10);
 		updateOam();
 	}
 }
@@ -782,19 +816,19 @@ void drawStatsPage(std::shared_ptr<PKX> pkm, bool background) {
 	// Print stat info labels
 	{
 		int i = pkm->nature();
-		printText(Lang::get(statsLabels[0]), 20, textStatsC1[0].y, false, true);
-		printTextTintedMaxW(Lang::get(statsLabels[1]), 80, 1, (i!=0&&i<5         ? TextColor::red : i!=0&&!(i%5)      ? TextColor::blue : TextColor::white), 20, textStatsC1[1].y, false, true);
-		printTextTintedMaxW(Lang::get(statsLabels[2]), 80, 1, (i!=6&&i>4&&i<10   ? TextColor::red : i!=6&&!((i-1)%5)  ? TextColor::blue : TextColor::white), 20, textStatsC1[2].y, false, true);
-		printTextTintedMaxW(Lang::get(statsLabels[3]), 80, 1, (i!=18&&i>14&&i<20 ? TextColor::red : i!=18&&!((i-3)%5) ? TextColor::blue : TextColor::white), 20, textStatsC1[3].y, false, true);
-		printTextTintedMaxW(Lang::get(statsLabels[4]), 80, 1, (i!=24&&i>19       ? TextColor::red : i!=24&&!((i-4)%5) ? TextColor::blue : TextColor::white), 20, textStatsC1[4].y, false, true);
-		printTextTintedMaxW(Lang::get(statsLabels[5]), 80, 1, (i!=12&&i>9&&i<15  ? TextColor::red : i!=12&&!((i-2)%5) ? TextColor::blue : TextColor::white), 20, textStatsC1[5].y, false, true);
+		printText(i18n::localize(Config::getLang("lang"), statsLabels[0]), 20, textStatsC1[0].y, false, true);
+		printTextTintedMaxW(i18n::localize(Config::getLang("lang"), statsLabels[1]), 80, 1, (i!=0&&i<5         ? TextColor::red : i!=0&&!(i%5)      ? TextColor::blue : TextColor::white), 20, textStatsC1[1].y, false, true);
+		printTextTintedMaxW(i18n::localize(Config::getLang("lang"), statsLabels[2]), 80, 1, (i!=6&&i>4&&i<10   ? TextColor::red : i!=6&&!((i-1)%5)  ? TextColor::blue : TextColor::white), 20, textStatsC1[2].y, false, true);
+		printTextTintedMaxW(i18n::localize(Config::getLang("lang"), statsLabels[3]), 80, 1, (i!=18&&i>14&&i<20 ? TextColor::red : i!=18&&!((i-3)%5) ? TextColor::blue : TextColor::white), 20, textStatsC1[3].y, false, true);
+		printTextTintedMaxW(i18n::localize(Config::getLang("lang"), statsLabels[4]), 80, 1, (i!=24&&i>19       ? TextColor::red : i!=24&&!((i-4)%5) ? TextColor::blue : TextColor::white), 20, textStatsC1[4].y, false, true);
+		printTextTintedMaxW(i18n::localize(Config::getLang("lang"), statsLabels[5]), 80, 1, (i!=12&&i>9&&i<15  ? TextColor::red : i!=12&&!((i-2)%5) ? TextColor::blue : TextColor::white), 20, textStatsC1[5].y, false, true);
 	}
 
 	// Print column titles
-	printTextCenteredMaxW(Lang::get(statsLabels[6]), 30, 1, textStatsC1[0].x, textStatsC1[0].y-16, false, true);
-	printTextCentered(Lang::get(statsLabels[7]), textStatsC2[0].x, textStatsC2[0].y-16, false, true);
-	printTextCentered(Lang::get(statsLabels[8]), textStatsC3[0].x, textStatsC3[0].y-16, false, true);
-	printTextCenteredMaxW(Lang::get(statsLabels[9]), 30, 1, textStatsC4[0].x, textStatsC4[0].y-16, false, true);
+	printTextCenteredMaxW(i18n::localize(Config::getLang("lang"), statsLabels[6]), 30, 1, textStatsC1[0].x, textStatsC1[0].y-16, false, true);
+	printTextCentered(i18n::localize(Config::getLang("lang"), statsLabels[7]), textStatsC2[0].x, textStatsC2[0].y-16, false, true);
+	printTextCentered(i18n::localize(Config::getLang("lang"), statsLabels[8]), textStatsC3[0].x, textStatsC3[0].y-16, false, true);
+	printTextCenteredMaxW(i18n::localize(Config::getLang("lang"), statsLabels[9]), 30, 1, textStatsC4[0].x, textStatsC4[0].y-16, false, true);
 
 	// Set base stat info
 	snprintf(textStatsC1[0].text,  sizeof(textStatsC1[0].text), "%i", pkm->baseHP());
@@ -817,8 +851,8 @@ void drawStatsPage(std::shared_ptr<PKX> pkm, bool background) {
 	}
 
 	// Draw Hidden Power type
-	printText(Lang::get("hpType")+":", 20, 118, false, true);
-	drawImage(24+getTextWidth(Lang::get("hpType")+":"), 120, types[pkm->hpType()+1], false, true);
+	printText(i18n::localize(Config::getLang("lang"), "hpType")+":", 20, 118, false, true);
+	drawImage(24+getTextWidth(i18n::localize(Config::getLang("lang"), "hpType")+":"), 120, types[pkm->hpType()+1], false, true);
 
 }
 
@@ -870,7 +904,7 @@ std::shared_ptr<PKX> selectStats(std::shared_ptr<PKX> pkm) {
 					break;
 				}
 			}
-			if(touch.px > 24+getTextWidth(Lang::get("hpType")+":") && touch.px < 24+getTextWidth(Lang::get("hpType")+":")+types[pkm->hpType()+1].width && touch.py > 120 && touch.py < 132) {
+			if(touch.px > 24+getTextWidth(i18n::localize(Config::getLang("lang"), "hpType")+":") && touch.px < 24+getTextWidth(i18n::localize(Config::getLang("lang"), "hpType")+":")+types[pkm->hpType()+1].width && touch.py > 120 && touch.py < 132) {
 				selection = 6;
 				optionSelected = true;
 			}
@@ -881,7 +915,7 @@ std::shared_ptr<PKX> selectStats(std::shared_ptr<PKX> pkm) {
 			setSpriteVisibility(arrowID, false, false);
 			updateOam();
 			if(selection == 6) { // Hidden Power Type
-				int num = Input::getInt(15); // TODO: Add proper selector
+				int num = selectHPType(pkm->hpType());
 				if(num != -1)	pkm->hpType(num);
 			} else if(column == 0) { // IV
 				int num = Input::getInt(31);
@@ -900,12 +934,83 @@ std::shared_ptr<PKX> selectStats(std::shared_ptr<PKX> pkm) {
 		}
 
 		if(selection == 6) { // Hidden Power type
-			setSpritePosition(arrowID, false, 25+getTextWidth(Lang::get("hpType")+":")+types[pkm->hpType()+1].width+2, 112);
+			setSpritePosition(arrowID, false, 25+getTextWidth(i18n::localize(Config::getLang("lang"), "hpType")+":")+types[pkm->hpType()+1].width+2, 112);
 		} else if(column == 0) {
 			setSpritePosition(arrowID, false, 128+(textStatsC2[selection].x+(getTextWidth(textStatsC2[selection].text)/2))+2, textStatsC2[selection].y-6);
 		} else {
 			setSpritePosition(arrowID, false, 128+(textStatsC3[selection].x+(getTextWidth(textStatsC3[selection].text)/2))+2, textStatsC3[selection].y-6);
 		}
+		updateOam();
+	}
+}
+
+int selectHPType(int current) {
+	// Clear screen
+	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
+	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
+
+	// Draw types
+	for(int y=0;y<4;y++) {
+		for(int x=0;x<4;x++) {
+			fillSpriteColor((y*4)+x, false, CLEAR);
+			fillSpriteImage((y*4)+x, false, 32, 0, 0, types[(y*4)+x+1]);
+			setSpritePosition((y*4)+x, false, (x*52)+34+((32-types[0].width)/2), (y*32)+42+((12-types[0].height)/2));
+			setSpriteVisibility((y*4)+x, false, true);
+			setSpriteAlpha((y*4)+x, false, 15);
+		}
+	}
+	updateOam();
+
+	int arrowX = current-((current/4)*4), selection = current/4, pressed, held;
+	// Move arrow to current wallpaper
+	setSpriteVisibility(arrowID, false, true);
+	setSpritePosition(arrowID, false, (arrowX*52)+34+types[0].width+2, (selection*32)+34);
+	updateOam();
+
+	while(1) {
+		do {
+			swiWaitForVBlank();
+			scanKeys();
+			pressed = keysDown();
+			held = keysDownRepeat();
+		} while(!held);
+
+		if(held & KEY_UP) {
+			if(selection > 0)	selection--;
+			else	selection = 3;
+		} else if(held & KEY_DOWN) {
+			if(selection < 3)	selection++;
+			else	selection = 0;
+		} else if(held & KEY_LEFT) {
+			if(arrowX > 0)	arrowX--;
+			else	arrowX = 3;
+		} else if(held & KEY_RIGHT) {
+			if(arrowX < 3)	arrowX++;
+			else arrowX = 0;
+		} else if(pressed & KEY_A) {
+			Sound::play(Sound::click);
+			resetPokemonSpritesPos();
+			return (selection*4)+arrowX;
+		} else if(pressed & KEY_B) {
+			Sound::play(Sound::back);
+			resetPokemonSpritesPos();
+			return -1;
+		} else if(pressed & KEY_TOUCH) {
+			touchPosition touch;
+			touchRead(&touch);
+			for(int y=0;y<4;y++) {
+				for(int x=0;x<4;x++) {
+					if(touch.px > (x*52)+34 && touch.px < (x*52)+34+types[0].width && touch.py > (y*32)+42 && touch.py < (y*32)+42+types[0].height) {
+						Sound::play(Sound::click);
+						resetPokemonSpritesPos();
+						return (y*4)+x;
+					}
+				}
+			}
+		}
+
+		// Move arrow
+		setSpritePosition(arrowID, false, (arrowX*52)+34+types[0].width+2, (selection*32)+34);
 		updateOam();
 	}
 }

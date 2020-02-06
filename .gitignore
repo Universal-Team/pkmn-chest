@@ -4,8 +4,10 @@
 *.nds
 *.elf
 *.gfx
+*.cia
 *.msl
 graphics/bmp2ds
+nitrofiles/i18n/**/*.txt
 
 *.DS_Store
 .vscode/ipch

@@ -7,11 +7,8 @@
 #include "config.hpp"
 #include "colors.hpp"
 #include "graphics.hpp"
-#include "lang.hpp"
 #include "manager.hpp"
 #include "sound.hpp"
-
-#define u8u16(str) StringUtils::UTF8toUTF16(str)
 
 char16_t iskatakana(char16_t c) { return c >= 0x30A1; }
 char16_t tokatakana(char16_t c) {
@@ -54,15 +51,15 @@ char16_t tossang(char16_t c) {
 	return c;
 }
 
-std::u16string hangul0  = u8u16("가까.나..다따라.......마바빠.사싸아자짜차카타파하");
-std::u16string hangul1  = u8u16("ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎㅗㅜ");
-std::u16string hangul2  = u8u16(".ㄱㄲㄳㄴㄵㄶㄷㄹㄺㄻㄼㄽㄾㄿㅀㅁㅂㅄㅅㅆㅇㅈㅊㅋㅌㅍㅎ");
-std::u16string hangul31 = u8u16(".ㄱㅅ");
-std::u16string hangul32 = u8u16(".ㅈㅎ");
-std::u16string hangul33 = u8u16(".ㄱㅁㅂㅅㅌㅎ");
-std::u16string hangul34 = u8u16(".ㅅ");
-std::u16string hangulW1 = u8u16(".ㅏㅐㅣ");
-std::u16string hangulW2 = u8u16(".ㅓㅔㅣ");
+std::u16string hangul0  = u"가까.나..다따라.......마바빠.사싸아자짜차카타파하";
+std::u16string hangul1  = u"ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎㅗㅜ";
+std::u16string hangul2  = u".ㄱㄲㄳㄴㄵㄶㄷㄹㄺㄻㄼㄽㄾㄿㅀㅁㅂㅄㅅㅆㅇㅈㅊㅋㅌㅍㅎ";
+std::u16string hangul31 = u".ㄱㅅ";
+std::u16string hangul32 = u".ㅈㅎ";
+std::u16string hangul33 = u".ㄱㅁㅂㅅㅌㅎ";
+std::u16string hangul34 = u".ㅅ";
+std::u16string hangulW1 = u".ㅏㅐㅣ";
+std::u16string hangulW2 = u".ㅓㅔㅣ";
 
 struct Key {
 	std::string character;
@@ -116,71 +113,71 @@ std::vector<std::pair<int, int>> keysDPad8 = {
 };
 
 std::vector<std::u16string> keysDPadABC3 = {
-	u8u16("abc."), //			abc.
-	u8u16("def!"), //		wxyz	def!
-	u8u16("ghi,"), //	tuv;			ghi,
-	u8u16("jkl?"), //		pqrs	jkl?
-	u8u16("mno:"), //			mno:
-	u8u16("pqrs"),
-	u8u16("tuv;"),
-	u8u16("wxyz"),
+	u"abc.", //			abc.
+	u"def!", //		wxyz	def!
+	u"ghi,", //	tuv;			ghi,
+	u"jkl?", //		pqrs	jkl?
+	u"mno:", //			mno:
+	u"pqrs",
+	u"tuv;",
+	u"wxyz",
 };
 std::vector<std::u16string> keysDPadABC4 = {
-	u8u16("abcd"), //			abcd
-	u8u16("efgh"), //		!?)(	efgh
-	u8u16("ijkl"), //	yz.,			ijkl
-	u8u16("mnop"), //		uvwx	mnop
-	u8u16("qrst"), //			qrst
-	u8u16("uvwx"),
-	u8u16("yz.,"),
-	u8u16("!?)("),
+	u"abcd", //			abcd
+	u"efgh", //		!?)(	efgh
+	u"ijkl", //	yz.,			ijkl
+	u"mnop", //		uvwx	mnop
+	u"qrst", //			qrst
+	u"uvwx",
+	u"yz.,",
+	u"!?)(",
 };
 std::vector<std::u16string> keysDPadABCSymbols = {
-	u8u16("1234"), //			1234
-	u8u16("5678"), //		…•~@	5678
-	u8u16("90)("), //	#%+*			90)(
-	u8u16("=-_|"), //		♂♀/\	|=_-
-	u8u16("‘’”“"), //			‘’”“
-	u8u16("♂♀/\\"),
-	u8u16("#%*+"),
-	u8u16("…・~@"),
+	u"1234", //			1234
+	u"5678", //		…•~@	5678
+	u"90)(", //	#%+*			90)(
+	u"=-_|", //		♂♀/\	|=_-
+	u"‘’”“", //			‘’”“
+	u"♂♀/\\",
+	u"#%*+",
+	u"…・~@",
 };
 std::vector<std::u16string> keysDPadAIU = {
-	u8u16("あいうえお"), //	　　　　　　　　　　あいうえお
-	u8u16("かきくけこ"), //	　　　　　や　ゆ　よ　　　　　かきくけこ
-	u8u16("さしすせそ"), //	まみむめも　　　　　　　　　　　　　　　さしすせそ
-	u8u16("たちつてと"), //	　　　　　はひふへほ　　　　　たちつてと
-	u8u16("なにぬねの"), //	　　　　　　　　　　なにぬねの
-	u8u16("はひふへほ"),
-	u8u16("まみむめも"),
-	u8u16("や ゆ よ"),
+	u"あいうえお", //	　　　　　　　　　　あいうえお
+	u"かきくけこ", //	　　　　　や　ゆ　よ　　　　　かきくけこ
+	u"さしすせそ", //	まみむめも　　　　　　　　　　　　　　　さしすせそ
+	u"たちつてと", //	　　　　　はひふへほ　　　　　たちつてと
+	u"なにぬねの", //	　　　　　　　　　　なにぬねの
+	u"はひふへほ",
+	u"まみむめも",
+	u"や ゆ よ",
 };
 std::vector<std::u16string> keysDPadAIU2 = {
-	u8u16("ぁぃぅぇぉ"), //	　　　　　　　　　　ぁぃぅぇぉ
-	u8u16("がぎぐげご"), //	　　　　　ゃ　ゅ　ょ　　　　　がぎぐげご
-	u8u16("ざじずぜぞ"), //	わをんー　　　　　　　　　　　　　　　　ざじずぜぞ
-	u8u16("だぢっでど"), //	　　　　　ばびぶべぼ　　　　　だぢっでど
-	u8u16("らりるれろ"), //	　　　　　　　　　　らりるれろ
-	u8u16("ばびぶべぼ"),
-	u8u16("わをんー"),
-	u8u16("ゃ ゅ ょ"),
+	u"ぁぃぅぇぉ", //	　　　　　　　　　　ぁぃぅぇぉ
+	u"がぎぐげご", //	　　　　　ゃ　ゅ　ょ　　　　　がぎぐげご
+	u"ざじずぜぞ", //	わをんー　　　　　　　　　　　　　　　　ざじずぜぞ
+	u"だぢっでど", //	　　　　　ばびぶべぼ　　　　　だぢっでど
+	u"らりるれろ", //	　　　　　　　　　　らりるれろ
+	u"ばびぶべぼ",
+	u"わをんー",
+	u"ゃ ゅ ょ",
 };
 std::vector<std::u16string> keysDPadAIU3 = {
-	u8u16("ぁぃゔぇぉ"), //	　　　　　　　　　　ぁぃゔぇぉ
-	u8u16("がぎぐげご"), //	　　　　　ゃ　ゅ　ょ　　　　　がぎぐげご
-	u8u16("ざじずぜぞ"), //	わをんー　　　　　　　　　　　　　　　　ざじずぜぞ
-	u8u16("だぢづでど"), //	　　　　　ぱぴぷぺぽ　　　　　だぢづでど
-	u8u16("らりるれろ"), //	　　　　　　　　　　らりるれろ
-	u8u16("ぱぴぷぺぽ"),
-	u8u16("わをんー"),
-	u8u16("ゃ ゅ ょ"),
+	u"ぁぃゔぇぉ", //	　　　　　　　　　　ぁぃゔぇぉ
+	u"がぎぐげご", //	　　　　　ゃ　ゅ　ょ　　　　　がぎぐげご
+	u"ざじずぜぞ", //	わをんー　　　　　　　　　　　　　　　　ざじずぜぞ
+	u"だぢづでど", //	　　　　　ぱぴぷぺぽ　　　　　だぢづでど
+	u"らりるれろ", //	　　　　　　　　　　らりるれろ
+	u"ぱぴぷぺぽ",
+	u"わをんー",
+	u"ゃ ゅ ょ",
 };
 
 Key16 keysAIU[] = {
-	{u8u16("あいうえお"), 34,  0},	{u8u16("かきくけこ"), 68,   0},	{u8u16("さしすせそ"), 102,   0},
-	{u8u16("たちつてと"), 34, 34},	{u8u16("なにぬねの"), 68,  34},	{u8u16("はひふへほ"), 102,  34},	{u8u16(" "), 136, 34},
-	{u8u16("まみむめも"), 34, 68},	{u8u16("や　ゆ　よ"), 68,  68},	{u8u16("らりるれろ"), 102,  68},
-								   {u8u16("わをんー"),   68, 102},
+	{u"あいうえお", 34,  0},	{u"かきくけこ", 68,   0},	{u"さしすせそ", 102,   0},
+	{u"たちつてと", 34, 34},	{u"なにぬねの", 68,  34},	{u"はひふへほ", 102,  34},	{u" ", 136, 34},
+	{u"まみむめも", 34, 68},	{u"や　ゆ　よ", 68,  68},	{u"らりるれろ", 102,  68},
+							   {u"わをんー",   68, 102},
 };
 Key keysSpecialKana[] = {
 	{"shft",  34, 102},
@@ -202,10 +199,10 @@ Key keysQWE[] = {
 	{"z", 30, 54}, {"x", 50, 54}, {"c", 70, 54}, {"v", 90, 54}, {"b", 110, 54}, {"n", 130, 54}, {"m", 150, 54}, {",", 170, 54}, {".", 190, 54}, {"/", 210, 54},
 };
 Key16 keysKor[] = {
-	{u8u16("1"),  0,  0},  {u8u16("2"), 20,  0}, {u8u16("3"), 40,  0}, {u8u16("4"),  60, 0},  {u8u16("5"),  80,  0}, {u8u16("6"),  100, 0},  {u8u16("7"), 120,  0}, {u8u16("8"), 140,  0},  {u8u16("9"), 160, 0}, {u8u16("0"),  180, 0},   {u8u16("-"), 200, 0},  {u8u16("="), 220, 0},
-	{u8u16("ㅂ"), 10, 18}, {u8u16("ㅈ"), 30, 18}, {u8u16("ㄷ"), 50, 18}, {u8u16("ㄱ"), 70, 18}, {u8u16("ㅅ"),  90, 18}, {u8u16("ㅛ"), 110, 18}, {u8u16("ㅕ"), 130, 18}, {u8u16("ㅑ"), 150, 18}, {u8u16("ㅐ"), 170, 18}, {u8u16("ㅔ"), 190, 18},  {u8u16("["), 210, 18}, {u8u16("]"), 230, 18},
-	{u8u16("ㅁ"), 20, 36}, {u8u16("ㄴ"), 40, 36}, {u8u16("ㅇ"), 60, 36}, {u8u16("ㄹ"), 80, 36}, {u8u16("ㅎ"), 100, 36}, {u8u16("ㅗ"), 120, 36}, {u8u16("ㅓ"), 140, 36}, {u8u16("ㅏ"), 160, 36}, {u8u16("ㅣ"), 180, 36}, {u8u16(";"),  200, 36}, {u8u16("'"), 220,  36},
-	{u8u16("ㅋ"), 30, 54}, {u8u16("ㅌ"), 50, 54}, {u8u16("ㅊ"), 70, 54}, {u8u16("ㅍ"), 90, 54}, {u8u16("ㅠ"), 110, 54}, {u8u16("ㅜ"), 130, 54}, {u8u16("ㅡ"), 150, 54}, {u8u16(","),  170, 54}, {u8u16("."), 190, 54}, {u8u16("/"),  210, 54},
+	{u"1",  0,  0},  {u"2", 20,  0}, {u"3", 40,  0}, {u"4",  60, 0},  {u"5",  80,  0}, {u"6",  100, 0},  {u"7", 120,  0}, {u"8", 140,  0},  {u"9", 160, 0}, {u"0",  180, 0},   {u"-", 200, 0},  {u"=", 220, 0},
+	{u"ㅂ", 10, 18}, {u"ㅈ", 30, 18}, {u"ㄷ", 50, 18}, {u"ㄱ", 70, 18}, {u"ㅅ",  90, 18}, {u"ㅛ", 110, 18}, {u"ㅕ", 130, 18}, {u"ㅑ", 150, 18}, {u"ㅐ", 170, 18}, {u"ㅔ", 190, 18},  {u"[", 210, 18}, {u"]", 230, 18},
+	{u"ㅁ", 20, 36}, {u"ㄴ", 40, 36}, {u"ㅇ", 60, 36}, {u"ㄹ", 80, 36}, {u"ㅎ", 100, 36}, {u"ㅗ", 120, 36}, {u"ㅓ", 140, 36}, {u"ㅏ", 160, 36}, {u"ㅣ", 180, 36}, {u";",  200, 36}, {u"'", 220,  36},
+	{u"ㅋ", 30, 54}, {u"ㅌ", 50, 54}, {u"ㅊ", 70, 54}, {u"ㅍ", 90, 54}, {u"ㅠ", 110, 54}, {u"ㅜ", 130, 54}, {u"ㅡ", 150, 54}, {u",",  170, 54}, {u".", 190, 54}, {u"/",  210, 54},
 };
 Key keysSpecialQWE[] = {
 	{"bksp", 240, 0},	// Backspace
@@ -217,7 +214,7 @@ Key keysSpecialQWE[] = {
 };
 
 void clearVars(void) {
-	string = u8u16(""), caps = false, shift = false, enter = false, katakana = false, changeLayout = -1, kanaMode = 0;
+	string = u"", caps = false, shift = false, enter = false, katakana = false, changeLayout = -1, kanaMode = 0;
 }
 
 void whileHeld(void) {
@@ -480,7 +477,7 @@ void processTouch123(touchPosition touch, unsigned maxLength) {
 			if((touch.px > keys123[i].x+xPos-2 && touch.px < keys123[i].x+xPos+34) && (touch.py > keys123[i].y+(192-keyboard.height)-2 && touch.py < keys123[i].y+34+(192-keyboard.height))) {
 				drawRectangle(keys123[i].x+xPos, keys123[i].y+(192-keyboard.height), 32, 32, (keys123[i].character == " " ? GRAY : DARK_GRAY), false, GL_TRUE);
 				whileHeld();
-				string += u8u16(keys123[i].character);
+				string += StringUtils::UTF8toUTF16(keys123[i].character);
 				return;
 			}
 		}
@@ -645,7 +642,7 @@ void processTouchAIU(touchPosition touch, unsigned maxLength) {
 		// Check if a kana key was pressed
 		for(unsigned i=0;i<(sizeof(keysAIU)/sizeof(keysAIU[0]));i++) {
 			if((touch.px > keysAIU[i].x+xPos-2 && touch.px < keysAIU[i].x+xPos+34) && (touch.py > keysAIU[i].y+(192-keyboard.height)-2 && touch.py < keysAIU[i].y+34+(192-keyboard.height))) {
-				drawRectangle(keysAIU[i].x+xPos, keysAIU[i].y+(192-keyboard.height), 32, 32, (keysAIU[i].character == u8u16(" ") ? GRAY : DARK_GRAY), false, true);
+				drawRectangle(keysAIU[i].x+xPos, keysAIU[i].y+(192-keyboard.height), 32, 32, (keysAIU[i].character == u" " ? GRAY : DARK_GRAY), false, true);
 				int selection = 0, prevSelection = -1, xOfs = 0, yOfs = 0;
 				while(keysHeld() & KEY_TOUCH) {
 					if(touch.px > keysAIU[i].x+xPos && touch.px < keysAIU[i].x+xPos+32 && touch.py > keysAIU[i].y+(192-keyboard.height) && touch.py < keysAIU[i].y+(192-keyboard.height)+32) {
@@ -776,7 +773,7 @@ void processTouchQWE(touchPosition touch, unsigned maxLength) {
 		Key key = {" ", 70, 72};
 		if((touch.px > key.x-2 && touch.px < key.x+100) && (touch.py > key.y+(192-keyboard.height)-2 && touch.py < key.y+18+(192-keyboard.height))) {
 			drawRectangle(key.x, key.y+(192-keyboard.height), 96, 16, DARK_GRAY, false, true);
-			string += u8u16(key.character);
+			string += StringUtils::UTF8toUTF16(key.character);
 			shift = false;
 			printText(string, 0, 192-keyboard.height-16, false, true);
 		}
@@ -965,7 +962,7 @@ void processTouchKor(touchPosition touch, unsigned maxLength) {
 		Key key = {" ", 70, 72};
 		if((touch.px > key.x-2 && touch.px < key.x+100) && (touch.py > key.y+(192-keyboard.height)-2 && touch.py < key.y+18+(192-keyboard.height))) {
 			drawRectangle(key.x, key.y+(192-keyboard.height), 96, 16, DARK_GRAY, false, true);
-			string += u8u16(key.character);
+			string += StringUtils::UTF8toUTF16(key.character);
 			shift = false;
 			printText(string, 0, 192-keyboard.height-16, false, true);
 		}
@@ -1074,7 +1071,7 @@ std::string Input::getLine(unsigned maxLength) {
 			pressed = keysDown();
 			if(cursorBlink == 30) {
 				drawRectangle(0, 192-keyboard.height-16, 256, 16, DARKERER_GRAY, false, true);
-				printText(string+u8u16("_"), 0, 192-keyboard.height-16, false, true);
+				printText(string+u"_", 0, 192-keyboard.height-16, false, true);
 			} else if(cursorBlink == 0) {
 				drawRectangle(0, 192-keyboard.height-16, 256, 16, DARKERER_GRAY, false, true);
 				printText(string, 0, 192-keyboard.height-16, false, true);
@@ -1097,7 +1094,7 @@ std::string Input::getLine(unsigned maxLength) {
 			drawKeyboard(loadedLayout);
 			// Print string
 			drawRectangle(0, 192-keyboard.height-16, 256, 16, DARKERER_GRAY, false, true);
-			printText(string + (cursorBlink ? u8u16("_") : u8u16("")), 0, 192-keyboard.height-16, false, true);
+			printText(string + (cursorBlink ? u"_" : u""), 0, 192-keyboard.height-16, false, true);
 
 			// If caps lock / shift are on, highlight the key
 			if(caps)	drawRectangle(keysSpecialQWE[1].x, keysSpecialQWE[1].y+(192-keyboard.height), 16, 16, GRAY, false, true);
@@ -1112,13 +1109,13 @@ std::string Input::getLine(unsigned maxLength) {
 
 			// Print string
 			drawRectangle(0, 192-keyboard.height-16, 256, 16, DARKERER_GRAY, false, true);
-			printText(string + (cursorBlink ? u8u16("_") : u8u16("")), 0, 192-keyboard.height-16, false, true);
+			printText(string + (cursorBlink ? u"_" : u""), 0, 192-keyboard.height-16, false, true);
 		} else if(held & KEY_B) {
 			string = string.substr(0, string.length()-1);
 			drawRectangle(0, 192-keyboard.height-16, 256, 16, DARKERER_GRAY, false, true);
 			printText(string, 0, 192-keyboard.height-16, false, true);
 		} else if(held & KEY_Y) {
-			string += u8u16(" ");
+			string += u" ";
 			drawRectangle(0, 192-keyboard.height-16, 256, 16, DARKERER_GRAY, false, true);
 			printText(string, 0, 192-keyboard.height-16, false, true);
 		}
@@ -1160,7 +1157,7 @@ int Input::getInt(unsigned max) {
 			pressed = keysDown();
 			if(cursorBlink == 30) {
 				drawRectangle(0, 192-keyboard.height-16, 256, 16, DARKERER_GRAY, false, true);
-				printText(string+u8u16("_"), 0, 192-keyboard.height-16, false, true);
+				printText(string+u"_", 0, 192-keyboard.height-16, false, true);
 			} else if(cursorBlink == 0) {
 				drawRectangle(0, 192-keyboard.height-16, 256, 16, DARKERER_GRAY, false, true);
 				printText(string, 0, 192-keyboard.height-16, false, true);
@@ -1180,7 +1177,7 @@ int Input::getInt(unsigned max) {
 
 			// Print string
 			drawRectangle(0, 192-keyboard.height-16, 256, 16, DARKERER_GRAY, false, true);
-			printText(string + (cursorBlink ? u8u16("_") : u8u16("")), 0, 192-keyboard.height-16, false, true);
+			printText(string + (cursorBlink ? u"_" : u""), 0, 192-keyboard.height-16, false, true);
 		} else if(held & KEY_B) {
 			string = string.substr(0, string.length()-1);
 			drawRectangle(0, 192-keyboard.height-16, 256, 16, DARKERER_GRAY, false, true);
@@ -1193,13 +1190,13 @@ int Input::getInt(unsigned max) {
 		}
 	}
 	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
-	if(string == u8u16("")) return -1;
+	if(string == u"") return -1;
 	unsigned i = std::stoi(StringUtils::UTF16toUTF8(string));
 	if(i > max)	return max;
 	return i;
 }
 
-bool Input::getBool() { return getBool(Lang::get("yes"), Lang::get("no")); }
+bool Input::getBool() { return getBool(i18n::localize(Config::getLang("lang"), "yes"), i18n::localize(Config::getLang("lang"), "no")); }
 bool Input::getBool(std::string optionTrue, std::string optionFalse) {
 	// Draw rectangles
 	drawRectangle(38, 65, 180, 61, DARKER_GRAY, false, true);
@@ -1243,52 +1240,6 @@ bool Input::getBool(std::string optionTrue, std::string optionFalse) {
 			Sound::play(Sound::back);
 			drawRectangle(38, 65, 180, 61, CLEAR, false, true);
 			return false;
-		}
-	}
-}
-
-void Input::prompt(std::string message, const std::string &confirm) {
-	// Get height
-	int lines = 1;
-	for(unsigned int c=0;c<message.length();c++) {
-		if(message[c] == '\n') {
-			lines++;
-		}
-	}
-
-	// Draw backgruond
-	drawRectangle(20, 96-(8*lines)-3, 215, (16*lines)+5, DARKER_GRAY, false, true);
-	drawOutline(20, 96-(8*lines)-3, 215, (16*lines)+5, BLACK, false, true);
-
-	// Draw confirm button
-	drawRectangle(164, 96+(8*lines)-19, 68, 18, LIGHT_GRAY, false, true);
-	drawOutline(164, 96+(8*lines)-19, 68, 18, BLACK, false, true);
-
-	// Print text
-	printTextTinted(message, TextColor::white, 23, 96-(8*lines), false, true);
-	printTextCenteredTintedMaxW(confirm, 64, 1, TextColor::gray, 70, 96+(8*lines)-18, false, true);
-
-	int pressed;
-	touchPosition touch;
-	while(1) {
-		do {
-			swiWaitForVBlank();
-			scanKeys();
-			pressed = keysDown();
-		} while(!pressed);
-
-		if(pressed & KEY_TOUCH) {
-			touchRead(&touch);
-			if(touch.py > 76 && touch.py < 116) {
-				if(touch.px > 138 && touch.px < 208) {
-					goto exit;
-				}
-			}
-		} else if(pressed & (KEY_A | KEY_B)) {
-			exit:
-			Sound::play(Sound::click);
-			drawRectangle(20, 96-(8*lines)-3, 215, (16*lines)+5, CLEAR, false, true);
-			return;
 		}
 	}
 }

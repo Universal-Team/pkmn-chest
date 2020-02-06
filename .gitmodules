@@ -1,0 +1,3 @@
+[submodule "arm9/core"]
+	path = arm9/core
+	url = https://github.com/Flagbrew/PKSM-Core.git

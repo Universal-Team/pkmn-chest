@@ -2,9 +2,9 @@
 #include "colors.hpp"
 #include "flashcard.hpp"
 #include "graphics.hpp"
-#include "lang.hpp"
 #include "loader.hpp"
 #include "manager.hpp"
+#include "PKX.hpp"
 #include "summary.hpp"
 #include "sound.hpp"
 
@@ -119,7 +119,6 @@ void toggleParty(void) {
 	}
 	partyShown = !partyShown;
 	setSpriteVisibility(arrowID, false, true);
-	updateOam();
 }
 
 void moveParty(int arrowMode, bool holdingPokemon) {

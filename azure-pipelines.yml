@@ -12,14 +12,21 @@ pr:
 name:  $[format('{0:yyyyMMdd\-HHmmss}', pipeline.startTime)]
 
 pool:
-  vmImage: 'macOS-10.13'
+  vmImage: 'macOS-latest'
 
 variables:
   CURRENT_DATE: $[format('{0:yyyyMMdd\-HHmmss}', pipeline.startTime)]
   REPOSITORY_NAME: $(Build.Repository.Name)
-  COMMIT_TAG: $(git log --format=%h -1)
 
 steps:
+- script: |
+    git submodule init
+    git submodule update
+    cd arm9/core
+    git submodule init
+    git submodule update
+  displayName: 'Clone submodules'
+
 - script: |
     curl -L https://github.com/devkitPro/pacman/releases/download/devkitpro-pacman-1.0.1/devkitpro-pacman-installer.pkg -o devkitpro-pacman-installer.pkg
     sudo installer -pkg devkitpro-pacman-installer.pkg -target /
@@ -34,7 +41,10 @@ steps:
   displayName: 'Build Pokémon Chest'
 
 - script: |
-    tools-osx/make_cia --srl="pkmn-chest.nds"
+    export DEVKITPRO="/opt/devkitpro"
+    export DEVKITARM="/opt/devkitpro/devkitARM"
+    sudo mv tools-osx/make_cia /usr/local/bin
+    make -s cia
     cp pkmn-chest.nds $(Build.ArtifactStagingDirectory)
     cp pkmn-chest.cia $(Build.ArtifactStagingDirectory)
     echo '##vso[task.setvariable variable=COMMIT_TAG]'$(git log --format=%h -1)

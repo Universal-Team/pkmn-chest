@@ -33,10 +33,10 @@ void Colors::load(void) {
 		fclose(file);
 	}
 
-	u16 palette[sizeof(defaultPalette)];
+	u16 palette[sizeof(defaultPalette)/sizeof(defaultPalette[0])];
 	tonccpy(palette, defaultPalette, sizeof(palette));
 
-	for(int i=0;i<16;i++) {
+	for(uint i=0;i<sizeof(defaultPalette)/sizeof(defaultPalette[0]);i++) {
 		if(themeJson.contains(keys[i]) && themeJson[keys[i]].is_string()) {
 			palette[i] = stoi(themeJson[keys[i]].get_ref<std::string&>(), nullptr, 0);
 		}

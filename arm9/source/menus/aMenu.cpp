@@ -3,15 +3,17 @@
 
 #include "banks.hpp"
 #include "colors.hpp"
+#include "config.hpp"
 #include "fileBrowse.hpp"
 #include "flashcard.hpp"
-#include "graphics.hpp"
+#include "gui.hpp"
 #include "input.hpp"
-#include "lang.hpp"
 #include "loader.hpp"
 #include "manager.hpp"
 #include "misc.hpp"
 #include "party.hpp"
+#include "PKX.hpp"
+#include "random.hpp"
 #include "summary.hpp"
 #include "sound.hpp"
 
@@ -42,12 +44,12 @@ std::vector<Label> aMenuTopBarButtons = {
 void drawAMenuButtons(std::vector<Label>& buttons, int buttonMode) {
 	for(unsigned i=0;i<buttons.size();i++) {
 		drawImage(buttons[i].x, buttons[i].y, boxButton, false, true);
-		printTextMaxW(Lang::get(buttons[i].label), 80, 1, buttons[i].x+4, buttons[i].y+4, false, true);
+		printTextMaxW(i18n::localize(Config::getLang("lang"), buttons[i].label), 80, 1, buttons[i].x+4, buttons[i].y+4, false, true);
 	}
 }
 
 int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
-	setSpritePosition(arrowID, false, buttons[0].x+getTextWidthMaxW(Lang::get(buttons[0].label), 80)+4, buttons[0].y);
+	setSpritePosition(arrowID, false, buttons[0].x+getTextWidthMaxW(i18n::localize(Config::getLang("lang"), buttons[0].label), 80)+4, buttons[0].y);
 	setSpriteVisibility(arrowID, true, false);
 	setSpriteVisibility(arrowID, false, true);
 	updateOam();
@@ -136,7 +138,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 					}
 					updateOam();
 				}
-				if(Input::getBool(Lang::get("release"), Lang::get("cancel"))) {
+				if(Input::getBool(i18n::localize(Config::getLang("lang"), "release"), i18n::localize(Config::getLang("lang"), "cancel"))) {
 					if(topScreen)	Banks::bank->pkm(save->emptyPkm(), currentBankBox, pkmPos(pkmX, pkmY));
 					else if(inParty)	save->pkm(save->emptyPkm(), pkmPos(pkmX, pkmY));
 					else	save->pkm(save->emptyPkm(), currentSaveBox, pkmPos(pkmX, pkmY), false);
@@ -176,9 +178,9 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				else
 					snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%i -\n%s -\n%x%lx.pk%i", sdFound() ? "sd" : "fat", currentPokemon(pkmX, pkmY)->species(), currentPokemon(pkmX, pkmY)->nickname().c_str(), currentPokemon(pkmX, pkmY)->checksum(), currentPokemon(pkmX, pkmY)->encryptionConstant(), currentPokemon(pkmX, pkmY)->genNumber());
 				char str[PATH_MAX];
-				snprintf(str, sizeof(str), Lang::get("dumpedTo").c_str(), path);
+				snprintf(str, sizeof(str), i18n::localize(Config::getLang("lang"), "dumpedTo").c_str(), path);
 
-				Input::prompt(str, Lang::get("back"));
+				Gui::prompt(str, i18n::localize(Config::getLang("lang"), "ok"));
 
 				drawAMenuButtons(buttons, buttonMode);
 				setSpriteVisibility(arrowID, false, true);
@@ -229,6 +231,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				drawBox(topScreen);
 			} else if(menuSelection == 2) { // Swap
 				std::vector<std::shared_ptr<PKX>> tempBox;
+				bool shouldCopy[30];
 				// Copy save Pokémon to a buffer
 				for(int i=0;i<30;i++) {
 					if(save->pkm(currentSaveBox, i)->species() != 0)
@@ -240,16 +243,25 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				// Copy bank Pokémon to the save and add it to the Pokédex
 				for(int i=0;i<30;i++) {
 					if(Banks::bank->pkm(currentBankBox, i)->species() != 0) {
-						save->pkm(Banks::bank->pkm(currentBankBox, i), currentSaveBox, i, false);
-						save->dex(Banks::bank->pkm(currentBankBox, i));
+						if(save->availableSpecies().count(Banks::bank->pkm(currentBankBox, i)->species()) != 0) {
+							save->pkm(save->transfer(Banks::bank->pkm(currentBankBox, i)), currentSaveBox, i, false);
+							save->dex(Banks::bank->pkm(currentBankBox, i));
+							shouldCopy[i] = true;
+						} else {
+							shouldCopy[i] = false;
+						}
 					} else {
 						save->pkm(save->emptyPkm(), currentSaveBox, i, false);
+						shouldCopy[i] = true;
 					}
 				}
 
 				// Copy the save Pokémon from their buffer to the bank
-				for(int i=0;i<30;i++)
-					Banks::bank->pkm(tempBox[i], currentBankBox, i);
+				for(int i=0;i<30;i++) {
+					if(shouldCopy[i]) {
+						Banks::bank->pkm(tempBox[i], currentBankBox, i);
+					}
+				}
 
 				// Update the boxes
 				drawBox(true);
@@ -269,12 +281,6 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 					setSpriteVisibility(arrowID, false, true);
 					drawRectangle(170, 0, 86, 192, CLEAR, false, true);
 					drawAMenuButtons(buttons, buttonMode);
-					// Reset Pokémon sprite positions
-					for(int y=0;y<4;y++) {
-						for(int x=0;x<6;x++) {
-							setSpritePosition((y*6)+x, false, 8+(x*24), 32+(y*24));
-						}
-					}
 					drawBox(false);
 				}
 			} else if(menuSelection == 4) { // Dump box
@@ -304,9 +310,9 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				// Get formatted path for prompt
 				snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/\n%s/", sdFound() ? "sd" : "fat", topScreen ? Banks::bank->boxName(currentBankBox).c_str() : save->boxName(currentSaveBox).c_str());
 				char str[PATH_MAX];
-				snprintf(str, sizeof(str), Lang::get("dumpedTo").c_str(), path);
+				snprintf(str, sizeof(str), i18n::localize(Config::getLang("lang"), "dumpedTo").c_str(), path);
 
-				Input::prompt(str, Lang::get("back"));
+				Gui::prompt(str, i18n::localize(Config::getLang("lang"), "ok"));
 
 				drawAMenuButtons(buttons, buttonMode);
 				setSpriteVisibility(arrowID, false, true);
@@ -336,19 +342,62 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				chdir(sdFound() ? "sd:/_nds/pkmn-chest/in" : "fat:/_nds/pkmn-chest/in");
 
 				// Get a pk4/5
-				std::vector<std::string> extList = {"pk4", "pk5"};
-				std::string fileName = browseForFile(extList, false);
+				std::string fileName = browseForFile({"pk3", "pk4", "pk5", "pk6", "pk7"}, false);
 
 				// If the fileName isn't blank, inject the Pokémon
 				if(fileName != "") {
-					FILE* in = fopen(fileName.c_str(), "rb");
-					if(in) {
-						u8 buffer[136];
-						fread(buffer, 1, sizeof(buffer), in);
-						if(topScreen)	Banks::bank->pkm(save->emptyPkm()->getPKM(fileName.substr(fileName.size()-1) == "4" ? Generation::FOUR : Generation::FIVE, buffer), currentBankBox, pkmPos(pkmX, pkmY));
-						else if(inParty)	save->pkm(save->emptyPkm()->getPKM(fileName.substr(fileName.size()-1) == "4" ? Generation::FOUR : Generation::FIVE, buffer), pkmPos(pkmX, pkmY));
-						else	save->pkm(save->emptyPkm()->getPKM(fileName.substr(fileName.size()-1) == "4" ? Generation::FOUR : Generation::FIVE, buffer), currentSaveBox, pkmPos(pkmX, pkmY), false);
-						fclose(in);
+					Generation gen;
+					switch(fileName[fileName.size()-1]) {
+						case '3':
+							gen = Generation::THREE;
+							break;
+						case '4':
+							gen = Generation::FOUR;
+							break;
+						case '5':
+							gen = Generation::FOUR;
+							break;
+						case '6':
+							gen = Generation::SIX;
+							break;
+						case '7':
+							switch(fileName[fileName.size()-2]) {
+								case 'k':
+								case 'K':
+									gen = Generation::SEVEN;
+									break;
+								case 'b': // Not currently supported
+								case 'B':
+									gen = Generation::LGPE;
+									break;
+								default:
+									gen = Generation::UNUSED;
+									break;
+							}
+							break;
+						case '8': // Not currently supported
+							gen = Generation::EIGHT;
+							break;
+						default:
+							gen = Generation::UNUSED;
+							break;
+					}
+					
+					if(gen != Generation::UNUSED) {
+						FILE* in = fopen(fileName.c_str(), "rb");
+
+						fseek(in, 0, SEEK_END);
+						int size = ftell(in);
+						fseek(in, 0, SEEK_SET);
+
+						if(in) {
+							u8 buffer[size];
+							fread(buffer, 1, sizeof(buffer), in);
+							if(topScreen)	Banks::bank->pkm(save->emptyPkm()->getPKM(gen, buffer), currentBankBox, pkmPos(pkmX, pkmY));
+							else if(inParty)	save->pkm(save->transfer(save->emptyPkm()->getPKM(gen, buffer)), pkmPos(pkmX, pkmY));
+							else	save->pkm(save->transfer(save->emptyPkm()->getPKM(gen, buffer)), currentSaveBox, pkmPos(pkmX, pkmY), false);
+							fclose(in);
+						}
 					}
 				}
 
@@ -403,7 +452,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				}
 				pkm->fixMoves();
 				pkm->PID(PKX::getRandomPID(pkm->species(), pkm->gender(), pkm->version(), pkm->nature(), pkm->alternativeForm(), pkm->abilityNumber(), pkm->PID(), pkm->generation()));
-				pkm->language(pkmLang());
+				pkm->language(getSafeLanguage(pkm->generation(), Config::getLang("lang")));
 				const time_t current = time(NULL);
 				pkm->metDay(gmtime(&current)->tm_mday);
 				pkm->metMonth(gmtime(&current)->tm_mon + 1);
@@ -430,7 +479,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 			}
 		}
 
-		setSpritePosition(arrowID, false, buttons[menuSelection].x+getTextWidthMaxW(Lang::get(buttons[menuSelection].label), 80)+4, buttons[menuSelection].y);
+		setSpritePosition(arrowID, false, buttons[menuSelection].x+getTextWidthMaxW(i18n::localize(Config::getLang("lang"), buttons[menuSelection].label), 80)+4, buttons[menuSelection].y);
 		updateOam();
 	}
 	return false;

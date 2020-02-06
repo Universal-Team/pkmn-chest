@@ -6,11 +6,13 @@
 #include "loader.hpp"
 #include "Sav.hpp"
 
+#define BALL_COUNT 26
+
 extern bool topScreen, inParty;
 extern int arrowID, currentSaveBox, currentBankBox, heldPokemonID, keyboardSpriteID, arrowMode;
 extern std::vector<int> menuIconID, partyIconID;
 extern std::string savePath;
-extern Image arrowBlue, arrowRed, arrowYellow, ballSheet, bankBox, boxBgTop, boxButton, infoBox, keyboardKey, listBg, menuBg, menuButton, menuButtonBlue, party, search, shiny;
+extern Image arrowBlue, arrowRed, arrowYellow, ball[BALL_COUNT], bankBox, boxBgTop, boxButton, infoBox, keyboardKey, listBg, menuBg, menuButton, menuButtonBlue, party, search, setToSelf, shiny;
 extern std::vector<Image> types;
 
 // Returns the current box for the cursor's current screen
@@ -45,11 +47,20 @@ int getPokemonIndex(int species, int alternativeForm = 0, int gender = 0, bool e
  */
 Image loadPokemonSprite(int dexNo);
 
+// Resets the Pokémon sprites to their positions for the box
+void resetPokemonSpritesPos(void);
+
 /*
  * Fills the arrow sprite with the desired color
  * int arrowMode is the desired color, 0 = red, 1 = blue, 2 = yellow
  */
 void fillArrow(int arrowMode);
+
+/* 
+ * Loads type images
+ * Language lang is the language to try load, if it fails English will be used
+ */
+void loadTypes(Language lang);
 
 // Inits sprites, run before first loadGraphics(), but should only be run once
 void initSprites(void);

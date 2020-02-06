@@ -6,8 +6,8 @@
 #include "fileBrowse.hpp"
 #include "flashcard.hpp"
 #include "graphics.hpp"
-#include "lang.hpp"
-#include "lang.hpp"
+#include "gui.hpp"
+#include "i18n.hpp"
 #include "loader.hpp"
 #include "loading.hpp"
 #include "manager.hpp"
@@ -19,7 +19,8 @@ extern std::vector<std::string> songs;
 int main(int argc, char **argv) {
 	initGraphics();
 	keysSetRepeat(25,5);
-	sysSetCardOwner(BUS_OWNER_ARM9); // Give ARM9 access to Slot-1 (for dumping/injecting saves)
+	sysSetCardOwner(BUS_OWNER_ARM9); // Set ARM9 as Slot-1 owner (for dumping/injecting DS saves)
+	sysSetCartOwner(BUS_OWNER_ARM9); // Set ARM9 as Slot-2 owner (for dumping/injecting GBA saves)
 	defaultExceptionHandler();
 	scanKeys(); // So it doesn't open the SD if A is held
 	srand(time(NULL));
@@ -71,8 +72,8 @@ int main(int argc, char **argv) {
 	Config::load();
 	Colors::load();
 	loadFont();
-	Lang::load(Config::getLang("lang"));
-	printTextCentered(Lang::get("loading"), 0, 32, false, true);
+	i18n::init(Config::getLang("lang"));
+	printTextCentered(i18n::localize(Config::getLang("lang"), "loading"), 0, 32, false, true);
 
 	if(Config::getString("music") == "theme") {
 		Sound::load((Config::getString("themeDir")+"/sound.msl").c_str());
@@ -83,15 +84,16 @@ int main(int argc, char **argv) {
 	Banks::init();
 	initSprites();
 	loadGraphics();
+	loadTypes(Config::getLang("lang"));
 
 	hideLoadingLogo();
 
 	while(1) {
-		if(!loadSave(savePath = browseForSave())) {
-			drawRectangle(20, 20, 216, 152, DARK_RED, true, true);
-			printTextCentered(Lang::get("invalidSave"), 0, 24, true, true);
-			for(int i=0;i<120;i++)	swiWaitForVBlank();
-			drawRectangle(20, 20, 216, 152, CLEAR, true, true);
+		savePath = browseForSave();
+		if(savePath == "%EXIT%")	break;
+
+		if(!loadSave(savePath)) {
+			Gui::warn(i18n::localize(Config::getLang("lang"), "invalidSave"));
 			continue;
 		}
 		currentSaveBox = save->currentBox();
@@ -99,7 +101,6 @@ int main(int argc, char **argv) {
 		// Decrypt the box data
 		save->cryptBoxData(true);
 
-		drawBoxScreen();
 		manageBoxes();
 	}
 

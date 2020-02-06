@@ -25,7 +25,14 @@ struct Sprite {
 	int y;
 };
 
-extern std::vector<u16> font;
+
+// Position & label struct
+struct Label {
+	int x;
+	int y;
+	std::string label;
+};
+
 extern int bg3Main, bg2Main, bg3Sub, bg2Sub, bg1Sub;
 
 // Initializes the screens for drawing
@@ -38,7 +45,7 @@ void loadFont(void);
  * Loads a .gfx image into an Image struct
  * std::string path is the path to the .gfx file
  */
-Image loadImage(std::string path);
+Image loadImage(const std::string &path);
 
 /*
  * Draws an image to the screen from an Image
