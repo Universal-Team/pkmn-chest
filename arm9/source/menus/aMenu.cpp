@@ -41,6 +41,37 @@ std::vector<Label> aMenuTopBarButtons = {
 	{170, 146,      "back"}, // Back
 };
 
+constexpr char pathFormat[][49] = {
+	"%s:/_nds/pkmn-chest/out/%03i-%02i - %s - %x%lx%s",
+	"%s:/_nds/pkmn-chest/out/%03i-%02i -\n%s -\n%x%lx%s",
+	"%s:/_nds/pkmn-chest/out/%03i - %s - %x%lx%s",
+	"%s:/_nds/pkmn-chest/out/%03i -\n%s -\n%x%lx%s",
+};
+
+std::string getPkxOutputPath(const std::shared_ptr<PKX> &pkm, bool insertNewlines = false) {
+	char path[PATH_MAX];
+	if(pkm->alternativeForm()) {
+		snprintf(path, sizeof(path), pathFormat[insertNewlines],
+									 sdFound() ? "sd" : "fat",
+									 pkm->species(),
+									 pkm->alternativeForm(),
+									 pkm->nickname().c_str(),
+									 pkm->checksum(),
+									 pkm->encryptionConstant(),
+									 pkm->extension().c_str());
+	} else {
+		snprintf(path, sizeof(path), pathFormat[2+insertNewlines],
+									 sdFound() ? "sd" : "fat",
+									 pkm->species(),
+									 pkm->nickname().c_str(),
+									 pkm->checksum(),
+									 pkm->encryptionConstant(),
+									 pkm->extension().c_str());
+	}
+
+	return path;
+}
+
 void drawAMenuButtons(std::vector<Label>& buttons, int buttonMode) {
 	for(unsigned i=0;i<buttons.size();i++) {
 		drawImage(buttons[i].x, buttons[i].y, boxButton, false, true);
@@ -158,12 +189,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 					fillPartySprites();
 				}
 			} else if(menuSelection == 4) { // Dump
-				char path[PATH_MAX];
-				if(currentPokemon(pkmX, pkmY)->alternativeForm())
-					snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%i-%i - %s - %x%lx.pk%s", sdFound() ? "sd" : "fat", currentPokemon(pkmX, pkmY)->species(), currentPokemon(pkmX, pkmY)->alternativeForm(), currentPokemon(pkmX, pkmY)->nickname().c_str(), currentPokemon(pkmX, pkmY)->checksum(), currentPokemon(pkmX, pkmY)->encryptionConstant(), genToCstring(currentPokemon(pkmX, pkmY)->generation()));
-				else
-					snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%i - %s - %x%lx.pk%s", sdFound() ? "sd" : "fat", currentPokemon(pkmX, pkmY)->species(), currentPokemon(pkmX, pkmY)->nickname().c_str(), currentPokemon(pkmX, pkmY)->checksum(), currentPokemon(pkmX, pkmY)->encryptionConstant(), genToCstring(currentPokemon(pkmX, pkmY)->generation()));
-				FILE* out = fopen(path, "wb");
+				FILE* out = fopen(getPkxOutputPath(currentPokemon(pkmX, pkmY)).c_str(), "wb");
 				if(out) {
 					fwrite(currentPokemon(pkmX, pkmY)->rawData(), 1, 136, out);
 					fclose(out);
@@ -173,12 +199,8 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				updateOam();
 
 				// Get formatted path for prompt
-				if(currentPokemon(pkmX, pkmY)->alternativeForm())
-					snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%i-%i -\n%s -\n%x%lx.pk%s", sdFound() ? "sd" : "fat", currentPokemon(pkmX, pkmY)->species(), currentPokemon(pkmX, pkmY)->alternativeForm(), currentPokemon(pkmX, pkmY)->nickname().c_str(), currentPokemon(pkmX, pkmY)->checksum(), currentPokemon(pkmX, pkmY)->encryptionConstant(), genToCstring(currentPokemon(pkmX, pkmY)->generation()));
-				else
-					snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%i -\n%s -\n%x%lx.pk%s", sdFound() ? "sd" : "fat", currentPokemon(pkmX, pkmY)->species(), currentPokemon(pkmX, pkmY)->nickname().c_str(), currentPokemon(pkmX, pkmY)->checksum(), currentPokemon(pkmX, pkmY)->encryptionConstant(), genToCstring(currentPokemon(pkmX, pkmY)->generation()));
 				char str[PATH_MAX];
-				snprintf(str, sizeof(str), i18n::localize(Config::getLang("lang"), "dumpedTo").c_str(), path);
+				snprintf(str, sizeof(str), i18n::localize(Config::getLang("lang"), "dumpedTo").c_str(), getPkxOutputPath(currentPokemon(pkmX, pkmY), true).c_str());
 
 				Gui::prompt(str, i18n::localize(Config::getLang("lang"), "ok"));
 
@@ -291,11 +313,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				for(int y=0;y<5;y++) {
 					for(int x=0;x<6;x++) {
 						if(currentPokemon(x, y)->species() != 0) {
-							if(currentPokemon(x, y)->alternativeForm())
-								snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%s/%i-%i - %s - %x%lx.pk%s", sdFound() ? "sd" : "fat", topScreen ? Banks::bank->boxName(currentBankBox).c_str() : save->boxName(currentSaveBox).c_str(), currentPokemon(x, y)->species(), currentPokemon(x, y)->alternativeForm(), currentPokemon(x, y)->nickname().c_str(), currentPokemon(x, y)->checksum(), currentPokemon(x, y)->encryptionConstant(), genToCstring(currentPokemon(x, y)->generation()));
-							else
-								snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%s/%i - %s - %x%lx.pk%s", sdFound() ? "sd" : "fat", topScreen ? Banks::bank->boxName(currentBankBox).c_str() : save->boxName(currentSaveBox).c_str(), currentPokemon(x, y)->species(), currentPokemon(x, y)->nickname().c_str(), currentPokemon(x, y)->checksum(), currentPokemon(x, y)->encryptionConstant(), genToCstring(currentPokemon(x, y)->generation()));
-							FILE* out = fopen(path, "wb");
+							FILE* out = fopen(getPkxOutputPath(currentPokemon(x, y)).c_str(), "wb");
 							if(out) {
 								fwrite(currentPokemon(x, y)->rawData(), 1, 136, out);
 								fclose(out);
@@ -308,9 +326,8 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				updateOam();
 
 				// Get formatted path for prompt
-				snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/\n%s/", sdFound() ? "sd" : "fat", topScreen ? Banks::bank->boxName(currentBankBox).c_str() : save->boxName(currentSaveBox).c_str());
 				char str[PATH_MAX];
-				snprintf(str, sizeof(str), i18n::localize(Config::getLang("lang"), "dumpedTo").c_str(), path);
+				snprintf(str, sizeof(str), i18n::localize(Config::getLang("lang"), "dumpedTo").c_str(), getPkxOutputPath(currentPokemon(pkmX, pkmY), true).c_str());
 
 				Gui::prompt(str, i18n::localize(Config::getLang("lang"), "ok"));
 
