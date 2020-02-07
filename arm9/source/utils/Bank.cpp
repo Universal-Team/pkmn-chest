@@ -203,24 +203,11 @@ void Bank::resize(size_t boxes) {
 std::shared_ptr<PKX> Bank::pkm(int box, int slot) const {
 	BankEntry* bank = (BankEntry*)(data + sizeof(BankHeader));
 	int index       = box * 30 + slot;
-	switch(bank[index].gen) {
-		case Generation::THREE:
-			return std::make_shared<PK3>(bank[index].data, false);
-		case Generation::FOUR:
-			return std::make_shared<PK4>(bank[index].data, false);
-		case Generation::FIVE:
-			return std::make_shared<PK5>(bank[index].data, false);
-		case Generation::SIX:
-			return std::make_shared<PK6>(bank[index].data, false);
-		case Generation::SEVEN:
-			return std::make_shared<PK7>(bank[index].data, false);
-		case Generation::LGPE:
-			return std::make_shared<PB7>(bank[index].data);
-		case Generation::EIGHT:
-			return std::make_shared<PB7>(bank[index].data, false);
-		case Generation::UNUSED:
-		default:
-			return std::make_shared<PK5>();
+	std::shared_ptr<PKX> ret = PKX::getPKM(bank[index].gen, bank[index].data, false);
+	if(ret) {
+		return ret;
+	} else {
+		return PKX::getPKM<Generation::SEVEN>(nullptr);
 	}
 }
 
