@@ -853,7 +853,6 @@ void drawStatsPage(std::shared_ptr<PKX> pkm, bool background) {
 	// Draw Hidden Power type
 	printText(i18n::localize(Config::getLang("lang"), "hpType")+":", 20, 118, false, true);
 	drawImage(24+getTextWidth(i18n::localize(Config::getLang("lang"), "hpType")+":"), 120, types[pkm->hpType()+1], false, true);
-
 }
 
 std::shared_ptr<PKX> selectStats(std::shared_ptr<PKX> pkm) {

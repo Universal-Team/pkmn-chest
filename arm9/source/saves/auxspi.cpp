@@ -315,7 +315,6 @@ void auxspi_disable_big_protection() {
 	auxspi_write(0xe);
 	auxspi_wait_busy();
 	auxspi_close();
-
 }
 
 auxspi_extra auxspi_has_extra() {

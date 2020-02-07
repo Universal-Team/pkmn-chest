@@ -318,7 +318,6 @@ std::string topMenuSelect(void) {
 					topMenuContents[tmSlot2Offset].valid = updateSlot2Text(cardWait, topMenuContents[tmSlot2Offset].valid);
 				}
 			}
-
 		} while(!held);
 
 		if(held & KEY_UP) {

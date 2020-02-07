@@ -391,7 +391,6 @@ void drawPokemonInfo(std::shared_ptr<PKX> pkm) {
 
 		// Print Level
 		printTextTinted(i18n::localize(Config::getLang("lang"), "lv")+std::to_string(pkm->level()), TextColor::gray, 170, 57, true, true);
-
 	}
 }
 
@@ -921,7 +920,6 @@ void manageBoxes(void) {
 				setSpriteVisibility(heldPokemonID, false, true);
 				setSpriteVisibility(heldPokemonID, true, false);
 			}
-
 		}
 
 		if(pressed & KEY_SELECT && heldPokemon.size() == 0) {
