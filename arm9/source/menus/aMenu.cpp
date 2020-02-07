@@ -160,9 +160,9 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 			} else if(menuSelection == 4) { // Dump
 				char path[PATH_MAX];
 				if(currentPokemon(pkmX, pkmY)->alternativeForm())
-					snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%i-%i - %s - %x%lx.pk%i", sdFound() ? "sd" : "fat", currentPokemon(pkmX, pkmY)->species(), currentPokemon(pkmX, pkmY)->alternativeForm(), currentPokemon(pkmX, pkmY)->nickname().c_str(), currentPokemon(pkmX, pkmY)->checksum(), currentPokemon(pkmX, pkmY)->encryptionConstant(), currentPokemon(pkmX, pkmY)->originGenNumber());
+					snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%i-%i - %s - %x%lx.pk%s", sdFound() ? "sd" : "fat", currentPokemon(pkmX, pkmY)->species(), currentPokemon(pkmX, pkmY)->alternativeForm(), currentPokemon(pkmX, pkmY)->nickname().c_str(), currentPokemon(pkmX, pkmY)->checksum(), currentPokemon(pkmX, pkmY)->encryptionConstant(), genToCstring(currentPokemon(pkmX, pkmY)->generation()));
 				else
-					snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%i - %s - %x%lx.pk%i", sdFound() ? "sd" : "fat", currentPokemon(pkmX, pkmY)->species(), currentPokemon(pkmX, pkmY)->nickname().c_str(), currentPokemon(pkmX, pkmY)->checksum(), currentPokemon(pkmX, pkmY)->encryptionConstant(), currentPokemon(pkmX, pkmY)->originGenNumber());
+					snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%i - %s - %x%lx.pk%s", sdFound() ? "sd" : "fat", currentPokemon(pkmX, pkmY)->species(), currentPokemon(pkmX, pkmY)->nickname().c_str(), currentPokemon(pkmX, pkmY)->checksum(), currentPokemon(pkmX, pkmY)->encryptionConstant(), genToCstring(currentPokemon(pkmX, pkmY)->generation()));
 				FILE* out = fopen(path, "wb");
 				if(out) {
 					fwrite(currentPokemon(pkmX, pkmY)->rawData(), 1, 136, out);
@@ -174,9 +174,9 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 
 				// Get formatted path for prompt
 				if(currentPokemon(pkmX, pkmY)->alternativeForm())
-					snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%i-%i -\n%s -\n%x%lx.pk%i", sdFound() ? "sd" : "fat", currentPokemon(pkmX, pkmY)->species(), currentPokemon(pkmX, pkmY)->alternativeForm(), currentPokemon(pkmX, pkmY)->nickname().c_str(), currentPokemon(pkmX, pkmY)->checksum(), currentPokemon(pkmX, pkmY)->encryptionConstant(), currentPokemon(pkmX, pkmY)->originGenNumber());
+					snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%i-%i -\n%s -\n%x%lx.pk%s", sdFound() ? "sd" : "fat", currentPokemon(pkmX, pkmY)->species(), currentPokemon(pkmX, pkmY)->alternativeForm(), currentPokemon(pkmX, pkmY)->nickname().c_str(), currentPokemon(pkmX, pkmY)->checksum(), currentPokemon(pkmX, pkmY)->encryptionConstant(), genToCstring(currentPokemon(pkmX, pkmY)->generation()));
 				else
-					snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%i -\n%s -\n%x%lx.pk%i", sdFound() ? "sd" : "fat", currentPokemon(pkmX, pkmY)->species(), currentPokemon(pkmX, pkmY)->nickname().c_str(), currentPokemon(pkmX, pkmY)->checksum(), currentPokemon(pkmX, pkmY)->encryptionConstant(), currentPokemon(pkmX, pkmY)->originGenNumber());
+					snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%i -\n%s -\n%x%lx.pk%s", sdFound() ? "sd" : "fat", currentPokemon(pkmX, pkmY)->species(), currentPokemon(pkmX, pkmY)->nickname().c_str(), currentPokemon(pkmX, pkmY)->checksum(), currentPokemon(pkmX, pkmY)->encryptionConstant(), genToCstring(currentPokemon(pkmX, pkmY)->generation()));
 				char str[PATH_MAX];
 				snprintf(str, sizeof(str), i18n::localize(Config::getLang("lang"), "dumpedTo").c_str(), path);
 
@@ -292,9 +292,9 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 					for(int x=0;x<6;x++) {
 						if(currentPokemon(x, y)->species() != 0) {
 							if(currentPokemon(x, y)->alternativeForm())
-								snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%s/%i-%i - %s - %x%lx.pk%i", sdFound() ? "sd" : "fat", topScreen ? Banks::bank->boxName(currentBankBox).c_str() : save->boxName(currentSaveBox).c_str(), currentPokemon(x, y)->species(), currentPokemon(x, y)->alternativeForm(), currentPokemon(x, y)->nickname().c_str(), currentPokemon(x, y)->checksum(), currentPokemon(x, y)->encryptionConstant(), currentPokemon(x, y)->originGenNumber());
+								snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%s/%i-%i - %s - %x%lx.pk%s", sdFound() ? "sd" : "fat", topScreen ? Banks::bank->boxName(currentBankBox).c_str() : save->boxName(currentSaveBox).c_str(), currentPokemon(x, y)->species(), currentPokemon(x, y)->alternativeForm(), currentPokemon(x, y)->nickname().c_str(), currentPokemon(x, y)->checksum(), currentPokemon(x, y)->encryptionConstant(), genToCstring(currentPokemon(x, y)->generation()));
 							else
-								snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%s/%i - %s - %x%lx.pk%i", sdFound() ? "sd" : "fat", topScreen ? Banks::bank->boxName(currentBankBox).c_str() : save->boxName(currentSaveBox).c_str(), currentPokemon(x, y)->species(), currentPokemon(x, y)->nickname().c_str(), currentPokemon(x, y)->checksum(), currentPokemon(x, y)->encryptionConstant(), currentPokemon(x, y)->originGenNumber());
+								snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%s/%i - %s - %x%lx.pk%s", sdFound() ? "sd" : "fat", topScreen ? Banks::bank->boxName(currentBankBox).c_str() : save->boxName(currentSaveBox).c_str(), currentPokemon(x, y)->species(), currentPokemon(x, y)->nickname().c_str(), currentPokemon(x, y)->checksum(), currentPokemon(x, y)->encryptionConstant(), genToCstring(currentPokemon(x, y)->generation()));
 							FILE* out = fopen(path, "wb");
 							if(out) {
 								fwrite(currentPokemon(x, y)->rawData(), 1, 136, out);
