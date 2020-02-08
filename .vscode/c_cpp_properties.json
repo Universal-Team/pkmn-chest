@@ -15,7 +15,7 @@
             "macFrameworkPath": [],
             "compilerPath": "/opt/devkitpro/devkitARM/bin/arm-none-eabi-g++",
             "cStandard": "c11",
-            "cppStandard": "c++17",
+            "cppStandard": "c++20",
             "intelliSenseMode": "gcc-x64",
             "forcedInclude": [
                 "/opt/devkitpro/libnds/include/nds/arm9/input.h",
@@ -40,7 +40,7 @@
             "macFrameworkPath": [],
             "compilerPath": "/devkitpro/devkitARM/bin/arm-none-eabi-g++.exe",
             "cStandard": "c11",
-            "cppStandard": "c++17",
+            "cppStandard": "c++20",
             "intelliSenseMode": "gcc-x64",
             "forcedInclude": [
                 "/devkitpro/libnds/include/nds/arm9/input.h",

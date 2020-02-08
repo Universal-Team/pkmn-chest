@@ -40,7 +40,7 @@ Text textC2[] = {
 int summaryPage = 0;
 std::vector<std::string> summaryLabels = {"species", "level", "ability", "nature", "item", "shiny", "pokerus", "origTrainer", "trainerID", "secretID", "friendship"};
 
-void changeAbility(std::shared_ptr<PKX> &pkm) {
+void changeAbility(std::shared_ptr<PKX> pkm) {
 	if(pkm->generation() == Generation::FOUR) {
 		u8 setAbility = pkm->ability();
 		if(pkm->abilities(0) != setAbility && pkm->abilities(0) != 0) {

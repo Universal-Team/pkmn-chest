@@ -48,7 +48,7 @@ constexpr char pathFormat[][49] = {
 	"%s:/_nds/pkmn-chest/out/%03i -\n%s -\n%x%lx%s",
 };
 
-std::string getPkxOutputPath(const std::shared_ptr<PKX> &pkm, bool insertNewlines = false) {
+std::string getPkxOutputPath(std::shared_ptr<PKX> pkm, bool insertNewlines = false) {
 	char path[PATH_MAX];
 	if(pkm->alternativeForm()) {
 		snprintf(path, sizeof(path), pathFormat[insertNewlines],
