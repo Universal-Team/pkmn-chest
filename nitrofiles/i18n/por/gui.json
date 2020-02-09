@@ -93,7 +93,7 @@
 	"remove": "Remover",
 	"rename": "Renomear",
 	"reopenIfFrozen": "Se o progresso congelar,\nfecha e reabre a consola.",
-	"rtcElapsed": "Tempo decorrido em tempo real",
+	"rtcElapsed": "Tempo real decorrido após última gravação",
 	"rtcInitial": "RTC inital time",
 	"save": "Guardar",
 	"saveMsgCard": "Gostarias de guardar as alterações\npara o cartão de jogo?",
