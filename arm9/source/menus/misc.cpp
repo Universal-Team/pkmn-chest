@@ -13,32 +13,6 @@
 #include "sound.hpp"
 #include "stat.hpp"
 
-struct FormCount {
-	int dexNo;
-	int noForms;
-} formCounts[] = {
-	{201, 27}, // Unown
-	{351,  4}, // Castform
-	{386,  4}, // Deoxys
-	{412,  3}, // Burmy
-	{413,  3}, // Wormadam
-	{422,  2}, // Shellos
-	{423,  2}, // Gastrodon
-	{479,  6}, // Rotom
-	{487,  2}, // Giratina
-	{492,  2}, // Shaymin
-	{550,  2}, // Basculin
-	{555,  2}, // Darmanitan
-	{585,  4}, // Deerling
-	{586,  4}, // Sawsbuck
-	{648,  2}, // Meloetta
-	{641,  2}, // Tornadus
-	{642,  2}, // Thunderus
-	{645,  2}, // Landorus
-	{646,  3}, // Kyurem
-	{647,  2}, // Keldeo
-};
-
 struct Text {
 	int x;
 	int y;
@@ -139,16 +113,11 @@ int selectBox(int currentBox) {
 }
 
 int selectForm(int dexNo, int currentForm) {
-	int altIndex = -1;
-	for(unsigned i=0;i<(sizeof(formCounts)/sizeof(formCounts[0]));i++) {
-		if(formCounts[i].dexNo == dexNo) {
-			altIndex = i;
-			break;
-		}
-	}
-	if(altIndex == -1)	return -1; // No alternate forms
-	else if(altIndex == 0) { // Unown
-		int num = Input::getLine(1)[0];
+	// Exit if only one form
+	if(save->formCount(dexNo) == 1)	return -1;
+
+	if(dexNo == 201) { // Unown
+		int num = tolower(Input::getLine(1)[0]);
 
 		if(num == 33)	return 26; // !
 		else if(num == 63)	return 27; // ?
@@ -161,10 +130,10 @@ int selectForm(int dexNo, int currentForm) {
 	drawOutline(0, 60, 256, 72, LIGHT_GRAY, false, true);
 
 	// Draw forms
-	for(int i=0;i<formCounts[altIndex].noForms;i++) {
+	for(int i=0;i<save->formCount(dexNo);i++) {
 		Image image = loadPokemonSprite(getPokemonIndex(dexNo, i));
 		fillSpriteImage(i, false, 32, 0, 0, image);
-		setSpritePosition(i, false, (i*32)+(128-((32*formCounts[altIndex].noForms)/2)), 80);
+		setSpritePosition(i, false, (i*32)+(128-((32*save->formCount(dexNo))/2)), 80);
 		setSpritePriority(i, false, 1);
 		setSpriteVisibility(i, false, true);
 		setSpriteAlpha(i, false, 15);
@@ -173,7 +142,7 @@ int selectForm(int dexNo, int currentForm) {
 
 	// Move arrow to current form
 	setSpriteVisibility(arrowID, false, true);
-	setSpritePosition(arrowID, false, (currentForm*32)+(128-((32*formCounts[altIndex].noForms)/2))+28, 84);
+	setSpritePosition(arrowID, false, (currentForm*32)+(128-((32*save->formCount(dexNo))/2))+28, 84);
 	updateOam();
 
 	int pressed, held;
@@ -187,9 +156,9 @@ int selectForm(int dexNo, int currentForm) {
 
 		if(held & KEY_LEFT) {
 			if(currentForm > 0)	currentForm--;
-			else	currentForm=formCounts[altIndex].noForms-1;
+			else	currentForm = save->formCount(dexNo)-1;
 		} else if(held & KEY_RIGHT) {
-			if(currentForm < formCounts[altIndex].noForms-1)	currentForm++;
+			if(currentForm < save->formCount(dexNo)-1)	currentForm++;
 			else currentForm=0;
 		} else if(pressed & KEY_A) {
 			Sound::play(Sound::click);
@@ -203,7 +172,7 @@ int selectForm(int dexNo, int currentForm) {
 			touchPosition touch;
 			touchRead(&touch);
 			for(int i=0;i<5;i++) {
-				if(touch.px > (i*32)+(128-((32*formCounts[altIndex].noForms)/2)) && touch.px < (i*32)+(128-((32*formCounts[altIndex].noForms)/2))+32 && touch.py > 72 && touch.py < 104) {
+				if(touch.px > (i*32)+(128-((32*save->formCount(dexNo))/2)) && touch.px < (i*32)+(128-((32*save->formCount(dexNo))/2))+32 && touch.py > 72 && touch.py < 104) {
 					Sound::play(Sound::click);
 					resetPokemonSpritesPos();
 					return i;
@@ -212,7 +181,7 @@ int selectForm(int dexNo, int currentForm) {
 		}
 
 		// Move arrow
-		setSpritePosition(arrowID, false, (currentForm*32)+(128-((32*formCounts[altIndex].noForms)/2))+28, 84);
+		setSpritePosition(arrowID, false, (currentForm*32)+(128-((32*save->formCount(dexNo))/2))+28, 84);
 		updateOam();
 	}
 }

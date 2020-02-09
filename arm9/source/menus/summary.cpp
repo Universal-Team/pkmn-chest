@@ -352,7 +352,12 @@ std::shared_ptr<PKX> showPokemonSummary(std::shared_ptr<PKX> pkm) {
 						break;
 					} case 1: {
 						int num = selectForm(pkm->species(), pkm->alternativeForm());
-						if(num != -1)	pkm->alternativeForm(num);
+						if(num == -1) { // If not changed then don't redraw
+							setSpriteVisibility(arrowID, false, true);
+							updateOam();
+							continue;
+						}
+						pkm->alternativeForm(num);
 						drawSummaryPage(pkm, true);
 						break;
 					} case 2: {
