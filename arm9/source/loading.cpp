@@ -22,11 +22,23 @@ void loadLoadingLogo(void) {
 	
 	Image logo;
 	logo = loadImage("/graphics/icon.gfx");
-	if(!(rand() % 8192)) { // Full odds shiny chest ;P
-		for(unsigned i=0;i<logo.palette.size();i++) {
-			if(logo.palette[i] == 0x801F || logo.palette[i] == 0x8C9F || logo.palette[i] == 0x8018)	logo.palette[i] |= BLUE & GRAY;
-		}
+
+	const time_t current = time(NULL);
+	
+	// Replace the red on the chest with a trans flag on March 31 ;P
+	if(gmtime(&current)->tm_mon == 2 && gmtime(&current)->tm_mday == 31) { // 🏳️‍⚧️
+		logo.palette[1] = 0xF32D; // Light blue
+		logo.palette[3] = 0xDEBC; // Pink
+		logo.palette[5] = 0xFBDE; // White
 	}
+
+	if(!(rand() % 8192)) { // Full odds shiny chest ;P
+		// Flip red & blue on palettes 1, 3, and 5
+		logo.palette[1] = (((logo.palette[1] >> 10) & 0x1F) | (logo.palette[1] & 0x83E0) | ((logo.palette[1] & 0x1F) << 10));
+		logo.palette[3] = (((logo.palette[3] >> 10) & 0x1F) | (logo.palette[3] & 0x83E0) | ((logo.palette[3] & 0x1F) << 10));
+		logo.palette[5] = (((logo.palette[5] >> 10) & 0x1F) | (logo.palette[5] & 0x83E0) | ((logo.palette[5] & 0x1F) << 10));
+	}
+
 	for(unsigned int i=0;i<logo.bitmap.size();i++) {
 		logoGfx[i] = logo.palette[logo.bitmap[i]];
 	}
