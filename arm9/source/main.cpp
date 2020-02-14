@@ -30,6 +30,12 @@ int main(int argc, char **argv) {
 	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, true, false);
 	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
 
+	// Check if on a DS (Lite) or DSi / 3DS
+	fifoWaitValue32(FIFO_USER_06);
+	u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
+	if (arm7_SNDEXCNT != 0)	isRegularDS = false;	// If sound frequency setting is found, then the console is not a DS (Lite)
+	fifoSendValue32(FIFO_USER_07, 0);
+
 	// Init filesystem
 	if(!fatInitDefault()) {
 		// Prints error if fatInitDefault() fails

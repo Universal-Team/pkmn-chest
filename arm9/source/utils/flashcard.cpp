@@ -9,6 +9,8 @@ static bool sdRead = false;
 static bool flashcardAccessed = false;
 static bool flashcardRead = false;
 
+bool isRegularDS = true;
+
 bool sdFound(void) {
 	if (!sdAccessed) {
 		if (access("sd:/", F_OK) == 0) {
