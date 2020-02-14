@@ -25,8 +25,20 @@ void loadLoadingLogo(void) {
 
 	const time_t current = time(NULL);
 	
-	// Replace the red on the chest with a trans flag on March 31 ;P
-	if(gmtime(&current)->tm_mon == 2 && gmtime(&current)->tm_mday == 31) { // 🏳️‍⚧️
+	
+	if(gmtime(&current)->tm_mon + 1 == PersonalData->birthMonth && gmtime(&current)->tm_mday == PersonalData->birthDay) {
+		// On the DS's set birthday color the logo pink 🎂! (Woulda done a cake but that can't be done with just palettes ;P)
+		logo.palette[1]  = 0xDEBF;
+		logo.palette[3]  = 0xE6FF;
+		logo.palette[5]  = 0xE6FF;
+		logo.palette[9]  = 0xB9B8;
+		logo.palette[10] = 0xB998;
+		logo.palette[11] = 0xC1F9;
+		logo.palette[12] = 0xCE5B;
+		logo.palette[13] = 0xD27B;
+		logo.palette[14] = 0xDEFE;
+	} else if(gmtime(&current)->tm_mon == 2 && gmtime(&current)->tm_mday == 31) {
+		// Replace the red on the chest with a trans flag on March 31 🏳️‍⚧️
 		logo.palette[1] = 0xF32D; // Light blue
 		logo.palette[3] = 0xDEBC; // Pink
 		logo.palette[5] = 0xFBDE; // White
