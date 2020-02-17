@@ -20,11 +20,7 @@ variables:
 
 steps:
 - script: |
-    git submodule init
-    git submodule update
-    cd arm9/core
-    git submodule init
-    git submodule update
+    git submodule update --init --recursive
   displayName: 'Clone submodules'
 
 - script: |
