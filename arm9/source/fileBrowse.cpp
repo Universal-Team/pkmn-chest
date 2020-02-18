@@ -270,11 +270,11 @@ std::string topMenuSelect(void) {
 	std::vector<topMenuItem> topMenuContents;
 
 	if(flashcardFound())	topMenuContents.push_back({"fat:", true});
-	if(sdFound())			topMenuContents.push_back({"sd:", true});
+	if(sdFound())	topMenuContents.push_back({"sd:", true});
 	if(!flashcardFound())	topMenuContents.push_back({"card:", false});
 	if(!flashcardFound())	tmSlot1Offset = topMenuContents.size()-1;
-	if(isRegularDS)			topMenuContents.push_back({"cart:", false});
-	if(isRegularDS)			tmSlot2Offset = topMenuContents.size()-1;
+	if(flashcardFound())	topMenuContents.push_back({"cart:", false});
+	if(flashcardFound())	tmSlot2Offset = topMenuContents.size()-1;
 
 	FILE* favs = fopen((sdFound() ? "sd:/_nds/pkmn-chest/favorites.lst" : "fat:/_nds/pkmn-chest/favorites.lst"), "rb");
 
@@ -290,7 +290,7 @@ std::string topMenuSelect(void) {
 
 	int cardWait = 0;
 	if(!flashcardFound())	topMenuContents[tmSlot1Offset].valid = updateSlot1Text(cardWait, topMenuContents[tmSlot1Offset].valid);
-	if(isRegularDS)	topMenuContents[tmSlot2Offset].valid = updateSlot2Text(cardWait, topMenuContents[tmSlot2Offset].valid);
+	if(flashcardFound())	topMenuContents[tmSlot2Offset].valid = updateSlot2Text(cardWait, topMenuContents[tmSlot2Offset].valid);
 
 	// Show topMenuContents
 	showTopMenu(topMenuContents);
@@ -313,7 +313,7 @@ std::string topMenuSelect(void) {
 				if(tmScreenOffset <= tmSlot1Offset) {
 					topMenuContents[tmSlot1Offset].valid = updateSlot1Text(cardWait, topMenuContents[tmSlot1Offset].valid);
 				}
-			} else if(isRegularDS) {
+			} else if(flashcardFound()) {
 				if(tmScreenOffset <= tmSlot2Offset) {
 					topMenuContents[tmSlot2Offset].valid = updateSlot2Text(cardWait, topMenuContents[tmSlot2Offset].valid);
 				}

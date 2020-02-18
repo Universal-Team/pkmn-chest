@@ -60,11 +60,11 @@ void showLoadingLogo(void) {
 	angle = 0;
 	oamSet(&oamSub, 127, 112, 80, 0, 15, SpriteSize_32x32, SpriteColorFormat_Bmp, logoGfx, 0, false, false, false, false, false);
 	oamUpdate(&oamSub);
-	timerStart(0, ClockDivider_1024, TIMER_FREQ_1024(60), loadingAnimation);
+	irqSet(IRQ_VBLANK, loadingAnimation);
 }
 
 void hideLoadingLogo(void) {
 	oamClearSprite(&oamSub, 127);
 	oamUpdate(&oamSub);
-	timerStop(0);
+	irqSet(IRQ_VBLANK, NULL);
 }
