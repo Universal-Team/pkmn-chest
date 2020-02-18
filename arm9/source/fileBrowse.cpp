@@ -121,25 +121,12 @@ bool showTopMenuOnExit = true, noCardMessageSet = false, noCartMessageSet = fals
 int tmCurPos = 0, tmScreenOffset = 0, tmSlot1Offset = 0, tmSlot2Offset = 0;
 
 void updateDriveLabel(bool fat) {
-	if (fat) {
-		fatGetVolumeLabel("fat", fatLabel);
-		for (int i = 0; i < 12; i++) {
-			if (((fatLabel[i] == ' ') && (fatLabel[i+1] == ' ') && (fatLabel[i+2] == ' '))
-			|| ((fatLabel[i] == ' ') && (fatLabel[i+1] == ' '))
-			|| (fatLabel[i] == ' ')) {
-				fatLabel[i] = '\0';
-				break;
-			}
-		}
-	} else {
-		fatGetVolumeLabel("sd", sdLabel);
-		for (int i = 0; i < 12; i++) {
-			if (((sdLabel[i] == ' ') && (sdLabel[i+1] == ' ') && (sdLabel[i+2] == ' '))
-			|| ((sdLabel[i] == ' ') && (sdLabel[i+1] == ' '))
-			|| (sdLabel[i] == ' ')) {
-				sdLabel[i] = '\0';
-				break;
-			}
+	char *label = fat ? fatLabel : sdLabel;
+	fatGetVolumeLabel(fat ? "fat" : "sd", label);
+	for(int i = strlen(label) - 1; i > 0; i--) {
+		if(label[i] != ' ') {
+			label[i + 1] = '\0';
+			break;
 		}
 	}
 }
