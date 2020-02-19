@@ -125,7 +125,7 @@
 	"unlimited": "Illimité",
 	"wallpaper": "Fond d’écran",
 	"warning": "Attention!",
-	"wrongSaveCard": "La taille de la sauvegarde\nne correspond pas à la taille de la carte de jeu actuelle\n! Écriture arrêtée.",
+	"wrongSaveCard": "La taille de la sauvegarde\nne correspond pas à la taille de la\ncarte de jeu actuelle\n! Écriture arrêtée.",
 	"wrongSaveCart": "Le type de la sauvegarde\nne correspond pas au type de la cartouche\nactuelle!\nÉcriture arrêtée.",
 	"yes": "Oui"
 }
