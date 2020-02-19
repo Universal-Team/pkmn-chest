@@ -125,7 +125,7 @@
 	"unlimited": "Ilimitadas",
 	"wallpaper": "Fondo",
 	"warning": "¡Advertencia!",
-	"wrongSaveCard": "¡El tamaño del guardado\nno coincide con el tamaño del juego actual!\nEscribe detenido.",
-	"wrongSaveCart": "¡El tipo de guardado\nno coincide con el tipo del cartucho actual!\nEscribe detenido.",
+	"wrongSaveCard": "¡El tamaño del guardado\nno coincide con el tamaño del\njuego actual!\nEscribe detenido.",
+	"wrongSaveCart": "¡El tipo de guardado\nno coincide con el tipo del\ncartucho actual!\nEscribe detenido.",
 	"yes": "Sí"
 }
