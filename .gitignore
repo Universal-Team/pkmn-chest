@@ -8,6 +8,7 @@
 *.msl
 graphics/bmp2ds
 nitrofiles/i18n/**/*.txt
+nitrofiles/version.txt
 
 *.DS_Store
 .vscode/ipch

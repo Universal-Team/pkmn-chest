@@ -47,7 +47,6 @@ lang:
 	@echo i18n strings ...
 
 #---------------------------------------------------------------------------------
-$(TARGET).nds	: graphics lang $(NITRO_FILES) arm9/$(TARGET).elf
 sound:
 	$(MAKE) -C sound
 

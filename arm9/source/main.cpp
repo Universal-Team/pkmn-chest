@@ -66,6 +66,28 @@ int main(int argc, char **argv) {
 			}
 		}
 	}
+
+	bool nitroFSGood = false;
+	FILE *file = fopen("nitro:/version.txt", "r");
+	if(file) {
+		fseek(file, 0, SEEK_END);
+		int length = ftell(file);
+		fseek(file, 0, SEEK_SET);
+
+		char version[length + 1] = {0};
+		fread(version, 1, length, file);
+		nitroFSGood = (strcmp(version, VER_NUMBER) == 0);
+		fclose(file);
+	}
+
+	if(!nitroFSGood) {
+		consoleDemoInit();
+		printf("NitroFS is out of date!\n\n");
+		printf("Please update pkmn-chest.nds at:\n\n");
+		printf("%s:/_nds/pkmn-chest/\n", sdFound() ? (access("/Nintendo 3DS", F_OK) == 0 ? "sdmc" : "sd") : "fat");
+		while(1) swiWaitForVBlank();
+	}
+
 	loadLoadingLogo();
 	showLoadingLogo();
 
