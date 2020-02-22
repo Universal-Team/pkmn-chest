@@ -51,7 +51,7 @@ sound:
 	$(MAKE) -C sound
 
 #---------------------------------------------------------------------------------
-$(TARGET).nds	: graphics sound $(NITRO_FILES) arm9/$(TARGET).elf
+$(TARGET).nds	: graphics sound lang $(NITRO_FILES) arm9/$(TARGET).elf
 	ndstool	-c $(TARGET).nds -9 arm9/$(TARGET).elf \
 	-b1 icon.bmp "$(GAME_TITLE);$(GAME_SUBTITLE1)" $(_ADDFILES) \
 	-z 80040000 -u 00030004 -a 00000138
