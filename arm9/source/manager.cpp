@@ -87,6 +87,7 @@ int getPokemonIndex(int species, int alternativeForm, int gender, bool egg) {
 				return 708 + alternativeForm;
 			case 641: // Tornadus
 			case 642: // Thunderus
+				return species + 68 + alternativeForm;
 			case 645: // Landorus
 			case 646: // Kyurem
 				return species + 66 + alternativeForm;
@@ -94,7 +95,7 @@ int getPokemonIndex(int species, int alternativeForm, int gender, bool egg) {
 				return 714 + alternativeForm;
 		}
 	} else if((species == 592 || species == 593) && gender == 1) { // Frillish || Jellicent
-		return species + 320;
+		return species + 115;
 	}
 
 	// Non-alternate form, return dex number
