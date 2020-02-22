@@ -16,7 +16,7 @@ void fillPartySprites(void) {
 		if(save->pkm(i)->species() == 0) {
 			setSpriteVisibility(partyIconID[i], false, false);
 		} else {
-			Image image = loadPokemonSprite(getPokemonIndex(save->pkm(i)));
+			Image image = loadPokemonSprite(getPokemonIndex(*save->pkm(i)));
 			fillSpriteImage(partyIconID[i], false, 32, 0, 0, image);
 			setSpriteVisibility(partyIconID[i], false, true);
 		}

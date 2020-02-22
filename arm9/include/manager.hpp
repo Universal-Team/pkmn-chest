@@ -22,14 +22,14 @@ int currentBox(void);
  * Returns the Pokémon in the provided slot
  * on the cursor's current screen
  */
-std::shared_ptr<PKX> currentPokemon(int x, int y);
+std::unique_ptr<PKX> currentPokemon(int x, int y);
 
 /*
  * Gets the image offset for a Pokémon
- * std::shared_ptr<PKX> pkm is the Pokémon to get the offset for
+ * const PKX &pkm is the Pokémon to get the offset for
  * Returns an int of the offset to use
  */
-int getPokemonIndex(std::shared_ptr<PKX> pkm);
+int getPokemonIndex(const PKX &pkm);
 
 /*
  * Gets the image offset for a Pokémon
@@ -80,10 +80,10 @@ std::string boxBgPath(bool top, int box = save->boxWallpaper(currentSaveBox));
 void drawBox(bool top);
 
 // Draws the info for the Pokémon provided
-void drawPokemonInfo(std::shared_ptr<PKX> pkm);
+void drawPokemonInfo(const PKX &pkm);
 
 // Fills the held Pokémon sprite
-void setHeldPokemon(std::shared_ptr<PKX> pkm);
+void setHeldPokemon(const PKX &pkm);
 
 // Main Pokémon box mangaement loop
 void manageBoxes(void);

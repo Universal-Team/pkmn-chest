@@ -5,6 +5,6 @@
 
 #include "PKFilter.hpp"
 
-void changeFilter(std::shared_ptr<PKFilter> &filter);
+void changeFilter(std::shared_ptr<PKFilter> filter);
 
 #endif

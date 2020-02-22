@@ -16,7 +16,7 @@ int selectItem(int current, int start, int max, const std::vector<std::string> &
 std::string selectItem(int current, const std::vector<std::string> &items);
 
 // Shows the move editing menu
-std::shared_ptr<PKX> selectMoves(std::shared_ptr<PKX> pkm);
+void selectMoves(PKX &pkm);
 
 // Shows the nature selection menu
 int selectNature(int currentNature);
@@ -31,10 +31,10 @@ int selectWallpaper(int currentWallpaper);
 int selectBox(int currentBox);
 
 // Shows the origin editing menu
-std::shared_ptr<PKX> selectOrigin(std::shared_ptr<PKX> pkm);
+void selectOrigin(PKX &pkm);
 
 // Shows the stat editing menu
-std::shared_ptr<PKX> selectStats(std::shared_ptr<PKX> pkm);
+void selectStats(PKX &pkm);
 
 // Shows the type selection menu
 int selectHPType(int current);

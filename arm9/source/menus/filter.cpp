@@ -16,7 +16,7 @@ std::vector<bool> filterEnabled;
 std::vector<bool> filterInversed;
 std::vector<std::string> genders = {"male", "female", "unknown"}, filterLabels = {"species", "nature", "ability", "gender", "item", "ball", "form", "level", "moves", "shiny"};
 
-void selectMoves(std::shared_ptr<PKFilter> &filter) {
+void selectMoves(std::shared_ptr<PKFilter> filter) {
 	// Clear screen
 	drawImageDMA(0, 0, listBg, false, false);
 	printText(i18n::localize(Config::getLang("lang"), "moves"), 4, 0, false, false);
@@ -112,7 +112,7 @@ void selectMoves(std::shared_ptr<PKFilter> &filter) {
 	}
 }
 
-void drawFilterMenu(const std::shared_ptr<PKFilter> &filter) {
+void drawFilterMenu(const std::shared_ptr<PKFilter> filter) {
 	// Clear screen
 	drawImageDMA(0, 0, listBg, false, false);
 	printText(i18n::localize(Config::getLang("lang"), "filter"), 4, 0, false, false);
@@ -165,7 +165,7 @@ void drawFilterMenu(const std::shared_ptr<PKFilter> &filter) {
 	}
 }
 
-void changeFilter(std::shared_ptr<PKFilter> &filter) {
+void changeFilter(std::shared_ptr<PKFilter> filter) {
 	drawFilterMenu(filter);
 
 	// Set arrow position

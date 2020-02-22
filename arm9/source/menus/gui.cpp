@@ -2,6 +2,10 @@
 #include "graphics.hpp"
 #include "sound.hpp"
 
+void Gui::prompt(int message, const std::string &confirm) {
+	prompt(std::to_string(message), confirm);
+}
+
 void Gui::prompt(std::string message, const std::string &confirm) {
 	// Get height
 	int lines = 1;

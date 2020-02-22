@@ -15,7 +15,7 @@
 std::vector<SortType> sortTypes;
 std::vector<std::string> sortText = {"none", "dexNo", "speciesName", "form", "type1", "type2", "hp", "attack", "defense", "spAtk", "spDef", "speed", "hpIV", "attackIV", "defenseIV", "spAtkIV", "spDefIV", "speedIV", "nature", "level", "trainerID", "hpType", "friendship", "name", "origTrainer", "shiny"};
 
-bool sortPokemonFilter(const std::shared_ptr<PKX>& pkm1, const std::shared_ptr<PKX>& pkm2) {
+bool sortPokemonFilter(const std::unique_ptr<PKX> &pkm1, const std::unique_ptr<PKX> &pkm2) {
 	for(const auto& type : sortTypes) {
 		switch (type) {
 			case SortType::DEX:
@@ -176,7 +176,7 @@ bool sortPokemonFilter(const std::shared_ptr<PKX>& pkm1, const std::shared_ptr<P
 }
 
 void sortPokemon(bool top) {
-	std::vector<std::shared_ptr<PKX>> sortPkm;
+	std::vector<std::unique_ptr<PKX>> sortPkm;
 	while(!sortTypes.empty() && sortTypes.back() == SortType::NONE) {
 		sortTypes.pop_back();
 	}
@@ -201,17 +201,17 @@ void sortPokemon(bool top) {
 
 	if(top) {
 		for(unsigned i=0;i<sortPkm.size();i++) {
-			Banks::bank->pkm(sortPkm[i], i/30, i%30);
+			Banks::bank->pkm(*sortPkm[i], i/30, i%30);
 		}
 		for(int i=sortPkm.size();i<Banks::bank->boxes()*30;i++) {
-			Banks::bank->pkm(save->emptyPkm(), i/30, i%30);
+			Banks::bank->pkm(*save->emptyPkm(), i/30, i%30);
 		}
 	} else {
 		for(unsigned i=0;i<sortPkm.size();i++) {
-			save->pkm(sortPkm[i], i/30, i%30, false);
+			save->pkm(*sortPkm[i], i/30, i%30, false);
 		}
 		for(int i=sortPkm.size();i<save->maxSlot();i++) {
-			save->pkm(save->emptyPkm(), i/30, i%30, false);
+			save->pkm(*save->emptyPkm(), i/30, i%30, false);
 		}
 	}
 }

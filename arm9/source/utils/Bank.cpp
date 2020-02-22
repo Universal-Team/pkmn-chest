@@ -200,31 +200,31 @@ void Bank::resize(size_t boxes) {
 	size = newSize;
 }
 
-std::shared_ptr<PKX> Bank::pkm(int box, int slot) const {
+std::unique_ptr<PKX> Bank::pkm(int box, int slot) const {
 	BankEntry* bank = (BankEntry*)(data + sizeof(BankHeader));
 	int index       = box * 30 + slot;
-	std::shared_ptr<PKX> ret = PKX::getPKM(bank[index].gen, bank[index].data, false);
+	std::unique_ptr<PKX> ret = PKX::getPKM(bank[index].gen, bank[index].data, false);
 	if(ret) {
 		return ret;
 	} else {
-		return PKX::getPKM<Generation::SEVEN>(nullptr);
+		return PKX::getPKM<Generation::FIVE>(nullptr);
 	}
 }
 
-void Bank::pkm(std::shared_ptr<PKX> pkm, int box, int slot) {
+void Bank::pkm(const PKX &pkm, int box, int slot) {
 	BankEntry* bank = (BankEntry*)(data + sizeof(BankHeader));
 	int index       = box * 30 + slot;
 	BankEntry newEntry;
-	if(pkm->species() == 0) {
+	if(pkm.species() == 0) {
 		std::fill_n((char*)&newEntry, sizeof(BankEntry), 0xFF);
 		bank[index] = newEntry;
 		needsCheck  = true;
 		return;
 	}
-	newEntry.gen = pkm->generation();
-	std::copy(pkm->rawData(), pkm->rawData() + pkm->getLength(), newEntry.data);
-	if(pkm->getLength() < 260) {
-		std::fill_n(newEntry.data + pkm->getLength(), 260 - pkm->getLength(), 0xFF);
+	newEntry.gen = pkm.generation();
+	std::copy(pkm.rawData(), pkm.rawData() + pkm.getLength(), newEntry.data);
+	if(pkm.getLength() < 260) {
+		std::fill_n(newEntry.data + pkm.getLength(), 260 - pkm.getLength(), 0xFF);
 	}
 	bank[index] = newEntry;
 	needsCheck  = true;
