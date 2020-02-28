@@ -235,7 +235,7 @@ void sortMenu(bool top) {
 
 	// Set arrow position
 	setSpriteVisibility(arrowID, false, true);
-	setSpritePosition(arrowID, false, 4+getTextWidth(i18n::localize(Config::getLang("lang"), "filter")+" "+std::to_string(1)+": "+i18n::localize(Config::getLang("lang"), sortText[int(sortTypes[0])]))+2, (15));
+	setSpritePosition(arrowID, false, 4+getTextWidth(i18n::localize(Config::getLang("lang"), "filter")+" "+std::to_string(1)+": "+i18n::localize(Config::getLang("lang"), sortText[int(sortTypes[0])]))+2, 10);
 	// Hide all Pokémon sprites
 	for(int i=0;i<30;i++) {
 		setSpriteVisibility(i, false, false);
@@ -294,8 +294,8 @@ void sortMenu(bool top) {
 		}
 
 		// Move cursor
-		if(selection < (int)sortTypes.size())	setSpritePosition(arrowID, false, 4+getTextWidth(i18n::localize(Config::getLang("lang"), "filter")+" "+std::to_string(selection+1)+": "+i18n::localize(Config::getLang("lang"), sortText[int(sortTypes[selection])]))+2, (16*(selection)+15));
-		else	setSpritePosition(arrowID, false, 260-boxButton.width+getTextWidth(i18n::localize(Config::getLang("lang"), "sort"))+2, 191-boxButton.height);
+		if(selection < (int)sortTypes.size())	setSpritePosition(arrowID, false, 4+getTextWidth(i18n::localize(Config::getLang("lang"), "filter")+" "+std::to_string(selection+1)+": "+i18n::localize(Config::getLang("lang"), sortText[int(sortTypes[selection])]))+2, (16*(selection)+10));
+		else	setSpritePosition(arrowID, false, 260-boxButton.width+getTextWidth(i18n::localize(Config::getLang("lang"), "sort"))+2, 191-boxButton.height-3);
 		updateOam();
 	}
 }

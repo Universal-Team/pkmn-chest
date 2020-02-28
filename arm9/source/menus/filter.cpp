@@ -23,13 +23,13 @@ void selectMoves(std::shared_ptr<PKFilter> filter) {
 
 	// Print moves
 	for(int i=0;i<4;i++) {
-		printText(filter->moveEnabled(i) ? "√" : "x", 4, 16+(i*16), false, false);
+		printText(filter->moveEnabled(i) ? "o" : "x", 4, 16+(i*16), false, false);
 		printTextMaxW(i18n::move(Config::getLang("lang"), filter->move(i)), 100, 1, 20, 16+(i*16), false, false);
 		printText(filter->moveInversed(i) ? "≠" : "=", 120, 16+(i*16), false, false);
 	}
 
 	// Set arrow position
-	setSpritePosition(arrowID, false, 4+getTextWidth(filter->moveEnabled(0) ? "√" : "x")+2, 15);
+	setSpritePosition(arrowID, false, 4+getTextWidth(filter->moveEnabled(0) ? "o" : "x")+2, 15);
 	setSpriteVisibility(arrowID, false, true);
 	updateOam();
 
@@ -60,7 +60,7 @@ void selectMoves(std::shared_ptr<PKFilter> filter) {
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
 			for(unsigned i=0;i<4;i++) {
-				if(touch.px >= 4 && touch.px <= 4+getTextWidth(filter->moveEnabled(selection) ? "√" : "x") && touch.py >= 15+(i*16) && touch.py <= 15+((i+1)*16)) {
+				if(touch.px >= 4 && touch.px <= 4+getTextWidth(filter->moveEnabled(selection) ? "o" : "x") && touch.py >= 15+(i*16) && touch.py <= 15+((i+1)*16)) {
 					column = 0;
 					selection = i;
 					optionSelected = true;
@@ -98,16 +98,16 @@ void selectMoves(std::shared_ptr<PKFilter> filter) {
 
 			// Print moves
 			for(int i=0;i<4;i++) {
-				printText(filter->moveEnabled(i) ? "√" : "x", 4, 16+(i*16), false, false);
+				printText(filter->moveEnabled(i) ? "o" : "x", 4, 16+(i*16), false, false);
 				printTextMaxW(i18n::move(Config::getLang("lang"), filter->move(i)), 100, 1, 20, 16+(i*16), false, false);
 				printText(filter->moveInversed(i) ? "≠" : "=", 120, 16+(i*16), false, false);
 			}
 		}
 
 		// Move cursor
-		if(column == 0)	setSpritePosition(arrowID, false, 4+getTextWidth(filter->moveEnabled(selection) ? "√" : "x")+2, (16*(selection)+15));
-		else if(column == 1)	setSpritePosition(arrowID, false, 20+getTextWidth(i18n::move(Config::getLang("lang"), filter->move(selection)))+2, (16*(selection)+15));
-		else if(column == 2)	setSpritePosition(arrowID, false, 120+getTextWidth(filter->moveInversed(selection) ? "≠" : "=")+2, (16*(selection)+15));
+		if(column == 0)	setSpritePosition(arrowID, false, 4+getTextWidth(filter->moveEnabled(selection) ? "o" : "x")+2, (16*(selection)+10));
+		else if(column == 1)	setSpritePosition(arrowID, false, 20+getTextWidth(i18n::move(Config::getLang("lang"), filter->move(selection)))+2, (16*(selection)+10));
+		else if(column == 2)	setSpritePosition(arrowID, false, 120+getTextWidth(filter->moveInversed(selection) ? "≠" : "=")+2, (16*(selection)+10));
 		updateOam();
 	}
 }
@@ -170,7 +170,7 @@ void changeFilter(std::shared_ptr<PKFilter> filter) {
 
 	// Set arrow position
 	setSpriteVisibility(arrowID, false, true);
-	setSpritePosition(arrowID, false, 4+getTextWidth(filterEnabled[0] ? "√" : "x")+2, (15));
+	setSpritePosition(arrowID, false, 4+getTextWidth(filterEnabled[0] ? "o" : "x")+2, 10);
 	// Hide all Pokémon sprites
 	for(int i=0;i<30;i++) {
 		setSpriteVisibility(i, false, false);
@@ -206,7 +206,7 @@ void changeFilter(std::shared_ptr<PKFilter> filter) {
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
 			for(unsigned i=0;i<filterLabels.size();i++) {
-				if(touch.px >= 4 && touch.px <= 4+getTextWidth(filter->moveEnabled(selection) ? "√" : "x") && touch.py >= 15+(i*16) && touch.py <= 15+((i+1)*16)) {
+				if(touch.px >= 4 && touch.px <= 4+getTextWidth(filter->moveEnabled(selection) ? "o" : "x") && touch.py >= 15+(i*16) && touch.py <= 15+((i+1)*16)) {
 					column = 0;
 					selection = i;
 					optionSelected = true;
@@ -348,9 +348,9 @@ void changeFilter(std::shared_ptr<PKFilter> filter) {
 		}
 
 		// Move cursor
-		if(column == 0)	setSpritePosition(arrowID, false, 4+getTextWidth(filterEnabled[selection] ? "√" : "x")+2, (16*(selection)+15));
-		else if(column == 1)	setSpritePosition(arrowID, false, 120+getTextWidth(filterInversed[selection] ? "≠" : "=")+2, (16*(selection)+15));
-		else if(column == 2)	setSpritePosition(arrowID, false, 136+getTextWidth(filterValues[selection])+2, (16*(selection)+15));
+		if(column == 0)	setSpritePosition(arrowID, false, 4+getTextWidth(filterEnabled[selection] ? "o" : "x")+2, (16*(selection)+10));
+		else if(column == 1)	setSpritePosition(arrowID, false, 120+getTextWidth(filterInversed[selection] ? "≠" : "=")+2, (16*(selection)+10));
+		else if(column == 2)	setSpritePosition(arrowID, false, 136+getTextWidth(filterValues[selection])+2, (16*(selection)+10));
 		updateOam();
 	}
 }

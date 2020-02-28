@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
 		// Prints error if fatInitDefault() fails
 		consoleDemoInit();
 		printf("fatInitDefault() failed...");
-		while(1) swiWaitForVBlank();
+		while(1)	swiWaitForVBlank();
 	}
 
 	// Make directories
@@ -62,7 +62,7 @@ int main(int argc, char **argv) {
 				printf("      TWiLight Menu++ or HBMenu\n\n\n\n\n");
 				printf("(Note: TWiLight's Acekard\n");
 				printf("        theme needs a copy in ^)\n\n");
-				while(1) swiWaitForVBlank();
+				while(1)	swiWaitForVBlank();
 			}
 		}
 	}
