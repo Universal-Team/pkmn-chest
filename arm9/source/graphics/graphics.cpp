@@ -374,6 +374,10 @@ void prepareSprite(int id, bool top, int x, int y, int priority) {
 	sprites(top)[id].y = y;
 }
 
+void setSpriteScale(int id, bool top, int sx, int sy) {
+	oamRotateScale((top ? &oamMain : &oamSub), id, 0, sx, sy);
+}
+
 void updateOam(void) {
 	oamUpdate(&oamSub);
 	oamUpdate(&oamMain);

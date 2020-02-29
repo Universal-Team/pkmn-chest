@@ -230,6 +230,14 @@ void fillSpriteText(int id, bool top, const std::u16string &text, TextColor pale
  */
 void prepareSprite(int id, bool top, int x, int y, int priority);
 
+/*
+ * Sets the sprite to scale
+ * int id is the id of the sprite
+ * int sx is the inverse scale factor in the X direction
+ * int sy is the inverse scale factor in the Y direction
+ */
+void setSpriteScale(int id, bool top, int sx, int sy);
+
 // Updates the OAM to show updates sprite properties
 void updateOam(void);
 
