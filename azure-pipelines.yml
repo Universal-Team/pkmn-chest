@@ -63,7 +63,6 @@ steps:
     cd extras/builds/pkmn-chest
     cp ../../../pkmn-chest.nds pkmn-chest.nds
     cp ../../../pkmn-chest.cia pkmn-chest.cia
-    cp ../../../pkmn-chest.cia pkmn-chest.cia
     git stage .
     git commit -m "pkmn-chest | $(COMMIT_TAG)"
     git push origin master

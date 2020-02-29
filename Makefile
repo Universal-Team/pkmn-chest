@@ -54,10 +54,7 @@ sound:
 $(TARGET).nds	: graphics sound lang $(NITRO_FILES) arm9/$(TARGET).elf
 	ndstool	-c $(TARGET).nds -9 arm9/$(TARGET).elf \
 	-b1 icon.bmp "$(GAME_TITLE);$(GAME_SUBTITLE1)" $(_ADDFILES) \
-	-g WPKA 00 "PKMN-CHEST" -z 80040000 -u 00030004 -a 00000138
-  # simple nds srl without dsi extended header
-	ndstool	-h 0x200 -c $(TARGET)_fc.nds -9 arm9/$(TARGET).elf \
-	-b1 icon.bmp "$(GAME_TITLE);$(GAME_SUBTITLE1)" $(_ADDFILES)
+	-g \#\#\#\# 00 "PKMN-CHEST" 87 -z 80040000 -u 00030004 -a 00000138
 
 #---------------------------------------------------------------------------------
 arm9/$(TARGET).elf:
