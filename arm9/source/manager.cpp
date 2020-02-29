@@ -208,6 +208,8 @@ void initSprites(void) {
 }
 
 void loadGraphics(void) {
+	extern bool wideScreen;
+
 	// Load images into RAM
 	arrowBlue = loadImage("/graphics/arrowBlue.gfx");
 	arrowRed = loadImage("/graphics/arrowRed.gfx");
@@ -215,7 +217,7 @@ void loadGraphics(void) {
 	for(int i=0;i<BALL_COUNT;i++) {
 		ball[i] = loadImage("/graphics/ball/"+std::to_string(i)+".gfx");
 	}
-	boxBgTop = loadImage("/graphics/boxBgTop.gfx");
+	boxBgTop = loadImage(wideScreen ? "/graphics/boxBgTopWide.gfx" : "/graphics/boxBgTop.gfx");
 	boxButton = loadImage("/graphics/boxButton.gfx");
 	infoBox = loadImage("/graphics/infoBox.gfx");
 	keyboardKey = loadImage("/graphics/keyboardKey.gfx");

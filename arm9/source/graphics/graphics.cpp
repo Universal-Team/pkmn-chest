@@ -10,6 +10,7 @@ std::vector<char> fontWidths;
 std::vector<u16> fontMap;
 u16 tileSize, tileWidth, tileHeight;
 int bg3Main, bg2Main, bg3Sub, bg2Sub, bg1Sub;
+bool wideScreen = false;
 
 #define sprites(top) (top ? spritesMain : spritesSub)
 #define maxSprite(top) (top ? maxSpriteMain : maxSpriteSub)

@@ -88,6 +88,8 @@ int main(int argc, char **argv) {
 		while(1) swiWaitForVBlank();
 	}
 
+	wideScreen = (strcmp(argv[1], "wide") == 0);
+
 	loadLoadingLogo();
 	showLoadingLogo();
 

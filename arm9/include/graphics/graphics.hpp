@@ -34,6 +34,7 @@ struct Label {
 };
 
 extern int bg3Main, bg2Main, bg3Sub, bg2Sub, bg1Sub;
+extern bool wideScreen;
 
 // Initializes the screens for drawing
 void initGraphics(void);
