@@ -27,7 +27,7 @@ no-pokemon	:	bmp2ds $(TARGETS)
 	@echo graphics ...
 
 bmp2ds	:
-	@g++ bmp2ds.cpp -o bmp2ds
+	@g++ bmp2ds.cpp -std=c++11 -o bmp2ds
 
 
 %.gfx	:	%.bmp %.txt
