@@ -23,7 +23,7 @@ bool topScreen, inParty;
 int arrowID = 126, currentSaveBox, currentBankBox, heldPokemonID = 125, keyboardSpriteID = 124, arrowMode = 0, boxTitleX = 0, boxTitleY = 0, pkmnX = 0, pkmnY = 0;
 std::vector<int> menuIconID, partyIconID;
 std::string savePath;
-Image arrowBlue, arrowRed, arrowYellow, ball[BALL_COUNT], bankBox, boxBgTop, boxButton, infoBox, keyboardKey, listBg, menuBg, menuButton, menuButtonBlue, party, search, setToSelf, shiny;
+Image arrowBlueTop, arrowRedTop, arrowYellowTop, arrowBlue, arrowRed, arrowYellow, ball[BALL_COUNT], bankBox, boxBgTop, boxButton, infoBox, keyboardKey, listBg, menuBg, menuButton, menuButtonBlue, party, search, setToSelf, shiny;
 std::vector<Image> types;
 FILE* pokemonGFX;
 std::shared_ptr<PKFilter> filter = std::make_shared<PKFilter>();
@@ -134,13 +134,13 @@ void resetPokemonSpritesPos(void) {
 void fillArrow(int arrowMode) {
 	if(arrowMode == 0) {
 		fillSpriteImage(arrowID, false, 16, 0, 0, arrowRed);
-		fillSpriteImage(arrowID, true, 16, 0, 0, arrowRed);
+		fillSpriteImage(arrowID, true, 16, 0, 0, arrowRedTop);
 	} else if(arrowMode == 1) {
 		fillSpriteImage(arrowID, false, 16, 0, 0, arrowBlue);
-		fillSpriteImage(arrowID, true, 16, 0, 0, arrowBlue);
+		fillSpriteImage(arrowID, true, 16, 0, 0, arrowBlueTop);
 	} else {
 		fillSpriteImage(arrowID, false, 16, 0, 0, arrowYellow);
-		fillSpriteImage(arrowID, true, 16, 0, 0, arrowYellow);
+		fillSpriteImage(arrowID, true, 16, 0, 0, arrowYellowTop);
 	}
 }
 
@@ -214,6 +214,15 @@ void loadGraphics(void) {
 	arrowBlue = loadImage("/graphics/arrowBlue.gfx");
 	arrowRed = loadImage("/graphics/arrowRed.gfx");
 	arrowYellow = loadImage("/graphics/arrowYellow.gfx");
+	if (wideScreen) {
+		arrowBlueTop = loadImage("/graphics/arrowBlueWide.gfx");
+		arrowRedTop = loadImage("/graphics/arrowRedWide.gfx");
+		arrowYellowTop = loadImage("/graphics/arrowYellowWide.gfx");
+	} else {
+		arrowBlueTop = loadImage("/graphics/arrowBlue.gfx");
+		arrowRedTop = loadImage("/graphics/arrowRed.gfx");
+		arrowYellowTop = loadImage("/graphics/arrowYellow.gfx");
+	}
 	for(int i=0;i<BALL_COUNT;i++) {
 		ball[i] = loadImage("/graphics/ball/"+std::to_string(i)+".gfx");
 	}
