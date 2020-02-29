@@ -158,15 +158,11 @@ void initSprites(void) {
 	// Pokémon Sprites
 	for(int y=0;y<5;y++) {
 		for(int x=0;x<6;x++) {
-			initSprite(true, SpriteSize_32x32);
+			initSprite(true, SpriteSize_32x32, -1, wideScreen ? 1 : -1);
 			initSprite(false, SpriteSize_32x32);
-			if (wideScreen) {
-				prepareSprite((y*6)+x, true, 20+(x*(24/1.2)), 32+(y*24), 3);
-				//setSpriteScale((y*6)+x, true, -5, 1);
-			} else {
-				prepareSprite((y*6)+x, true, 8+(x*24), 32+(y*24), 3);
-			}
+			prepareSprite((y*6)+x, true, wideScreen ? 20+(x*(24/1.2)) : 8+(x*(24)), 32+(y*24), 3);
 			prepareSprite((y*6)+x, false, pkmnX+(x*24), pkmnY+(y*24), 3);
+			setSpriteScale(1, true, 0.8f, 1);
 		}
 	}
 
@@ -334,17 +330,21 @@ void drawBox(bool top) {
 		if(tempPkm->species() != 0) {
 			Image image = loadPokemonSprite(getPokemonIndex(*tempPkm));
 			fillSpriteImage(i, top, 32, 0, 0, image);
-			setSpriteVisibility(i, top, true);
+			if(!top)	setSpriteVisibility(i, top, true);
 			if(!(partyShown && arrowMode == 0))
 				setSpriteAlpha(i, top, (*tempPkm == *filter) ? 15 : 8);
 		} else {
-			setSpriteVisibility(i, top, false);
+			if(top) {
+				fillSpriteColor(i, top, CLEAR);
+			} else {
+				setSpriteVisibility(i, top, false);
+			}
 		}
 	}
 	updateOam();
 
 	// Draw box image
-	drawImage((top&&wideScreen) ? 17 : 5, 15, bankBox, top, false);
+	drawImage((top && wideScreen) ? 17 : 5, 15, bankBox, top, false);
 
 	// Print box name
 	printTextCenteredTintedMaxW((top ? Banks::bank->boxName(currentBankBox) : save->boxName(currentSaveBox)), 110, 1, TextColor::gray, boxTitleX, top ? 20 : boxTitleY, top, false);

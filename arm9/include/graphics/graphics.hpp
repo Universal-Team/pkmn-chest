@@ -232,11 +232,11 @@ void prepareSprite(int id, bool top, int x, int y, int priority);
 
 /*
  * Sets the sprite to scale
- * int id is the id of the sprite
- * int sx is the inverse scale factor in the X direction
- * int sy is the inverse scale factor in the Y direction
+ * int rotationIndex is the rotation index to affect
+ * int sx is the scale factor in the X direction
+ * int sy is the scale factor in the Y direction
  */
-void setSpriteScale(int id, bool top, int sx, int sy);
+void setSpriteScale(int rotationIndex, bool top, float sx, float sy);
 
 // Updates the OAM to show updates sprite properties
 void updateOam(void);
