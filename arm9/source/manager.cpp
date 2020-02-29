@@ -162,7 +162,7 @@ void initSprites(void) {
 			initSprite(false, SpriteSize_32x32);
 			if (wideScreen) {
 				prepareSprite((y*6)+x, true, 20+(x*(24/1.2)), 32+(y*24), 3);
-				setSpriteScale((y*6)+x, true, 0.8, 1);
+				setSpriteScale((y*6)+x, true, -2, 1);
 			} else {
 				prepareSprite((y*6)+x, true, 8+(x*24), 32+(y*24), 3);
 			}
