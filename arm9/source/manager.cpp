@@ -339,7 +339,11 @@ void drawBox(bool top) {
 	updateOam();
 
 	// Draw box image
-	drawImage(5, 15, bankBox, top, false);
+	if (top && wideScreen) {
+		drawImageScaled(17, 15, 0.8, 1, bankBox, top, false);
+	} else {
+		drawImage(5, 15, bankBox, top, false);
+	}
 
 	// Print box name
 	printTextCenteredTintedMaxW((top ? Banks::bank->boxName(currentBankBox) : save->boxName(currentSaveBox)), 110, 1, TextColor::gray, boxTitleX, top ? 20 : boxTitleY, top, false);
