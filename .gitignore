@@ -7,6 +7,7 @@
 *.cia
 *.msl
 graphics/bmp2ds
+graphics/bmp2ds.exe
 nitrofiles/i18n/**/*.txt
 nitrofiles/version.txt
 
