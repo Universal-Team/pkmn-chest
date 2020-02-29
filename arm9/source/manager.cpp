@@ -286,7 +286,7 @@ void drawBoxScreen(void) {
 }
 
 std::string boxBgPath(bool top, int box) {
-	if(top)	return "/graphics/box/chest.gfx";
+	if(top)	return (wideScreen ? "/graphics/box/chestWide.gfx" : "/graphics/box/chest.gfx");
 	std::string game;
 	switch(save->version()) {
 		case 1: // Sapphire
@@ -344,11 +344,7 @@ void drawBox(bool top) {
 	updateOam();
 
 	// Draw box image
-	if (top && wideScreen) {
-		drawImageScaled(17, 15, 0.8, 1, bankBox, top, false);
-	} else {
-		drawImage(5, 15, bankBox, top, false);
-	}
+	drawImage((top&&wideScreen) ? 17 : 5, 15, bankBox, top, false);
 
 	// Print box name
 	printTextCenteredTintedMaxW((top ? Banks::bank->boxName(currentBankBox) : save->boxName(currentSaveBox)), 110, 1, TextColor::gray, boxTitleX, top ? 20 : boxTitleY, top, false);
