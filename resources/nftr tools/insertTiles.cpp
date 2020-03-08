@@ -35,7 +35,7 @@ std::pair<int, int> loadBmp16(std::string path, std::vector<uint8_t> &imageBuffe
 			}
 		}
 	} else {
-		printf("in.bmp not found!");
+		printf("in.bmp not found!\n");
 		return imageData;
 	}
 	fclose(file);
