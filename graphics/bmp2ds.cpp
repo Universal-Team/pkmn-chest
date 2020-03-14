@@ -1,3 +1,4 @@
+#include <cstdint>
 #include <math.h>
 #include <string>
 #include <string.h>
@@ -41,7 +42,7 @@ Image loadBmp16(std::string path, int paletteOffset, int paletteCount) {
 				int g = round((((palTemp[i]>>16)&0xff)*31)/255.0);
 				int b = round((((palTemp[i]>>8)&0xff)*31)/255.0);
 				image.palette[i] = r | g<<5 | b<<10 | 1<<15;
-				if(i > 0 && image.palette[i] == image.palette[i-1] && i > paletteCount) {
+				if(i > 0 && palTemp[i] == palTemp[i-1] && i > paletteCount) {
 					image.palette.resize(i);
 					break;
 				}
