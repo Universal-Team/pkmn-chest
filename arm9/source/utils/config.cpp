@@ -22,8 +22,8 @@ Language sysLang() {
 			return Language::ITA;
 		case 5:
 			return Language::SPA;
-		case 6:
-			return Language::CHS;
+		// case 6:
+		// 	return Language::CHS;
 		case 7:
 			return Language::KOR;
 	}
