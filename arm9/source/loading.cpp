@@ -23,10 +23,13 @@ void loadLoadingLogo(void) {
 	Image logo;
 	logo = loadImage("/graphics/icon.gfx");
 
+	extern bool useTwlCfg;
+	int birthMonth = (useTwlCfg ? *(u8*)0x02000446 : PersonalData->birthMonth);
+	int birthDay = (useTwlCfg ? *(u8*)0x02000447 : PersonalData->birthDay);
 	const time_t current = time(NULL);
 	
 	
-	if(gmtime(&current)->tm_mon + 1 == PersonalData->birthMonth && gmtime(&current)->tm_mday == PersonalData->birthDay) {
+	if(gmtime(&current)->tm_mon + 1 == birthMonth && gmtime(&current)->tm_mday == birthDay) {
 		// On the DS's set birthday color the logo pink 🎂! (Woulda done a cake but that can't be done with just palettes ;P)
 		logo.palette[1]  = 0xDEBF;
 		logo.palette[3]  = 0xE6FF;

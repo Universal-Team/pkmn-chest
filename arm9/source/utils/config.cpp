@@ -7,7 +7,8 @@
 nlohmann::json configJson;
 
 Language sysLang() {
-	switch(PersonalData->language) {
+	extern bool useTwlCfg;
+	switch(useTwlCfg ? *(u8*)0x02000406 : PersonalData->language) {
 		case 0:
 			return Language::JPN;
 		case 1:
@@ -21,6 +22,10 @@ Language sysLang() {
 			return Language::ITA;
 		case 5:
 			return Language::SPA;
+		case 6:
+			return Language::CHS;
+		case 7:
+			return Language::KOR;
 	}
 }
 
