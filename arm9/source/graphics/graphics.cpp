@@ -453,13 +453,12 @@ void printTextTinted(const std::u16string &text, TextColor palette, int xPos, in
 			image.bitmap[(i*4)+3] = (fontTiles[i+(t*tileSize)]    & 3);
 		}
 
-		x += fontWidths[t*3];
 		if(x > 256) {
-			x = xPos+fontWidths[t*3];
+			x = xPos;
 			yPos += tileHeight;
 		}
-		drawImage(x, yPos, image, top, layer, int(palette)*4);
-		x += fontWidths[(t*3)+1];
+		drawImage(x + fontWidths[t*3], yPos, image, top, layer, int(palette)*4);
+		x += fontWidths[(t*3)+2];
 	}
 }
 
@@ -517,13 +516,12 @@ void printTextTintedScaled(const std::u16string &text, float scaleX, float scale
 			image.bitmap[(i*4)+3] = (fontTiles[i+(t*tileSize)]    & 3);
 		}
 
-		x += fontWidths[t*3];
 		if(x > 256) {
-			x = xPos+fontWidths[t*3];
+			x = xPos;
 			yPos += tileHeight;
 		}
-		drawImageScaled(x, yPos, scaleX, scaleY, image, top, layer, int(palette)*4);
-		x += fontWidths[(t*3)+1]*scaleX;
+		drawImageScaled(x + fontWidths[t*3], yPos, scaleX, scaleY, image, top, layer, int(palette)*4);
+		x += fontWidths[(t*3)+2]*scaleX;
 	}
 }
 
