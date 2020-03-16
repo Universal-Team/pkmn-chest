@@ -250,7 +250,7 @@ std::string topMenuSelect(void) {
 	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 
 	// Print version number
-	printText(VER_NUMBER, 256-getTextWidth(VER_NUMBER)-1, 176, true, true);
+	printTextScaled(VER_NUMBER, wideScreen ? 0.8 : 1, 1, 256-getTextWidthScaled(VER_NUMBER, wideScreen ? 0.8 : 1)-1, 176, true, true);
 
 	if(!flashcardFound())	updateCardInfo();
 
@@ -541,7 +541,7 @@ std::string browseForSave(void) {
 	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 
 	// Print version number
-	printText(VER_NUMBER, 256-getTextWidth(VER_NUMBER)-1, 176, true, true);
+	printTextScaled(VER_NUMBER, wideScreen ? 0.8 : 1, 1, 256-getTextWidthScaled(VER_NUMBER, wideScreen ? 0.8 : 1)-1, 176, true, true);
 
 	std::vector<std::string> extensionList;
 	extensionList.push_back("sav");

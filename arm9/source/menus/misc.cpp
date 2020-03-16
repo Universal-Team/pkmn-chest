@@ -558,7 +558,7 @@ int selectWallpaper(int currentWallpaper) {
 		for(int x=0;x<6;x++) {
 			Image image = loadImage(boxBgPath(false, (y*6)+x));
 			if(!(image.width == 0 || image.height == 0)) {
-				fillSpriteImageScaled((y*6)+x, false, 32, 0, 0, 32.0f/std::max(image.width, image.height), image);
+				fillSpriteImageScaled((y*6)+x, false, 32, 0, 0, 32.0f/std::max(image.width, image.height), 32.0f/std::max(image.width, image.height), image);
 				setSpritePosition((y*6)+x, false, (x*40)+12, (y*38)+24);
 				setSpriteVisibility((y*6)+x, false, true);
 				setSpriteAlpha((y*6)+x, false, 15);

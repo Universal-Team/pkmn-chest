@@ -81,8 +81,8 @@ void drawAMenuButtons(std::vector<Label>& buttons, int buttonMode) {
 
 int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 	setSpritePosition(arrowID, false, buttons[0].x+getTextWidthMaxW(i18n::localize(Config::getLang("lang"), buttons[0].label), 80)+4, buttons[0].y);
-	setSpriteVisibility(arrowID, true, false);
-	setSpriteVisibility(arrowID, false, true);
+	fillSpriteColor(arrowID, true, CLEAR);
+	fillArrow(arrowMode, false);
 	updateOam();
 
 
@@ -125,7 +125,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 			if(menuSelection == 0) { // Move
 				if(topScreen) {
 					setSpriteVisibility(arrowID, false, false);
-					setSpriteVisibility(arrowID, true, true);
+					fillArrow(arrowMode, true);
 				}
 				updateOam();
 				drawRectangle(170, 0, 86, 192, CLEAR, false, true);
@@ -156,7 +156,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 			} else if(menuSelection == 2) { // Copy
 				if(topScreen) {
 					setSpriteVisibility(arrowID, false, false);
-					setSpriteVisibility(arrowID, true, true);
+					fillArrow(arrowMode, true);
 				}
 				updateOam();
 				drawRectangle(170, 0, 86, 192, CLEAR, false, true);
@@ -211,7 +211,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				back:
 				if(topScreen) {
 					setSpriteVisibility(arrowID, false, false);
-					setSpriteVisibility(arrowID, true, true);
+					fillArrow(arrowMode, true);
 				}
 				updateOam();
 				drawRectangle(170, 0, 86, 192, CLEAR, false, true);

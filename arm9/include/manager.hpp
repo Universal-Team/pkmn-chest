@@ -53,8 +53,9 @@ void resetPokemonSpritesPos(void);
 /*
  * Fills the arrow sprite with the desired color
  * int arrowMode is the desired color, 0 = red, 1 = blue, 2 = yellow
+ * bool top is whether to fill the top or bottom screen's arrow
  */
-void fillArrow(int arrowMode);
+void fillArrow(int arrowMode, bool top);
 
 /* 
  * Loads type images
@@ -83,7 +84,7 @@ void drawBox(bool top);
 void drawPokemonInfo(const PKX &pkm);
 
 // Fills the held Pokémon sprite
-void setHeldPokemon(const PKX &pkm);
+void setHeldPokemon(const PKX &pkm, bool top);
 
 // Main Pokémon box mangaement loop
 void manageBoxes(void);

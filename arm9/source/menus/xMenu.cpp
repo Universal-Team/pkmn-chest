@@ -87,7 +87,7 @@ bool xMenu(void) {
 	updateOam();
 
 	// Make bottom arrow red
-	fillArrow(0);
+	fillArrow(0, false);
 
 	// Draw background
 	drawImageDMA(0, 0, menuBg, false, false);
@@ -180,7 +180,7 @@ bool xMenu(void) {
 		if(pressed & KEY_B || pressed & KEY_X) {
 			Sound::play(Sound::back);
 			// Reset arrow color
-			fillArrow(arrowMode);
+			fillArrow(arrowMode, false);
 			setSpriteVisibility(arrowID, topScreen, true);
 			// Hide menu icons
 			for(int i=0;i<6;i++) {
