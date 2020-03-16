@@ -25,7 +25,7 @@ bool topScreen, inParty;
 int arrowID = 126, currentSaveBox, currentBankBox, heldPokemonID = 125, keyboardSpriteID = 124, arrowMode = 0, boxTitleX = 0, boxTitleY = 0, pkmnX = 0, pkmnY = 0;
 std::vector<int> menuIconID, partyIconID;
 std::string savePath;
-Image arrowBlueTop, arrowRedTop, arrowYellowTop, arrowBlue, arrowRed, arrowYellow, ball[BALL_COUNT], bankBox, boxBgTop, boxButton, infoBox, keyboardKey, listBg, menuBg, menuButton, menuButtonBlue, party, search, setToSelf, shiny;
+Image arrowBlueTop, arrowRedTop, arrowYellowTop, arrowBlue, arrowRed, arrowYellow, ball[BALL_COUNT], bankBox, boxBgTop, boxButton, infoBox, itemIcon, keyboardKey, listBg, menuBg, menuButton, menuButtonBlue, party, search, setToSelf, shiny;
 std::vector<Image> types;
 FILE* pokemonGFX;
 std::shared_ptr<PKFilter> filter = std::make_shared<PKFilter>();
@@ -229,6 +229,7 @@ void loadGraphics(void) {
 	boxBgTop = loadImage(wideScreen ? "/graphics/boxBgTopWide.gfx" : "/graphics/boxBgTop.gfx");
 	boxButton = loadImage("/graphics/boxButton.gfx");
 	infoBox = loadImage("/graphics/infoBox.gfx");
+	itemIcon = loadImage("/graphics/item.gfx");
 	keyboardKey = loadImage("/graphics/keyboardKey.gfx");
 	listBg = loadImage("/graphics/listBg.gfx");
 	menuBg = loadImage("/graphics/menuBg.gfx");
@@ -329,6 +330,8 @@ void drawBox(bool top) {
 			if(!top)	setSpriteVisibility(i, top, true);
 			if(!(partyShown && arrowMode == 0))
 				setSpriteAlpha(i, top, (*tempPkm == *filter) ? 15 : 8);
+			if(tempPkm->heldItem())
+				fillSpriteImage(i, top, 32, 17, 32-itemIcon.height, itemIcon, true);
 		} else {
 			if(top) {
 				fillSpriteColor(i, top, CLEAR);

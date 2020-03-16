@@ -12,7 +12,7 @@ extern bool topScreen, inParty;
 extern int arrowID, currentSaveBox, currentBankBox, heldPokemonID, keyboardSpriteID, arrowMode;
 extern std::vector<int> menuIconID, partyIconID;
 extern std::string savePath;
-extern Image arrowBlue, arrowRed, arrowYellow, ball[BALL_COUNT], bankBox, boxBgTop, boxButton, infoBox, keyboardKey, listBg, menuBg, menuButton, menuButtonBlue, party, search, setToSelf, shiny;
+extern Image arrowBlue, arrowRed, arrowYellow, ball[BALL_COUNT], bankBox, boxBgTop, boxButton, infoBox, itemIcon, keyboardKey, listBg, menuBg, menuButton, menuButtonBlue, party, search, setToSelf, shiny;
 extern std::vector<Image> types;
 
 // Returns the current box for the cursor's current screen

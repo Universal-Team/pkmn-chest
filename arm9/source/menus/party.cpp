@@ -19,6 +19,8 @@ void fillPartySprites(void) {
 			Image image = loadPokemonSprite(getPokemonIndex(*save->pkm(i)));
 			fillSpriteImage(partyIconID[i], false, 32, 0, 0, image);
 			setSpriteVisibility(partyIconID[i], false, true);
+			if(save->pkm(i)->heldItem())
+				fillSpriteImage(partyIconID[i], false, 32, 17, 32-itemIcon.height, itemIcon, true);
 		}
 	}
 	updateOam();

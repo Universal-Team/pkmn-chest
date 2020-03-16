@@ -126,7 +126,7 @@ void drawSummaryPage(const PKX &pkm, bool background) {
 
 	// Draw/clear shiny star
 	if(pkm.shiny())	drawImage(150, 45, shiny, false, true);
-	else	drawRectangle(150, 45, 8, 8, 0, false, true);
+	else	drawRectangle(150, 45, shiny.width, shiny.height, 0, false, true);
 
 	// Print Pokémon and trainer info labels
 	for(unsigned i=0;i<summaryLabels.size();i++) {
