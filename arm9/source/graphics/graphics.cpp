@@ -8,6 +8,7 @@ int maxSpriteMain = 0, maxSpriteSub = 0;
 std::vector<char> fontTiles;
 std::vector<char> fontWidths;
 std::vector<u16> fontMap;
+char16_t questionMark = 0;
 u16 tileSize, tileWidth, tileHeight;
 int bg3Main, bg2Main, bg3Sub, bg2Sub, bg1Sub;
 bool wideScreen = false;
@@ -37,7 +38,7 @@ int getCharIndex(char16_t c) {
 	for(unsigned int i=0;i<fontMap.size();i++) {
 		if(fontMap[i] == c)	return i;
 	}
-	return 0;
+	return questionMark;
 }
 
 void initGraphics(void) {
@@ -73,10 +74,11 @@ void initGraphics(void) {
 	REG_BLDCNT_SUB = 1<<11;
 }
 
-void loadFont(void) {
-	FILE *file = fopen((Config::getString("themeDir")+"/graphics/font.nftr").c_str(), "rb");
+void loadFont(Language lang) {
+	bool chinese = lang == Language::CHS || lang == Language::CHT;
+	FILE *file = fopen((Config::getString("themeDir") + "/graphics/" + (chinese ? "fontChinese.nftr" : "font.nftr")).c_str(), "rb");
 	if(!file) {
-		file = fopen("nitro:/graphics/font.nftr", "rb");
+		file = fopen((std::string("nitro:/graphics/") + (chinese ? "fontChinese.nftr" : "font.nftr")).c_str(), "rb");
 	}
 
 	if(file) {
@@ -162,6 +164,8 @@ void loadFont(void) {
 		}
 		fclose(file);
 	}
+
+	questionMark = getCharIndex('?');
 }
 
 Image loadImage(const std::string &path) {

@@ -40,8 +40,8 @@ std::vector<std::string> songs = {"off", "center1", "center3", "center4", "cente
 
 std::vector<std::string> optionsText;
 
-const std::vector<std::string> langNames = {"Bruh", "Deutsch", "English", "Español", "Français", "Bahasa Indonesia", "Italiano", "Lietuvių", "Polski", "Português", "Русский", "日本語", "한국"};
-const std::vector<Language> guiLangs = {Language::BRH, Language::GER, Language::ENG, Language::SPA, Language::FRE, Language::IND, Language::ITA, Language::LIT, Language::POL, Language::POR, Language::RUS, Language::JPN, Language::KOR};
+const std::vector<std::string> langNames = {"Bruh", "Deutsch", "English", "Español", "Français", "Bahasa Indonesia", "Italiano", "Lietuvių", "Polski", "Português", "Русский", "中文 (简体)", "中文 (繁體)", "日本語", "한국"};
+const std::vector<Language> guiLangs = {Language::BRH, Language::GER, Language::ENG, Language::SPA, Language::FRE, Language::IND, Language::ITA, Language::LIT, Language::POL, Language::POR, Language::RUS, Language::CHS, Language::CHT, Language::JPN, Language::KOR};
 
 void drawChestFileMenu(void) {
 	// Draw background
@@ -281,6 +281,12 @@ void configMenu(void) {
 					i18n::exit();
 					i18n::init(Config::getLang("lang"));
 					loadTypes(Config::getLang("lang"));
+
+					bool wasChinese = guiLangs[currentLang] == Language::CHS || guiLangs[currentLang] == Language::CHT;
+					bool isChinese = Config::getLang("lang") == Language::CHS || Config::getLang("lang") == Language::CHT;
+					if((wasChinese && !isChinese) || (!wasChinese && isChinese)) {
+						loadFont(Config::getLang("lang"));
+					}
 					break;
 				} case 3: { // Backup Amount
 					if(pressed & KEY_LEFT) {
@@ -342,7 +348,7 @@ void configMenu(void) {
 						Config::setString("themeDir", (sdFound() ? "sd:/_nds/pkmn-chest/themes/" : "fat:/_nds/pkmn-chest/themes/") + themePath);
 						Colors::load();
 						loadGraphics();
-						loadFont();
+						loadFont(Config::getLang("lang"));
 						if(Config::getString("music") == "theme") {
 							Sound::load((Config::getString("themeDir")+"/sound.msl").c_str());
 						}

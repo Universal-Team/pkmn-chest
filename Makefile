@@ -38,11 +38,12 @@ checkarm9:
 graphics:
 	$(MAKE) -C graphics
 
-LANG_DIRS	:= eng fre ger ita jpn kor spa
+LANG_DIRS	:= chs cht eng fre ger ita jpn kor spa
 LANG_FILES	:= abilities.txt games.txt items.txt locations*.txt moves.txt natures.txt species.txt
 
 #---------------------------------------------------------------------------------
 lang:
+	$(foreach dir, $(LANG_DIRS), mkdir -p $(NITRO_FILES)/i18n/$(dir);)
 	$(foreach dir, $(LANG_DIRS), cp $(foreach file, $(LANG_FILES), arm9/core/strings/$(dir)/$(file)) $(NITRO_FILES)/i18n/$(dir);)
 	@echo i18n strings ...
 

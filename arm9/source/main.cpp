@@ -101,7 +101,7 @@ int main(int argc, char **argv) {
 
 	Config::load();
 	Colors::load();
-	loadFont();
+	loadFont(Config::getLang("lang"));
 	i18n::init(Config::getLang("lang"));
 	printTextCentered(i18n::localize(Config::getLang("lang"), "loading"), 0, 32, false, true);
 
