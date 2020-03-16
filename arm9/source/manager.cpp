@@ -374,10 +374,10 @@ void drawPokemonInfo(const PKX &pkm) {
 
 		// Draw types
 		int type = (pkm.generation() < Generation::FIVE && pkm.type1() > 8) ? pkm.type1()-1 : pkm.type1();
-		drawImageScaled(170, 42-((types[type].height-12)/2), WIDE_SCALE, 1, types[type], true, false);
+		drawImageScaled(170, 42-((types[type].height-12)/2), WIDE_SCALE, 1, types[type], true, true);
 		if(pkm.type1() != pkm.type2()) {
 			type = (pkm.generation() < Generation::FIVE && pkm.type2() > 8) ? pkm.type2()-1 : pkm.type2();
-			drawImageScaled(170 + (35 * WIDE_SCALE), 42-((types[type].height-12)/2), WIDE_SCALE, 1, types[type], true, false, 4);
+			drawImageScaled(170 + (35 * WIDE_SCALE), 42-((types[type].height-12)/2), WIDE_SCALE, 1, types[type], true, true, 4);
 		}
 
 		// Print Level

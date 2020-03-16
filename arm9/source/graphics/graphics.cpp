@@ -229,7 +229,7 @@ void drawImageDMA(int x, int y, const Image &image, bool top, bool layer) {
 }
 
 void drawImageScaled(int x, int y, float scaleX, float scaleY, const Image &image, bool top, bool layer, int paletteOffset) {
-	if(scaleX == 1 && scaleY == 1)	drawImage(x, y, image, top, layer);
+	if(scaleX == 1 && scaleY == 1)	drawImage(x, y, image, top, layer, paletteOffset);
 	else {
 		copyPalette(image, top, paletteOffset);
 		u8* dst = gfxPointer(top, layer);
