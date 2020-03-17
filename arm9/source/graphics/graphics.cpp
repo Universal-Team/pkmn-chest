@@ -75,7 +75,7 @@ void initGraphics(void) {
 }
 
 void loadFont(Language lang) {
-	bool chinese = lang == Language::CHS || lang == Language::CHT;
+	bool chinese = lang == Language::CHS;
 	FILE *file = fopen((Config::getString("themeDir") + "/graphics/" + (chinese ? "fontChinese.nftr" : "font.nftr")).c_str(), "rb");
 	if(!file) {
 		file = fopen((std::string("nitro:/graphics/") + (chinese ? "fontChinese.nftr" : "font.nftr")).c_str(), "rb");

@@ -282,8 +282,8 @@ void configMenu(void) {
 					i18n::init(Config::getLang("lang"));
 					loadTypes(Config::getLang("lang"));
 
-					bool wasChinese = guiLangs[currentLang] == Language::CHS || guiLangs[currentLang] == Language::CHT;
-					bool isChinese = Config::getLang("lang") == Language::CHS || Config::getLang("lang") == Language::CHT;
+					bool wasChinese = guiLangs[currentLang] == Language::CHS;
+					bool isChinese = Config::getLang("lang") == Language::CHS;
 					if((wasChinese && !isChinese) || (!wasChinese && isChinese)) {
 						loadFont(Config::getLang("lang"));
 					}
