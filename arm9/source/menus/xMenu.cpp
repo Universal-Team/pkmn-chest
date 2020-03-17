@@ -86,8 +86,8 @@ bool xMenu(void) {
 	setSpriteVisibility(arrowID, false, false);
 	updateOam();
 
-	// Make bottom arrow red
-	fillArrow(0, false);
+	// Make arrow red
+	fillArrow(0);
 
 	// Draw background
 	drawImageDMA(0, 0, menuBg, false, false);
@@ -180,8 +180,8 @@ bool xMenu(void) {
 		if(pressed & KEY_B || pressed & KEY_X) {
 			Sound::play(Sound::back);
 			// Reset arrow color
-			fillArrow(arrowMode, false);
-			setSpriteVisibility(arrowID, topScreen, true);
+			fillArrow(arrowMode);
+			if(!topScreen)	 setSpriteVisibility(arrowID, topScreen, true);
 			// Hide menu icons
 			for(int i=0;i<6;i++) {
 				setSpriteVisibility(menuIconID[i], false, false);

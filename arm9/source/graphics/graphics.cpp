@@ -319,10 +319,10 @@ void fillSpriteColor(int id, bool top, u16 color) {
 			size = 0; // I'm lazy
 			break;
 		case SpriteSize_16x16:
-			size = 16*16*2;
+			size = 16*16;
 			break;
 		case SpriteSize_32x32:
-			size = 32*32*2;
+			size = 32*32;
 			break;
 	}
 
@@ -416,7 +416,14 @@ void setSpritePosition(int id, bool top, int x, int y) {
 
 void setSpriteAlpha(int id, bool top, int alpha) { oamSetAlpha((top ? &oamMain : &oamSub), id, alpha); }
 void setSpritePriority(int id, bool top, int priority) { oamSetPriority((top ? &oamMain : &oamSub), id, priority); }
-void setSpriteVisibility(int id, bool top, int show) { oamSetHidden((top ? &oamMain : &oamSub), id, !show); }
+void setSpriteVisibility(int id, bool top, int show) {
+	if(sprites(top)[id].rotationIndex == -1) {
+		oamSetHidden((top ? &oamMain : &oamSub), id, !show);
+	} else {
+		// Can't hide sprites with rotation / scaling, so move them off screen
+		setSpritePosition(id, top, -32, -32);
+	}
+}
 Sprite getSpriteInfo(int id, bool top) { return sprites(top)[id]; }
 unsigned getSpriteAmount(bool top) { return maxSprite(top); }
 

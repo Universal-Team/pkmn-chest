@@ -162,11 +162,11 @@ int selectForm(int dexNo, int currentForm) {
 			else currentForm=0;
 		} else if(pressed & KEY_A) {
 			Sound::play(Sound::click);
-			resetPokemonSpritesPos();
+			resetPokemonSpritesPos(false);
 			return currentForm;
 		} else if(pressed & KEY_B) {
 			Sound::play(Sound::back);
-			resetPokemonSpritesPos();
+			resetPokemonSpritesPos(false);
 			return -1;
 		} else if(pressed & KEY_TOUCH) {
 			touchPosition touch;
@@ -174,7 +174,7 @@ int selectForm(int dexNo, int currentForm) {
 			for(int i=0;i<5;i++) {
 				if(touch.px > (i*32)+(128-((32*save->formCount(dexNo))/2)) && touch.px < (i*32)+(128-((32*save->formCount(dexNo))/2))+32 && touch.py > 72 && touch.py < 104) {
 					Sound::play(Sound::click);
-					resetPokemonSpritesPos();
+					resetPokemonSpritesPos(false);
 					return i;
 				}
 			}
@@ -519,12 +519,12 @@ int selectPokeball(int currentBall) {
 		} else if(pressed & KEY_A) {
 			if(!(save->generation() < Generation::FIVE && (selection*5)+arrowX == 24)) {
 				Sound::play(Sound::click);
-				resetPokemonSpritesPos();
+				resetPokemonSpritesPos(false);
 				return (selection*5)+arrowX+1;
 			}
 		} else if(pressed & KEY_B) {
 			Sound::play(Sound::back);
-			resetPokemonSpritesPos();
+			resetPokemonSpritesPos(false);
 			return -1;
 		} else if(pressed & KEY_TOUCH) {
 			touchPosition touch;
@@ -534,7 +534,7 @@ int selectPokeball(int currentBall) {
 					if(touch.px > (x*48)+8 && touch.px < (x*48)+56 && touch.py > (y*32)+8 && touch.py < (y*32)+56) {
 						if(!(save->generation() < Generation::FIVE && (y*5)+x == 24)) {
 							Sound::play(Sound::click);
-							resetPokemonSpritesPos();
+							resetPokemonSpritesPos(false);
 							return (y*5)+x+1;
 						}
 					}
@@ -595,11 +595,11 @@ int selectWallpaper(int currentWallpaper) {
 			else arrowX=0;
 		} else if(pressed & KEY_A) {
 			Sound::play(Sound::click);
-			resetPokemonSpritesPos();
+			resetPokemonSpritesPos(false);
 			return (selection*6)+arrowX;
 		} else if(pressed & KEY_B) {
 			Sound::play(Sound::back);
-			resetPokemonSpritesPos();
+			resetPokemonSpritesPos(false);
 			return -1;
 		} else if(pressed & KEY_TOUCH) {
 			touchPosition touch;
@@ -608,7 +608,7 @@ int selectWallpaper(int currentWallpaper) {
 				for(int x=0;x<6;x++) {
 					if(touch.px > (x*40)+12 && touch.px < (x*40)+44 && touch.py > (y*38)+24 && touch.py < (y*38)+56) {
 						Sound::play(Sound::click);
-						resetPokemonSpritesPos();
+						resetPokemonSpritesPos(false);
 						return (y*6)+x;
 					}
 				}
@@ -957,11 +957,11 @@ int selectHPType(int current) {
 			else arrowX = 0;
 		} else if(pressed & KEY_A) {
 			Sound::play(Sound::click);
-			resetPokemonSpritesPos();
+			resetPokemonSpritesPos(false);
 			return (selection*4)+arrowX;
 		} else if(pressed & KEY_B) {
 			Sound::play(Sound::back);
-			resetPokemonSpritesPos();
+			resetPokemonSpritesPos(false);
 			return -1;
 		} else if(pressed & KEY_TOUCH) {
 			touchPosition touch;
@@ -970,7 +970,7 @@ int selectHPType(int current) {
 				for(int x=0;x<4;x++) {
 					if(touch.px > (x*52)+34 && touch.px < (x*52)+34+types[0].width && touch.py > (y*32)+42 && touch.py < (y*32)+42+types[0].height) {
 						Sound::play(Sound::click);
-						resetPokemonSpritesPos();
+						resetPokemonSpritesPos(false);
 						return (y*4)+x;
 					}
 				}

@@ -47,15 +47,16 @@ int getPokemonIndex(int species, int alternativeForm = 0, int gender = 0, bool e
  */
 Image loadPokemonSprite(int dexNo);
 
-// Resets the Pokémon sprites to their positions for the box
-void resetPokemonSpritesPos(void);
+/* Resets the Pokémon sprites to their positions for the box
+ * bool top is whether to reset the top or bottom sprites
+ */
+void resetPokemonSpritesPos(bool top);
 
 /*
  * Fills the arrow sprite with the desired color
  * int arrowMode is the desired color, 0 = red, 1 = blue, 2 = yellow
- * bool top is whether to fill the top or bottom screen's arrow
  */
-void fillArrow(int arrowMode, bool top);
+void fillArrow(int arrowMode);
 
 /* 
  * Loads type images
@@ -84,7 +85,7 @@ void drawBox(bool top);
 void drawPokemonInfo(const PKX &pkm);
 
 // Fills the held Pokémon sprite
-void setHeldPokemon(const PKX &pkm, bool top);
+void setHeldPokemon(const PKX &pkm);
 
 // Main Pokémon box mangaement loop
 void manageBoxes(void);
