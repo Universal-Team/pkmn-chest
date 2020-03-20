@@ -187,6 +187,14 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 					fillPartySprites();
 				}
 			} else if(menuSelection == 4) { // Dump
+				if(partyShown) {
+					// Hide party Pokémon
+					for(unsigned int i=0;i<partyIconID.size();i++) {
+						setSpriteVisibility(partyIconID[i], false, false);
+					}
+					updateOam();
+				}
+
 				FILE* out = fopen(getPkxOutputPath(*currentPokemon(pkmX, pkmY)).c_str(), "wb");
 				if(out) {
 					fwrite(currentPokemon(pkmX, pkmY)->rawData(), 1, 136, out);
@@ -205,6 +213,12 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				drawAMenuButtons(buttons, buttonMode);
 				setSpriteVisibility(arrowID, false, true);
 				updateOam();
+
+				if(partyShown) {
+					save->fixParty();
+					drawImage(PARTY_TRAY_X, PARTY_TRAY_Y, party, false, true);
+					fillPartySprites();
+				}
 			} else if(menuSelection == 5) { // Back
 				back:
 				if(topScreen) {
