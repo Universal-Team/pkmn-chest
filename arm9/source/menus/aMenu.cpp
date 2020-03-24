@@ -481,10 +481,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				}
 				pkm->fixMoves();
 				pkm->PID(PKX::getRandomPID(pkm->species(), pkm->gender(), pkm->version(), pkm->nature(), pkm->alternativeForm(), pkm->abilityNumber(), pkm->PID(), pkm->generation()));
-				const time_t current = time(NULL);
-				pkm->metDay(gmtime(&current)->tm_mday);
-				pkm->metMonth(gmtime(&current)->tm_mon + 1);
-				pkm->metYear(gmtime(&current)->tm_year - 100);
+				pkm->metDate(Date::today());
 				pkm->metLevel(pkm->generation() <= Generation::THREE ? 5 : 1);
 				if(pkm->generation() == Generation::THREE) {
 					pkm->level(5); // There was no level 1 before gen 4

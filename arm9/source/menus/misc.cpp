@@ -628,9 +628,9 @@ void drawOriginPage(const PKX &pkm, std::vector<std::string> &varText) {
 	// Print text
 	varText = { 
 		std::to_string(pkm.metLevel()),
-		std::to_string(pkm.metYear()+2000),
-		std::to_string(pkm.metMonth()),
-		std::to_string(pkm.metDay()),
+		std::to_string(pkm.metDate().year()),
+		std::to_string(pkm.metDate().month()),
+		std::to_string(pkm.metDate().day()),
 		i18n::location(Config::getLang("lang"), pkm.metLocation(), pkm.version()),
 		i18n::game(Config::getLang("lang"), pkm.version()),
 	};
@@ -691,31 +691,41 @@ void selectOrigin(PKX &pkm) {
 					break;
 				} case 1: { // Year
 					int num = Input::getInt(2099);
-					if(num != -1) {
-						if(num < 2000)	pkm.metYear(std::min(num, 99));
-						else	pkm.metYear(num-2000);
+					Date metDate = pkm.metDate();
+					if(num != -1 && num <= (num > 2000 ? 2099 : 99)) {
+						if(num < 2000)	metDate.year(num + 2000);
+						else	metDate.year(num);
 
-						if(pkm.metYear()%4 && pkm.metMonth() == 2 && pkm.metDay() > 28) {
-							pkm.metDay(28);
+						bool leapYear = metDate.year() % 400 == 0 || (metDate.year() % 4 == 0 && metDate.year() % 100 != 0);
+						if(leapYear && metDate.month() == 2 && metDate.day() > 28) {
+							pkm.metDate(28);
 						}
 					}
+					pkm.metDate(metDate);
 					break;
 				} case 2: { // Month
 					int num = Input::getInt(12);
 					if(num > 0) {
-						pkm.metMonth(num);
-						if(num == 2 && pkm.metDay() > ((pkm.metYear()%4) ? 28 : 29)) {
-							pkm.metDay((pkm.metYear()%4) ? 28 : 29);
-						} else if((num == 4 || num == 6 || num == 9 || num == 11) && pkm.metDay() > 30) {
-							pkm.metDay(30);
+						Date metDate = pkm.metDate();
+						bool leapYear = metDate.year() % 400 == 0 || (metDate.year() % 4 == 0 && metDate.year() % 100 != 0);
+
+						if(num == 2 && metDate.day() > (leapYear ? 29 : 28)) {
+							metDate.day(leapYear ? 29 : 28);
+						} else if((num == 4 || num == 6 || num == 9 || num == 11) && metDate.day() > 30) {
+							metDate.day(30);
 						}
+
+						pkm.metDate(metDate);
 					}
 					break;
 				} case 3: { // Day
 					int num;
-					switch(pkm.metMonth()) {
+					Date metDate = pkm.metDate();
+					bool leapYear = metDate.year() % 400 == 0 || (metDate.year() % 4 == 0 && metDate.year() % 100 != 0);
+
+					switch(metDate.month()) {
 						case 2:
-							num = Input::getInt((pkm.metYear()%4) ? 28 : 29);
+							num = Input::getInt(leapYear ? 29 : 28);
 							break;
 						case 4:
 						case 6:
@@ -727,7 +737,8 @@ void selectOrigin(PKX &pkm) {
 							num = Input::getInt(31);
 							break;
 					}
-					if(num != -1)	pkm.metDay(num);
+					if(num > 0)	metDate.day(num);
+					pkm.metDate(metDate);
 					break;
 				} case 4: { // Location
 					std::vector<std::string> locations;
@@ -739,7 +750,6 @@ void selectOrigin(PKX &pkm) {
 					}
 
 					int num = selectItem(location, 0, locations.size(), locations);
-
 
 					for(std::map<u16, std::string>::const_iterator it = i18n::locations(Config::getLang("lang"), pkm.generation()).begin();it != i18n::locations(Config::getLang("lang"), pkm.generation()).end();it++) {
 						if(it->second == locations[num]) {

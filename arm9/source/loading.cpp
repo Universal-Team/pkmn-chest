@@ -4,6 +4,7 @@
 
 #include "flashcard.hpp"
 #include "colors.hpp"
+#include "DateTime.hpp"
 #include "graphics.hpp"
 #include "tonccpy.h"
 
@@ -26,10 +27,10 @@ void loadLoadingLogo(void) {
 	extern bool useTwlCfg;
 	int birthMonth = (useTwlCfg ? *(u8*)0x02000446 : PersonalData->birthMonth);
 	int birthDay = (useTwlCfg ? *(u8*)0x02000447 : PersonalData->birthDay);
-	const time_t current = time(NULL);
+	Date today = Date::today();
 	
 	
-	if(gmtime(&current)->tm_mon + 1 == birthMonth && gmtime(&current)->tm_mday == birthDay) {
+	if(today.month() == birthMonth && today.day() == birthDay) {
 		// On the DS's set birthday color the logo pink 🎂! (Woulda done a cake but that can't be done with just palettes ;P)
 		logo.palette[1]  = 0xDEBF;
 		logo.palette[3]  = 0xE6FF;
@@ -40,11 +41,11 @@ void loadLoadingLogo(void) {
 		logo.palette[12] = 0xCE5B;
 		logo.palette[13] = 0xD27B;
 		logo.palette[14] = 0xDEFE;
-	} else if(gmtime(&current)->tm_mon == 2 && gmtime(&current)->tm_mday == 31) {
+	} else if(today.month() == 3 && today.day() == 31) {
 		// Replace the red on the chest with a trans flag on March 31 🏳️‍⚧️
-		logo.palette[1] = 0xF32D; // Light blue
-		logo.palette[3] = 0xDEBC; // Pink
-		logo.palette[5] = 0xFBDE; // White
+		logo.palette[1] = 0xF2EA; // Light blue
+		logo.palette[3] = 0xD65C; // Pink
+		logo.palette[5] = 0xF7BD; // White
 	}
 
 	if(!(rand() % 8192)) { // Full odds shiny chest ;P

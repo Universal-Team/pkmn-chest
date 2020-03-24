@@ -41,8 +41,18 @@ void saveChanges(std::string savePath) {
 	mkdir(backupDir, 0777);
 
 	char backupPath[PATH_MAX];
-	const time_t current = time(NULL);
-	snprintf(backupPath, sizeof(backupPath), "%s:/_nds/pkmn-chest/backups/%s/%.4d%.2d%.2d-%.2d%.2d%.2d.sav.bak", sdFound() ? "sd" : "fat", saveFile.substr(0, saveFile.find_last_of(".")).c_str(), gmtime(&current)->tm_year+1900, gmtime(&current)->tm_mon+1, gmtime(&current)->tm_mday, gmtime(&current)->tm_hour, gmtime(&current)->tm_min, gmtime(&current)->tm_sec);
+	DateTime now = DateTime::now();
+	snprintf(backupPath,
+			 sizeof(backupPath),
+			 "%s:/_nds/pkmn-chest/backups/%s/%.4ld%.2d%.2d-%.2d%.2d%.2d.sav.bak",
+			 sdFound() ? "sd" : "fat",
+			 saveFile.substr(0, saveFile.find_last_of(".")).c_str(),
+			 now.year(),
+			 now.month(),
+			 now.day(),
+			 now.hour(),
+			 now.minute(),
+			 now.second());
 
 	fcopy(savePath.c_str(), backupPath);
 
