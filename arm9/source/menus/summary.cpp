@@ -41,48 +41,54 @@ int summaryPage = 0;
 std::vector<std::string> summaryLabels = {"species", "level", "ability", "nature", "item", "shiny", "pokerus", "origTrainer", "trainerID", "secretID", "friendship"};
 
 void changeAbility(PKX &pkm) {
-	if(pkm.generation() == Generation::FOUR) {
-		u8 setAbility = pkm.ability();
-		if(pkm.abilities(0) != setAbility && pkm.abilities(0) != 0) {
-			pkm.setAbility(0);
-		} else if(pkm.abilities(1) != 0) {
-			pkm.setAbility(1);
-		} else { // Just in case
-			pkm.setAbility(0);
+	switch(pkm.generation()) {
+		case Generation::THREE:
+		case Generation::FOUR: {
+			u8 setAbility = pkm.ability();
+			if(pkm.abilities(0) != setAbility && pkm.abilities(0) != 0) {
+				pkm.setAbility(0);
+			} else if(pkm.abilities(1) != 0) {
+				pkm.setAbility(1);
+			} else { // Just in case
+				pkm.setAbility(0);
+			}
+			break;
 		}
-	} else if(pkm.generation() == Generation::FIVE) {
-		PK5* pk5 = (PK5*)&pkm;
-		switch(pkm.abilityNumber() >> 1) {
-			case 0:
-				if(pkm.abilities(1) != pkm.ability() && pkm.abilities(1) != 0) {
-					pkm.setAbility(1);
-					if(pk5->abilities(1) == pk5->abilities(2)) {
-						pk5->hiddenAbility(true);
+		case Generation::FIVE: {
+			PK5* pk5 = (PK5*)&pkm;
+			switch(pkm.abilityNumber() >> 1) {
+				case 0:
+					if(pkm.abilities(1) != pkm.ability() && pkm.abilities(1) != 0) {
+						pkm.setAbility(1);
+						if(pk5->abilities(1) == pk5->abilities(2)) {
+							pk5->hiddenAbility(true);
+						}
+					} else if(pkm.abilities(2) != 0) {
+						pkm.setAbility(2);
 					}
-				} else if(pkm.abilities(2) != 0) {
-					pkm.setAbility(2);
-				}
-				break;
-			case 1:
-				if(pkm.abilities(2) != pkm.ability() && pkm.abilities(2) != 0) {
-					pkm.setAbility(2);
-				}
-				else if(pkm.abilities(0) != 0)
-				{
-					pkm.setAbility(0);
-				}
-				break;
-			case 2:
-				if(pkm.abilities(0) != pkm.ability() && pkm.abilities(0) != 0)
-				{
-					pkm.setAbility(0);
-				} else if(pkm.abilities(1) != 0) {
-					pkm.setAbility(1);
-					if(pkm.abilities(1) == pkm.abilities(2)) {
-						pk5->hiddenAbility(true);
+					break;
+				case 1:
+					if(pkm.abilities(2) != pkm.ability() && pkm.abilities(2) != 0) {
+						pkm.setAbility(2);
 					}
-				}
-				break;
+					else if(pkm.abilities(0) != 0)
+					{
+						pkm.setAbility(0);
+					}
+					break;
+				case 2:
+					if(pkm.abilities(0) != pkm.ability() && pkm.abilities(0) != 0)
+					{
+						pkm.setAbility(0);
+					} else if(pkm.abilities(1) != 0) {
+						pkm.setAbility(1);
+						if(pkm.abilities(1) == pkm.abilities(2)) {
+							pk5->hiddenAbility(true);
+						}
+					}
+					break;
+			}
+			break;
 		}
 	}
 }
