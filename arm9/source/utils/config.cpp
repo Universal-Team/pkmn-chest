@@ -76,6 +76,8 @@ void Config::setString(const std::string &key, const std::string &v) {
 }
 
 Language Config::getLang(const std::string &key) {
+	return Language::BRH;
+
 	if(!configJson.contains(key) || !configJson[key].is_string()) {
 		return sysLang();
 	}

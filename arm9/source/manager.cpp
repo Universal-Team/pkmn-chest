@@ -279,6 +279,7 @@ void drawBoxScreen(void) {
 }
 
 std::string boxBgPath(bool top, int box) {
+	box = 0;
 	if(top)	return (wideScreen ? "/graphics/box/chestWide.gfx" : "/graphics/box/chest.gfx");
 	std::string game;
 	switch(save->version()) {
@@ -346,7 +347,7 @@ void drawBox(bool top) {
 	drawImage((top && wideScreen) ? 17 : 5, 15, bankBox, top, false);
 
 	// Print box name
-	printTextCenteredTintedMaxW((top ? Banks::bank->boxName(currentBankBox) : save->boxName(currentSaveBox)), 110 * (top ? WIDE_SCALE : 1), 1, TextColor::gray, boxTitleX, top ? 20 : boxTitleY, top, false, top ? WIDE_SCALE : 1);
+	printTextCenteredTintedMaxW((top ? Banks::bank->boxName(currentBankBox) : save->boxName(currentSaveBox)), 110 * (top ? WIDE_SCALE : 1), 1, TextColor::white, boxTitleX, top ? 20 : boxTitleY, top, false, top ? WIDE_SCALE : 1);
 
 	if(!top) {
 		drawImage(boxButton.width+5, 192-search.height, search, false, false);
@@ -361,16 +362,16 @@ void drawPokemonInfo(const PKX &pkm) {
 
 	if(pkm.species() > 0 && pkm.species() < 650) {
 		// Show shiny star if applicable
-		if(pkm.shiny())	drawImageScaled(170 + (69 * WIDE_SCALE), 45, WIDE_SCALE, 1, shiny, true, false);
+		if(pkm.shiny())	drawImageScaled(170 + (69 * WIDE_SCALE), 45, WIDE_SCALE, 1, shiny, true, true);
 
 		// Print Pokédex number
 		char str[9];
 		snprintf(str, sizeof(str), "%s%.3i", i18n::localize(Config::getLang("lang"), "dexNo").c_str(), pkm.species());
-		printTextTintedScaled(str, WIDE_SCALE, 1, TextColor::gray, 170, 8, true, true);
+		printTextTintedScaled(str, WIDE_SCALE, 1, TextColor::white, 170, 8, true, true);
 
 		// Print name
-		if(pkm.nicknamed())	printTextTintedMaxW(pkm.nickname(), 80 * WIDE_SCALE, 1, (pkm.gender() ? (pkm.gender() == 1 ? TextColor::red : TextColor::gray) : TextColor::blue), 170, 25, true, true, WIDE_SCALE);
-		else	printTextTintedMaxW(i18n::species(Config::getLang("lang"), pkm.species()), 80 * WIDE_SCALE, 1, (pkm.gender() ? (pkm.gender() == 1 ? TextColor::red : TextColor::gray) : TextColor::blue), 170, 25, true, true, WIDE_SCALE);
+		if(pkm.nicknamed())	printTextTintedMaxW(pkm.nickname(), 80 * WIDE_SCALE, 1, (pkm.gender() ? (pkm.gender() == 1 ? TextColor::red : TextColor::white) : TextColor::blue), 170, 25, true, true, WIDE_SCALE);
+		else	printTextTintedMaxW(i18n::species(Config::getLang("lang"), pkm.species()), 80 * WIDE_SCALE, 1, (pkm.gender() ? (pkm.gender() == 1 ? TextColor::red : TextColor::white) : TextColor::blue), 170, 25, true, true, WIDE_SCALE);
 
 		// Draw types
 		int type = (pkm.generation() < Generation::FIVE && pkm.type1() > 8) ? pkm.type1()-1 : pkm.type1();
@@ -381,7 +382,7 @@ void drawPokemonInfo(const PKX &pkm) {
 		}
 
 		// Print Level
-		printTextTintedScaled(i18n::localize(Config::getLang("lang"), "lv")+std::to_string(pkm.level()), WIDE_SCALE, 1, TextColor::gray, 170, 57, true, true);
+		printTextTintedScaled(i18n::localize(Config::getLang("lang"), "lv")+std::to_string(pkm.level()), WIDE_SCALE, 1, TextColor::white, 170, 57, true, true);
 	}
 }
 

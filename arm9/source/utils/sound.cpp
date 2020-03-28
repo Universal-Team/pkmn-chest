@@ -12,13 +12,13 @@
 mm_sound_effect Sound::click, Sound::back;
 
 void Sound::load(const char *path) {
-	char realPath[PATH_MAX];
-	if(access(path, F_OK) == 0) {
-		strcpy(realPath, path);
-	} else {
-		strcpy(realPath, "nitro:/sound/sfx.msl");
-	}
-	mmInitDefault(realPath);
+	// char realPath[PATH_MAX];
+	// if(access(path, F_OK) == 0) {
+	// 	strcpy(realPath, path);
+	// } else {
+	// 	strcpy(realPath, "nitro:/sound/sfx.msl");
+	// }
+	mmInitDefault("nitro:/sound/center1.msl");
 	
 	mmLoadEffect(SFX_BACK);
 	mmLoadEffect(SFX_CLICK);
@@ -45,5 +45,5 @@ void Sound::load(const char *path) {
 }
 
 void Sound::play(mm_sound_effect &sound) {
-	if(Config::getBool("playSfx"))	mmEffectEx(&sound);
+	/*if(Config::getBool("playSfx"))*/	mmEffectEx(&sound);
 }

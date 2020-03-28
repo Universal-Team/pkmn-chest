@@ -427,21 +427,21 @@ void drawKeyboard(int layout) {
 
 	if(layout == 0) {
 		for(unsigned i=0;i<keys123.size();i++) {
-			printTextTinted(keys123[i].character, TextColor::gray, xPos + keys123[i].x + 16 - (getTextWidth(keys123[i].character) / 2), 192 - keyboard.height + keys123[i].y + 8, false, true);
+			printTextTinted(keys123[i].character, TextColor::white, xPos + keys123[i].x + 16 - (getTextWidth(keys123[i].character) / 2), 192 - keyboard.height + keys123[i].y + 8, false, true);
 		}
 	} else if(layout == 1) {
 		for(unsigned i=0;i<keysABC.size();i++) {
-			printTextTinted(keysABC[i].character, TextColor::gray, xPos + keysABC[i].x + 16 - (getTextWidth(keysABC[i].character) / 2), 192 - keyboard.height + keysABC[i].y + 8, false, true);
+			printTextTinted(keysABC[i].character, TextColor::white, xPos + keysABC[i].x + 16 - (getTextWidth(keysABC[i].character) / 2), 192 - keyboard.height + keysABC[i].y + 8, false, true);
 		}
-		printTextTinted("a/A", TextColor::gray, xPos + keysSpecialKana[0].x + 16 - (getTextWidth("a/A") / 2), 192 - keyboard.height + keysSpecialKana[0].y + 8, false, true);
+		printTextTinted("a/A", TextColor::white, xPos + keysSpecialKana[0].x + 16 - (getTextWidth("a/A") / 2), 192 - keyboard.height + keysSpecialKana[0].y + 8, false, true);
 	} else if(layout == 2) {
 		for(unsigned i=0;i<keysAIU.size();i++) {
 			std::u16string str;
 			str += (katakana ? tokatakana(keysAIU[i].character[0]) : keysAIU[i].character[0]);
-			printTextTinted(str, TextColor::gray, xPos + keysAIU[i].x + 16 - (getTextWidth(str) / 2), 192 - keyboard.height + keysAIU[i].y + 8, false, true);
+			printTextTinted(str, TextColor::white, xPos + keysAIU[i].x + 16 - (getTextWidth(str) / 2), 192 - keyboard.height + keysAIU[i].y + 8, false, true);
 		}
-		printTextTinted(katakana ? "ｯﾞﾟ" : "っﾞﾟ", TextColor::gray, xPos + keysSpecialKana[0].x + 16 - (getTextWidth(katakana ? "ｯﾞﾟ" : "っﾞﾟ") / 2), 192 - keyboard.height + keysSpecialKana[0].y + 8, false, true);
-		printTextTinted(katakana ? "あ" : "ア", TextColor::gray, xPos + keysSpecialKana[1].x + 16 - (getTextWidth(katakana ? "あ" : "ア") / 2), 192 - keyboard.height + keysSpecialKana[1].y + 8, false, true);
+		printTextTinted(katakana ? "ｯﾞﾟ" : "っﾞﾟ", TextColor::white, xPos + keysSpecialKana[0].x + 16 - (getTextWidth(katakana ? "ｯﾞﾟ" : "っﾞﾟ") / 2), 192 - keyboard.height + keysSpecialKana[0].y + 8, false, true);
+		printTextTinted(katakana ? "あ" : "ア", TextColor::white, xPos + keysSpecialKana[1].x + 16 - (getTextWidth(katakana ? "あ" : "ア") / 2), 192 - keyboard.height + keysSpecialKana[1].y + 8, false, true);
 	} else if(layout == 3) {
 		for(unsigned i=0;i<keysQWERTY.size();i++) {
 			std::string str;

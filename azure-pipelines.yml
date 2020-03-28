@@ -1,7 +1,7 @@
 trigger:
   branches:
     include: ['*']
-    exclude: [translation]
+    exclude: [translation, '2020-04-01']
   tags:
     include: ['*']
 
