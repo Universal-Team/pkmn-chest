@@ -90,6 +90,32 @@ void changeAbility(PKX &pkm) {
 			}
 			break;
 		}
+		default: {
+			switch(pkm.abilityNumber() >> 1) {
+				case 0:
+					if(pkm.abilities(1) != pkm.ability() && pkm.abilities(1) != 0) {
+						pkm.setAbility(1);
+					} else if(pkm.abilities(2) != 0) {
+						pkm.setAbility(2);
+					}
+					break;
+				case 1:
+					if(pkm.abilities(2) != pkm.ability() && pkm.abilities(2) != 0) {
+						pkm.setAbility(2);
+					} else if(pkm.abilities(0) != 0) {
+						pkm.setAbility(0);
+					}
+					break;
+				case 2:
+					if(pkm.abilities(0) != pkm.ability() && pkm.abilities(0) != 0) {
+						pkm.setAbility(0);
+					} else if (pkm.abilities(1) != 0) {
+						pkm.setAbility(1);
+					}
+					break;
+			}
+			break;
+		}
 	}
 }
 
@@ -210,6 +236,7 @@ const PKX &showPokemonSummary(PKX &pkm) {
 		} else if(pressed & KEY_B) {
 			Sound::play(Sound::back);
 			pkm.refreshChecksum();
+			if(pkm.isParty())	pkm.updatePartyData();
 			return pkm;
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
