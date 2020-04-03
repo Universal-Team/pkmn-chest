@@ -19,7 +19,7 @@ bool useTwlCfg = false;
 extern std::vector<std::string> songs;
 
 int main(int argc, char **argv) {
-	useTwlCfg = (isDSiMode() && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000404 == 0));
+	useTwlCfg = (isDSiMode() && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0));
 	initGraphics();
 	keysSetRepeat(25,5);
 	sysSetCardOwner(BUS_OWNER_ARM9); // Set ARM9 as Slot-1 owner (for dumping/injecting DS saves)
