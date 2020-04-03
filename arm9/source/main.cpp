@@ -11,6 +11,7 @@
 #include "loader.hpp"
 #include "loading.hpp"
 #include "manager.hpp"
+#include "miscUtils.hpp"
 #include "nitrofs.h"
 #include "sound.hpp"
 
@@ -50,13 +51,13 @@ int main(int argc, char **argv) {
 	mkdir(sdFound() ? "sd:/_nds/pkmn-chest/out" : "fat:/_nds/pkmn-chest/out", 0777);
 	mkdir(sdFound() ? "sd:/_nds/pkmn-chest/themes" : "fat:/_nds/pkmn-chest/themes", 0777);
 
-	// Try to init NitroFS from argv provided to the game when it was launched
-	bool nitroFSFromArgv = nitroFSInit(argv[0]);
-	if(!nitroFSFromArgv) {
+	// Try to init NitroFS from argv provided to the app when it was launched
+	if(!nitroFSInit(argv[0])) {
 		// If that fails, try to init NitroFS on 'pkmn-chest.nds'
-		if(!nitroFSInit("pkmn-chest.nds")) {
+		if(!(nitroFSInit("pkmn-chest.nds") && nitroFSGood())) {
+			// If that fails, try '/_nds/pkmn-chest/pkmn-chest.nds'
 			if(!nitroFSInit("/_nds/pkmn-chest/pkmn-chest.nds")) {
-				// Prints error if nitroFSInit() fails
+				// Print error that nitroFSInit() failed
 				consoleDemoInit();
 				printf("nitroFSInit() failed...\n\n");
 				printf("Please copy pkmn-chest.nds to:\n\n");
@@ -67,30 +68,14 @@ int main(int argc, char **argv) {
 				printf("(Note: TWiLight's Acekard\n");
 				printf("        theme needs a copy in ^)\n\n");
 				while(1)	swiWaitForVBlank();
+			} else if(!nitroFSGood()) {
+				// Print error that the NitroFS was out of date
+				consoleDemoInit();
+				printf("NitroFS is out of date!\n\n");
+				printf("Please update pkmn-chest.nds at:\n\n");
+				printf("%s:/_nds/pkmn-chest/\n", sdFound() ? (access("/Nintendo 3DS", F_OK) == 0 ? "sdmc" : "sd") : "fat");
+				while(1)	swiWaitForVBlank();
 			}
-		}
-	}
-
-	if (!nitroFSFromArgv) {
-		bool nitroFSGood = false;
-		FILE *file = fopen("nitro:/version.txt", "r");
-		if(file) {
-			fseek(file, 0, SEEK_END);
-			int length = ftell(file);
-			fseek(file, 0, SEEK_SET);
-
-			char version[length + 1] = {0};
-			fread(version, 1, length, file);
-			nitroFSGood = (strcmp(version, VER_NUMBER) == 0);
-			fclose(file);
-		}
-
-		if(!nitroFSGood) {
-			consoleDemoInit();
-			printf("NitroFS is out of date!\n\n");
-			printf("Please update pkmn-chest.nds at:\n\n");
-			printf("%s:/_nds/pkmn-chest/\n", sdFound() ? (access("/Nintendo 3DS", F_OK) == 0 ? "sdmc" : "sd") : "fat");
-			while(1) swiWaitForVBlank();
 		}
 	}
 
