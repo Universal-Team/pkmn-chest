@@ -6,6 +6,7 @@
 #include "flashcard.hpp"
 #include "graphics.hpp"
 #include "i18n.hpp"
+#include "i18n_ext.hpp"
 #include "input.hpp"
 #include "Item.hpp"
 #include "loader.hpp"
@@ -38,11 +39,11 @@ void drawBag(Sav::Pouch pouch, int maxItem, int screenPos, bool background) {
 		// Draw pouch buttons
 		for(unsigned i=0;i<save->pouches().size();i++) {
 			drawImageScaled(170, (104-(10*save->pouches().size()))+i*(20), 1, (float)20/boxButton.height, boxButton, false, false);
-			printTextMaxW(save->pouchName(Config::getLang("lang"), save->pouches()[i].first), boxButton.width-8, 1, 174, (104-(10*save->pouches().size()))+i*(20)+2, false, false);
+			printTextMaxW(i18n::pouch(Config::getLang("lang"), save->pouches()[i].first), boxButton.width-8, 1, 174, (104-(10*save->pouches().size()))+i*(20)+2, false, false);
 		}
 	}
 
-	printText(save->pouchName(Config::getLang("lang"), pouch), 4, 0, false, true);
+	printText(i18n::pouch(Config::getLang("lang"), pouch), 4, 0, false, true);
 
 	// Print items
 	for(int i=0;i<std::min(entriesPerScreen, maxItem+1);i++) {
