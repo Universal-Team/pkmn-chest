@@ -281,12 +281,6 @@ void configMenu(void) {
 					i18n::exit();
 					i18n::init(Config::getLang("lang"));
 					loadTypes(Config::getLang("lang"));
-
-					bool wasChinese = guiLangs[currentLang] == Language::CHS;
-					bool isChinese = Config::getLang("lang") == Language::CHS;
-					if((wasChinese && !isChinese) || (!wasChinese && isChinese)) {
-						loadFont(Config::getLang("lang"));
-					}
 					break;
 				} case 3: { // Backup Amount
 					if(pressed & KEY_LEFT) {
@@ -348,7 +342,7 @@ void configMenu(void) {
 						Config::setString("themeDir", (sdFound() ? "sd:/_nds/pkmn-chest/themes/" : "fat:/_nds/pkmn-chest/themes/") + themePath);
 						Colors::load();
 						loadGraphics();
-						loadFont(Config::getLang("lang"));
+						loadFont();
 						if(Config::getString("music") == "theme") {
 							Sound::load((Config::getString("themeDir")+"/sound.msl").c_str());
 						}

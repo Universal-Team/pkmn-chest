@@ -54,7 +54,7 @@ int main(int argc, char **argv) {
 	// Try to init NitroFS from argv provided to the app when it was launched
 	if(!nitroFSInit(argv[0])) {
 		// If that fails, try to init NitroFS on 'pkmn-chest.nds'
-		if(!(nitroFSInit("pkmn-chest.nds") && nitroFSGood())) {
+		if(!nitroFSInit("pkmn-chest.nds") || !nitroFSGood()) {
 			// If that fails, try '/_nds/pkmn-chest/pkmn-chest.nds'
 			if(!nitroFSInit("/_nds/pkmn-chest/pkmn-chest.nds")) {
 				// Print error that nitroFSInit() failed
@@ -86,7 +86,7 @@ int main(int argc, char **argv) {
 
 	Config::load();
 	Colors::load();
-	loadFont(Config::getLang("lang"));
+	loadFont();
 
 	i18n::removeCallbacks(i18n::initBall, i18n::exitBall);
 	i18n::removeCallbacks(i18n::initForm, i18n::exitForm);

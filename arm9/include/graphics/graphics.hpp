@@ -6,7 +6,6 @@
 
 #include "colors.hpp"
 #include "utils.hpp"
-#include "Language.hpp"
 
 struct Image {
 	u16 width;
@@ -41,7 +40,7 @@ extern bool wideScreen;
 void initGraphics(void);
 
 // Loads the font into RAM
-void loadFont(Language lang);
+void loadFont();
 
 /*
  * Loads a .gfx image into an Image struct

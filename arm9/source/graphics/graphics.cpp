@@ -74,11 +74,10 @@ void initGraphics(void) {
 	REG_BLDCNT_SUB = 1<<11;
 }
 
-void loadFont(Language lang) {
-	bool chinese = lang == Language::CHS;
-	FILE *file = fopen((Config::getString("themeDir") + "/graphics/" + (chinese ? "fontChinese.nftr" : "font.nftr")).c_str(), "rb");
+void loadFont() {
+	FILE *file = fopen((Config::getString("themeDir") + "/graphics/" + "font.nftr").c_str(), "rb");
 	if(!file) {
-		file = fopen((std::string("nitro:/graphics/") + (chinese ? "fontChinese.nftr" : "font.nftr")).c_str(), "rb");
+		file = fopen((std::string("nitro:/graphics/") + "font.nftr").c_str(), "rb");
 	}
 
 	if(file) {
