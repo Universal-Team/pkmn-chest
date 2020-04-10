@@ -631,7 +631,7 @@ void drawOriginPage(const PKX &pkm, std::vector<std::string> &varText) {
 		std::to_string(pkm.metDate().year()),
 		std::to_string(pkm.metDate().month()),
 		std::to_string(pkm.metDate().day()),
-		i18n::location(Config::getLang("lang"), pkm.metLocation(), pkm.version()),
+		i18n::location(Config::getLang("lang"), pkm.generation(), pkm.metLocation()),
 		i18n::game(Config::getLang("lang"), pkm.version()),
 	};
 	printText(i18n::localize(Config::getLang("lang"), "origin"), 4, 0, false, true);
@@ -743,7 +743,7 @@ void selectOrigin(PKX &pkm) {
 				} case 4: { // Location
 					std::vector<std::string> locations;
 					int location = 0, i = 0;
-					for(std::map<u16, std::string>::const_iterator it = i18n::locations(Config::getLang("lang"), pkm.generation()).begin();it != i18n::locations(Config::getLang("lang"), pkm.generation()).end();it++) {
+					for(auto it = i18n::rawLocations(Config::getLang("lang"), pkm.generation()).begin();it != i18n::rawLocations(Config::getLang("lang"), pkm.generation()).end();it++) {
 						locations.push_back(it->second);
 						if(it->first == pkm.metLocation())	location = i;
 						i++;
@@ -751,7 +751,7 @@ void selectOrigin(PKX &pkm) {
 
 					int num = selectItem(location, 0, locations.size(), locations);
 
-					for(std::map<u16, std::string>::const_iterator it = i18n::locations(Config::getLang("lang"), pkm.generation()).begin();it != i18n::locations(Config::getLang("lang"), pkm.generation()).end();it++) {
+					for(auto it = i18n::rawLocations(Config::getLang("lang"), pkm.generation()).begin();it != i18n::rawLocations(Config::getLang("lang"), pkm.generation()).end();it++) {
 						if(it->second == locations[num]) {
 							pkm.metLocation(it->first);
 							break;
@@ -760,7 +760,8 @@ void selectOrigin(PKX &pkm) {
 
 					break;
 				} case 5: { // Game
-					pkm.version(selectItem(pkm.version(), 0, i18n::rawGames(Config::getLang("lang")).size(), i18n::rawGames(Config::getLang("lang"))));
+					u8 ver = selectItem(u8(pkm.version()), 0, i18n::rawGames(Config::getLang("lang")).size(), i18n::rawGames(Config::getLang("lang")));
+					pkm.version(GameVersion(ver));
 					break;
 				}
 			}

@@ -282,34 +282,34 @@ std::string boxBgPath(bool top, int box) {
 	if(top)	return (wideScreen ? "/graphics/box/chestWide.gfx" : "/graphics/box/chest.gfx");
 	std::string game;
 	switch(save->version()) {
-		case 1: // Sapphire
-		case 2: // Ruby
+		case GameVersion::S: // Sapphire
+		case GameVersion::R: // Ruby
 			game = "rs";
 			break;
-		case 3: // Emerald
+		case GameVersion::E: // Emerald
 			game = "e";
 			break;
-		case 4: // FireRed
-		case 5: // LeafGreen
+		case GameVersion::FR: // FireRed
+		case GameVersion::LG: // LeafGreen
 			game = box < 12 ? "rs" : "frlg";
 			break;
-		case 10: // Diamond
-		case 11: // Pearl
+		case GameVersion::D: // Diamond
+		case GameVersion::P: // Pearl
 			game = "dp";
 			break;
-		case 12: // Platinum
+		case GameVersion::Pt: // Platinum
 			game = box < 16 ? "dp" : "pt";
 			break;
-		case 7: // HeartGold
-		case 8: // SoulSilver
+		case GameVersion::HG: // HeartGold
+		case GameVersion::SS: // SoulSilver
 			game = box < 16 ? "dp" : "hgss";
 			break;
-		case 20: // White
-		case 21: // Black
+		case GameVersion::W: // White
+		case GameVersion::B: // Black
 			game = "bw";
 			break;
-		case 22: // White 2
-		case 23: // Black 2
+		case GameVersion::W2: // White 2
+		case GameVersion::B2: // Black 2
 		default:
 			game = box < 16 ? "bw" : "b2w2";
 			break;

@@ -6,7 +6,7 @@
 
 #include "colors.hpp"
 #include "utils.hpp"
-#include "i18n.hpp"
+#include "Language.hpp"
 
 struct Image {
 	u16 width;

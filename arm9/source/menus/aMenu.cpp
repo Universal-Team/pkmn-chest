@@ -463,20 +463,53 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				pkm->encryptionConstant((((u32)randomNumbers()) % 0xFFFFFFFF) + 1);
 				pkm->version(save->version());
 				switch (pkm->version()) {
-					case 7:
-					case 8:
+					case GameVersion::R:
+					case GameVersion::S:
+					case GameVersion::E:
+						pkm->metLocation(0x0010); // Route 101 (RSE)
+						break;
+					case GameVersion::FR:
+					case GameVersion::LG:
+						pkm->metLocation(0x0065); // Route 1 (FRLG)
+						break;
+					case GameVersion::HG:
+					case GameVersion::SS:
 						pkm->metLocation(0x0095); // Route 1 (HGSS)
 						break;
-					case 10:
-					case 11:
-					case 12:
+					case GameVersion::D:
+					case GameVersion::P:
+					case GameVersion::Pt:
 						pkm->metLocation(0x0010); // Route 201 (DPPt)
 						break;
-					case 20:
-					case 21:
-					case 22:
-					case 23:
-						pkm->metLocation(0x000e); // Route 1 (BWB2W2)
+					case GameVersion::B:
+					case GameVersion::W:
+					case GameVersion::B2:
+					case GameVersion::W2:
+						pkm->metLocation(0x000E); // Route 1 (BWB2W2)
+						break;
+					case GameVersion::X:
+					case GameVersion::Y:
+						pkm->metLocation(0x0008); // Route 1 (XY)
+						break;
+					case GameVersion::OR:
+					case GameVersion::AS:
+						pkm->metLocation(0x00CC); // Route 101 (ORAS)
+						break;
+					case GameVersion::SN:
+					case GameVersion::MN:
+					case GameVersion::US:
+					case GameVersion::UM:
+						pkm->metLocation(0x0006); // Route 1 (SMUSUM)
+						break;
+					case GameVersion::GP:
+					case GameVersion::GE:
+						pkm->metLocation(0x0003); // Route 1 (LGPE)
+						break;
+					case GameVersion::SW:
+					case GameVersion::SH:
+						pkm->metLocation(0x000C); // Route 1 (SWSH)
+						break;
+					default:
 						break;
 				}
 				pkm->fixMoves();
