@@ -185,13 +185,13 @@ void sortPokemon(bool top) {
 	}
 	if(top) {
 		for(int i=0;i<Banks::bank->boxes()*30;i++) {
-			if(Banks::bank->pkm(i/30, i%30)->species() != 0) {
+			if(Banks::bank->pkm(i/30, i%30)->species() != Species::None) {
 				sortPkm.push_back(Banks::bank->pkm(i/30, i%30));
 			}
 		}
 	} else {
 		for(int i=0;i<save->maxSlot();i++) {
-			if(save->pkm(i/30, i%30)->species() != 0) {
+			if(save->pkm(i/30, i%30)->species() != Species::None) {
 				sortPkm.push_back(save->pkm(i/30, i%30));
 			}
 		}
@@ -285,7 +285,7 @@ void sortMenu(bool top) {
 				for(unsigned i=0;i<sortText.size();i++) {
 					sortTextLocalized.push_back(i18n::localize(Config::getLang("lang"), sortText[i]));
 				}
-				sortTypes[selection] = SortType(selectItem(int(sortTypes[selection]), 0, sortTextLocalized.size(), sortTextLocalized));
+				sortTypes[selection] = selectItem(sortTypes[selection], 0, sortTextLocalized.size(), sortTextLocalized);
 			} else {
 				sortPokemon(top);
 				break;

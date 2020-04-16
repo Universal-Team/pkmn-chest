@@ -215,7 +215,7 @@ void Bank::pkm(const PKX &pkm, int box, int slot) {
 	BankEntry* bank = (BankEntry*)(data + sizeof(BankHeader));
 	int index       = box * 30 + slot;
 	BankEntry newEntry;
-	if(pkm.species() == 0) {
+	if(pkm.species() == Species::None) {
 		std::fill_n((char*)&newEntry, sizeof(BankEntry), 0xFF);
 		bank[index] = newEntry;
 		needsCheck  = true;

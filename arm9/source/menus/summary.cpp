@@ -44,10 +44,10 @@ void changeAbility(PKX &pkm) {
 	switch(pkm.generation()) {
 		case Generation::THREE:
 		case Generation::FOUR: {
-			u8 setAbility = pkm.ability();
-			if(pkm.abilities(0) != setAbility && pkm.abilities(0) != 0) {
+			Ability setAbility = pkm.ability();
+			if(pkm.abilities(0) != setAbility && pkm.abilities(0) != Ability::None) {
 				pkm.setAbility(0);
-			} else if(pkm.abilities(1) != 0) {
+			} else if(pkm.abilities(1) != Ability::None) {
 				pkm.setAbility(1);
 			} else { // Just in case
 				pkm.setAbility(0);
@@ -58,29 +58,26 @@ void changeAbility(PKX &pkm) {
 			PK5* pk5 = (PK5*)&pkm;
 			switch(pkm.abilityNumber() >> 1) {
 				case 0:
-					if(pkm.abilities(1) != pkm.ability() && pkm.abilities(1) != 0) {
+					if(pkm.abilities(1) != pkm.ability() && pkm.abilities(1) != Ability::None) {
 						pkm.setAbility(1);
 						if(pk5->abilities(1) == pk5->abilities(2)) {
 							pk5->hiddenAbility(true);
 						}
-					} else if(pkm.abilities(2) != 0) {
+					} else if(pkm.abilities(2) != Ability::None) {
 						pkm.setAbility(2);
 					}
 					break;
 				case 1:
-					if(pkm.abilities(2) != pkm.ability() && pkm.abilities(2) != 0) {
+					if(pkm.abilities(2) != pkm.ability() && pkm.abilities(2) != Ability::None) {
 						pkm.setAbility(2);
-					}
-					else if(pkm.abilities(0) != 0)
-					{
+					} else if(pkm.abilities(0) != Ability::None) {
 						pkm.setAbility(0);
 					}
 					break;
 				case 2:
-					if(pkm.abilities(0) != pkm.ability() && pkm.abilities(0) != 0)
-					{
+					if(pkm.abilities(0) != pkm.ability() && pkm.abilities(0) != Ability::None) {
 						pkm.setAbility(0);
-					} else if(pkm.abilities(1) != 0) {
+					} else if(pkm.abilities(1) != Ability::None) {
 						pkm.setAbility(1);
 						if(pkm.abilities(1) == pkm.abilities(2)) {
 							pk5->hiddenAbility(true);
@@ -93,23 +90,23 @@ void changeAbility(PKX &pkm) {
 		default: {
 			switch(pkm.abilityNumber() >> 1) {
 				case 0:
-					if(pkm.abilities(1) != pkm.ability() && pkm.abilities(1) != 0) {
+					if(pkm.abilities(1) != pkm.ability() && pkm.abilities(1) != Ability::None) {
 						pkm.setAbility(1);
-					} else if(pkm.abilities(2) != 0) {
+					} else if(pkm.abilities(2) != Ability::None) {
 						pkm.setAbility(2);
 					}
 					break;
 				case 1:
-					if(pkm.abilities(2) != pkm.ability() && pkm.abilities(2) != 0) {
+					if(pkm.abilities(2) != pkm.ability() && pkm.abilities(2) != Ability::None) {
 						pkm.setAbility(2);
-					} else if(pkm.abilities(0) != 0) {
+					} else if(pkm.abilities(0) != Ability::None) {
 						pkm.setAbility(0);
 					}
 					break;
 				case 2:
-					if(pkm.abilities(0) != pkm.ability() && pkm.abilities(0) != 0) {
+					if(pkm.abilities(0) != pkm.ability() && pkm.abilities(0) != Ability::None) {
 						pkm.setAbility(0);
-					} else if (pkm.abilities(1) != 0) {
+					} else if (pkm.abilities(1) != Ability::None) {
 						pkm.setAbility(1);
 					}
 					break;
@@ -136,13 +133,11 @@ void drawSummaryPage(const PKX &pkm, bool background) {
 		Image image = loadPokemonSprite(getPokemonIndex(pkm));
 		drawImageScaled(169, 22, 2, 2, image, false, false, 0xB0);
 		// Draw Poké ball
-		drawImage(148, 7, ball[pkm.ball()], false, false);
+		drawImage(148, 7, ball[u8(pkm.ball())], false, false);
 		// Draw types
-		int type = (pkm.generation() < Generation::FIVE && pkm.type1() > 8) ? pkm.type1()-1 : pkm.type1();
-		drawImage(150, 25-((types[type].height-12)/2), types[type], false, false);
+		drawImage(150, 25-((types[u8(pkm.type1())].height-12)/2), types[u8(pkm.type1())], false, false);
 		if(pkm.type1() != pkm.type2()) {
-			type = (pkm.generation() < Generation::FIVE && pkm.type2() > 8) ? pkm.type2()-1 : pkm.type2();
-			drawImage(186, 25-((types[type].height-12)/2), types[type], false, false, 4);
+			drawImage(186, 25-((types[u8(pkm.type2())].height-12)/2), types[u8(pkm.type2())], false, false, 4);
 		}
 		// Draw set to self button
 		drawImage(232, 10, setToSelf, false, false);
@@ -154,7 +149,7 @@ void drawSummaryPage(const PKX &pkm, bool background) {
 
 	// Print Pokémon name
 	const std::string &name = pkm.nicknamed() ? pkm.nickname() : i18n::species(Config::getLang("lang"), pkm.species());
-	printTextTintedMaxW(name, 65, 1, (pkm.gender() ? (pkm.gender() == 1 ? TextColor::red : TextColor::gray) : TextColor::blue), 165, 8, false, true);
+	printTextTintedMaxW(name, 65, 1, (pkm.gender() ? (pkm.gender() == Gender::Female ? TextColor::red : TextColor::gray) : TextColor::blue), 165, 8, false, true);
 
 	// Draw/clear shiny star
 	if(pkm.shiny())	drawImage(150, 45, shiny, false, true);
@@ -283,21 +278,21 @@ const PKX &showPokemonSummary(PKX &pkm) {
 			if(column == 0) {
 				switch(selection) {
 					case 0: {
-						int num = selectItem(pkm.species()-1, save->availableSpecies(), i18n::rawSpecies(Config::getLang("lang")));
+						Species species = selectItem<Species>(pkm.species(), save->availableSpecies(), i18n::rawSpecies(Config::getLang("lang")));
 						bool nicknamed = pkm.nicknamed(); // Gotta check before changing species for G3
-						if(num > 0) {
-							pkm.species(num);
+						if(species != Species::INVALID) {
+							pkm.species(species);
 							if(!nicknamed) {
-								std::string speciesName = i18n::species(Config::getLang("lang"), num);
+								std::string speciesName = i18n::species(Config::getLang("lang"), species);
 								if(pkm.generation() == Generation::THREE)	speciesName = StringUtils::toUpper(speciesName);
 								pkm.nickname(speciesName);
 							}
 							pkm.setAbility(0);
 							pkm.alternativeForm(0);
-							if(pkm.genderType() == 255)	pkm.gender(2);
-							else if(pkm.genderType() == 0)	pkm.gender(0);
-							else if(pkm.genderType() == 254)	pkm.gender(1);
-							else if(pkm.gender() == 2)	pkm.gender(0);
+							if(pkm.genderType() == 255)	pkm.gender(Gender::Genderless);
+							else if(pkm.genderType() == 0)	pkm.gender(Gender::Male);
+							else if(pkm.genderType() == 254)	pkm.gender(Gender::Female);
+							else if(pkm.gender() == Gender::Genderless)	pkm.gender(Gender::Male);
 						}
 						drawSummaryPage(pkm, true);
 						break;
@@ -311,12 +306,12 @@ const PKX &showPokemonSummary(PKX &pkm) {
 						drawSummaryPage(pkm, false);
 						break;
 					} case 3: {
-						int num = selectNature(pkm.nature());
-						if(num != -1)	pkm.nature(num);
+						Nature nature = selectNature(pkm.nature());
+						if(nature != Nature::INVALID)	pkm.nature(nature);
 						drawSummaryPage(pkm, true);
 						break;
 					} case 4: {
-						int num = selectItem(pkm.heldItem(), save->availableItems(), i18n::rawItems(Config::getLang("lang")));
+						int num = selectItem<int>(pkm.heldItem(), save->availableItems(), i18n::rawItems(Config::getLang("lang")));
 						if(num != -1)	pkm.heldItem(num);
 						drawSummaryPage(pkm, true);
 						break;
@@ -332,7 +327,7 @@ const PKX &showPokemonSummary(PKX &pkm) {
 						std::string name = Input::getLine(7);
 						if(name != "")	pkm.otName(name);
 						drawSummaryPage(pkm, false);
-						pkm.otGender(Input::getBool(i18n::localize(Config::getLang("lang"), "female"), i18n::localize(Config::getLang("lang"), "male")));
+						pkm.otGender(Gender(Input::getBool(i18n::localize(Config::getLang("lang"), "female"), i18n::localize(Config::getLang("lang"), "male"))));
 						drawSummaryPage(pkm, false);
 						break;
 					} case 8: {
@@ -358,12 +353,12 @@ const PKX &showPokemonSummary(PKX &pkm) {
 					pkm.nickname(name);
 					pkm.nicknamed(name != i18n::species(Config::getLang("lang"), pkm.species()));
 				}
-				if(pkm.genderType() == 255)	pkm.gender(2);
-				else if(pkm.genderType() == 0)	pkm.gender(0);
-				else if(pkm.genderType() == 254)	pkm.gender(1);
+				if(pkm.genderType() == 255)	pkm.gender(Gender::Genderless);
+				else if(pkm.genderType() == 0)	pkm.gender(Gender::Male);
+				else if(pkm.genderType() == 254)	pkm.gender(Gender::Female);
 				else {
 					drawSummaryPage(pkm, false);
-					pkm.gender(Input::getBool(i18n::localize(Config::getLang("lang"), "female"), i18n::localize(Config::getLang("lang"), "male")));
+					pkm.gender(Gender(Input::getBool(i18n::localize(Config::getLang("lang"), "female"), i18n::localize(Config::getLang("lang"), "male"))));
 					pkm.PID(PKX::getRandomPID(pkm.species(), pkm.gender(), pkm.version(), pkm.nature(), pkm.alternativeForm(), pkm.abilityNumber(), pkm.PID(), pkm.generation()));
 				}
 				drawSummaryPage(pkm, false);
@@ -379,17 +374,17 @@ const PKX &showPokemonSummary(PKX &pkm) {
 			} else {
 				switch(selection) {
 					case 0: {
-						int num = selectPokeball(pkm.ball());
-						if(num > 0)	pkm.ball(num);
+						Ball ball = selectPokeball(pkm.ball());
+						if(ball != Ball::INVALID)	pkm.ball(ball);
 						drawSummaryPage(pkm, true);
 						break;
 					} case 1: {
-						if(save->formCount(pkm.species()) == 1) { // If no alt forms then don't redraw
+						if(pkm.formCount() == 1) { // If no alt forms then don't redraw
 							setSpriteVisibility(arrowID, false, true);
 							updateOam();
 							continue;
 						}
-						int num = selectForm(pkm.species(), pkm.alternativeForm());
+						int num = selectForm(pkm);
 						if(num != -1)	pkm.alternativeForm(num);
 						drawSummaryPage(pkm, true);
 						break;

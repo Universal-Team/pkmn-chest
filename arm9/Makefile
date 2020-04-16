@@ -31,7 +31,7 @@ SOURCES		:=	source \
 				source/utils
 INCLUDES	:=	include \
 				core/memecrypto core/swshcrypto \
-				core/include core/include/i18n core/include/personal core/include/pkx core/include/sav core/include/utils core/include/wcx \
+				core/include core/include/enums core/include/i18n core/include/personal core/include/pkx core/include/sav core/include/utils core/include/wcx \
 				include/graphics \
 				include/menus \
 				include/saves \

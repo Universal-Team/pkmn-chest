@@ -272,7 +272,7 @@ void configMenu(void) {
 							Config::setLang("lang", guiLangs[0]);
 						}
 					} else {
-						int num = selectItem(currentLang, 0, langNames.size(), langNames);
+						int num = selectItem<int>(currentLang, 0, langNames.size(), langNames);
 						if(num != -1) {
 							Config::setLang("lang", guiLangs[num]);
 						}
@@ -314,7 +314,7 @@ void configMenu(void) {
 						for(auto str : songs) {
 							names.push_back(i18n::localize(Config::getLang("lang"), str));
 						}
-						Config::setString("music", songs[selectItem(current, 0, names.size(), names)]);
+						Config::setString("music", songs[selectItem<int>(current, 0, names.size(), names)]);
 					}
 					if(Config::getString("music") == "theme") {
 						Sound::load((Config::getString("themeDir")+"/sound.msl").c_str());

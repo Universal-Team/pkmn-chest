@@ -49,66 +49,68 @@ int getPokemonIndex(const PKX &pkm) {
 	return getPokemonIndex(pkm.species(), pkm.alternativeForm(), pkm.gender(), pkm.egg());
 }
 
-int getPokemonIndex(int species, int alternativeForm, int gender, bool egg) {
-	if(species > 649) {
+int getPokemonIndex(Species species, u16 alternativeForm, Gender gender, bool egg) {
+	if(species > Species::Genesect) {
 		return 0;
 	} else if(egg) {
 		return 651;
 	} else if(alternativeForm > 0) {
 		switch(species) {
-			case 201: // Unown
+			case Species::Unown:
 				return 651 + alternativeForm;
-			case 351: // Castform
+			case Species::Castform:
 				return 678 + alternativeForm;
-			case 386: // Deoxys
+			case Species::Deoxys:
 				return 681 + alternativeForm;
-			case 412: // Burmy
+			case Species::Burmy:
 				return 684 + alternativeForm;
-			case 413: // Wormadam
+			case Species::Wormadam:
 				return 686 + alternativeForm;
-			case 422: // Shellos
-			case 423: // Gastrodon
-				return species + 266 + alternativeForm;
-			case 479: // Rotom
+			case Species::Shellos:
+			case Species::Gastrodon:
+				return u16(species) + 266 + alternativeForm;
+			case Species::Rotom:
 				return 690 + alternativeForm;
-			case 487: // Giratina
+			case Species::Giratina:
 				return 695 + alternativeForm;
-			case 492: // Shaymin
+			case Species::Shaymin:
 				return 696 + alternativeForm;
-			case 521: // Unfezant
-				return 697 + alternativeForm;
-			case 550: // Basculin
+			case Species::Basculin:
 				return 698 + alternativeForm;
-			case 555: // Darmanitan
+			case Species::Darmanitan:
 				return 699 + alternativeForm;
-			case 585: // Deerling
+			case Species::Deerling:
 				return 700 + alternativeForm;
-			case 586: // Sawsbuck
+			case Species::Sawsbuck:
 				return 703 + alternativeForm;
-			case 648: // Meloetta
+			case Species::Meloetta:
 				return 708 + alternativeForm;
-			case 641: // Tornadus
-			case 642: // Thunderus
-				return species + 68 + alternativeForm;
-			case 645: // Landorus
-			case 646: // Kyurem
-				return species + 66 + alternativeForm;
-			case 647: // Keldeo
+			case Species::Tornadus:
+			case Species::Thundurus:
+				return u16(species) + 68 + alternativeForm;
+			case Species::Landorus:
+			case Species::Kyurem:
+				return u16(species) + 66 + alternativeForm;
+			case Species::Keldeo:
 				return 714 + alternativeForm;
+			default:
+				break;
 		}
-	} else if((species == 592 || species == 593) && gender == 1) { // Frillish || Jellicent
-		return species + 115;
+	} else if(species == Species::Unfezant && gender == Gender::Female) {
+		return 698;
+	} else if((species == Species::Frillish || species == Species::Jellicent) && gender == Gender::Female) {
+		return u16(species) + 115;
 	}
 
 	// Non-alternate form, return dex number
-	return species;
+	return u16(species);
 }
 
-Image loadPokemonSprite(int dexNo) {
+Image loadPokemonSprite(int index) {
 	Image image = {0, 0};
 	u16 palCount, palOfs;
 	if(pokemonGFX) {
-		fseek(pokemonGFX, (dexNo*0x42C)+4, SEEK_SET);
+		fseek(pokemonGFX, (index * 0x42C) + 4, SEEK_SET);
 		fread(&image.width, 1, 2, pokemonGFX);
 		fread(&image.height, 1, 2, pokemonGFX);
 		image.bitmap = std::vector<u8>(image.width*image.height);
@@ -324,7 +326,7 @@ void drawBox(bool top) {
 	for(int i=0;i<30;i++) {
 		// Fill Pokémon Sprites
 		std::unique_ptr<PKX> tempPkm = (top ? Banks::bank->pkm(currentBankBox, i) : save->pkm(currentSaveBox, i));
-		if(tempPkm->species() != 0) {
+		if(tempPkm->species() != Species::None) {
 			Image image = loadPokemonSprite(getPokemonIndex(*tempPkm));
 			fillSpriteImage(i, top, 32, 0, 0, image);
 			if(!top)	setSpriteVisibility(i, top, true);
@@ -359,25 +361,23 @@ void drawPokemonInfo(const PKX &pkm) {
 	// Clear previous draw
 	drawRectangle(164, 2, infoBox.width, infoBox.height-16, CLEAR, true, true);
 
-	if(pkm.species() > 0 && pkm.species() < 650) {
+	if(pkm.species() > Species::None && pkm.species() <= Species::Genesect) {
 		// Show shiny star if applicable
 		if(pkm.shiny())	drawImageScaled(170 + (69 * WIDE_SCALE), 45, WIDE_SCALE, 1, shiny, true, false);
 
 		// Print Pokédex number
 		char str[9];
-		snprintf(str, sizeof(str), "%s%.3i", i18n::localize(Config::getLang("lang"), "dexNo").c_str(), pkm.species());
+		snprintf(str, sizeof(str), "%s%.3i", i18n::localize(Config::getLang("lang"), "dexNo").c_str(), u16(pkm.species()));
 		printTextTintedScaled(str, WIDE_SCALE, 1, TextColor::gray, 170, 8, true, true);
 
 		// Print name
-		if(pkm.nicknamed())	printTextTintedMaxW(pkm.nickname(), 80 * WIDE_SCALE, 1, (pkm.gender() ? (pkm.gender() == 1 ? TextColor::red : TextColor::gray) : TextColor::blue), 170, 25, true, true, WIDE_SCALE);
-		else	printTextTintedMaxW(i18n::species(Config::getLang("lang"), pkm.species()), 80 * WIDE_SCALE, 1, (pkm.gender() ? (pkm.gender() == 1 ? TextColor::red : TextColor::gray) : TextColor::blue), 170, 25, true, true, WIDE_SCALE);
+		if(pkm.nicknamed())	printTextTintedMaxW(pkm.nickname(), 80 * WIDE_SCALE, 1, (pkm.gender() ? (pkm.gender() == Gender::Female ? TextColor::red : TextColor::gray) : TextColor::blue), 170, 25, true, true, WIDE_SCALE);
+		else	printTextTintedMaxW(i18n::species(Config::getLang("lang"), pkm.species()), 80 * WIDE_SCALE, 1, (pkm.gender() ? (pkm.gender() == Gender::Female ? TextColor::red : TextColor::gray) : TextColor::blue), 170, 25, true, true, WIDE_SCALE);
 
 		// Draw types
-		int type = (pkm.generation() < Generation::FIVE && pkm.type1() > 8) ? pkm.type1()-1 : pkm.type1();
-		drawImageScaled(170, 42-((types[type].height-12)/2), WIDE_SCALE, 1, types[type], true, true);
+		drawImageScaled(170, 42-((types[u8(pkm.type1())].height-12)/2), WIDE_SCALE, 1, types[u8(pkm.type1())], true, true);
 		if(pkm.type1() != pkm.type2()) {
-			type = (pkm.generation() < Generation::FIVE && pkm.type2() > 8) ? pkm.type2()-1 : pkm.type2();
-			drawImageScaled(170 + (35 * WIDE_SCALE), 42-((types[type].height-12)/2), WIDE_SCALE, 1, types[type], true, true, 4);
+			drawImageScaled(170 + (35 * WIDE_SCALE), 42-((types[u8(pkm.type2())].height-12)/2), WIDE_SCALE, 1, types[u8(pkm.type2())], true, true, 4);
 		}
 
 		// Print Level
@@ -386,7 +386,7 @@ void drawPokemonInfo(const PKX &pkm) {
 }
 
 void setHeldPokemon(const PKX &pkm) {
-	if(pkm.species() != 0) {
+	if(pkm.species() != Species::None) {
 		Image image = loadPokemonSprite(getPokemonIndex(pkm));
 		fillSpriteImage(heldPokemonID, true, 32, 0, 0, image);
 		fillSpriteImage(heldPokemonID, false, 32, 0, 0, image);
@@ -415,6 +415,15 @@ void manageBoxes(void) {
 			boxTitleY = 20;
 			break;
 	}
+
+	// Set starting values in filter
+	if(filter->gender() == Gender::INVALID)
+		filter->gender(Gender::Genderless);
+	if(filter->ball() == Ball::INVALID)
+		filter->ball(Ball::Poke);
+	if(filter->ability() == Ability::INVALID)
+		filter->ability(Ability::None);
+
 	resetPokemonSpritesPos(true);
 	resetPokemonSpritesPos(false);
 	drawBoxScreen();
@@ -566,8 +575,8 @@ void manageBoxes(void) {
 						// If in the held Pokémon's previous spot, just put held Pokémon back down
 						returnPokemon:
 						for(unsigned i=0;i<heldPokemon.size();i++) {
-							if(heldInParty)	setSpriteVisibility(partyIconID[heldPokemon[i].position], heldPokemonScreen, heldPokemon[i].pkm->species());
-							else if(!heldPokemonScreen)	setSpriteVisibility(heldPokemon[i].position, heldPokemonScreen, heldPokemon[i].pkm->species());
+							if(heldInParty)	setSpriteVisibility(partyIconID[heldPokemon[i].position], heldPokemonScreen, heldPokemon[i].pkm->species() != Species::None);
+							else if(!heldPokemonScreen)	setSpriteVisibility(heldPokemon[i].position, heldPokemonScreen, heldPokemon[i].pkm->species() != Species::None);
 							else {
 								Image image = loadPokemonSprite(getPokemonIndex(*heldPokemon[i].pkm));
 								fillSpriteImage(heldPokemon[i].position, heldPokemonScreen, 32, 0, 0, image);
@@ -581,7 +590,7 @@ void manageBoxes(void) {
 						heldPokemon.clear();
 						heldPokemonBox = -1;
 						if(partyShown && !topScreen)	moveParty(arrowMode, heldPokemon.size() > 0);
-					} else if(!heldMode || currentPokemon(arrowX, arrowY)->species() == 0) {
+					} else if(!heldMode || currentPokemon(arrowX, arrowY)->species() == Species::None) {
 						int canPlace = true;
 						for(unsigned i=0;i<heldPokemon.size();i++) {
 							if(heldPokemon[i].x-heldPokemon[0].x > 5-arrowX)	canPlace = false;
@@ -602,7 +611,7 @@ void manageBoxes(void) {
 									// If not copying / there isn't a Pokémon at the new spot, move Pokémon
 									// Save the Pokémon at the cursor's postion to a temp variable
 									std::unique_ptr<PKX> tempPkm;
-									if(currentPokemon(arrowX+heldPokemon[i].x, arrowY+heldPokemon[i].y)->species() != 0)
+									if(currentPokemon(arrowX+heldPokemon[i].x, arrowY+heldPokemon[i].y)->species() != Species::None)
 										tempPkm = currentPokemon(arrowX+heldPokemon[i].x, arrowY+heldPokemon[i].y);
 									else
 										tempPkm = save->emptyPkm();
@@ -763,7 +772,7 @@ void manageBoxes(void) {
 						}
 						updateOam();
 					}
-				} else if(currentPokemon(arrowX, arrowY)->species() != 0) {
+				} else if(currentPokemon(arrowX, arrowY)->species() != Species::None) {
 					int temp = 1;
 					if(arrowMode == 1 || (temp = aMenu(arrowX, arrowY, aMenuButtons, 0))) {
 						// If no pokemon is currently held and there is one at the cursor, pick it up

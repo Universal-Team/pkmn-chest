@@ -88,9 +88,9 @@ int main(int argc, char **argv) {
 	Colors::load();
 	loadFont();
 
-	i18n::removeCallbacks(i18n::initBall, i18n::exitBall);
+	// i18n::removeCallbacks(i18n::initBall, i18n::exitBall);
 	i18n::removeCallbacks(i18n::initForm, i18n::exitForm);
-	i18n::removeCallbacks(i18n::initHP, i18n::exitHP);
+	i18n::removeCallbacks(i18n::initType, i18n::exitType);
 	i18n::removeCallbacks(i18n::initGeo, i18n::exitGeo);
 	i18n::init(Config::getLang("lang"));
 

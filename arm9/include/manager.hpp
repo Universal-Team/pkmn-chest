@@ -33,19 +33,19 @@ int getPokemonIndex(const PKX &pkm);
 
 /*
  * Gets the image offset for a Pokémon
- * int species is the National dex number of the Pokémon
- * int alternativeForm is the alternative form of the Pokémon
- * int gender is the gender of the Pokémon
- * bool egg is wheher the Pokémon is in an egg
+ * Species species is the Species of the Pokémon
+ * u16 alternativeForm is the alternative form of the Pokémon
+ * Gender gender is the Gender of the Pokémon
+ * bool egg is whether the Pokémon is in an egg
  * Returns an int of the offset to use
  */
-int getPokemonIndex(int species, int alternativeForm = 0, int gender = 0, bool egg = false);
+int getPokemonIndex(Species species, u16 alternativeForm, Gender gender, bool egg);
 
 /*
  * Loads a Pokémon sprite into an Image struct
- * int dexNo is the Pokémon dex number
+ * int index is the Pokémon sprite's index
  */
-Image loadPokemonSprite(int dexNo);
+Image loadPokemonSprite(int index);
 
 /* Resets the Pokémon sprites to their positions for the box
  * bool top is whether to reset the top or bottom sprites

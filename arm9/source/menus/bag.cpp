@@ -182,7 +182,7 @@ void editBag(void) {
 					}
 				}
 
-				int num = selectItem(currentItem, 0, validItems.size(), validItems);
+				int num = selectItem<int>(currentItem, 0, validItems.size(), validItems);
 				if(num != item->id()) {
 					// If `None` was selected, bring all items down by one
 					if(num == 0) {

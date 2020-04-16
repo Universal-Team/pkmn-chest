@@ -267,7 +267,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				bool shouldCopy[30];
 				// Copy save Pokémon to a buffer
 				for(int i=0;i<30;i++) {
-					if(save->pkm(currentSaveBox, i)->species() != 0)
+					if(save->pkm(currentSaveBox, i)->species() != Species::None)
 						tempBox.push_back(save->pkm(currentSaveBox, i));
 					else
 						tempBox.push_back(save->emptyPkm());
@@ -275,7 +275,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 
 				// Copy bank Pokémon to the save and add it to the Pokédex
 				for(int i=0;i<30;i++) {
-					if(Banks::bank->pkm(currentBankBox, i)->species() != 0) {
+					if(Banks::bank->pkm(currentBankBox, i)->species() != Species::None) {
 						if(save->availableSpecies().count(Banks::bank->pkm(currentBankBox, i)->species()) != 0) {
 							save->pkm(*save->transfer(*Banks::bank->pkm(currentBankBox, i)), currentSaveBox, i, false);
 							save->dex(*Banks::bank->pkm(currentBankBox, i));
@@ -323,7 +323,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 
 				for(int y=0;y<5;y++) {
 					for(int x=0;x<6;x++) {
-						if(currentPokemon(x, y)->species() != 0) {
+						if(currentPokemon(x, y)->species() != Species::None) {
 							FILE* out = fopen(getPkxOutputPath(*currentPokemon(x, y)).c_str(), "wb");
 							if(out) {
 								fwrite(currentPokemon(x, y)->rawData(), 1, 136, out);
@@ -459,7 +459,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				pkm->language(getSafeLanguage(pkm->generation(), Config::getLang("lang")));
 				pkm->otName(save->otName());
 				pkm->otGender(save->gender());
-				pkm->ball(4);
+				pkm->ball(Ball::Poke);
 				pkm->encryptionConstant((((u32)randomNumbers()) % 0xFFFFFFFF) + 1);
 				pkm->version(save->version());
 				switch (pkm->version()) {

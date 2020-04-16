@@ -115,7 +115,7 @@ void showTrainerCard(void) {
 				case 0: {
 					std::string name = Input::getLine(7);
 					if(name != "")	save->otName(name);
-					save->gender(Input::getBool(i18n::localize(Config::getLang("lang"), "female"), i18n::localize(Config::getLang("lang"), "male")));
+					save->gender(Gender(Input::getBool(i18n::localize(Config::getLang("lang"), "female"), i18n::localize(Config::getLang("lang"), "male"))));
 					break;
 				} case 1: {
 					int num = Input::getInt(65535);

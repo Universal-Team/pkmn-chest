@@ -14,7 +14,8 @@
 std::vector<std::string> filterValues;
 std::vector<bool> filterEnabled;
 std::vector<bool> filterInversed;
-std::vector<std::string> genders = {"male", "female", "unknown"}, filterLabels = {"species", "nature", "ability", "gender", "item", "ball", "form", "level", "moves", "shiny"};
+std::array<std::string, 3> genders = {"male", "female", "unknown"};
+std::array<std::string, 10> filterLabels = {"species", "nature", "ability", "gender", "item", "ball", "form", "level", "moves", "shiny"};
 
 void selectMoves(std::shared_ptr<PKFilter> filter) {
 	// Clear screen
@@ -87,7 +88,7 @@ void selectMoves(std::shared_ptr<PKFilter> filter) {
 			if(column == 0) {
 				filter->moveEnabled(selection, !filter->moveEnabled(selection));
 			} else if(column == 1) {
-				filter->move(selection, selectItem(filter->move(selection), save->availableMoves(), i18n::rawMoves(Config::getLang("lang"))));
+				filter->move(selection, selectItem<int>(filter->move(selection), save->availableMoves(), i18n::rawMoves(Config::getLang("lang"))));
 			} else if(column == 2) {
 				filter->moveInversed(selection, !filter->moveInversed(selection));
 			}
@@ -122,9 +123,9 @@ void drawFilterMenu(const std::shared_ptr<PKFilter> filter) {
 	filterValues.push_back(i18n::species(Config::getLang("lang"), filter->species()));
 	filterValues.push_back(i18n::nature(Config::getLang("lang"), filter->nature()));
 	filterValues.push_back(i18n::ability(Config::getLang("lang"), filter->ability()));
-	filterValues.push_back(i18n::localize(Config::getLang("lang"), genders[filter->gender()]));
+	filterValues.push_back(i18n::localize(Config::getLang("lang"), genders[u8(filter->gender())]));
 	filterValues.push_back(i18n::item(Config::getLang("lang"), filter->heldItem()));
-	filterValues.push_back(std::to_string(filter->ball()));
+	filterValues.push_back(i18n::ball(Config::getLang("lang"), filter->ball()));
 	filterValues.push_back(std::to_string(filter->alternativeForm()));
 	filterValues.push_back(std::to_string(filter->level()));
 	filterValues.push_back("……");
@@ -311,21 +312,26 @@ void changeFilter(std::shared_ptr<PKFilter> filter) {
 						filter->species(selectItem(filter->species(), save->availableSpecies(), i18n::rawSpecies(Config::getLang("lang"))));
 						break;
 					} case 1: { // Nature
-						int num = selectNature(filter->nature());
-						if(num != -1)	filter->nature();
+						Nature nature = selectNature(filter->nature());
+						if(nature != Nature::INVALID)	filter->nature(nature);
 						break;
 					} case 2: { // Ability
 						filter->ability(selectItem(filter->ability(), save->availableAbilities(), i18n::rawAbilities(Config::getLang("lang"))));
 						break;
 					} case 3: { // Gender
-						std::vector<std::string> genderList = {i18n::localize(Config::getLang("lang"), "male"), i18n::localize(Config::getLang("lang"), "female"), i18n::localize(Config::getLang("lang"), "unknown")};
+						std::vector<std::string> genderList(genders.size());
+						for(unsigned int i = 0; i < genders.size(); i++) {
+							genderList[i] = i18n::localize(Config::getLang("lang"), genders[i]);
+						}
 						filter->gender(selectItem(filter->gender(), 0, genderList.size(), genderList));
 						break;
 					} case 4: { // Held item
-						filter->heldItem(selectItem(filter->heldItem(), save->availableItems(), i18n::rawItems(Config::getLang("lang"))));
+						filter->heldItem(selectItem<int>(filter->heldItem(), save->availableItems(), i18n::rawItems(Config::getLang("lang"))));
 						break;
 					} case 5: { // Ball
-						filter->ball(selectPokeball(filter->ball()));
+						Ball ball = selectPokeball(filter->ball());
+						if(ball != Ball::INVALID)
+							filter->ball(ball);
 						break;
 					} case 6: { // Alt. form
 						filter->alternativeForm(Input::getInt(28));

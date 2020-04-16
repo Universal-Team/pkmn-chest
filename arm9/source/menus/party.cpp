@@ -13,7 +13,7 @@ int partyX = 0, partyY = 0;
 
 void fillPartySprites(void) {
 	for(unsigned i=0;i<partyIconID.size();i++) {
-		if(save->pkm(i)->species() == 0) {
+		if(save->pkm(i)->species() == Species::None) {
 			setSpriteVisibility(partyIconID[i], false, false);
 		} else {
 			Image image = loadPokemonSprite(getPokemonIndex(*save->pkm(i)));
