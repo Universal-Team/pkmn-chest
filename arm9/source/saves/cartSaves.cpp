@@ -2,6 +2,7 @@
 #include "colors.hpp"
 #include "config.hpp"
 #include "graphics.hpp"
+#include "gui.hpp"
 
 #define MAGIC_EEPR 0x52504545
 #define MAGIC_SRAM 0x4D415253
@@ -150,7 +151,7 @@ bool restoreSlot2(void) {
 			return 1;
 		}
 	} else {
-		i18n::localize(Config::getLang("lang"), "wrongSaveCart");
+		Gui::warn(i18n::localize(Config::getLang("lang"), "wrongSaveCart"));
 	}
 	return 0;
 }

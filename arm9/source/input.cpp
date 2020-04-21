@@ -7,6 +7,7 @@
 #include "config.hpp"
 #include "colors.hpp"
 #include "graphics.hpp"
+#include "i18n_ext.hpp"
 #include "manager.hpp"
 #include "sound.hpp"
 

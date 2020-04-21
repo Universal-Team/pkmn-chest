@@ -4,6 +4,7 @@
 #include "flashcard.hpp"
 #include "graphics.hpp"
 #include "i18n.hpp"
+#include "i18n_ext.hpp"
 #include "input.hpp"
 #include "loader.hpp"
 #include "manager.hpp"

@@ -6,6 +6,7 @@
 #include "config.hpp"
 #include "flashcard.hpp"
 #include "input.hpp"
+#include "i18n_ext.hpp"
 #include "loader.hpp"
 #include "manager.hpp"
 #include "PKX.hpp"
@@ -111,7 +112,7 @@ int selectBox(int currentBox) {
 
 int selectForm(const PKX &pkm) {
 	// Exit if only one form
-	if(pkm.formCount() == 1)	return -1;
+	if(save->formCount(pkm.species()) == 1)	return -1;
 
 	if(pkm.species() == Species::Unown) {
 		int num = tolower(Input::getLine(1)[0]);
@@ -127,10 +128,10 @@ int selectForm(const PKX &pkm) {
 	drawOutline(0, 60, 256, 72, LIGHT_GRAY, false, true);
 
 	// Draw forms
-	for(int i = 0; i < pkm.formCount(); i++) {
+	for(int i = 0; i < save->formCount(pkm.species()); i++) {
 		Image image = loadPokemonSprite(getPokemonIndex(pkm.species(), i, pkm.gender(), pkm.egg()));
 		fillSpriteImage(i, false, 32, 0, 0, image);
-		setSpritePosition(i, false, (i * 32) + (128 - ((32 * pkm.formCount()) / 2)), 80);
+		setSpritePosition(i, false, (i * 32) + (128 - ((32 * save->formCount(pkm.species())) / 2)), 80);
 		setSpritePriority(i, false, 1);
 		setSpriteVisibility(i, false, true);
 		setSpriteAlpha(i, false, 15);
@@ -139,7 +140,7 @@ int selectForm(const PKX &pkm) {
 
 	// Move arrow to current form
 	setSpriteVisibility(arrowID, false, true);
-	setSpritePosition(arrowID, false, (pkm.alternativeForm() * 32) + (128 - ((32 * pkm.formCount()) / 2)) + 28, 84);
+	setSpritePosition(arrowID, false, (pkm.alternativeForm() * 32) + (128 - ((32 * save->formCount(pkm.species())) / 2)) + 28, 84);
 	updateOam();
 
 	int pressed, held, currentForm = pkm.alternativeForm();
@@ -153,9 +154,9 @@ int selectForm(const PKX &pkm) {
 
 		if(held & KEY_LEFT) {
 			if(currentForm > 0)	currentForm--;
-			else	currentForm = pkm.formCount() - 1;
+			else	currentForm = save->formCount(pkm.species()) - 1;
 		} else if(held & KEY_RIGHT) {
-			if(currentForm < pkm.formCount() - 1)	currentForm++;
+			if(currentForm < save->formCount(pkm.species()) - 1)	currentForm++;
 			else currentForm=0;
 		} else if(pressed & KEY_A) {
 			Sound::play(Sound::click);
@@ -169,8 +170,8 @@ int selectForm(const PKX &pkm) {
 			touchPosition touch;
 			touchRead(&touch);
 			for(int i=0;i<5;i++) {
-				if(touch.px > (i * 32) + (128 - ((32 * pkm.formCount()) / 2))
-				&& touch.px < (i * 32) + (128 - ((32 * pkm.formCount()) / 2)) + 32
+				if(touch.px > (i * 32) + (128 - ((32 * save->formCount(pkm.species())) / 2))
+				&& touch.px < (i * 32) + (128 - ((32 * save->formCount(pkm.species())) / 2)) + 32
 				&& touch.py > 72 && touch.py < 104) {
 					Sound::play(Sound::click);
 					resetPokemonSpritesPos(false);
@@ -180,7 +181,7 @@ int selectForm(const PKX &pkm) {
 		}
 
 		// Move arrow
-		setSpritePosition(arrowID, false, (currentForm * 32) + (128 - ((32 * pkm.formCount()) / 2)) + 28, 84);
+		setSpritePosition(arrowID, false, (currentForm * 32) + (128 - ((32 * save->formCount(pkm.species())) / 2)) + 28, 84);
 		updateOam();
 	}
 }

@@ -4,6 +4,7 @@
 #include "flashcard.hpp"
 #include "loader.hpp"
 #include "input.hpp"
+#include "i18n_ext.hpp"
 #include "manager.hpp"
 #include "misc.hpp"
 #include "PK5.hpp"
@@ -379,7 +380,7 @@ const PKX &showPokemonSummary(PKX &pkm) {
 						drawSummaryPage(pkm, true);
 						break;
 					} case 1: {
-						if(pkm.formCount() == 1) { // If no alt forms then don't redraw
+						if(save->formCount(pkm.species()) == 1) { // If no alt forms then don't redraw
 							setSpriteVisibility(arrowID, false, true);
 							updateOam();
 							continue;

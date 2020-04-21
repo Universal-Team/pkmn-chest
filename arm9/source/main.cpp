@@ -8,6 +8,7 @@
 #include "graphics.hpp"
 #include "gui.hpp"
 #include "i18n.hpp"
+#include "i18n_ext.hpp"
 #include "loader.hpp"
 #include "loading.hpp"
 #include "manager.hpp"
@@ -88,7 +89,7 @@ int main(int argc, char **argv) {
 	Colors::load();
 	loadFont();
 
-	// i18n::removeCallbacks(i18n::initBall, i18n::exitBall);
+	i18n::addCallbacks(i18n::initGui, i18n::exitGui);
 	i18n::removeCallbacks(i18n::initForm, i18n::exitForm);
 	i18n::removeCallbacks(i18n::initType, i18n::exitType);
 	i18n::removeCallbacks(i18n::initGeo, i18n::exitGeo);

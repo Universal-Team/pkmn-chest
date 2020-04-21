@@ -9,6 +9,7 @@
 #include "configMenu.hpp"
 #include "flashcard.hpp"
 #include "input.hpp"
+#include "i18n_ext.hpp"
 #include "loader.hpp"
 #include "manager.hpp"
 #include "party.hpp"

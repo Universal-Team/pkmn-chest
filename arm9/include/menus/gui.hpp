@@ -2,7 +2,7 @@
 #define GUI_HPP
 
 #include "config.hpp"
-#include "i18n.hpp"
+#include "i18n_ext.hpp"
 
 namespace Gui {
 	void prompt(int message, const std::string &confirm = i18n::localize(Config::getLang("lang"), "ok"));

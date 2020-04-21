@@ -5,6 +5,10 @@
 
 namespace i18n {
 	const std::string &pouch(Language lang, Sav::Pouch);
+
+	void initGui(Language lang);
+	void exitGui(Language lang);
+	const std::string &localize(Language lang, const std::string &v);
 }
 
 #endif

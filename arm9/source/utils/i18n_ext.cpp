@@ -1,6 +1,7 @@
 #include "i18n_ext.hpp"
 #include "../core/source/i18n/i18n_internal.hpp"
 #include "i18n.hpp"
+#include "json.hpp"
 
 const std::string &i18n::pouch(Language lang, Sav::Pouch pouch) {
 	switch(pouch) {
@@ -53,4 +54,39 @@ const std::string &i18n::pouch(Language lang, Sav::Pouch pouch) {
 			return emptyString;
 			break;
 	}
+}
+
+std::unordered_map<Language, nlohmann::json> gui;
+
+// load function for json
+void load(Language lang, const std::string& name, nlohmann::json& json) {
+	std::string path = io::exists(_PKSMCORE_LANG_FOLDER + i18n::folder(lang) + name) ? _PKSMCORE_LANG_FOLDER + i18n::folder(lang) + name
+																					 : _PKSMCORE_LANG_FOLDER + i18n::folder(Language::ENG) + name;
+
+	FILE* values = fopen(path.c_str(), "rt");
+	if(values) {
+		json = nlohmann::json::parse(values, nullptr, false);
+		fclose(values);
+	}
+}
+
+void i18n::initGui(Language lang) {
+	nlohmann::json j;
+	load(lang, "/gui.json", j);
+	
+	gui.insert_or_assign(lang, std::move(j));
+}
+
+void i18n::exitGui(Language lang) { gui.erase(lang); }
+
+const std::string &i18n::localize(Language lang, const std::string &v) {
+	checkInitialized(lang);
+	auto it = gui.find(lang);
+	if(it != gui.end()) {
+		if(!it->second.contains(v)) {
+			it->second[v] = "MISSING: " + v;
+		}
+		return it->second[v].get_ref<const std::string&>();
+	}
+	return emptyString;
 }
