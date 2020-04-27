@@ -217,7 +217,6 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				updateOam();
 
 				if(partyShown) {
-					save->fixParty();
 					drawImage(PARTY_TRAY_X, PARTY_TRAY_Y, party, false, true);
 					fillPartySprites();
 				}
@@ -536,6 +535,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				if(topScreen)	drawBox(topScreen);
 				drawPokemonInfo(*currentPokemon(pkmX, pkmY));
 				if(partyShown) {
+					save->fixParty();
 					drawImage(PARTY_TRAY_X, PARTY_TRAY_Y, party, false, true);
 					fillPartySprites();
 				}
