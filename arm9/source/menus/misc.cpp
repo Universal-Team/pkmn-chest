@@ -28,7 +28,7 @@ struct Text {
 };
 
 std::vector<std::string> statsLabels = {"hp", "attack", "defense", "spAtk", "spDef", "speed", "base", "iv", "ev", "total"};
-std::vector<std::string> originLabels = {"metLevel", "metYear", "metMonth", "metDay", "metLocation", "originGame"};
+std::vector<std::string> originLabels = {"metLevel", "metYear", "metMonth", "metDay", "metLocation", "originGame", "fatefulEncounter"};
 
 static constexpr Stat statOrder[] = {Stat::HP, Stat::ATK, Stat::DEF, Stat::SPATK, Stat::SPDEF, Stat::SPD};
 
@@ -610,6 +610,7 @@ void drawOriginPage(const PKX &pkm, std::vector<std::string> &varText) {
 		std::to_string(pkm.metDate().day()),
 		i18n::location(Config::getLang("lang"), pkm.generation(), pkm.metLocation()),
 		i18n::game(Config::getLang("lang"), pkm.version()),
+		pkm.fatefulEncounter() ? i18n::localize(Config::getLang("lang"), "yes") : i18n::localize(Config::getLang("lang"), "no"),
 	};
 	printText(i18n::localize(Config::getLang("lang"), "origin"), 4, 0, false, true);
 	for(unsigned i=0;i<originLabels.size();i++) {
@@ -740,6 +741,8 @@ void selectOrigin(PKX &pkm) {
 					GameVersion ver = selectItem<GameVersion>(pkm.version(), 0, i18n::rawGames(Config::getLang("lang")).size(), i18n::rawGames(Config::getLang("lang")));
 					pkm.version(ver);
 					break;
+				} case 6: { // Fateful encounter
+					pkm.fatefulEncounter(!pkm.fatefulEncounter());
 				}
 			}
 			drawOriginPage(pkm, varText);
