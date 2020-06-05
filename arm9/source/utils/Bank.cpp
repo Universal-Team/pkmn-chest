@@ -47,16 +47,19 @@
 // #define ARCHIVE (Configuration::getInstance().useExtData() ? Archive::data() : Archive::sd())
 // #define OTHERARCHIVE (Configuration::getInstance().useExtData() ? Archive::sd() : Archive::data())
 
-// class BankException : public std::exception
-// {
-// public:
-//     BankException(u32 badVal) : string(fmt::format("BankException: Bad generation value: 0x{:X}", badVal)) {}
+class BankException : public std::exception
+{
+public:
+    BankException(u32 badVal) {
+        string.resize(64);
+        snprintf(string.data(), string.length(), i18n::localize(Config::getLang("lang"), "BankException").c_str(), badVal);
+    }
 
-//     const char* what() const noexcept override { return string.c_str(); }
+    const char* what() const noexcept override { return string.c_str(); }
 
-// private:
-//     std::string string;
-// };
+private:
+    std::string string;
+};
 
 Bank::Bank(const std::string& name, int maxBoxes) : bankName(name)
 {
@@ -325,10 +328,7 @@ std::unique_ptr<pksm::PKX> Bank::pkm(int box, int slot) const
         return pksm::PKX::getPKM<pksm::Generation::SEVEN>(nullptr);
     }
 
-    // throw BankException(u32(entries[index].gen));
-    Gui::warn(u32(entries[index].gen));
-    extern std::shared_ptr<pksm::Sav> save;
-    return save->emptyPkm();
+    throw BankException(u32(entries[index].gen));
 }
 
 void Bank::pkm(const pksm::PKX& pkm, int box, int slot)
