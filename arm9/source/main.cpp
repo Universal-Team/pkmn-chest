@@ -20,7 +20,7 @@ bool useTwlCfg = false;
 
 extern std::vector<std::string> songs;
 
-int main(int argc, char **argv) {
+void init(int argc, char **argv) {
 	useTwlCfg = (isDSiMode() && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0));
 	initGraphics();
 	keysSetRepeat(25,5);
@@ -109,7 +109,9 @@ int main(int argc, char **argv) {
 	loadTypes(Config::getLang("lang"));
 
 	hideLoadingLogo();
+}
 
+void mainLoop(void) {
 	while(1) {
 		savePath = browseForSave();
 		if(savePath == "%EXIT%")	break;
@@ -124,6 +126,15 @@ int main(int argc, char **argv) {
 		save->cryptBoxData(true);
 
 		manageBoxes();
+	}
+}
+
+int main(int argc, char **argv) {
+	try {
+		init(argc, argv);
+		mainLoop();
+	} catch(std::exception &e) {
+		Gui::warn(e.what());
 	}
 
 	return 0;
