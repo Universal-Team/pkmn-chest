@@ -264,7 +264,7 @@ std::string topMenuSelect(void) {
 	if(flashcardFound())	topMenuContents.push_back({"cart:", false});
 	if(flashcardFound())	tmSlot2Offset = topMenuContents.size()-1;
 
-	FILE* favs = fopen((sdFound() ? "sd:/_nds/pkmn-chest/favorites.lst" : "fat:/_nds/pkmn-chest/favorites.lst"), "rb");
+	FILE* favs = fopen((mainDrive() + ":/_nds/pkmn-chest/favorites.lst").c_str(), "rb");
 
 	if(favs) {
 		char* line = NULL;
@@ -358,7 +358,7 @@ std::string topMenuSelect(void) {
 				if(Input::getBool(i18n::localize(Config::getLang("lang"), "remove"), i18n::localize(Config::getLang("lang"), "cancel"))) {
 					topMenuContents.erase(topMenuContents.begin()+tmCurPos);
 
-					FILE* out = fopen((sdFound() ? "sd:/_nds/pkmn-chest/favorites.lst" : "fat:/_nds/pkmn-chest/favorites.lst"), "wb");
+					FILE* out = fopen((mainDrive() + ":/_nds/pkmn-chest/favorites.lst").c_str(), "wb");
 
 					if(out) {
 						for(int i=0;i<(int)topMenuContents.size();i++) {
@@ -498,7 +498,7 @@ std::string browseForFile(const std::vector<std::string>& extensionList, bool ac
 				char path[PATH_MAX];
 				getcwd(path, PATH_MAX);
 
-				FILE* favs = fopen((sdFound() ? "sd:/_nds/pkmn-chest/favorites.lst" : "fat:/_nds/pkmn-chest/favorites.lst"), "ab");
+				FILE* favs = fopen((mainDrive() + ":/_nds/pkmn-chest/favorites.lst").c_str(), "ab");
 
 				if(favs) {
 					fwrite((path+dirContents[fileOffset].name+"\n").c_str(), 1, (path+dirContents[fileOffset].name+"\n").size(), favs);

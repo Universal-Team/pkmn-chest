@@ -5,6 +5,7 @@
 #include "flashcard.hpp"
 #include "graphics.hpp"
 #include "input.hpp"
+#include "i18n.hpp"
 #include "i18n_ext.hpp"
 #include "loader.hpp"
 #include "manager.hpp"
@@ -16,7 +17,7 @@
 std::vector<SortType> sortTypes;
 std::vector<std::string> sortText = {"none", "dexNo", "speciesName", "form", "type1", "type2", "hp", "attack", "defense", "spAtk", "spDef", "speed", "hpIV", "attackIV", "defenseIV", "spAtkIV", "spDefIV", "speedIV", "nature", "level", "trainerID", "hpType", "friendship", "name", "origTrainer", "shiny"};
 
-bool sortPokemonFilter(const std::unique_ptr<PKX> &pkm1, const std::unique_ptr<PKX> &pkm2) {
+bool sortPokemonFilter(const std::unique_ptr<pksm::PKX> &pkm1, const std::unique_ptr<pksm::PKX> &pkm2) {
 	for(const auto& type : sortTypes) {
 		switch (type) {
 			case SortType::DEX:
@@ -44,39 +45,39 @@ bool sortPokemonFilter(const std::unique_ptr<PKX> &pkm1, const std::unique_ptr<P
 					return false;
 				break;
 			case SortType::HP:
-				if(pkm1->stat(Stat::HP) < pkm2->stat(Stat::HP))
+				if(pkm1->stat(pksm::Stat::HP) < pkm2->stat(pksm::Stat::HP))
 					return true;
-				if(pkm2->stat(Stat::HP) < pkm1->stat(Stat::HP))
+				if(pkm2->stat(pksm::Stat::HP) < pkm1->stat(pksm::Stat::HP))
 					return false;
 				break;
 			case SortType::ATK:
-				if(pkm1->stat(Stat::ATK) < pkm2->stat(Stat::ATK))
+				if(pkm1->stat(pksm::Stat::ATK) < pkm2->stat(pksm::Stat::ATK))
 					return true;
-				if(pkm2->stat(Stat::ATK) < pkm1->stat(Stat::ATK))
+				if(pkm2->stat(pksm::Stat::ATK) < pkm1->stat(pksm::Stat::ATK))
 					return false;
 				break;
 			case SortType::DEF:
-				if(pkm1->stat(Stat::DEF) < pkm2->stat(Stat::DEF))
+				if(pkm1->stat(pksm::Stat::DEF) < pkm2->stat(pksm::Stat::DEF))
 					return true;
-				if(pkm2->stat(Stat::DEF) < pkm1->stat(Stat::DEF))
+				if(pkm2->stat(pksm::Stat::DEF) < pkm1->stat(pksm::Stat::DEF))
 					return false;
 				break;
 			case SortType::SATK:
-				if(pkm1->stat(Stat::SPATK) < pkm2->stat(Stat::SPATK))
+				if(pkm1->stat(pksm::Stat::SPATK) < pkm2->stat(pksm::Stat::SPATK))
 					return true;
-				if(pkm2->stat(Stat::SPATK) < pkm1->stat(Stat::SPATK))
+				if(pkm2->stat(pksm::Stat::SPATK) < pkm1->stat(pksm::Stat::SPATK))
 					return false;
 				break;
 			case SortType::SDEF:
-				if(pkm1->stat(Stat::SPDEF) < pkm2->stat(Stat::SPDEF))
+				if(pkm1->stat(pksm::Stat::SPDEF) < pkm2->stat(pksm::Stat::SPDEF))
 					return true;
-				if(pkm2->stat(Stat::SPDEF) < pkm1->stat(Stat::SPDEF))
+				if(pkm2->stat(pksm::Stat::SPDEF) < pkm1->stat(pksm::Stat::SPDEF))
 					return false;
 				break;
 			case SortType::SPE:
-				if(pkm1->stat(Stat::SPDEF) < pkm2->stat(Stat::SPD))
+				if(pkm1->stat(pksm::Stat::SPDEF) < pkm2->stat(pksm::Stat::SPD))
 					return true;
-				if(pkm2->stat(Stat::SPDEF) < pkm1->stat(Stat::SPD))
+				if(pkm2->stat(pksm::Stat::SPDEF) < pkm1->stat(pksm::Stat::SPD))
 					return false;
 				break;
 			case SortType::NATURE:
@@ -98,39 +99,39 @@ bool sortPokemonFilter(const std::unique_ptr<PKX> &pkm1, const std::unique_ptr<P
 					return false;
 				break;
 			case SortType::HPIV:
-				if(pkm1->iv(Stat::HP) < pkm2->iv(Stat::HP))
+				if(pkm1->iv(pksm::Stat::HP) < pkm2->iv(pksm::Stat::HP))
 					return true;
-				if(pkm2->iv(Stat::HP) < pkm1->iv(Stat::HP))
+				if(pkm2->iv(pksm::Stat::HP) < pkm1->iv(pksm::Stat::HP))
 					return false;
 				break;
 			case SortType::ATKIV:
-				if(pkm1->iv(Stat::ATK) < pkm2->iv(Stat::ATK))
+				if(pkm1->iv(pksm::Stat::ATK) < pkm2->iv(pksm::Stat::ATK))
 					return true;
-				if(pkm2->iv(Stat::ATK) < pkm1->iv(Stat::ATK))
+				if(pkm2->iv(pksm::Stat::ATK) < pkm1->iv(pksm::Stat::ATK))
 					return false;
 				break;
 			case SortType::DEFIV:
-				if(pkm1->iv(Stat::DEF) < pkm2->iv(Stat::DEF))
+				if(pkm1->iv(pksm::Stat::DEF) < pkm2->iv(pksm::Stat::DEF))
 					return true;
-				if(pkm2->iv(Stat::DEF) < pkm1->iv(Stat::DEF))
+				if(pkm2->iv(pksm::Stat::DEF) < pkm1->iv(pksm::Stat::DEF))
 					return false;
 				break;
 			case SortType::SATKIV:
-				if(pkm1->iv(Stat::SPATK) < pkm2->iv(Stat::SPATK))
+				if(pkm1->iv(pksm::Stat::SPATK) < pkm2->iv(pksm::Stat::SPATK))
 					return true;
-				if(pkm2->iv(Stat::SPATK) < pkm1->iv(Stat::SPATK))
+				if(pkm2->iv(pksm::Stat::SPATK) < pkm1->iv(pksm::Stat::SPATK))
 					return false;
 				break;
 			case SortType::SDEFIV:
-				if(pkm1->iv(Stat::SPDEF) < pkm2->iv(Stat::SPDEF))
+				if(pkm1->iv(pksm::Stat::SPDEF) < pkm2->iv(pksm::Stat::SPDEF))
 					return true;
-				if(pkm2->iv(Stat::SPDEF) < pkm1->iv(Stat::SPDEF))
+				if(pkm2->iv(pksm::Stat::SPDEF) < pkm1->iv(pksm::Stat::SPDEF))
 					return false;
 				break;
 			case SortType::SPEIV:
-				if(pkm1->iv(Stat::SPD) < pkm2->iv(Stat::SPD))
+				if(pkm1->iv(pksm::Stat::SPD) < pkm2->iv(pksm::Stat::SPD))
 					return true;
-				if(pkm2->iv(Stat::SPD) < pkm1->iv(Stat::SPD))
+				if(pkm2->iv(pksm::Stat::SPD) < pkm1->iv(pksm::Stat::SPD))
 					return false;
 				break;
 			case SortType::HIDDENPOWER:
@@ -177,7 +178,7 @@ bool sortPokemonFilter(const std::unique_ptr<PKX> &pkm1, const std::unique_ptr<P
 }
 
 void sortPokemon(bool top) {
-	std::vector<std::unique_ptr<PKX>> sortPkm;
+	std::vector<std::unique_ptr<pksm::PKX>> sortPkm;
 	while(!sortTypes.empty() && sortTypes.back() == SortType::NONE) {
 		sortTypes.pop_back();
 	}
@@ -186,13 +187,13 @@ void sortPokemon(bool top) {
 	}
 	if(top) {
 		for(int i=0;i<Banks::bank->boxes()*30;i++) {
-			if(Banks::bank->pkm(i/30, i%30)->species() != Species::None) {
+			if(Banks::bank->pkm(i/30, i%30)->species() != pksm::Species::None) {
 				sortPkm.push_back(Banks::bank->pkm(i/30, i%30));
 			}
 		}
 	} else {
 		for(int i=0;i<save->maxSlot();i++) {
-			if(save->pkm(i/30, i%30)->species() != Species::None) {
+			if(save->pkm(i/30, i%30)->species() != pksm::Species::None) {
 				sortPkm.push_back(save->pkm(i/30, i%30));
 			}
 		}

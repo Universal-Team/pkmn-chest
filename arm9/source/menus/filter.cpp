@@ -18,7 +18,7 @@ std::vector<bool> filterInversed;
 std::array<std::string, 3> genders = {"male", "female", "unknown"};
 std::array<std::string, 10> filterLabels = {"species", "nature", "ability", "gender", "item", "ball", "form", "level", "moves", "shiny"};
 
-void selectMoves(std::shared_ptr<PKFilter> filter) {
+void selectMoves(std::shared_ptr<pksm::PKFilter> filter) {
 	// Clear screen
 	drawImageDMA(0, 0, listBg, false, false);
 	printText(i18n::localize(Config::getLang("lang"), "moves"), 4, 0, false, false);
@@ -114,7 +114,7 @@ void selectMoves(std::shared_ptr<PKFilter> filter) {
 	}
 }
 
-void drawFilterMenu(const std::shared_ptr<PKFilter> filter) {
+void drawFilterMenu(const std::shared_ptr<pksm::PKFilter> filter) {
 	// Clear screen
 	drawImageDMA(0, 0, listBg, false, false);
 	printText(i18n::localize(Config::getLang("lang"), "filter"), 4, 0, false, false);
@@ -167,7 +167,7 @@ void drawFilterMenu(const std::shared_ptr<PKFilter> filter) {
 	}
 }
 
-void changeFilter(std::shared_ptr<PKFilter> filter) {
+void changeFilter(std::shared_ptr<pksm::PKFilter> filter) {
 	drawFilterMenu(filter);
 
 	// Set arrow position
@@ -313,8 +313,8 @@ void changeFilter(std::shared_ptr<PKFilter> filter) {
 						filter->species(selectItem(filter->species(), save->availableSpecies(), i18n::rawSpecies(Config::getLang("lang"))));
 						break;
 					} case 1: { // Nature
-						Nature nature = selectNature(filter->nature());
-						if(nature != Nature::INVALID)	filter->nature(nature);
+						pksm::Nature nature = selectNature(filter->nature());
+						if(nature != pksm::Nature::INVALID)	filter->nature(nature);
 						break;
 					} case 2: { // Ability
 						filter->ability(selectItem(filter->ability(), save->availableAbilities(), i18n::rawAbilities(Config::getLang("lang"))));
@@ -330,8 +330,8 @@ void changeFilter(std::shared_ptr<PKFilter> filter) {
 						filter->heldItem(selectItem<int>(filter->heldItem(), save->availableItems(), i18n::rawItems(Config::getLang("lang"))));
 						break;
 					} case 5: { // Ball
-						Ball ball = selectPokeball(filter->ball());
-						if(ball != Ball::INVALID)
+						pksm::Ball ball = selectPokeball(filter->ball());
+						if(ball != pksm::Ball::INVALID)
 							filter->ball(ball);
 						break;
 					} case 6: { // Alt. form

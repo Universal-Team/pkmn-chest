@@ -7,6 +7,7 @@
 #include "fileBrowse.hpp"
 #include "flashcard.hpp"
 #include "gui.hpp"
+#include "i18n.hpp"
 #include "input.hpp"
 #include "loader.hpp"
 #include "manager.hpp"
@@ -48,11 +49,11 @@ constexpr char pathFormat[][51] = {
 	"%s:/_nds/pkmn-chest/out/%s%03i -\n%s -\n%x%lx%s",
 };
 
-std::string getPkxOutputPath(const PKX &pkm, const std::string &boxName = "", bool insertNewlines = false) {
+std::string getPkxOutputPath(const pksm::PKX &pkm, const std::string &boxName = "", bool insertNewlines = false) {
 	char path[PATH_MAX];
 	if(pkm.alternativeForm()) {
 		snprintf(path, sizeof(path), pathFormat[insertNewlines],
-									 sdFound() ? "sd" : "fat",
+									 mainDrive().c_str(),
 									 (boxName == "" ? boxName : boxName + (insertNewlines ? "/\n" : "/")).c_str(),
 									 u16(pkm.species()),
 									 pkm.alternativeForm(),
@@ -62,7 +63,7 @@ std::string getPkxOutputPath(const PKX &pkm, const std::string &boxName = "", bo
 									 pkm.extension().c_str());
 	} else {
 		snprintf(path, sizeof(path), pathFormat[2+insertNewlines],
-									 sdFound() ? "sd" : "fat",
+									 mainDrive().c_str(),
 									 (boxName == "" ? boxName : boxName + (insertNewlines ? "/\n" : "/")).c_str(),
 									 u16(pkm.species()),
 									 pkm.nickname().c_str(),
@@ -264,11 +265,11 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				drawAMenuButtons(buttons, buttonMode);
 				drawBox(topScreen);
 			} else if(menuSelection == 2) { // Swap
-				std::vector<std::unique_ptr<PKX>> tempBox;
+				std::vector<std::unique_ptr<pksm::PKX>> tempBox;
 				bool shouldCopy[30];
 				// Copy save Pokémon to a buffer
 				for(int i=0;i<30;i++) {
-					if(save->pkm(currentSaveBox, i)->species() != Species::None)
+					if(save->pkm(currentSaveBox, i)->species() != pksm::Species::None)
 						tempBox.push_back(save->pkm(currentSaveBox, i));
 					else
 						tempBox.push_back(save->emptyPkm());
@@ -276,7 +277,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 
 				// Copy bank Pokémon to the save and add it to the Pokédex
 				for(int i=0;i<30;i++) {
-					if(Banks::bank->pkm(currentBankBox, i)->species() != Species::None) {
+					if(Banks::bank->pkm(currentBankBox, i)->species() != pksm::Species::None) {
 						if(save->availableSpecies().count(Banks::bank->pkm(currentBankBox, i)->species()) != 0) {
 							save->pkm(*save->transfer(*Banks::bank->pkm(currentBankBox, i)), currentSaveBox, i, false);
 							save->dex(*Banks::bank->pkm(currentBankBox, i));
@@ -319,12 +320,12 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				}
 			} else if(menuSelection == 4) { // Dump box
 				char path[PATH_MAX];
-				snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%s", sdFound() ? "sd" : "fat", topScreen ? Banks::bank->boxName(currentBankBox).c_str() : save->boxName(currentSaveBox).c_str());
+				snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%s", mainDrive().c_str(), topScreen ? Banks::bank->boxName(currentBankBox).c_str() : save->boxName(currentSaveBox).c_str());
 				mkdir(path, 0777);
 
 				for(int y=0;y<5;y++) {
 					for(int x=0;x<6;x++) {
-						if(currentPokemon(x, y)->species() != Species::None) {
+						if(currentPokemon(x, y)->species() != pksm::Species::None) {
 							FILE* out = fopen(getPkxOutputPath(*currentPokemon(x, y), topScreen ? Banks::bank->boxName(currentBankBox) : save->boxName(currentSaveBox)).c_str(), "wb");
 							if(out) {
 								fwrite(currentPokemon(x, y)->rawData(), 1, 136, out);
@@ -339,7 +340,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 
 				// Get formatted path for prompt
 				char outputPath[PATH_MAX], str[PATH_MAX];
-				snprintf(outputPath, sizeof(outputPath), "%s:/_nds/pkmn-chest/\nout/%s", sdFound() ? "sd" : "fat", (topScreen ? Banks::bank->boxName(currentBankBox) : save->boxName(currentSaveBox)).c_str());
+				snprintf(outputPath, sizeof(outputPath), "%s:/_nds/pkmn-chest/\nout/%s", mainDrive().c_str(), (topScreen ? Banks::bank->boxName(currentBankBox) : save->boxName(currentSaveBox)).c_str());
 				snprintf(str, sizeof(str), i18n::localize(Config::getLang("lang"), "dumpedTo").c_str(), outputPath);
 
 				Gui::prompt(str, i18n::localize(Config::getLang("lang"), "ok"));
@@ -369,51 +370,51 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				// Save path and chane to /_nds/pkmn-chest/in
 				char path[PATH_MAX];
 				getcwd(path, PATH_MAX);
-				chdir(sdFound() ? "sd:/_nds/pkmn-chest/in" : "fat:/_nds/pkmn-chest/in");
+				chdir((mainDrive() + ":/_nds/pkmn-chest/in").c_str());
 
 				// Get a pk4/5
 				std::string fileName = browseForFile({"pk3", "pk4", "pk5", "pk6", "pk7"}, false);
 
 				// If the fileName isn't blank, inject the Pokémon
 				if(fileName != "") {
-					Generation gen;
+					pksm::Generation gen;
 					switch(fileName[fileName.size()-1]) {
 						case '3':
-							gen = Generation::THREE;
+							gen = pksm::Generation::THREE;
 							break;
 						case '4':
-							gen = Generation::FOUR;
+							gen = pksm::Generation::FOUR;
 							break;
 						case '5':
-							gen = Generation::FOUR;
+							gen = pksm::Generation::FOUR;
 							break;
 						case '6':
-							gen = Generation::SIX;
+							gen = pksm::Generation::SIX;
 							break;
 						case '7':
 							switch(fileName[fileName.size()-2]) {
 								case 'k':
 								case 'K':
-									gen = Generation::SEVEN;
+									gen = pksm::Generation::SEVEN;
 									break;
 								case 'b': // Not currently supported
 								case 'B':
-									gen = Generation::LGPE;
+									gen = pksm::Generation::LGPE;
 									break;
 								default:
-									gen = Generation::UNUSED;
+									gen = pksm::Generation::UNUSED;
 									break;
 							}
 							break;
 						case '8': // Not currently supported
-							gen = Generation::EIGHT;
+							gen = pksm::Generation::EIGHT;
 							break;
 						default:
-							gen = Generation::UNUSED;
+							gen = pksm::Generation::UNUSED;
 							break;
 					}
 					
-					if(gen != Generation::UNUSED) {
+					if(gen != pksm::Generation::UNUSED) {
 						FILE* in = fopen(fileName.c_str(), "rb");
 
 						fseek(in, 0, SEEK_END);
@@ -455,70 +456,70 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 					}
 					updateOam();
 				}
-				std::unique_ptr<PKX> pkm = save->emptyPkm()->clone();
+				std::unique_ptr<pksm::PKX> pkm = save->emptyPkm()->clone();
 				pkm->TID(save->TID());
 				pkm->SID(save->SID());
 				pkm->language(getSafeLanguage(pkm->generation(), Config::getLang("lang")));
 				pkm->otName(save->otName());
 				pkm->otGender(save->gender());
-				pkm->ball(Ball::Poke);
+				pkm->ball(pksm::Ball::Poke);
 				pkm->encryptionConstant((((u32)randomNumbers()) % 0xFFFFFFFF) + 1);
 				pkm->version(save->version());
 				switch (pkm->version()) {
-					case GameVersion::R:
-					case GameVersion::S:
-					case GameVersion::E:
+					case pksm::GameVersion::R:
+					case pksm::GameVersion::S:
+					case pksm::GameVersion::E:
 						pkm->metLocation(0x0010); // Route 101 (RSE)
 						break;
-					case GameVersion::FR:
-					case GameVersion::LG:
+					case pksm::GameVersion::FR:
+					case pksm::GameVersion::LG:
 						pkm->metLocation(0x0065); // Route 1 (FRLG)
 						break;
-					case GameVersion::HG:
-					case GameVersion::SS:
+					case pksm::GameVersion::HG:
+					case pksm::GameVersion::SS:
 						pkm->metLocation(0x0095); // Route 1 (HGSS)
 						break;
-					case GameVersion::D:
-					case GameVersion::P:
-					case GameVersion::Pt:
+					case pksm::GameVersion::D:
+					case pksm::GameVersion::P:
+					case pksm::GameVersion::Pt:
 						pkm->metLocation(0x0010); // Route 201 (DPPt)
 						break;
-					case GameVersion::B:
-					case GameVersion::W:
-					case GameVersion::B2:
-					case GameVersion::W2:
+					case pksm::GameVersion::B:
+					case pksm::GameVersion::W:
+					case pksm::GameVersion::B2:
+					case pksm::GameVersion::W2:
 						pkm->metLocation(0x000E); // Route 1 (BWB2W2)
 						break;
-					case GameVersion::X:
-					case GameVersion::Y:
+					case pksm::GameVersion::X:
+					case pksm::GameVersion::Y:
 						pkm->metLocation(0x0008); // Route 1 (XY)
 						break;
-					case GameVersion::OR:
-					case GameVersion::AS:
+					case pksm::GameVersion::OR:
+					case pksm::GameVersion::AS:
 						pkm->metLocation(0x00CC); // Route 101 (ORAS)
 						break;
-					case GameVersion::SN:
-					case GameVersion::MN:
-					case GameVersion::US:
-					case GameVersion::UM:
+					case pksm::GameVersion::SN:
+					case pksm::GameVersion::MN:
+					case pksm::GameVersion::US:
+					case pksm::GameVersion::UM:
 						pkm->metLocation(0x0006); // Route 1 (SMUSUM)
 						break;
-					case GameVersion::GP:
-					case GameVersion::GE:
+					case pksm::GameVersion::GP:
+					case pksm::GameVersion::GE:
 						pkm->metLocation(0x0003); // Route 1 (LGPE)
 						break;
-					case GameVersion::SW:
-					case GameVersion::SH:
+					case pksm::GameVersion::SW:
+					case pksm::GameVersion::SH:
 						pkm->metLocation(0x000C); // Route 1 (SWSH)
 						break;
 					default:
 						break;
 				}
 				pkm->fixMoves();
-				pkm->PID(PKX::getRandomPID(pkm->species(), pkm->gender(), pkm->version(), pkm->nature(), pkm->alternativeForm(), pkm->abilityNumber(), pkm->PID(), pkm->generation()));
+				pkm->PID(pksm::PKX::getRandomPID(pkm->species(), pkm->gender(), pkm->version(), pkm->nature(), pkm->alternativeForm(), pkm->abilityNumber(), pkm->PID(), pkm->generation()));
 				pkm->metDate(Date::today());
-				pkm->metLevel(pkm->generation() <= Generation::THREE ? 5 : 1);
-				if(pkm->generation() == Generation::THREE) {
+				pkm->metLevel(pkm->generation() <= pksm::Generation::THREE ? 5 : 1);
+				if(pkm->generation() == pksm::Generation::THREE) {
 					pkm->level(5); // There was no level 1 before gen 4
 					std::string name = i18n::species(Config::getLang("lang"), pkm->species());
 					pkm->nickname(StringUtils::toUpper(name));

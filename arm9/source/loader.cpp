@@ -8,7 +8,7 @@
 
 static std::string saveFileName;
 
-std::shared_ptr<Sav> save;
+std::shared_ptr<pksm::Sav> save;
 
 bool loadSave(std::string savePath) {
 	save = nullptr;
@@ -21,7 +21,7 @@ bool loadSave(std::string savePath) {
 		std::shared_ptr<u8[]> saveData = std::shared_ptr<u8[]>(new u8[size]);
 		fread(saveData.get(), 1, size, in);
 		fclose(in);
-		save = Sav::getSave(saveData, size);
+		save = pksm::Sav::getSave(saveData, size);
 	} else {
 		saveFileName = "";
 		return false;
@@ -37,7 +37,7 @@ void saveChanges(std::string savePath) {
 	// Make backup
 	std::string saveFile = savePath.substr(savePath.find_last_of("/")+1);
 	char backupDir[PATH_MAX];
-	snprintf(backupDir, sizeof(backupDir), "%s:/_nds/pkmn-chest/backups/%s", sdFound() ? "sd" : "fat", saveFile.substr(0, saveFile.find_last_of(".")).c_str());
+	snprintf(backupDir, sizeof(backupDir), "%s:/_nds/pkmn-chest/backups/%s", mainDrive().c_str(), saveFile.substr(0, saveFile.find_last_of(".")).c_str());
 	mkdir(backupDir, 0777);
 
 	char backupPath[PATH_MAX];
@@ -45,7 +45,7 @@ void saveChanges(std::string savePath) {
 	snprintf(backupPath,
 			 sizeof(backupPath),
 			 "%s:/_nds/pkmn-chest/backups/%s/%.4ld%.2d%.2d-%.2d%.2d%.2d.sav.bak",
-			 sdFound() ? "sd" : "fat",
+			 mainDrive().c_str(),
 			 saveFile.substr(0, saveFile.find_last_of(".")).c_str(),
 			 now.year(),
 			 now.month(),

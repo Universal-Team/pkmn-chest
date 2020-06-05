@@ -1,3 +1,4 @@
+#include "flashcard.hpp"
 #include <fat.h>
 #include <nds.h>
 #include <stdio.h>
@@ -39,4 +40,8 @@ bool bothSDandFlashcard(void) {
 	} else {
 		return false;
 	}
+}
+
+std::string mainDrive(void) {
+	return sdFound() ? "sd" : "fat";
 }

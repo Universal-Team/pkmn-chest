@@ -7,6 +7,7 @@
 #include "config.hpp"
 #include "filter.hpp"
 #include "flashcard.hpp"
+#include "i18n.hpp"
 #include "input.hpp"
 #include "loader.hpp"
 #include "loading.hpp"
@@ -28,10 +29,10 @@ std::string savePath;
 Image arrowBlueTop, arrowRedTop, arrowYellowTop, arrowBlue, arrowRed, arrowYellow, ball[BALL_COUNT], bankBox, boxBgTop, boxButton, infoBox, itemIcon, keyboardKey, listBg, menuBg, menuButton, menuButtonBlue, party, search, setToSelf, shiny;
 std::vector<Image> types;
 FILE* pokemonGFX;
-std::shared_ptr<PKFilter> filter = std::make_shared<PKFilter>();
+std::shared_ptr<pksm::PKFilter> filter = std::make_shared<pksm::PKFilter>();
 
 struct HeldPkm {
-	std::unique_ptr<PKX> pkm;
+	std::unique_ptr<pksm::PKX> pkm;
 	int position, x, y;
 };
 
@@ -39,66 +40,66 @@ int currentBox(void) {
 	return topScreen ? currentBankBox : currentSaveBox;
 }
 
-std::unique_ptr<PKX> currentPokemon(int x, int y) {
+std::unique_ptr<pksm::PKX> currentPokemon(int x, int y) {
 	if(topScreen)	return Banks::bank->pkm(currentBox(), (y*6)+x);
 	else if(inParty)	return save->pkm((y*2)+x);
 	else	return save->pkm(currentBox(), (y*6)+x);
 }
 
-int getPokemonIndex(const PKX &pkm) {
+int getPokemonIndex(const pksm::PKX &pkm) {
 	return getPokemonIndex(pkm.species(), pkm.alternativeForm(), pkm.gender(), pkm.egg());
 }
 
-int getPokemonIndex(Species species, u16 alternativeForm, Gender gender, bool egg) {
-	if(species > Species::Genesect) {
+int getPokemonIndex(pksm::Species species, u16 alternativeForm, pksm::Gender gender, bool egg) {
+	if(species > pksm::Species::Genesect) {
 		return 0;
 	} else if(egg) {
 		return 651;
 	} else if(alternativeForm > 0) {
 		switch(species) {
-			case Species::Unown:
+			case pksm::Species::Unown:
 				return 651 + alternativeForm;
-			case Species::Castform:
+			case pksm::Species::Castform:
 				return 678 + alternativeForm;
-			case Species::Deoxys:
+			case pksm::Species::Deoxys:
 				return 681 + alternativeForm;
-			case Species::Burmy:
+			case pksm::Species::Burmy:
 				return 684 + alternativeForm;
-			case Species::Wormadam:
+			case pksm::Species::Wormadam:
 				return 686 + alternativeForm;
-			case Species::Shellos:
-			case Species::Gastrodon:
+			case pksm::Species::Shellos:
+			case pksm::Species::Gastrodon:
 				return u16(species) + 266 + alternativeForm;
-			case Species::Rotom:
+			case pksm::Species::Rotom:
 				return 690 + alternativeForm;
-			case Species::Giratina:
+			case pksm::Species::Giratina:
 				return 695 + alternativeForm;
-			case Species::Shaymin:
+			case pksm::Species::Shaymin:
 				return 696 + alternativeForm;
-			case Species::Basculin:
+			case pksm::Species::Basculin:
 				return 698 + alternativeForm;
-			case Species::Darmanitan:
+			case pksm::Species::Darmanitan:
 				return 699 + alternativeForm;
-			case Species::Deerling:
+			case pksm::Species::Deerling:
 				return 700 + alternativeForm;
-			case Species::Sawsbuck:
+			case pksm::Species::Sawsbuck:
 				return 703 + alternativeForm;
-			case Species::Meloetta:
+			case pksm::Species::Meloetta:
 				return 708 + alternativeForm;
-			case Species::Tornadus:
-			case Species::Thundurus:
+			case pksm::Species::Tornadus:
+			case pksm::Species::Thundurus:
 				return u16(species) + 68 + alternativeForm;
-			case Species::Landorus:
-			case Species::Kyurem:
+			case pksm::Species::Landorus:
+			case pksm::Species::Kyurem:
 				return u16(species) + 66 + alternativeForm;
-			case Species::Keldeo:
+			case pksm::Species::Keldeo:
 				return 714 + alternativeForm;
 			default:
 				break;
 		}
-	} else if(species == Species::Unfezant && gender == Gender::Female) {
+	} else if(species == pksm::Species::Unfezant && gender == pksm::Gender::Female) {
 		return 698;
-	} else if((species == Species::Frillish || species == Species::Jellicent) && gender == Gender::Female) {
+	} else if((species == pksm::Species::Frillish || species == pksm::Species::Jellicent) && gender == pksm::Gender::Female) {
 		return u16(species) + 115;
 	}
 
@@ -152,9 +153,9 @@ void fillArrow(int arrowMode) {
 	}
 }
 
-void loadTypes(Language lang) {
+void loadTypes(pksm::Language lang) {
 	std::string langStr = i18n::langString(lang);
-	Language tempLang = (access(("nitro:/i18n/"+StringUtils::toLower(langStr)+"/types/0.gfx").c_str(), F_OK) == 0) ? lang : Language::ENG;
+	pksm::Language tempLang = (access(("nitro:/i18n/"+StringUtils::toLower(langStr)+"/types/0.gfx").c_str(), F_OK) == 0) ? lang : pksm::Language::ENG;
 	langStr = i18n::langString(tempLang);
 	types.clear();
 	for(int i=0;i<17;i++) {
@@ -284,34 +285,34 @@ std::string boxBgPath(bool top, int box) {
 	if(top)	return (wideScreen ? "/graphics/box/chestWide.gfx" : "/graphics/box/chest.gfx");
 	std::string game;
 	switch(save->version()) {
-		case GameVersion::S: // Sapphire
-		case GameVersion::R: // Ruby
+		case pksm::GameVersion::S: // Sapphire
+		case pksm::GameVersion::R: // Ruby
 			game = "rs";
 			break;
-		case GameVersion::E: // Emerald
+		case pksm::GameVersion::E: // Emerald
 			game = "e";
 			break;
-		case GameVersion::FR: // FireRed
-		case GameVersion::LG: // LeafGreen
+		case pksm::GameVersion::FR: // FireRed
+		case pksm::GameVersion::LG: // LeafGreen
 			game = box < 12 ? "rs" : "frlg";
 			break;
-		case GameVersion::D: // Diamond
-		case GameVersion::P: // Pearl
+		case pksm::GameVersion::D: // Diamond
+		case pksm::GameVersion::P: // Pearl
 			game = "dp";
 			break;
-		case GameVersion::Pt: // Platinum
+		case pksm::GameVersion::Pt: // Platinum
 			game = box < 16 ? "dp" : "pt";
 			break;
-		case GameVersion::HG: // HeartGold
-		case GameVersion::SS: // SoulSilver
+		case pksm::GameVersion::HG: // HeartGold
+		case pksm::GameVersion::SS: // SoulSilver
 			game = box < 16 ? "dp" : "hgss";
 			break;
-		case GameVersion::W: // White
-		case GameVersion::B: // Black
+		case pksm::GameVersion::W: // White
+		case pksm::GameVersion::B: // Black
 			game = "bw";
 			break;
-		case GameVersion::W2: // White 2
-		case GameVersion::B2: // Black 2
+		case pksm::GameVersion::W2: // White 2
+		case pksm::GameVersion::B2: // Black 2
 		default:
 			game = box < 16 ? "bw" : "b2w2";
 			break;
@@ -325,8 +326,8 @@ void drawBox(bool top) {
 
 	for(int i=0;i<30;i++) {
 		// Fill Pokémon Sprites
-		std::unique_ptr<PKX> tempPkm = (top ? Banks::bank->pkm(currentBankBox, i) : save->pkm(currentSaveBox, i));
-		if(tempPkm->species() != Species::None) {
+		std::unique_ptr<pksm::PKX> tempPkm = (top ? Banks::bank->pkm(currentBankBox, i) : save->pkm(currentSaveBox, i));
+		if(tempPkm->species() != pksm::Species::None) {
 			Image image = loadPokemonSprite(getPokemonIndex(*tempPkm));
 			fillSpriteImage(i, top, 32, 0, 0, image);
 			if(!top)	setSpriteVisibility(i, top, true);
@@ -357,11 +358,11 @@ void drawBox(bool top) {
 	}
 }
 
-void drawPokemonInfo(const PKX &pkm) {
+void drawPokemonInfo(const pksm::PKX &pkm) {
 	// Clear previous draw
 	drawRectangle(164, 2, infoBox.width, infoBox.height-16, CLEAR, true, true);
 
-	if(pkm.species() > Species::None && pkm.species() <= Species::Genesect) {
+	if(pkm.species() > pksm::Species::None && pkm.species() <= pksm::Species::Genesect) {
 		// Show shiny star if applicable
 		if(pkm.shiny())	drawImageScaled(170 + (69 * WIDE_SCALE), 45, WIDE_SCALE, 1, shiny, true, true);
 
@@ -371,8 +372,8 @@ void drawPokemonInfo(const PKX &pkm) {
 		printTextTintedScaled(str, WIDE_SCALE, 1, TextColor::gray, 170, 8, true, true);
 
 		// Print name
-		if(pkm.nicknamed())	printTextTintedMaxW(pkm.nickname(), 80 * WIDE_SCALE, 1, (pkm.gender() ? (pkm.gender() == Gender::Female ? TextColor::red : TextColor::gray) : TextColor::blue), 170, 25, true, true, WIDE_SCALE);
-		else	printTextTintedMaxW(i18n::species(Config::getLang("lang"), pkm.species()), 80 * WIDE_SCALE, 1, (pkm.gender() ? (pkm.gender() == Gender::Female ? TextColor::red : TextColor::gray) : TextColor::blue), 170, 25, true, true, WIDE_SCALE);
+		if(pkm.nicknamed())	printTextTintedMaxW(pkm.nickname(), 80 * WIDE_SCALE, 1, (pkm.gender() ? (pkm.gender() == pksm::Gender::Female ? TextColor::red : TextColor::gray) : TextColor::blue), 170, 25, true, true, WIDE_SCALE);
+		else	printTextTintedMaxW(i18n::species(Config::getLang("lang"), pkm.species()), 80 * WIDE_SCALE, 1, (pkm.gender() ? (pkm.gender() == pksm::Gender::Female ? TextColor::red : TextColor::gray) : TextColor::blue), 170, 25, true, true, WIDE_SCALE);
 
 		// Draw types
 		drawImageScaled(170, 42-((types[u8(pkm.type1())].height-12)/2), WIDE_SCALE, 1, types[u8(pkm.type1())], true, true);
@@ -385,8 +386,8 @@ void drawPokemonInfo(const PKX &pkm) {
 	}
 }
 
-void setHeldPokemon(const PKX &pkm) {
-	if(pkm.species() != Species::None) {
+void setHeldPokemon(const pksm::PKX &pkm) {
+	if(pkm.species() != pksm::Species::None) {
 		Image image = loadPokemonSprite(getPokemonIndex(pkm));
 		fillSpriteImage(heldPokemonID, true, 32, 0, 0, image);
 		fillSpriteImage(heldPokemonID, false, 32, 0, 0, image);
@@ -395,20 +396,20 @@ void setHeldPokemon(const PKX &pkm) {
 
 void manageBoxes(void) {
 	switch(save->generation()) {
-		case Generation::THREE:
+		case pksm::Generation::THREE:
 			pkmnX = 7;
 			pkmnY = 26;
 			boxTitleX = -44;
 			boxTitleY = 18;
 			break;
-		case Generation::FOUR:
+		case pksm::Generation::FOUR:
 			pkmnX = 10;
 			pkmnY = 30;
 			boxTitleX = -42;
 			boxTitleY = 19;
 			break;
 		default:
-		case Generation::FIVE:
+		case pksm::Generation::FIVE:
 			pkmnX = 8;
 			pkmnY = 32;
 			boxTitleX = -44;
@@ -417,12 +418,12 @@ void manageBoxes(void) {
 	}
 
 	// Set starting values in filter
-	if(filter->gender() == Gender::INVALID)
-		filter->gender(Gender::Genderless);
-	if(filter->ball() == Ball::INVALID)
-		filter->ball(Ball::Poke);
-	if(filter->ability() == Ability::INVALID)
-		filter->ability(Ability::None);
+	if(filter->gender() == pksm::Gender::INVALID)
+		filter->gender(pksm::Gender::Genderless);
+	if(filter->ball() == pksm::Ball::INVALID)
+		filter->ball(pksm::Ball::Poke);
+	if(filter->ability() == pksm::Ability::INVALID)
+		filter->ability(pksm::Ability::None);
 
 	resetPokemonSpritesPos(true);
 	resetPokemonSpritesPos(false);
@@ -575,8 +576,8 @@ void manageBoxes(void) {
 						// If in the held Pokémon's previous spot, just put held Pokémon back down
 						returnPokemon:
 						for(unsigned i=0;i<heldPokemon.size();i++) {
-							if(heldInParty)	setSpriteVisibility(partyIconID[heldPokemon[i].position], heldPokemonScreen, heldPokemon[i].pkm->species() != Species::None);
-							else if(!heldPokemonScreen)	setSpriteVisibility(heldPokemon[i].position, heldPokemonScreen, heldPokemon[i].pkm->species() != Species::None);
+							if(heldInParty)	setSpriteVisibility(partyIconID[heldPokemon[i].position], heldPokemonScreen, heldPokemon[i].pkm->species() != pksm::Species::None);
+							else if(!heldPokemonScreen)	setSpriteVisibility(heldPokemon[i].position, heldPokemonScreen, heldPokemon[i].pkm->species() != pksm::Species::None);
 							else {
 								Image image = loadPokemonSprite(getPokemonIndex(*heldPokemon[i].pkm));
 								fillSpriteImage(heldPokemon[i].position, heldPokemonScreen, 32, 0, 0, image);
@@ -590,7 +591,7 @@ void manageBoxes(void) {
 						heldPokemon.clear();
 						heldPokemonBox = -1;
 						if(partyShown && !topScreen)	moveParty(arrowMode, heldPokemon.size() > 0);
-					} else if(!heldMode || currentPokemon(arrowX, arrowY)->species() == Species::None) {
+					} else if(!heldMode || currentPokemon(arrowX, arrowY)->species() == pksm::Species::None) {
 						int canPlace = true;
 						for(unsigned i=0;i<heldPokemon.size();i++) {
 							if(heldPokemon[i].x-heldPokemon[0].x > 5-arrowX)	canPlace = false;
@@ -610,8 +611,8 @@ void manageBoxes(void) {
 								if(topScreen || save->availableSpecies().count(heldPokemon[i].pkm->species()) != 0) {
 									// If not copying / there isn't a Pokémon at the new spot, move Pokémon
 									// Save the Pokémon at the cursor's postion to a temp variable
-									std::unique_ptr<PKX> tempPkm;
-									if(currentPokemon(arrowX+heldPokemon[i].x, arrowY+heldPokemon[i].y)->species() != Species::None)
+									std::unique_ptr<pksm::PKX> tempPkm;
+									if(currentPokemon(arrowX+heldPokemon[i].x, arrowY+heldPokemon[i].y)->species() != pksm::Species::None)
 										tempPkm = currentPokemon(arrowX+heldPokemon[i].x, arrowY+heldPokemon[i].y);
 									else
 										tempPkm = save->emptyPkm();
@@ -772,7 +773,7 @@ void manageBoxes(void) {
 						}
 						updateOam();
 					}
-				} else if(currentPokemon(arrowX, arrowY)->species() != Species::None) {
+				} else if(currentPokemon(arrowX, arrowY)->species() != pksm::Species::None) {
 					int temp = 1;
 					if(arrowMode == 1 || (temp = aMenu(arrowX, arrowY, aMenuButtons, 0))) {
 						// If no pokemon is currently held and there is one at the cursor, pick it up

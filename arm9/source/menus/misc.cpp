@@ -6,6 +6,7 @@
 #include "config.hpp"
 #include "flashcard.hpp"
 #include "input.hpp"
+#include "i18n.hpp"
 #include "i18n_ext.hpp"
 #include "loader.hpp"
 #include "manager.hpp"
@@ -30,7 +31,7 @@ struct Text {
 std::vector<std::string> statsLabels = {"hp", "attack", "defense", "spAtk", "spDef", "speed", "base", "iv", "ev", "total"};
 std::vector<std::string> originLabels = {"metLevel", "metYear", "metMonth", "metDay", "metLocation", "originGame", "fatefulEncounter"};
 
-static constexpr Stat statOrder[] = {Stat::HP, Stat::ATK, Stat::DEF, Stat::SPATK, Stat::SPDEF, Stat::SPD};
+static constexpr pksm::Stat statOrder[] = {pksm::Stat::HP, pksm::Stat::ATK, pksm::Stat::DEF, pksm::Stat::SPATK, pksm::Stat::SPDEF, pksm::Stat::SPD};
 
 void drawMiniBoxes(int currentBox) {
 	if(currentBox < 0)	currentBox = (topScreen ? Banks::bank->boxes()-1 : save->maxBoxes()-1)+currentBox;
@@ -46,9 +47,9 @@ void drawMiniBoxes(int currentBox) {
 		drawRectangle(170, 10+(i*33), 38, 32, WHITE, false, true);
 		drawOutline(170, 10+(i*33), 38, 32, DARK_GRAY, false, true);
 		for(int j=0;j<30;j++) {
-			if((topScreen ? Banks::bank->pkm(currentBox, j)->species() : save->pkm(currentBox, j)->species()) != Species::None) {
+			if((topScreen ? Banks::bank->pkm(currentBox, j)->species() : save->pkm(currentBox, j)->species()) != pksm::Species::None) {
 				// Type 1
-				Type type = topScreen ? Banks::bank->pkm(currentBox, j)->type1() : save->pkm(currentBox, j)->type1();
+				pksm::Type type = topScreen ? Banks::bank->pkm(currentBox, j)->type1() : save->pkm(currentBox, j)->type1();
 				drawRectangle(172+((j-((j/6)*6))*6), 12+((j/6)*6)+(i*33), 2, 4, 0xD0 + u8(type), false, true);
 
 				// Type 2
@@ -110,11 +111,11 @@ int selectBox(int currentBox) {
 	}
 }
 
-int selectForm(const PKX &pkm) {
+int selectForm(const pksm::PKX &pkm) {
 	// Exit if only one form
 	if(save->formCount(pkm.species()) == 1)	return -1;
 
-	if(pkm.species() == Species::Unown) {
+	if(pkm.species() == pksm::Species::Unown) {
 		int num = tolower(Input::getLine(1)[0]);
 
 		if(num == 33)	return 26; // !
@@ -293,7 +294,7 @@ std::string selectItem(int current, const std::vector<std::string> &strings) {
 	}
 }
 
-void selectMoves(PKX &pkm) {
+void selectMoves(pksm::PKX &pkm) {
 	// Clear screen
 	drawImageDMA(0, 0, listBg, false, false);
 	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
@@ -366,7 +367,7 @@ void selectMoves(PKX &pkm) {
 	}
 }
 
-Nature selectNature(Nature currentNature) {
+pksm::Nature selectNature(pksm::Nature currentNature) {
 	// Clear screen
 	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
 	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
@@ -391,7 +392,7 @@ Nature selectNature(Nature currentNature) {
 	// Print natures
 	for(int y=0;y<5;y++) {
 		for(int x=0;x<5;x++) {
-			printTextCenteredMaxW(i18n::nature(Config::getLang("lang"), Nature((y*5)+x)), 48, 1, ((x-2)*48), (y*32)+32, false, false);
+			printTextCenteredMaxW(i18n::nature(Config::getLang("lang"), pksm::Nature((y*5)+x)), 48, 1, ((x-2)*48), (y*32)+32, false, false);
 		}
 	}
 
@@ -423,10 +424,10 @@ Nature selectNature(Nature currentNature) {
 			else arrowX=0;
 		} else if(pressed & KEY_A) {
 			Sound::play(Sound::click);
-			return Nature((selection*5)+arrowX);
+			return pksm::Nature((selection*5)+arrowX);
 		} else if(pressed & KEY_B) {
 			Sound::play(Sound::back);
-			return Nature::INVALID;
+			return pksm::Nature::INVALID;
 		} else if(pressed & KEY_TOUCH) {
 			touchPosition touch;
 			touchRead(&touch);
@@ -434,21 +435,21 @@ Nature selectNature(Nature currentNature) {
 				for(int x=0;x<5;x++) {
 					if(touch.px > (x*48)+8 && touch.px < (x*48)+56 && touch.py > (y*32)+8 && touch.py < (y*32)+56) {
 						Sound::play(Sound::click);
-						return Nature((y*5)+x);
+						return pksm::Nature((y*5)+x);
 					}
 				}
 			}
 		}
 
 		// Move arrow
-		setSpritePosition(arrowID, false, (arrowX*48)+(getTextWidthMaxW(i18n::nature(Config::getLang("lang"), Nature((selection*5)+arrowX)), 48)/2)+28, (selection*32)+24);
+		setSpritePosition(arrowID, false, (arrowX*48)+(getTextWidthMaxW(i18n::nature(Config::getLang("lang"), pksm::Nature((selection*5)+arrowX)), 48)/2)+28, (selection*32)+24);
 		updateOam();
 	}
 }
 
-Ball selectPokeball(Ball currentBall) {
-	if(currentBall < Ball::None || currentBall > Ball::Beast)
-		currentBall = Ball::Poke;
+pksm::Ball selectPokeball(pksm::Ball currentBall) {
+	if(currentBall < pksm::Ball::None || currentBall > pksm::Ball::Beast)
+		currentBall = pksm::Ball::Poke;
 
 	// Clear screen
 	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
@@ -494,25 +495,25 @@ Ball selectPokeball(Ball currentBall) {
 			if(arrowX < 4)	arrowX++;
 			else arrowX=0;
 		} else if(pressed & KEY_A) {
-			if(!(save->generation() < Generation::FIVE && (selection*5)+arrowX == 24)) {
+			if(!(save->generation() < pksm::Generation::FIVE && (selection*5)+arrowX == 24)) {
 				Sound::play(Sound::click);
 				resetPokemonSpritesPos(false);
-				return Ball((selection * 5) + arrowX + 1);
+				return pksm::Ball((selection * 5) + arrowX + 1);
 			}
 		} else if(pressed & KEY_B) {
 			Sound::play(Sound::back);
 			resetPokemonSpritesPos(false);
-			return Ball::INVALID;
+			return pksm::Ball::INVALID;
 		} else if(pressed & KEY_TOUCH) {
 			touchPosition touch;
 			touchRead(&touch);
 			for(int y=0;y<5;y++) {
 				for(int x=0;x<5;x++) {
 					if(touch.px > (x*48)+8 && touch.px < (x*48)+56 && touch.py > (y*32)+8 && touch.py < (y*32)+56) {
-						if(!(save->generation() < Generation::FIVE && (y*5)+x == 24)) {
+						if(!(save->generation() < pksm::Generation::FIVE && (y*5)+x == 24)) {
 							Sound::play(Sound::click);
 							resetPokemonSpritesPos(false);
-							return Ball((y*5)+x+1);
+							return pksm::Ball((y*5)+x+1);
 						}
 					}
 				}
@@ -598,7 +599,7 @@ int selectWallpaper(int currentWallpaper) {
 	}
 }
 
-void drawOriginPage(const PKX &pkm, std::vector<std::string> &varText) {
+void drawOriginPage(const pksm::PKX &pkm, std::vector<std::string> &varText) {
 	// Clear screen
 	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 
@@ -618,7 +619,7 @@ void drawOriginPage(const PKX &pkm, std::vector<std::string> &varText) {
 	}
 }
 
-void selectOrigin(PKX &pkm) {
+void selectOrigin(pksm::PKX &pkm) {
 	std::vector<std::string> varText;
 	drawImageDMA(0, 0, listBg, false, false);
 	drawOriginPage(pkm, varText);
@@ -738,7 +739,7 @@ void selectOrigin(PKX &pkm) {
 
 					break;
 				} case 5: { // Game
-					GameVersion ver = selectItem<GameVersion>(pkm.version(), 0, i18n::rawGames(Config::getLang("lang")).size(), i18n::rawGames(Config::getLang("lang")));
+					pksm::GameVersion ver = selectItem<pksm::GameVersion>(pkm.version(), 0, i18n::rawGames(Config::getLang("lang")).size(), i18n::rawGames(Config::getLang("lang")));
 					pkm.version(ver);
 					break;
 				} case 6: { // Fateful encounter
@@ -756,7 +757,7 @@ void selectOrigin(PKX &pkm) {
 	}
 }
 
-void drawStatsPage(const PKX &pkm, bool background) {
+void drawStatsPage(const pksm::PKX &pkm, bool background) {
 	if(background) {
 		// Clear the screen
 		drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
@@ -815,7 +816,7 @@ void drawStatsPage(const PKX &pkm, bool background) {
 	drawImage(24+getTextWidth(i18n::localize(Config::getLang("lang"), "hpType")+":"), 120, types[u8(pkm.hpType())], false, true);
 }
 
-void selectStats(PKX &pkm) {
+void selectStats(pksm::PKX &pkm) {
 	drawStatsPage(pkm, true);
 	setSpritePosition(arrowID, false, 128+(textStatsC2[0].x+(getTextWidth(textStatsC2[0].text)/2))+2, textStatsC2[0].y-6);
 	setSpriteVisibility(arrowID, false, true);
@@ -874,8 +875,8 @@ void selectStats(PKX &pkm) {
 			setSpriteVisibility(arrowID, false, false);
 			updateOam();
 			if(selection == 6) { // Hidden Power Type
-				Type type = selectHPType(pkm.hpType());
-				if(type != Type::INVALID)	pkm.hpType(type);
+				pksm::Type type = selectHPType(pkm.hpType());
+				if(type != pksm::Type::INVALID)	pkm.hpType(type);
 			} else if(column == 0) { // IV
 				int num = Input::getInt(31);
 				if(num != -1)	pkm.iv(statOrder[selection], num);
@@ -903,7 +904,7 @@ void selectStats(PKX &pkm) {
 	}
 }
 
-Type selectHPType(Type type) {
+pksm::Type selectHPType(pksm::Type type) {
 	// Clear screen
 	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
 	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
@@ -950,11 +951,11 @@ Type selectHPType(Type type) {
 		} else if(pressed & KEY_A) {
 			Sound::play(Sound::click);
 			resetPokemonSpritesPos(false);
-			return Type((selection * 4) + arrowX + 1);
+			return pksm::Type((selection * 4) + arrowX + 1);
 		} else if(pressed & KEY_B) {
 			Sound::play(Sound::back);
 			resetPokemonSpritesPos(false);
-			return Type::INVALID;
+			return pksm::Type::INVALID;
 		} else if(pressed & KEY_TOUCH) {
 			touchPosition touch;
 			touchRead(&touch);
@@ -963,7 +964,7 @@ Type selectHPType(Type type) {
 					if(touch.px > (x*52)+34 && touch.px < (x*52)+34+types[0].width && touch.py > (y*32)+42 && touch.py < (y*32)+42+types[0].height) {
 						Sound::play(Sound::click);
 						resetPokemonSpritesPos(false);
-						return Type((y * 4) + x + 1);
+						return pksm::Type((y * 4) + x + 1);
 					}
 				}
 			}

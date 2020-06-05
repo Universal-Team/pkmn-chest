@@ -25,7 +25,7 @@ int getMaxItem(int pouchIndex) {
 	return 0;
 }
 
-void drawBag(Sav::Pouch pouch, int maxItem, int screenPos, bool background) {
+void drawBag(pksm::Sav::Pouch pouch, int maxItem, int screenPos, bool background) {
 	// Clear text
 	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 
@@ -72,7 +72,7 @@ void editBag(void) {
 		} while(!held);
 
 		if(pressed & KEY_A) {
-			if(save->pouches()[selectedPouch].first != Sav::Pouch::KeyItem) {
+			if(save->pouches()[selectedPouch].first != pksm::Sav::Pouch::KeyItem) {
 				Sound::play(Sound::click);
 				optionSelected = true;
 			}
@@ -136,14 +136,14 @@ void editBag(void) {
 				if(touch.px <= 30 && touch.py >= 16+(i*16) && touch.py <= 16+((i+1)*16)) {
 					column = 0;
 					selection = screenPos+i;
-					if(save->pouches()[selectedPouch].first != Sav::Pouch::KeyItem) {
+					if(save->pouches()[selectedPouch].first != pksm::Sav::Pouch::KeyItem) {
 						optionSelected = true;
 					}
 					break;
 				} else if(touch.px > 30 && touch.px <= 160 && touch.py >= 16+(i*16) && touch.py <= 16+((i+1)*16)) {
 					column = 1;
 					selection = screenPos+i;
-					if(save->pouches()[selectedPouch].first != Sav::Pouch::KeyItem) {
+					if(save->pouches()[selectedPouch].first != pksm::Sav::Pouch::KeyItem) {
 						optionSelected = true;
 					}
 					break;
@@ -164,12 +164,12 @@ void editBag(void) {
 			if(column == 0) {
 				int num = Input::getInt(save->item(save->pouches()[selectedPouch].first, selection)->maxCount());
 				if(num != -1) {
-					std::unique_ptr<Item> item = save->item(save->pouches()[selectedPouch].first, selection);
+					std::unique_ptr<pksm::Item> item = save->item(save->pouches()[selectedPouch].first, selection);
 					item->count(num);
 					save->item(*item, save->pouches()[selectedPouch].first, selection);
 				}
 			} else if(column == 1) {
-				std::unique_ptr<Item> item = save->item(save->pouches()[selectedPouch].first, selection);
+				std::unique_ptr<pksm::Item> item = save->item(save->pouches()[selectedPouch].first, selection);
 
 				// Create list of valid items
 				int currentItem = 0;
@@ -190,7 +190,7 @@ void editBag(void) {
 							save->item(*save->item(save->pouches()[selectedPouch].first, i), save->pouches()[selectedPouch].first, i-1);
 						}
 						// And clear the last one
-						Item4 emptyItem;
+						pksm::Item4 emptyItem;
 						save->item(emptyItem, save->pouches()[selectedPouch].first, save->pouches()[selectedPouch].second);
 						maxItem--;
 					} else {

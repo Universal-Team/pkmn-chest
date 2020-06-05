@@ -41,7 +41,7 @@ std::vector<std::string> songs = {"off", "center1", "center3", "center4", "cente
 std::vector<std::string> optionsText;
 
 const std::vector<std::string> langNames = {"Bruh", "Deutsch", "English", "Español", "Français", "Bahasa Indonesia", "Italiano", "Lietuvių", "Polski", "Português", "Русский", "中文 (简体)", "中文 (繁體)", "日本語", "한국"};
-const std::vector<Language> guiLangs = {Language::BRH, Language::GER, Language::ENG, Language::SPA, Language::FRE, Language::IND, Language::ITA, Language::LIT, Language::POL, Language::POR, Language::RUS, Language::CHS, Language::CHT, Language::JPN, Language::KOR};
+const std::vector<pksm::Language> guiLangs = {pksm::Language::BRH, pksm::Language::GER, pksm::Language::ENG, pksm::Language::SPA, pksm::Language::FRE, pksm::Language::IND, pksm::Language::ITA, pksm::Language::LIT, pksm::Language::POL, pksm::Language::POR, pksm::Language::RUS, pksm::Language::CHS, pksm::Language::CHT, pksm::Language::JPN, pksm::Language::KOR};
 
 void drawChestFileMenu(void) {
 	// Draw background
@@ -123,7 +123,7 @@ void chestFileMenu(void) {
 				} case 2: { // Delete
 					char path[PATH_MAX];
 					getcwd(path, PATH_MAX);
-					chdir(sdFound() ? "sd:/_nds/pkmn-chest/banks" : "fat:/_nds/pkmn-chest/banks");
+					chdir((mainDrive() + ":/_nds/pkmn-chest/banks").c_str());
 					std::vector<std::string> extList;
 					extList.push_back(".bnk");
 					std::string str = browseForFile(extList, false);
@@ -137,7 +137,7 @@ void chestFileMenu(void) {
 				} case 3: { // Change
 					char path[PATH_MAX];
 					getcwd(path, PATH_MAX);
-					chdir(sdFound() ? "sd:/_nds/pkmn-chest/banks" : "fat:/_nds/pkmn-chest/banks");
+					chdir((mainDrive() + ":/_nds/pkmn-chest/banks").c_str());
 					std::vector<std::string> extList;
 					extList.push_back(".bnk");
 					std::string str = browseForFile(extList, false);
@@ -335,11 +335,11 @@ void configMenu(void) {
 					char startPath[PATH_MAX];
 					getcwd(startPath, PATH_MAX);
 
-					chdir(sdFound() ? "sd:/_nds/pkmn-chest/themes" : "fat:/_nds/pkmn-chest/themes");
+					chdir((mainDrive() + ":/_nds/pkmn-chest/themes").c_str());
 					std::string themePath = browseForFile({}, false, true);
 
 					if(themePath != "") {
-						Config::setString("themeDir", (sdFound() ? "sd:/_nds/pkmn-chest/themes/" : "fat:/_nds/pkmn-chest/themes/") + themePath);
+						Config::setString("themeDir", mainDrive() + ":/_nds/pkmn-chest/themes/" + themePath);
 						Colors::load();
 						loadGraphics();
 						loadFont();

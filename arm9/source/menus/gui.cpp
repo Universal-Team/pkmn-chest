@@ -54,6 +54,10 @@ void Gui::prompt(std::string message, const std::string &confirm) {
 	}
 }
 
+void Gui::warn(int message, const std::string &confirm) {
+	warn(std::to_string(message), confirm);
+}
+
 void Gui::warn(std::string message, const std::string &confirm) {
 	// Get height
 	int lines = 2;

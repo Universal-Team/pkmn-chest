@@ -22,24 +22,24 @@ int currentBox(void);
  * Returns the Pokémon in the provided slot
  * on the cursor's current screen
  */
-std::unique_ptr<PKX> currentPokemon(int x, int y);
+std::unique_ptr<pksm::PKX> currentPokemon(int x, int y);
 
 /*
  * Gets the image offset for a Pokémon
- * const PKX &pkm is the Pokémon to get the offset for
+ * const pksm::PKX &pkm is the Pokémon to get the offset for
  * Returns an int of the offset to use
  */
-int getPokemonIndex(const PKX &pkm);
+int getPokemonIndex(const pksm::PKX &pkm);
 
 /*
  * Gets the image offset for a Pokémon
- * Species species is the Species of the Pokémon
+ * pksm::Species species is the Species of the Pokémon
  * u16 alternativeForm is the alternative form of the Pokémon
- * Gender gender is the Gender of the Pokémon
+ * pksm::Gender gender is the Gender of the Pokémon
  * bool egg is whether the Pokémon is in an egg
  * Returns an int of the offset to use
  */
-int getPokemonIndex(Species species, u16 alternativeForm, Gender gender, bool egg);
+int getPokemonIndex(pksm::Species species, u16 alternativeForm, pksm::Gender gender, bool egg);
 
 /*
  * Loads a Pokémon sprite into an Image struct
@@ -60,9 +60,9 @@ void fillArrow(int arrowMode);
 
 /* 
  * Loads type images
- * Language lang is the language to try load, if it fails English will be used
+ * pksm::Language lang is the language to try load, if it fails English will be used
  */
-void loadTypes(Language lang);
+void loadTypes(pksm::Language lang);
 
 // Inits sprites, run before first loadGraphics(), but should only be run once
 void initSprites(void);
@@ -82,10 +82,10 @@ std::string boxBgPath(bool top, int box = save->boxWallpaper(currentSaveBox));
 void drawBox(bool top);
 
 // Draws the info for the Pokémon provided
-void drawPokemonInfo(const PKX &pkm);
+void drawPokemonInfo(const pksm::PKX &pkm);
 
 // Fills the held Pokémon sprite
-void setHeldPokemon(const PKX &pkm);
+void setHeldPokemon(const pksm::PKX &pkm);
 
 // Main Pokémon box mangaement loop
 void manageBoxes(void);

@@ -2,6 +2,6 @@
 #define SUMMARY_HPP
 #include "Sav.hpp"
 
-const PKX &showPokemonSummary(PKX &pkm);
+const pksm::PKX &showPokemonSummary(pksm::PKX &pkm);
 
 #endif

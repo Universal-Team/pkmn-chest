@@ -2,7 +2,7 @@
 #define CONFIG_HPP
 
 #include <string>
-#include "i18n.hpp"
+#include "enums/Language.hpp"
 
 namespace Config {
 	void load();
@@ -17,8 +17,8 @@ namespace Config {
 	std::string getString(const std::string &key);
 	void setString(const std::string &key, const std::string &v);
 
-	Language getLang(const std::string &key);
-	void setLang(const std::string &key, Language lang);
+	pksm::Language getLang(const std::string &key);
+	void setLang(const std::string &key, pksm::Language lang);
 }
 
 #endif

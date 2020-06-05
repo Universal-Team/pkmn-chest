@@ -44,13 +44,13 @@ int main(int argc, char **argv) {
 	}
 
 	// Make directories
-	mkdir(sdFound() ? "sd:/_nds" : "fat:/_nds", 0777);
-	mkdir(sdFound() ? "sd:/_nds/pkmn-chest" : "fat:/_nds/pkmn-chest", 0777);
-	mkdir(sdFound() ? "sd:/_nds/pkmn-chest/banks" : "fat:/_nds/pkmn-chest/banks", 0777);
-	mkdir(sdFound() ? "sd:/_nds/pkmn-chest/backups" : "fat:/_nds/pkmn-chest/backups", 0777);
-	mkdir(sdFound() ? "sd:/_nds/pkmn-chest/in" : "fat:/_nds/pkmn-chest/in", 0777);
-	mkdir(sdFound() ? "sd:/_nds/pkmn-chest/out" : "fat:/_nds/pkmn-chest/out", 0777);
-	mkdir(sdFound() ? "sd:/_nds/pkmn-chest/themes" : "fat:/_nds/pkmn-chest/themes", 0777);
+	mkdir((mainDrive() + ":/_nds").c_str(), 0777);
+	mkdir((mainDrive() + ":/_nds/pkmn-chest").c_str(), 0777);
+	mkdir((mainDrive() + ":/_nds/pkmn-chest/in").c_str(), 0777);
+	mkdir((mainDrive() + ":/_nds/pkmn-chest/out").c_str(), 0777);
+	mkdir((mainDrive() + ":/_nds/pkmn-chest/banks").c_str(), 0777);
+	mkdir((mainDrive() + ":/_nds/pkmn-chest/themes").c_str(), 0777);
+	mkdir((mainDrive() + ":/_nds/pkmn-chest/backups").c_str(), 0777);
 
 	// Try to init NitroFS from argv provided to the app when it was launched
 	if(!nitroFSInit(argv[0])) {
@@ -62,7 +62,7 @@ int main(int argc, char **argv) {
 				consoleDemoInit();
 				printf("nitroFSInit() failed...\n\n");
 				printf("Please copy pkmn-chest.nds to:\n\n");
-				printf("%s:/_nds/pkmn-chest/\n", sdFound() ? (access("/Nintendo 3DS", F_OK) == 0 ? "sdmc" : "sd") : "fat");
+				printf("%s:/_nds/pkmn-chest/\n", mainDrive().c_str());
 				printf("                  pkmn-chest.nds\n\n");
 				printf("or launch pkmn-chest using\n\n");
 				printf("      TWiLight Menu++ or HBMenu\n\n\n\n\n");
@@ -74,7 +74,7 @@ int main(int argc, char **argv) {
 				consoleDemoInit();
 				printf("NitroFS is out of date!\n\n");
 				printf("Please update pkmn-chest.nds at:\n\n");
-				printf("%s:/_nds/pkmn-chest/\n", sdFound() ? (access("/Nintendo 3DS", F_OK) == 0 ? "sdmc" : "sd") : "fat");
+				printf("%s:/_nds/pkmn-chest/\n", mainDrive().c_str());
 				while(1)	swiWaitForVBlank();
 			}
 		}

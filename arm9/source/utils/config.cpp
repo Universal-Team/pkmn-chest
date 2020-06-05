@@ -1,36 +1,37 @@
 #include "config.hpp"
 #include <nds/system.h>
 
+#include "i18n.hpp"
 #include "json.hpp"
 #include "flashcard.hpp"
 
 nlohmann::json configJson;
 
-Language sysLang() {
+pksm::Language sysLang() {
 	extern bool useTwlCfg;
 	switch(useTwlCfg ? *(u8*)0x02000406 : PersonalData->language) {
 		case 0:
-			return Language::JPN;
+			return pksm::Language::JPN;
 		case 1:
 		default:
-			return Language::ENG;
+			return pksm::Language::ENG;
 		case 2:
-			return Language::FRE;
+			return pksm::Language::FRE;
 		case 3:
-			return Language::GER;
+			return pksm::Language::GER;
 		case 4:
-			return Language::ITA;
+			return pksm::Language::ITA;
 		case 5:
-			return Language::SPA;
+			return pksm::Language::SPA;
 		case 6:
-			return Language::CHS;
+			return pksm::Language::CHS;
 		case 7:
-			return Language::KOR;
+			return pksm::Language::KOR;
 	}
 }
 
 void Config::load() {
-	FILE* file = fopen(sdFound() ? "sd:/_nds/pkmn-chest/config.json" : "fat:/_nds/pkmn-chest/config.json", "r");
+	FILE* file = fopen((mainDrive() + ":/_nds/pkmn-chest/config.json").c_str(), "rb");
 	if(file) {
 		configJson = nlohmann::json::parse(file, nullptr, false);
 		fclose(file);
@@ -38,7 +39,7 @@ void Config::load() {
 }
 
 void Config::save() {
-	FILE* file = fopen(sdFound() ? "sd:/_nds/pkmn-chest/config.json" : "fat:/_nds/pkmn-chest/config.json", "w");
+	FILE* file = fopen((mainDrive() + ":/_nds/pkmn-chest/config.json").c_str(), "wb");
 	if(file) {
 		fwrite(configJson.dump(1, '\t').c_str(), 1, configJson.dump(1, '\t').size(), file);
 		fclose(file);
@@ -75,12 +76,12 @@ void Config::setString(const std::string &key, const std::string &v) {
 	configJson[key] = v;
 }
 
-Language Config::getLang(const std::string &key) {
+pksm::Language Config::getLang(const std::string &key) {
 	if(!configJson.contains(key) || !configJson[key].is_string()) {
 		return sysLang();
 	}
 	return i18n::langFromString(configJson.at(key).get_ref<const std::string&>());
 }
-void Config::setLang(const std::string &key, Language lang) {
+void Config::setLang(const std::string &key, pksm::Language lang) {
 	configJson[key] = i18n::langString(lang);
 }

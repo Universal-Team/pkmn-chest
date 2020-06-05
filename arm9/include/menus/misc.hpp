@@ -6,7 +6,7 @@
 #include "Type.hpp"
 
 // Shows the form selection menu
-int selectForm(const PKX &pkm);
+int selectForm(const pksm::PKX &pkm);
 
 // Shows a list of items in a vector to select from
 std::string selectItem(int current, const std::vector<std::string> &strings);
@@ -47,13 +47,13 @@ T selectItem(T current, int start, int max, const std::vector<std::string> &stri
 }
 
 // Shows the move editing menu
-void selectMoves(PKX &pkm);
+void selectMoves(pksm::PKX &pkm);
 
 // Shows the nature selection menu
-Nature selectNature(Nature currentNature);
+pksm::Nature selectNature(pksm::Nature currentNature);
 
 // Shows the Pokéball selection menu
-Ball selectPokeball(Ball currentBall);
+pksm::Ball selectPokeball(pksm::Ball currentBall);
 
 // Shows the Wallpaper selection menu
 int selectWallpaper(int currentWallpaper);
@@ -62,12 +62,12 @@ int selectWallpaper(int currentWallpaper);
 int selectBox(int currentBox);
 
 // Shows the origin editing menu
-void selectOrigin(PKX &pkm);
+void selectOrigin(pksm::PKX &pkm);
 
 // Shows the stat editing menu
-void selectStats(PKX &pkm);
+void selectStats(pksm::PKX &pkm);
 
 // Shows the type selection menu
-Type selectHPType(Type type);
+pksm::Type selectHPType(pksm::Type type);
 
 #endif

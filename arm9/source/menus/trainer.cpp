@@ -36,7 +36,7 @@ void drawTrainerCard(void) {
 	printText(i18n::localize(Config::getLang("lang"), "trainerInfo"), 4, 0, false, true);
 
 	// Print labels
-	for(unsigned i=0;i<sizeof(textTP1)/sizeof(textTP1[0]) - (save->generation() == Generation::THREE ? 0 : 2);i++) {
+	for(unsigned i=0;i<sizeof(textTP1)/sizeof(textTP1[0]) - (save->generation() == pksm::Generation::THREE ? 0 : 2);i++) {
 		printText(i18n::localize(Config::getLang("lang"), trainerText[i])+":", textTP1[i].x, textTP1[i].y, false, true);
 	}
 
@@ -48,15 +48,15 @@ void drawTrainerCard(void) {
 	snprintf(textTP1[4].text, sizeof(textTP1[4].text), "%li", save->BP());
 	snprintf(textTP1[5].text, sizeof(textTP1[5].text), "%i", save->badges());
 	snprintf(textTP1[6].text, sizeof(textTP1[6].text), "%i:%i:%i", save->playedHours(), save->playedMinutes(), save->playedSeconds());
-	if(save->generation() == Generation::THREE) {
-		Sav3 *sav3 = (Sav3*)save.get();
+	if(save->generation() == pksm::Generation::THREE) {
+		pksm::Sav3 *sav3 = (pksm::Sav3*)save.get();
 		snprintf(textTP1[7].text, sizeof(textTP1[7].text), "%i:%i:%i:%i", sav3->rtcInitialDay(), sav3->rtcInitialHour(), sav3->rtcInitialMinute(), sav3->rtcInitialSecond());
 		snprintf(textTP1[8].text, sizeof(textTP1[8].text), "%i:%i:%i:%i", sav3->rtcElapsedDay(), sav3->rtcElapsedHour(), sav3->rtcElapsedMinute(), sav3->rtcElapsedSecond());
 	}
 	
 	// Print info
 	printTextTinted(textTP1[0].text, (save->gender() ? TextColor::red : TextColor::blue), textTP1[0].x+getTextWidth(i18n::localize(Config::getLang("lang"), trainerText[0]))+8, textTP1[0].y, false, true);
-	for(unsigned i=1;i<(sizeof(textTP1)/sizeof(textTP1[0])) - (save->generation() == Generation::THREE ? 0 : 2);i++) {
+	for(unsigned i=1;i<(sizeof(textTP1)/sizeof(textTP1[0])) - (save->generation() == pksm::Generation::THREE ? 0 : 2);i++) {
 		printText(textTP1[i].text, textTP1[i].x+getTextWidth(i18n::localize(Config::getLang("lang"), trainerText[i]))+8, textTP1[i].y, false, true);
 	}
 }
@@ -116,7 +116,7 @@ void showTrainerCard(void) {
 				case 0: {
 					std::string name = Input::getLine(7);
 					if(name != "")	save->otName(name);
-					save->gender(Gender(Input::getBool(i18n::localize(Config::getLang("lang"), "female"), i18n::localize(Config::getLang("lang"), "male"))));
+					save->gender(pksm::Gender(Input::getBool(i18n::localize(Config::getLang("lang"), "female"), i18n::localize(Config::getLang("lang"), "male"))));
 					break;
 				} case 1: {
 					int num = Input::getInt(65535);
@@ -143,7 +143,7 @@ void showTrainerCard(void) {
 					if(num != -1)	save->playedSeconds(num);
 					break;
 				} case 7: {
-					Sav3 *sav3 = (Sav3*)save.get();
+					pksm::Sav3 *sav3 = (pksm::Sav3*)save.get();
 					int num = Input::getInt(65535);
 					if(num != -1)	sav3->rtcInitialDay(num);
 					num = Input::getInt(255);
@@ -154,7 +154,7 @@ void showTrainerCard(void) {
 					if(num != -1)	sav3->rtcInitialSecond(num);
 					break;
 				} case 8: {
-					Sav3 *sav3 = (Sav3*)save.get();
+					pksm::Sav3 *sav3 = (pksm::Sav3*)save.get();
 					int num = Input::getInt(65535);
 					if(num != -1)	sav3->rtcElapsedDay(num);
 					num = Input::getInt(255);
