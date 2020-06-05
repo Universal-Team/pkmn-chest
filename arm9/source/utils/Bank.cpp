@@ -197,7 +197,7 @@ void Bank::load(int maxBoxes)
             {
                 for (int i = boxNames->size(); i < boxes(); i++)
                 {
-                    (*boxNames)[i] = i18n::localize(Config::getLang("lang"), "STORAGE") + " " + std::to_string(i + 1);
+                    (*boxNames)[i] = "%CHEST% " + std::to_string(i + 1);
                     if (!needSave)
                     {
                         needSave = true;
@@ -308,7 +308,7 @@ void Bank::resize(int boxes)
 
         for (int i = boxNames->size(); i < boxes; i++)
         {
-            (*boxNames)[i] = i18n::localize(Config::getLang("lang"), "STORAGE") + " " + std::to_string(i + 1);
+            (*boxNames)[i] = "%CHEST% " + std::to_string(i + 1);
         }
 
         save();
@@ -371,7 +371,10 @@ bool Bank::backup() const
 
 std::string Bank::boxName(int box) const
 {
-    return (*boxNames)[box].get<std::string>();
+    std::string name = (*boxNames)[box].get<std::string>();
+    if(name.substr(0, 7) == "%CHEST%")
+        return i18n::localize(Config::getLang("lang"), "chest") + name.substr(7);
+    return name;
 }
 
 void Bank::boxName(std::string name, int box)
@@ -384,7 +387,7 @@ void Bank::createJSON()
     boxNames = std::make_unique<nlohmann::json>(nlohmann::json::array());
     for (int i = 0; i < boxes(); i++)
     {
-        (*boxNames)[i] = i18n::localize(Config::getLang("lang"), "STORAGE") + " " + std::to_string(i + 1);
+        (*boxNames)[i] = "%CHEST% " + std::to_string(i + 1);
     }
 }
 
