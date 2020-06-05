@@ -12,7 +12,7 @@
 	"BANK_CORRUPT": "The chest is corrupted!",
 	"BANK_NAME_ERROR": "Couldn't save chest names!",
 	"BANK_SAVE_ERROR": "Couldn't save chest!",
-	"BankException": "BankException: Bad generation value: 0x%x",
+	"BankException": "BankException:\nBad generation value: 0x%x",
 	"base": "Basis",
 	"BATTLE_ITEMS": "Barang Bertanding",
 	"BERRIES": "Beri",
