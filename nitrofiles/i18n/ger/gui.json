@@ -12,6 +12,7 @@
 	"BANK_CORRUPT": "Die Chest ist beschädigt!",
 	"BANK_NAME_ERROR": "Konnte Chest-namen nicht speichern!",
 	"BANK_SAVE_ERROR": "Konnte Chest nicht speichern!",
+	"BankException": "BankException: Bad generation value: 0x%x",
 	"base": "Basis",
 	"BATTLE_ITEMS": "Kampf Items",
 	"BERRIES": "Beeren",
