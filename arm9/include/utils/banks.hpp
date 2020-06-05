@@ -35,15 +35,18 @@
 #define BANK_DEFAULT_SIZE 50
 #define BANK_MAX_SIZE 500
 
+class Bank;
+
 namespace Banks {
-	extern std::shared_ptr<Bank> bank;
-	int init();
-	// If maxBoxes == 0, the default will be used
-	bool loadBank(const std::string& name, int maxBoxes = 0);
-	void removeBank(const std::string& name);
-	void renameBank(const std::string& oldName, const std::string& newName);
-	void setBankSize(const std::string& name, int size);
-	std::vector<std::pair<std::string, int>> bankNames();
+    inline std::shared_ptr<Bank> bank = nullptr;
+    int init();
+    // Result swapSD(bool toSD);
+    bool saveJson();
+    bool loadBank(const std::string& name, const std::optional<int>& maxBoxes = std::nullopt);
+    void removeBank(const std::string& name);
+    void renameBank(const std::string& oldName, const std::string& newName);
+    void setBankSize(const std::string& name, int size);
+    std::vector<std::pair<std::string, int>> bankNames();
 }
 
 #endif

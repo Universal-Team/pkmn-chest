@@ -27,52 +27,58 @@
 #ifndef BANK_HPP
 #define BANK_HPP
 
+#include "enums/Generation.hpp"
 #include "json.hpp"
-#include "Sav.hpp"
+#include "pkx/PKX.hpp"
+#include "utils/crypto.hpp"
 
-extern "C" {
-#include "sha256.h"
-}
-
-class Bank {
+class Bank
+{
 public:
-	Bank(const std::string& name, int maxBoxes);
-	~Bank() { delete[] data; }
-	std::unique_ptr<PKX> pkm(int box, int slot) const;
-	void pkm(const PKX &pkm, int box, int slot);
-	void resize(size_t boxes);
-	void load(int maxBoxes);
-	bool save() const;
-	bool backup() const;
-	std::string boxName(int box) const;
-	std::pair<std::string, std::string> paths() const;
-	void boxName(std::string name, int box);
-	bool hasChanged() const;
-	int boxes() const;
-	const std::string& name() const;
-	bool setName(const std::string& name);
+    Bank(const std::string& name, int maxBoxes);
+    ~Bank();
+    std::unique_ptr<pksm::PKX> pkm(int box, int slot) const;
+    void pkm(const pksm::PKX& pkm, int box, int slot);
+    void resize(int boxes);
+    void load(int maxBoxes);
+    bool save() const;
+    bool saveWithoutBackup() const;
+    bool backup() const;
+    std::string boxName(int box) const;
+    std::pair<std::string, std::string> paths() const;
+    void boxName(std::string name, int box);
+    bool hasChanged() const;
+    int boxes() const;
+    const std::string& name() const;
+    bool setName(const std::string& name);
 
 private:
-	static constexpr int BANK_VERSION            = 2;
-	static std::string BANK_MAGIC;
-	void createJSON();
-	void createBank(int maxBoxes);
-	void convert();
-	struct BankHeader {
-		const char MAGIC[8];
-		int version;
-		int boxes;
-	};
-	struct BankEntry {
-		Generation gen;
-		u8 data[260];
-	};
-	u8* data = nullptr;
-	nlohmann::json boxNames;
-	size_t size;
-	mutable std::array<u8, SHA256_BLOCK_SIZE> prevHash;
-	mutable bool needsCheck = false;
-	std::string bankName;
+    static constexpr int BANK_VERSION            = 3;
+    static constexpr std::string_view BANK_MAGIC = "PKSMBANK";
+    void createJSON();
+    void createBank(int maxBoxes);
+    // void convertFromBankBin();
+    struct BankHeader
+    {
+        char MAGIC[8];
+        u32 version;
+        u32 boxes;
+    };
+    static_assert(sizeof(BankHeader) == 16);
+    struct BankEntry
+    {
+        pksm::Generation gen;
+        u8 data[0x148];
+        u8 padding[4]; // Pad to 8 bytes
+    };
+    static_assert(sizeof(BankEntry) == 0x150);
+    std::unique_ptr<nlohmann::json> boxNames;
+    mutable std::array<u8, 32> prevHash;
+    mutable std::array<u8, 32> prevNameHash;
+    std::string bankName;
+    BankHeader header;
+    BankEntry* entries      = nullptr;
+    mutable bool needsCheck = false;
 };
 
 #endif
