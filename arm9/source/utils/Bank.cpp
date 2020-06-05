@@ -255,7 +255,7 @@ bool Bank::saveWithoutBackup() const
         out = fopen(JSON(paths).c_str(), "wb");
         if (out)
         {
-            fwrite(jsonData.data(), 1, jsonData.size() + 1, out);
+            fwrite(jsonData.data(), 1, jsonData.size(), out);
             prevHash     = pksm::crypto::sha256((u8*)entries, sizeof(BankEntry) * boxes() * 30);
             prevNameHash = pksm::crypto::sha256((u8*)jsonData.data(), jsonData.size());
             fclose(out);

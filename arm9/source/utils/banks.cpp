@@ -27,6 +27,7 @@
 #include "banks.hpp"
 // #include "Archive.hpp"
 // #include "Configuration.hpp"
+#include "config.hpp"
 #include "flashcard.hpp"
 #include "json.hpp"
 
@@ -38,7 +39,7 @@ namespace
     bool createJson()
     {
         g_banks           = nlohmann::json::object();
-        g_banks["pksm_1"] = BANK_DEFAULT_SIZE;
+        g_banks["pkmn-chest_1"] = BANK_DEFAULT_SIZE;
         return Banks::saveJson();
     }
 
@@ -74,7 +75,7 @@ bool Banks::saveJson()
     FILE *out = fopen(path.c_str(), "wb");
     if (out)
     {
-        fwrite(jsonData.data(), 1, jsonData.size() + 1, out);
+        fwrite(jsonData.data(), 1, jsonData.size(), out);
         fclose(out);
         return true;
     }
@@ -94,7 +95,7 @@ int Banks::init()
     if (g_banks.is_discarded())
         return -1;
 
-    auto i = g_banks.find("pksm_1");
+    auto i = g_banks.find(Config::getString("chestFile") == "" ? "pkmn-chest_1" : Config::getString("chestFile"));
     if (i == g_banks.end())
     {
         i = g_banks.begin();
