@@ -12,7 +12,7 @@
 	"BANK_CORRUPT": "チェストが壊れています！",
 	"BANK_NAME_ERROR": "チェスト名を保存できませんでした！",
 	"BANK_SAVE_ERROR": "チェストを保存できませんでした！",
-	"BankException": "BankException: Bad generation value: 0x%x",
+	"BankException": "BankException:\nBad generation value: 0x%x",
 	"base": "種族値",
 	"BATTLE_ITEMS": "戦闘用",
 	"BERRIES": "きのみ",
