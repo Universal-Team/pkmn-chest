@@ -12,6 +12,8 @@ else
 GIT_VER := $(shell git describe --abbrev=0 --tags)-$(shell git rev-parse --short HEAD)
 endif
 
+VER_STRING := \#ifndef VERSION_HPP\n\#define VERSION_HPP\n\#define GIT_VERSION $(GIT_VER)\n\#endif\n
+
 include $(DEVKITARM)/ds_rules
 
 #---------------------------------------------------------------------------------
@@ -45,7 +47,6 @@ ARCH	:=	-mthumb-interwork
 CFLAGS	:=	-g -Wall -Wno-psabi -O2\
  			-march=armv5te -mtune=arm946e-s -fomit-frame-pointer\
 			-ffast-math \
-			-DVER_NUMBER=\"$(GIT_VER)\" \
 			$(ARCH)
 
 CFLAGS	+=	$(INCLUDE) -DARM9
@@ -111,6 +112,9 @@ export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib)
 
 #---------------------------------------------------------------------------------
 $(BUILD):
+ifeq (,$(findstring $(GIT_VER), $(shell cat include/utils/version.hpp)))
+	printf "#ifndef VERSION_HPP\n#define VERSION_HPP\n\n#define VER_NUMBER \"$(GIT_VER)\"\n\n#endif\n" > include/utils/version.hpp
+endif
 	@[ -d $@ ] || mkdir -p $@
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
 	printf $(GIT_VER) > ../nitrofiles/version.txt

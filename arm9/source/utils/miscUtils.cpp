@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <unistd.h>
 
+#include "version.hpp"
+
 bool nitroFSGood(void) {
 	bool nitroFSGood = false;
 	FILE *file = fopen("nitro:/version.txt", "r");

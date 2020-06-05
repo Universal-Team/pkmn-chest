@@ -6,6 +6,7 @@
 *.gfx
 *.cia
 *.msl
+arm9/include/utils/version.hpp
 graphics/bmp2ds
 graphics/bmp2ds.exe
 nitrofiles/i18n/**/*.txt

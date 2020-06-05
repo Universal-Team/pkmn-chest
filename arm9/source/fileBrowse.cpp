@@ -18,6 +18,7 @@
 #include "cartSaves.hpp"
 #include "sound.hpp"
 #include "utils.hpp"
+#include "version.hpp"
 
 #define ENTRIES_PER_SCREEN 11
 #define ENTRY_PAGE_LENGTH 10
