@@ -12,7 +12,7 @@
 	"BANK_CORRUPT": "Сундук повреждён!",
 	"BANK_NAME_ERROR": "Не удалось сохранить названия сундуков!",
 	"BANK_SAVE_ERROR": "Не удалось сохранить сундук!",
-	"BankException": "BankException:\nBad generation value: 0x%x",
+	"BankException": "BankException:\nНеверное значение генерации: 0x%x",
 	"base": "Баз",
 	"BATTLE_ITEMS": "Боевые вещи",
 	"BERRIES": "Ягоди",
