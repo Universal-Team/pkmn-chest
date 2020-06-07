@@ -51,6 +51,7 @@ Once the language has been added (or to help with an existing one) you can join 
 - [R-YaTian](https://github.com/R-YaTian): Chinese
 - [StackZ](https://github.com/SuperSaiyajinStackZ): German
 - [whatter](https://github.com/whatter): Polish
+- [XxPhoenix1996xX](https://github.com/XxPhoenix1996xX): Spanish
 ### Others
 - [devkitPro](https://github.com/devkitPro), [WinterMute](https://github.com/WinterMute): devkitARM, libnds, and libfat.
 - [edo9300](https://github.com/edo9300): [ndsi-savedumper](https://github.com/edo9300/ndsi-savedumper)'s gamecard save dumping and injecting code
