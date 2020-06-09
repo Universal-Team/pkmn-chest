@@ -34,10 +34,7 @@ int getCharIndex(char16_t c) {
 		}
 	}
 
-	// If that doesn't find the char, do a linear search
-	for(unsigned int i=0;i<fontMap.size();i++) {
-		if(fontMap[i] == c)	return i;
-	}
+	// If that doesn't find the char, return a question mark
 	return questionMark;
 }
 
