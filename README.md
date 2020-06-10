@@ -1,16 +1,46 @@
 # ![Logo](https://raw.githubusercontent.com/Universal-Team/pkmn-chest/master/resources/icon.png) Pokémon Chest
 <p align="center">
+  <img src="https://img.shields.io/badge/License-GPLv3-informational.svg" alt="License: GPLv3">
+  <a href="https://gbatemp.net/threads/release-pkmn-chest-a-pokemon-bank-for-the-nintendo-ds-i.549249/">
+    <img src="https://img.shields.io/badge/GBAtemp-thread-blue" alt="GBAtemp thread">
+  </a>
+  <a href="https://discord.gg/KDJCfGF">
+    <img src="https://img.shields.io/badge/Discord-%23pkmn--chest-7289DA" alt="Discord Server: #pkmn-chest">
+  </a>
   <a href="https://dev.azure.com/Universal-Team/Builds/_build?definitionId=4">
-    <img src="https://dev.azure.com/Universal-Team/Builds/_apis/build/status/Universal-Team.pkmn-chest?branchName=master">
+    <img src="https://dev.azure.com/Universal-Team/Builds/_apis/build/status/Universal-Team.pkmn-chest?branchName=master" alt="Build status on Azure Pipelines">
   </a>
   <a href="https://crowdin.com/project/pkmn-chest">
-    <img src="https://badges.crowdin.net/pkmn-chest/localized.svg">
+    <img src="https://badges.crowdin.net/pkmn-chest/localized.svg" alt="Translation status on Crowdin">
   </a>
 </p>
 
 A Pokémon Bank for the 3<sup>rd</sup> through 5<sup>th</sup> generation Pokémon games for the Nintendo DS(i).
 
-## Compiling
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Universal-Team/universal-team.github.io/master/images/pkmn-chest/top-menu-1.png" alt="The top menu (top screen)">
+  <img src="https://raw.githubusercontent.com/Universal-Team/universal-team.github.io/master/images/pkmn-chest/box-1.png" alt="In the boxes (top screen)">
+  <img src="https://raw.githubusercontent.com/Universal-Team/universal-team.github.io/master/images/pkmn-chest/box-1.png" alt="Editing a Pokémon (top screen)">
+  <br>
+  <img src="https://raw.githubusercontent.com/Universal-Team/universal-team.github.io/master/images/pkmn-chest/top-menu-2.png" alt="The top menu (bottom screen)">
+  <img src="https://raw.githubusercontent.com/Universal-Team/universal-team.github.io/master/images/pkmn-chest/box-2.png" alt="In the boxes (bottom screen)">
+    <img src="https://raw.githubusercontent.com/Universal-Team/universal-team.github.io/master/images/pkmn-chest/summary.png" alt="Editing a Pokémon (bottom screen)">
+</p>
+
+## Table of contents
+- [Building](#building)
+  - [Setting up your environment](#setting-up-your-environment)
+  - [Cloning the repo](#cloning-the-repo)
+  - [Compiling](#compiling)
+- [Contact](#contact)
+- [Translating](#translating)
+- [Credits](#credits)
+  - [Main Developers](#main-developers)
+  - [Translators](#translators)
+  - [Others](#others)
+  - [Music](#music)
+
+## Building
 ### Setting up your environment
 Compiling this app requires [devkitPro](https://devkitpro.org)'s devkitARM and libnds.
 These can be installed by getting [devkitPro pacman](https://devkitpro.org/wiki/devkitPro_pacman), then running:
@@ -19,25 +49,24 @@ These can be installed by getting [devkitPro pacman](https://devkitpro.org/wiki/
 
 ### Cloning the repo
 To clone the repo run `git clone --recursive https://github.com/Universal-Team/pkmn-chest.git` (Note the `--recursive`, that is needed to clone the submodules)
+
 If you already have the repo without the submodules you can run `git submodule update --init --recursive` to get the core submodule and the memecrypto submodule inside it.
 
 ### Compiling
 Simply run `make` in the pkmn-chest source directory
-- (Note: `g++` is also required currently to build the bmp2ds grapics converter)
+- (Note: `g++` is also required currently to build the bmp2ds graphics converter)
 
 ## Contact
-The best way to talk to us is to join [our Discord](https://discord.gg/KDJCfGF).
-If you want to report a bug you can do so [here](https://github.com/Universal-Team/pkmn-chest/issues/new/choose).
-You can also talk on the [GBAtemp thread](https://gbatemp.net/threads/release-pkmn-chest-a-pokemon-bank-for-the-nintendo-ds-i.549249/).
+The best way to talk to us is to join [our Discord](https://discord.gg/KDJCfGF). If you want to report a bug ore request a feature you can do so [in a GitHub Issue](https://github.com/Universal-Team/pkmn-chest/issues/new/choose). You can also talk on the [GBAtemp thread](https://gbatemp.net/threads/release-pkmn-chest-a-pokemon-bank-for-the-nintendo-ds-i.549249/).
 
 ## Translating
-If you'd like to help translate pkmn-chest to a language that isn't yet supported, please either [make a feature request issue](https://github.com/Universal-Team/pkmn-chest/issues/new/choose) requesting the language be added or ask on our Discord (linked above).
+[Crowdin](https://crowdin.com) is the preferred place for translating pkmn-chest as it manages keeping the languages synchronized and provides useful features when translating like screenshots for context. You can join the pkmn-chest project with [this invite link](https://crwd.in/pkmn-chest). If you don't want to use Crowdin you can send an updated `app.json` file on our Discord or the GBAtemp thread (linked above) or in an Issue here, direct Pull Requests editing the `app.json` files are not preferred since that messes with Crowdin's syncing.
 
-Once the language has been added (or to help with an existing one) you can join the Crowdin project with [this invite link](https://crwd.in/pkmn-chest).
+If you'd like to help translate pkmn-chest to a language that isn't yet supported, or for a regional variant to be created for an existing language, please either [make a feature request issue](https://github.com/Universal-Team/pkmn-chest/issues/new/choose) requesting the language be added, ask on our Discord or the GBAtemp thread (linked above), or send Pk11 a message on Crowdin.
 
 ## Credits
 ### Main Developers
-- [Pk11](https://github.com/Epicpkmn11): GUI code, porting PKSM's save and bank management code
+- [Pk11](https://github.com/Epicpkmn11): Main developer
 ### Translators
 - [antoine62](https://github.com/antoine62): French
 - [Chips](https://github.com/Ch1p5): Portuguese, some Spanish and French
