@@ -44,7 +44,7 @@ A Pokémon Bank for the 3<sup>rd</sup> through 5<sup>th</sup> generation Pokémo
 ### Setting up your environment
 Compiling this app requires [devkitPro](https://devkitpro.org)'s devkitARM and libnds.
 These can be installed by getting [devkitPro pacman](https://devkitpro.org/wiki/devkitPro_pacman), then running:
-`sudo dkp-pacman -S nds-dev`<br/>
+`sudo dkp-pacman -S nds-dev`<br>
 <sup>(command may be slightly different depending on your OS)</sup>
 
 ### Cloning the repo
@@ -57,7 +57,7 @@ Simply run `make` in the pkmn-chest source directory
 - (Note: `g++` is also required currently to build the bmp2ds graphics converter)
 
 ## Contact
-The best way to talk to us is to join [our Discord](https://discord.gg/KDJCfGF). If you want to report a bug ore request a feature you can do so [in a GitHub Issue](https://github.com/Universal-Team/pkmn-chest/issues/new/choose). You can also talk on the [GBAtemp thread](https://gbatemp.net/threads/release-pkmn-chest-a-pokemon-bank-for-the-nintendo-ds-i.549249/).
+The best way to talk to us is to join [our Discord](https://discord.gg/KDJCfGF). If you want to report a bug or request a feature you can do so [in a GitHub Issue](https://github.com/Universal-Team/pkmn-chest/issues/new/choose). You can also talk on the [GBAtemp thread](https://gbatemp.net/threads/release-pkmn-chest-a-pokemon-bank-for-the-nintendo-ds-i.549249/).
 
 ## Translating
 [Crowdin](https://crowdin.com) is the preferred place for translating pkmn-chest as it manages keeping the languages synchronized and provides useful features when translating like screenshots for context. You can join the pkmn-chest project with [this invite link](https://crwd.in/pkmn-chest). If you don't want to use Crowdin you can send an updated `app.json` file on our Discord or the GBAtemp thread (linked above) or in an Issue here, direct Pull Requests editing the `app.json` files are not preferred since that messes with Crowdin's syncing.
