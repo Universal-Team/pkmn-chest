@@ -463,7 +463,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				pkm->otName(save->otName());
 				pkm->otGender(save->gender());
 				pkm->ball(pksm::Ball::Poke);
-				pkm->encryptionConstant((((u32)randomNumbers()) % 0xFFFFFFFF) + 1);
+				pkm->encryptionConstant(((pksm::randomNumber()) % 0xFFFFFFFF) + 1);
 				pkm->version(save->version());
 				switch (pkm->version()) {
 					case pksm::GameVersion::R:
