@@ -208,8 +208,9 @@ u8 *gfxPointer(bool top, bool layer) {
 	}
 }
 
-void drawImage(int x, int y, const Image &image, bool top, bool layer, int paletteOffset) {
-	copyPalette(image, top, paletteOffset);
+void drawImage(int x, int y, const Image &image, bool top, bool layer, int paletteOffset, bool copyPal) {
+	if(copyPal)
+		copyPalette(image, top, paletteOffset);
 	u8 *dst = gfxPointer(top, layer);
 	u16 *pal = (top ? BG_PALETTE : BG_PALETTE_SUB);
 	for(int i=0;i<image.height;i++) {
@@ -217,17 +218,19 @@ void drawImage(int x, int y, const Image &image, bool top, bool layer, int palet
 	}
 }
 
-void drawImageDMA(int x, int y, const Image &image, bool top, bool layer) {
-	copyPalette(image, top);
+void drawImageDMA(int x, int y, const Image &image, bool top, bool layer, int paletteOffset, bool copyPal) {
+	if(copyPal)
+		copyPalette(image, top, paletteOffset);
 	for(int i=0;i<image.height;i++) {
 		dmaCopyHalfWords(0, image.bitmap.data()+(i*image.width), gfxPointer(top, layer)+((y+i)*256)+x, image.width);
 	}
 }
 
-void drawImageScaled(int x, int y, float scaleX, float scaleY, const Image &image, bool top, bool layer, int paletteOffset) {
+void drawImageScaled(int x, int y, float scaleX, float scaleY, const Image &image, bool top, bool layer, int paletteOffset, bool copyPal) {
 	if(scaleX == 1 && scaleY == 1)	drawImage(x, y, image, top, layer, paletteOffset);
 	else {
-		copyPalette(image, top, paletteOffset);
+		if(copyPal)
+			copyPalette(image, top, paletteOffset);
 		u8* dst = gfxPointer(top, layer);
 		u16 *pal = (top ? BG_PALETTE : BG_PALETTE_SUB);
 		u8 buffer[(int)(image.width*scaleX)];
@@ -240,8 +243,9 @@ void drawImageScaled(int x, int y, float scaleX, float scaleY, const Image &imag
 	}
 }
 
-void drawImageSegment(int x, int y, int w, int h, const Image &image, int xOffset, int yOffset, bool top, bool layer) {
-	copyPalette(image, top);
+void drawImageSegment(int x, int y, int w, int h, const Image &image, int xOffset, int yOffset, bool top, bool layer, int paletteOffset, bool copyPal) {
+	if(copyPal)
+		copyPalette(image, top, paletteOffset);
 	u8* dst = gfxPointer(top, layer);
 	u16 *pal = (top ? BG_PALETTE : BG_PALETTE_SUB);
 	for(int i=0;i<h;i++) {
@@ -249,14 +253,15 @@ void drawImageSegment(int x, int y, int w, int h, const Image &image, int xOffse
 	}
 }
 
-void drawImageSegmentDMA(int x, int y, int w, int h, const Image &image, int xOffset, int yOffset, bool top, bool layer) {
-	copyPalette(image, top);
+void drawImageSegmentDMA(int x, int y, int w, int h, const Image &image, int xOffset, int yOffset, bool top, bool layer, int paletteOffset, bool copyPal) {
+	if(copyPal)
+		copyPalette(image, top, paletteOffset);
 	for(int i=0;i<h;i++) {
 		dmaCopyHalfWords(0, image.bitmap.data()+((yOffset+i)*image.width)+xOffset, gfxPointer(top, layer)+((y+i)*256)+x, w);
 	}
 }
 
-void drawImageSegmentScaled(int x, int y, int w, int h, float scaleX, float scaleY, const Image &image, int xOffset, int yOffset, bool top, bool layer) {
+void drawImageSegmentScaled(int x, int y, int w, int h, float scaleX, float scaleY, const Image &image, int xOffset, int yOffset, bool top, bool layer, int paletteOffset, bool copyPal) {
 	if(scaleX == 1 && scaleY == 1)	return drawImageSegment(x, y, w, h, image, xOffset, yOffset, top, layer);
 
 	// u8* dst = gfxPointer(top, layer);
@@ -265,7 +270,8 @@ void drawImageSegmentScaled(int x, int y, int w, int h, float scaleX, float scal
 	// 	imgcpy(dst+((y+i)*256+x), image.bitmap.data()+(((yOffset+i)*image.width)+xOffset), pal, w, 0);
 	// }
 
-	copyPalette(image, top);
+	if(copyPal)
+		copyPalette(image, top, paletteOffset);
 	u8* dst = gfxPointer(top, layer);
 	u16 *pal = (top ? BG_PALETTE : BG_PALETTE_SUB);
 	u8 buffer[(int)(image.width*scaleX)];

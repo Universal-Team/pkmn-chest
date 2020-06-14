@@ -142,7 +142,7 @@ void drawSummaryPage(const pksm::PKX &pkm, bool background) {
 			drawImage(186, 25-((types[u8(pkm.type2())].height-12)/2), types[u8(pkm.type2())], false, false, 4);
 		}
 		// Draw set to self button
-		drawImage(232, 10, setToSelf, false, false);
+		drawImage(232, 10, setToSelf, false, false, 0, false);
 
 		// Print title
 		printText(i18n::localize(Config::getLang("lang"), "pokemonInfo"), 4, 0, false, false);
