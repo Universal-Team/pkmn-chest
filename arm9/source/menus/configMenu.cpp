@@ -40,7 +40,7 @@ std::vector<std::string> songs = {"off", "center1", "center3", "center4", "cente
 
 std::vector<std::string> optionsText;
 
-const std::vector<std::string> langNames = {"Bruh", "Deutsch", "English", "Español", "Français", "Bahasa Indonesia", "Italiano", "Lietuvių", "Polski", "Português", "Русский", "中文 (简体)", "中文 (繁體)", "日本語", "한국"};
+const std::vector<std::string> langNames = {"Bruh", "Deutsch", "English", "Español", "Français", "Bahasa Indonesia", "Italiano", "Lietuvių", "Polski", "Português", "Русский", "中文 (简体)", "中文 (繁體)", "日本語", "한국어"};
 const std::vector<pksm::Language> guiLangs = {pksm::Language::BRH, pksm::Language::GER, pksm::Language::ENG, pksm::Language::SPA, pksm::Language::FRE, pksm::Language::IND, pksm::Language::ITA, pksm::Language::LIT, pksm::Language::POL, pksm::Language::POR, pksm::Language::RUS, pksm::Language::CHS, pksm::Language::CHT, pksm::Language::JPN, pksm::Language::KOR};
 
 void drawChestFileMenu(void) {
