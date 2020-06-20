@@ -11,7 +11,7 @@ const std::string &i18n::pouch(pksm::Language lang, pksm::Sav::Pouch pouch) {
 			return localize(lang, "KEY_ITEMS");
 			break;
 		case pksm::Sav::Pouch::TM:
-			return localize(lang, "BALLS");
+			return localize(lang, "TMHM");
 			break;
 		case pksm::Sav::Pouch::Mail:
 			return localize(lang, "MAIL");
