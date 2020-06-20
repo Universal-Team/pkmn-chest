@@ -16,9 +16,23 @@
 
 #define entriesPerScreen 11
 
+u16 itemID(std::unique_ptr<pksm::Item> item) {
+	if(item->generation() == pksm::Generation::THREE)
+		return ((pksm::Item3*)item.get())->id3();
+	else
+		return item->id();
+}
+
+const std::string &itemName(std::unique_ptr<pksm::Item> item) {
+	if(item->generation() == pksm::Generation::THREE)
+		return i18n::item3(Config::getLang("lang"), ((pksm::Item3*)item.get())->id3());
+	else
+		return i18n::item(Config::getLang("lang"), item->id());
+}
+
 int getMaxItem(int pouchIndex) {
 	for(int i=save->pouches()[pouchIndex].second-1;i>0;i--) {
-		if(save->item(save->pouches()[pouchIndex].first, i)->id() != 0) {
+		if(itemID(save->item(save->pouches()[pouchIndex].first, i)) != 0) {
 			return std::min(i+1, save->pouches()[pouchIndex].second);
 		}
 	}
@@ -47,7 +61,7 @@ void drawBag(pksm::Sav::Pouch pouch, int maxItem, int screenPos, bool background
 
 	// Print items
 	for(int i=0;i<std::min(entriesPerScreen, maxItem+1);i++) {
-		printTextMaxW(i18n::item(Config::getLang("lang"), save->item(pouch, screenPos+i)->id()), 127, 1, 30, 16+(i*16), false, true);
+		printTextMaxW(itemName(save->item(pouch, screenPos+i)), 127, 1, 30, 16+(i*16), false, true);
 		printText(std::to_string(save->item(pouch, screenPos+i)->count()), 4, 16+(i*16), false, true);
 	}
 }
@@ -87,7 +101,7 @@ void editBag(void) {
 			std::string str = Input::getLine(-1);
 			if(str != "") {
 				for(int i=0;i<save->pouches()[selectedPouch].second;i++) {
-					if(strncasecmp(str.c_str(), i18n::item(Config::getLang("lang"), save->item(save->pouches()[selectedPouch].first, i)->id()).c_str(), str.size()) == 0) {
+					if(strncasecmp(str.c_str(), itemName(save->item(save->pouches()[selectedPouch].first, i)).c_str(), str.size()) == 0) {
 						selection = i;
 						break;
 					}
@@ -225,7 +239,7 @@ void editBag(void) {
 
 		// Move cursor
 		if(column == 0)	setSpritePosition(arrowID, false, 4+getTextWidth(std::to_string(save->item(save->pouches()[selectedPouch].first, selection)->count()))+2, (16*(selection-screenPos)+10));
-		else if(column == 1)	setSpritePosition(arrowID, false, 30+getTextWidth(i18n::item(Config::getLang("lang"), save->item(save->pouches()[selectedPouch].first, selection)->id()))+2, (16*(selection-screenPos)+10));
+		else if(column == 1)	setSpritePosition(arrowID, false, 30+getTextWidth(itemName(save->item(save->pouches()[selectedPouch].first, selection)))+2, (16*(selection-screenPos)+10));
 		updateOam();
 	}
 }
