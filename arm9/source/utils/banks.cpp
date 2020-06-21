@@ -56,7 +56,7 @@ namespace
             fread(data, 1, size, in);
             data[size] = '\0';
             fclose(in);
-            g_banks = nlohmann::json::parse(data, nullptr, false);
+            g_banks = nlohmann::json::parse((char*)data, nullptr, false);
         }
         else
         {
