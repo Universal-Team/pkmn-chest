@@ -348,8 +348,15 @@ std::string topMenuSelect(void) {
 				return cartSave;
 			} else if(topMenuContents[tmCurPos].valid) {
 				Sound::play(Sound::click);
-				showTopMenuOnExit = 1;
-				return topMenuContents[tmCurPos].name;
+				DIR *pdir = opendir(topMenuContents[tmCurPos].name.c_str());
+				if(pdir) {
+					closedir(pdir);
+					chdir(topMenuContents[tmCurPos].name.c_str());
+					return "";
+				} else {
+					showTopMenuOnExit = 1;
+					return topMenuContents[tmCurPos].name;
+				}
 			}
 		} else if(pressed & KEY_X) {
 			Sound::play(Sound::click);
@@ -498,8 +505,8 @@ std::string browseForFile(const std::vector<std::string>& extensionList, bool ac
 			screenOffset = 0;
 			fileOffset = 0;
 			showDirectoryContents(dirContents, screenOffset);
-		} else if(pressed & KEY_Y && !dirContents[fileOffset].isDirectory && accessSubdirectories) { // accessSubdirectory check is a hack to make it not trigger except in save selection
-			if(loadSave(dirContents[fileOffset].name)) {
+		} else if(pressed & KEY_Y && accessSubdirectories) { // accessSubdirectory is to make it not trigger except in save selection
+			if(dirContents[fileOffset].isDirectory || loadSave(dirContents[fileOffset].name)) {
 				Sound::play(Sound::click);
 				char path[PATH_MAX];
 				getcwd(path, PATH_MAX);
