@@ -24,7 +24,7 @@ steps:
   displayName: 'Clone submodules'
 
 - script: |
-    curl -L https://github.com/devkitPro/pacman/releases/download/devkitpro-pacman-1.0.1/devkitpro-pacman-installer.pkg -o devkitpro-pacman-installer.pkg
+    curl -L https://github.com/devkitPro/pacman/releases/download/v1.0.1/devkitpro-pacman-installer.pkg -o devkitpro-pacman-installer.pkg
     sudo installer -pkg devkitpro-pacman-installer.pkg -target /
     sudo dkp-pacman -Sy
     sudo dkp-pacman -S nds-dev --noconfirm
