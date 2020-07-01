@@ -10,7 +10,7 @@
 	"ball": "Ball",
 	"BALLS": "Poké Balls",
 	"BANK_CORRUPT": "Il forziere è corrotto!",
-	"BANK_NAME_ERROR": "Impossibile salvare i nomi delle forzieri!",
+	"BANK_NAME_ERROR": "Impossibile salvare i nomi dei forzieri!",
 	"BANK_SAVE_ERROR": "Impossibile salvare il forziere!",
 	"BankException": "BankException:\nValore di generazione errato: 0x%x",
 	"base": "Base",
@@ -134,6 +134,6 @@
 	"wallpaper": "Sfondo",
 	"warning": "Attenzione!",
 	"wrongSaveCard": "La dimensione del salvataggio\nnon corrisponde alla dimensione della\ngamecard attuale! Scrittura interrotta.",
-	"wrongSaveCart": "Il tipo di salvataggio\nnon corrisponde al tipo di\ncartuccia corrente!\nScrivi interrotto.",
+	"wrongSaveCart": "Il tipo di salvataggio\nnon corrisponde al tipo di\ncartuccia corrente!\nScrittura interrotta.",
 	"yes": "Si"
 }
