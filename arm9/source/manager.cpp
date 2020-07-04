@@ -365,6 +365,7 @@ void drawPokemonInfo(const pksm::PKX &pkm) {
 	if(pkm.species() > pksm::Species::None && pkm.species() <= pksm::Species::Genesect) {
 		// Show shiny star if applicable
 		if(pkm.shiny())	drawImageScaled(170 + (69 * WIDE_SCALE), 45, WIDE_SCALE, 1, shiny, true, true);
+		else	drawRectangle(170 + (69 * WIDE_SCALE), 45, shiny.width * WIDE_SCALE, shiny.height, 0, true, true);
 
 		// Print Pokédex number
 		char str[9];
