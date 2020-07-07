@@ -100,7 +100,7 @@
 	"release": "Rilascia",
 	"remove": "Rimuovi",
 	"rename": "Rinomina",
-	"reopenIfFrozen": "Se il progresso si congela,\nchiudi e riapri la consola.",
+	"reopenIfFrozen": "Se il progresso si blocca,\nchiudi e riapri la console.",
 	"rtcElapsed": "OTR tempo trascorso",
 	"rtcInitial": "OTR tempo iniziale",
 	"save": "Salva",
