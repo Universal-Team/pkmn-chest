@@ -46,7 +46,7 @@
 	"elmLab": "Laboratorio del Prof. Elm",
 	"ev": "EV",
 	"exit": "Esci",
-	"fatefulEncounter": "Incontro fatale",
+	"fatefulEncounter": "Evento speciale",
 	"female": "Femmina",
 	"filter": "Filtra",
 	"form": "Forma",
@@ -133,7 +133,7 @@
 	"unlimited": "Ilimitato",
 	"wallpaper": "Sfondo",
 	"warning": "Attenzione!",
-	"wrongSaveCard": "La dimensione del salvataggio\nnon corrisponde alla dimensione della\ngamecard attuale! Scrittura interrotta.",
+	"wrongSaveCard": "La dimensione del salvataggio\nnon corrisponde alla dimensione della\ncartuccia attuale! Scrittura interrotta.",
 	"wrongSaveCart": "Il tipo di salvataggio\nnon corrisponde al tipo di\ncartuccia corrente!\nScrittura interrotta.",
 	"yes": "Si"
 }
