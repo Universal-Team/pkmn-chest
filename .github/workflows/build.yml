@@ -101,7 +101,7 @@ jobs:
           git stage .
           git commit -m "pkmn-chest | $COMMIT_TAG"
           git tag v$CURRENT_DATE
-          git push origin v$CURRENT_DATE
+          git push origin master v$CURRENT_DATE
       - name: Release to Universal-Team/extras
         run: |
           AUTH_HEADER="Authorization: token ${{ secrets.TWLBOT_TOKEN }}"
