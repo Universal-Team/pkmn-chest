@@ -46,6 +46,7 @@ Compiling this app requires [devkitPro](https://devkitpro.org)'s devkitARM and l
 These can be installed by getting [devkitPro pacman](https://devkitpro.org/wiki/devkitPro_pacman), then running:
 `sudo dkp-pacman -S nds-dev`<br>
 <sup>(command may be slightly different depending on your OS)</sup>
+You will also need the [bmp2ds](https://github.com/Universal-Team/bmp2ds/releases/latest) graphics converter in your PATH.
 
 ### Cloning the repo
 To clone the repo run `git clone --recursive https://github.com/Universal-Team/pkmn-chest.git` (Note the `--recursive`, that is needed to clone the submodules)

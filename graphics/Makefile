@@ -18,29 +18,25 @@ INPUTS		:= $(foreach dir,$(GRAPHICS),$(addprefix $(dir)/,$(notdir $(wildcard $(d
 
 TARGETS		:= $(INPUTS:.bmp=.gfx)
 
-.PHONY	:	bmp2ds clean all directories pokemon
+.PHONY	:	clean all directories pokemon
 
-all	:	bmp2ds $(TARGETS) pokemon
+all	:	$(TARGETS) pokemon
 	@echo graphics ...
 
-no-pokemon	:	bmp2ds $(TARGETS)
+no-pokemon	:	$(TARGETS)
 	@echo graphics ...
-
-bmp2ds	:
-	@g++ bmp2ds.cpp -std=c++11 -o bmp2ds
 
 
 %.gfx	:	%.bmp %.txt
 	@mkdir -p $(OUT)/$(@D)
-	@./bmp2ds $< $(OUT)/$@ -o $(shell cat $(word 2,$^))
+	@bmp2ds $< $(OUT)/$@ -o $(shell cat $(word 2,$^))
 
 %.gfx	:	%.bmp
 	@mkdir -p $(OUT)/$(@D)
-	@./bmp2ds $< $(OUT)/$@
+	@bmp2ds $< $(OUT)/$@
 
 clean	:
 	@echo clean ...
-	@rm -f bmp2ds
 	@rm -rf $(addprefix $(OUT)/,$(TARGETS))
 
 pokemon	:
