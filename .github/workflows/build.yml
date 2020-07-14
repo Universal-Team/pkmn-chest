@@ -23,6 +23,8 @@ jobs:
     steps:
       - name: "Checkout repo"
         uses: actions/checkout@v1
+        with:
+          submodules: recursive
       - name: "Build"
         run: |
           make
@@ -59,9 +61,6 @@ jobs:
           sudo apt-get install qrencode -y
       - name: "Checkout repo"
         uses: actions/checkout@v1
-      - name: "Clone submodules"
-        run: |
-          git submodule update --init --recursive
       - name: Download artifacts
         uses: actions/download-artifact@v2
         with:
