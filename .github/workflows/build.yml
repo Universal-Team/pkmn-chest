@@ -59,6 +59,8 @@ jobs:
           sudo apt-get install qrencode -y
       - name: "Checkout repo"
         uses: actions/checkout@v1
+        with:
+          submodules: true
       - name: Download artifacts
         uses: actions/download-artifact@v2
         with:
