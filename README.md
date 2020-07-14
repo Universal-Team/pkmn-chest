@@ -7,8 +7,8 @@
   <a href="https://discord.gg/KDJCfGF">
     <img src="https://img.shields.io/badge/Discord-%23pkmn--chest-7289DA" alt="Discord Server: #pkmn-chest">
   </a>
-  <a href="https://dev.azure.com/Universal-Team/Builds/_build?definitionId=4">
-    <img src="https://dev.azure.com/Universal-Team/Builds/_apis/build/status/Universal-Team.pkmn-chest?branchName=master" alt="Build status on Azure Pipelines">
+  <a href="https://github.com/Universal-Team/pkmn-chest/actions?query=workflow%3A%22Build+pkmn-chest%22">
+    <img src="https://github.com/Universal-Team/pkmn-chest/workflows/Build%20pkmn-chest/badge.svg" alt="Build status on GitHub Actions">
   </a>
   <a href="https://crowdin.com/project/pkmn-chest">
     <img src="https://badges.crowdin.net/pkmn-chest/localized.svg" alt="Translation status on Crowdin">
