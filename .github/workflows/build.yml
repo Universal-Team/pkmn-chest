@@ -18,8 +18,8 @@ jobs:
     container: devkitpro/devkitarm
     name: "Build with Docker using devkitARM"
     outputs:
-      commit_tag: ${{ steps.make-cias.outputs.commit_tag }}
-      commit_message: ${{ steps.make-cias.outputs.commit_message }}
+      commit_tag: ${{ steps.build.outputs.commit_tag }}
+      commit_message: ${{ steps.build.outputs.commit_message }}
     steps:
       - name: "Checkout repo"
         uses: actions/checkout@v1
@@ -31,6 +31,7 @@ jobs:
           chmod +x bmp2ds
           mv bmp2ds /usr/local/bin
       - name: Build
+        id: build
         run: |
           make
 
