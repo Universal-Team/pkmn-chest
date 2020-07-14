@@ -7,5 +7,4 @@
 
 #define _PKSMCORE_EXTRA_LANGUAGES BRH, IND, LIT, POL, POR, RUS
 
-
 #endif
