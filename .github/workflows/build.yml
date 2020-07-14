@@ -107,7 +107,7 @@ jobs:
         run: |
           AUTH_HEADER="Authorization: token ${{ secrets.TWLBOT_TOKEN }}"
           CONTENT_TYPE="Content-Type: application/json"
-          API_URL="https://api.github.com/repos/TWLBot/Builds/releases"
+          API_URL="https://api.github.com/repos/Universal-Team/extras/releases"
           RELEASE_INFO="{\"tag_name\": \"v${{ steps.commit.outputs.current_date }}\", \"name\": \"pkmn-chest | $COMMIT_TAG\", \"body\": \"$COMMIT_MESSAGE\", "prerelease": true}"
 
           RESPONSE=$(curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_TYPE" "$API_URL" -d "$RELEASE_INFO")
