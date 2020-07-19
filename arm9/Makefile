@@ -56,7 +56,7 @@ CFLAGS	:=	-g -Wall -Wno-psabi -O2\
 
 CFLAGS	+=	$(INCLUDE) -DARM9
 # Exeptions needed on for swshcrypto
-CXXFLAGS	:=	$(CFLAGS) -fno-rtti -fexceptions -std=gnu++2a -Wno-volatile
+CXXFLAGS	:=	$(CFLAGS) -fno-rtti -fexceptions -std=gnu++20 -Wno-volatile
 
 ASFLAGS	:=	-g $(ARCH) -march=armv5te -mtune=arm946e-s
 
