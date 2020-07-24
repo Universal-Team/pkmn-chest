@@ -7,6 +7,7 @@
 *.cia
 *.msl
 arm9/include/utils/version.hpp
+graphics/bmp2ds
 nitrofiles/i18n/**/*.txt
 nitrofiles/version.txt
 

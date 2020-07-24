@@ -2,7 +2,6 @@ name: Build pkmn-chest
 
 on:
   push:
-    branches: ["*"]
     branches-ignore: [translation]
     paths-ignore:
       - 'README.md'
