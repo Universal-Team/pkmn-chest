@@ -43,14 +43,15 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
  * bool canChooseDirs is whether to allow selecting directories as the path (default: false)
  * Returns the selected file
  */
-std::string browseForFile(const std::vector<std::string> &extensionList, bool directoryNavigation, bool canChooseDirs = false);
+std::string browseForFile(const std::vector<std::string> &extensionList,
+						  bool directoryNavigation,
+						  bool canChooseDirs = false);
 
 /*
  * Browse for a save file
  * Returns the selected file
  */
 std::string browseForSave(void);
-
 
 /*
  * Copies a file to another location
@@ -60,4 +61,4 @@ std::string browseForSave(void);
  */
 int fcopy(const char *sourcePath, const char *destinationPath);
 
-#endif //FILE_BROWSE_HPP
+#endif

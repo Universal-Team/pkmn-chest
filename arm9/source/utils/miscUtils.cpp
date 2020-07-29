@@ -1,13 +1,14 @@
 #include "miscUtils.hpp"
+
+#include "version.hpp"
+
 #include <cstring>
 #include <stdio.h>
 #include <unistd.h>
 
-#include "version.hpp"
-
 bool nitroFSGood(void) {
 	bool nitroFSGood = false;
-	FILE *file = fopen("nitro:/version.txt", "r");
+	FILE *file       = fopen("nitro:/version.txt", "r");
 	if(file) {
 		fseek(file, 0, SEEK_END);
 		int length = ftell(file);

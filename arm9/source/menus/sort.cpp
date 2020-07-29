@@ -1,25 +1,29 @@
 #include "sort.hpp"
+
+#include "PKFilter.hpp"
+#include "PKX.hpp"
 #include "banks.hpp"
 #include "colors.hpp"
 #include "config.hpp"
 #include "flashcard.hpp"
 #include "graphics.hpp"
-#include "input.hpp"
 #include "i18n.hpp"
 #include "i18n_ext.hpp"
+#include "input.hpp"
 #include "loader.hpp"
 #include "manager.hpp"
 #include "misc.hpp"
-#include "PKFilter.hpp"
-#include "PKX.hpp"
 #include "sound.hpp"
 
 std::vector<SortType> sortTypes;
-std::vector<std::string> sortText = {"none", "dexNo", "speciesName", "form", "type1", "type2", "hp", "attack", "defense", "spAtk", "spDef", "speed", "hpIV", "attackIV", "defenseIV", "spAtkIV", "spDefIV", "speedIV", "nature", "level", "trainerID", "hpType", "friendship", "name", "origTrainer", "shiny"};
+std::vector<std::string> sortText = {
+	"none",   "dexNo", "speciesName", "form",   "type1",      "type2",     "hp",          "attack",  "defense",
+	"spAtk",  "spDef", "speed",       "hpIV",   "attackIV",   "defenseIV", "spAtkIV",     "spDefIV", "speedIV",
+	"nature", "level", "trainerID",   "hpType", "friendship", "name",      "origTrainer", "shiny"};
 
 bool sortPokemonFilter(const std::unique_ptr<pksm::PKX> &pkm1, const std::unique_ptr<pksm::PKX> &pkm2) {
-	for(const auto& type : sortTypes) {
-		switch (type) {
+	for(const auto &type : sortTypes) {
+		switch(type) {
 			case SortType::DEX:
 				if(pkm1->species() < pkm2->species())
 					return true;
@@ -153,9 +157,11 @@ bool sortPokemonFilter(const std::unique_ptr<pksm::PKX> &pkm1, const std::unique
 					return false;
 				break;
 			case SortType::SPECIESNAME:
-				if(i18n::species(Config::getLang("lang"), pkm1->species()) < i18n::species(Config::getLang("lang"), pkm2->species()))
+				if(i18n::species(Config::getLang("lang"), pkm1->species()) <
+				   i18n::species(Config::getLang("lang"), pkm2->species()))
 					return true;
-				if(i18n::species(Config::getLang("lang"), pkm2->species()) < i18n::species(Config::getLang("lang"), pkm1->species()))
+				if(i18n::species(Config::getLang("lang"), pkm2->species()) <
+				   i18n::species(Config::getLang("lang"), pkm1->species()))
 					return false;
 				break;
 			case SortType::OTNAME:
@@ -186,15 +192,15 @@ void sortPokemon(bool top) {
 		sortTypes.push_back(SortType::DEX);
 	}
 	if(top) {
-		for(int i=0;i<Banks::bank->boxes()*30;i++) {
-			if(Banks::bank->pkm(i/30, i%30)->species() != pksm::Species::None) {
-				sortPkm.push_back(Banks::bank->pkm(i/30, i%30));
+		for(int i = 0; i < Banks::bank->boxes() * 30; i++) {
+			if(Banks::bank->pkm(i / 30, i % 30)->species() != pksm::Species::None) {
+				sortPkm.push_back(Banks::bank->pkm(i / 30, i % 30));
 			}
 		}
 	} else {
-		for(int i=0;i<save->maxSlot();i++) {
-			if(save->pkm(i/30, i%30)->species() != pksm::Species::None) {
-				sortPkm.push_back(save->pkm(i/30, i%30));
+		for(int i = 0; i < save->maxSlot(); i++) {
+			if(save->pkm(i / 30, i % 30)->species() != pksm::Species::None) {
+				sortPkm.push_back(save->pkm(i / 30, i % 30));
 			}
 		}
 	}
@@ -202,18 +208,18 @@ void sortPokemon(bool top) {
 	std::stable_sort(sortPkm.begin(), sortPkm.end(), sortPokemonFilter);
 
 	if(top) {
-		for(unsigned i=0;i<sortPkm.size();i++) {
-			Banks::bank->pkm(*sortPkm[i], i/30, i%30);
+		for(unsigned i = 0; i < sortPkm.size(); i++) {
+			Banks::bank->pkm(*sortPkm[i], i / 30, i % 30);
 		}
-		for(int i=sortPkm.size();i<Banks::bank->boxes()*30;i++) {
-			Banks::bank->pkm(*save->emptyPkm(), i/30, i%30);
+		for(int i = sortPkm.size(); i < Banks::bank->boxes() * 30; i++) {
+			Banks::bank->pkm(*save->emptyPkm(), i / 30, i % 30);
 		}
 	} else {
-		for(unsigned i=0;i<sortPkm.size();i++) {
-			save->pkm(*sortPkm[i], i/30, i%30, false);
+		for(unsigned i = 0; i < sortPkm.size(); i++) {
+			save->pkm(*sortPkm[i], i / 30, i % 30, false);
 		}
-		for(int i=sortPkm.size();i<save->maxSlot();i++) {
-			save->pkm(*save->emptyPkm(), i/30, i%30, false);
+		for(int i = sortPkm.size(); i < save->maxSlot(); i++) {
+			save->pkm(*save->emptyPkm(), i / 30, i % 30, false);
 		}
 	}
 }
@@ -223,12 +229,23 @@ void drawSortMenu(void) {
 	printText(i18n::localize(Config::getLang("lang"), "sort"), 4, 0, false, true);
 
 	// Print items
-	for(unsigned i=0;i<sortTypes.size();i++) {
-		printText(i18n::localize(Config::getLang("lang"), "filter")+" "+std::to_string(i+1)+": "+i18n::localize(Config::getLang("lang"), sortText[int(sortTypes[i])]), 4, 16+(i*16), false, true);
+	for(unsigned i = 0; i < sortTypes.size(); i++) {
+		printText(i18n::localize(Config::getLang("lang"), "filter") + " " + std::to_string(i + 1) + ": " +
+					  i18n::localize(Config::getLang("lang"), sortText[int(sortTypes[i])]),
+				  4,
+				  16 + (i * 16),
+				  false,
+				  true);
 	}
 
-	drawImage(253-boxButton.width, 189-boxButton.height, boxButton, false, false);
-	printTextMaxW(i18n::localize(Config::getLang("lang"), "sort"), boxButton.width-8, 1, 260-boxButton.width, 193-boxButton.height, false, true);
+	drawImage(253 - boxButton.width, 189 - boxButton.height, boxButton, false, false);
+	printTextMaxW(i18n::localize(Config::getLang("lang"), "sort"),
+				  boxButton.width - 8,
+				  1,
+				  260 - boxButton.width,
+				  193 - boxButton.height,
+				  false,
+				  true);
 }
 
 void sortMenu(bool top) {
@@ -237,9 +254,15 @@ void sortMenu(bool top) {
 
 	// Set arrow position
 	setSpriteVisibility(arrowID, false, true);
-	setSpritePosition(arrowID, false, 4+getTextWidth(i18n::localize(Config::getLang("lang"), "filter")+" "+std::to_string(1)+": "+i18n::localize(Config::getLang("lang"), sortText[int(sortTypes[0])]))+2, 10);
+	setSpritePosition(arrowID,
+					  false,
+					  4 +
+						  getTextWidth(i18n::localize(Config::getLang("lang"), "filter") + " " + std::to_string(1) +
+									   ": " + i18n::localize(Config::getLang("lang"), sortText[int(sortTypes[0])])) +
+						  2,
+					  10);
 	// Hide all Pokémon sprites
-	for(int i=0;i<30;i++) {
+	for(int i = 0; i < 30; i++) {
 		setSpriteVisibility(i, false, false);
 	}
 	updateOam();
@@ -252,7 +275,7 @@ void sortMenu(bool top) {
 			swiWaitForVBlank();
 			scanKeys();
 			pressed = keysDown();
-			held = keysDownRepeat();
+			held    = keysDownRepeat();
 		} while(!held);
 
 		if(pressed & KEY_A) {
@@ -261,20 +284,26 @@ void sortMenu(bool top) {
 			Sound::play(Sound::back);
 			break;
 		} else if(held & KEY_UP) {
-			if(selection > 0)	selection--;
+			if(selection > 0)
+				selection--;
 		} else if(held & KEY_DOWN) {
-			if(selection < (int)sortTypes.size())	selection++;
+			if(selection < (int)sortTypes.size())
+				selection++;
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
-			for(unsigned i=0;i<sortTypes.size();i++) {
-				if(touch.px <= 4+getTextWidth(i18n::localize(Config::getLang("lang"), "filter")+" "+std::to_string(selection+1)+": "+i18n::localize(Config::getLang("lang"), sortText[int(sortTypes[selection])])) && touch.py >= 16+(i*16) && touch.py <= 16+((i+1)*16)) {
-					selection = i;
+			for(unsigned i = 0; i < sortTypes.size(); i++) {
+				if(touch.px <= 4 +
+						   getTextWidth(i18n::localize(Config::getLang("lang"), "filter") + " " +
+										std::to_string(selection + 1) + ": " +
+										i18n::localize(Config::getLang("lang"), sortText[int(sortTypes[selection])])) &&
+				   touch.py >= 16 + (i * 16) && touch.py <= 16 + ((i + 1) * 16)) {
+					selection      = i;
 					optionSelected = true;
 					break;
 				}
 			}
-			if(touch.px >= 253-boxButton.width && touch.py >= 189-boxButton.height) {
-				selection = sortTypes.size();
+			if(touch.px >= 253 - boxButton.width && touch.py >= 189 - boxButton.height) {
+				selection      = sortTypes.size();
 				optionSelected = true;
 			}
 		}
@@ -284,7 +313,7 @@ void sortMenu(bool top) {
 			Sound::play(Sound::click);
 			if(selection < (int)sortTypes.size()) {
 				std::vector<std::string> sortTextLocalized;
-				for(unsigned i=0;i<sortText.size();i++) {
+				for(unsigned i = 0; i < sortText.size(); i++) {
 					sortTextLocalized.push_back(i18n::localize(Config::getLang("lang"), sortText[i]));
 				}
 				sortTypes[selection] = selectItem(sortTypes[selection], 0, sortTextLocalized.size(), sortTextLocalized);
@@ -296,8 +325,21 @@ void sortMenu(bool top) {
 		}
 
 		// Move cursor
-		if(selection < (int)sortTypes.size())	setSpritePosition(arrowID, false, 4+getTextWidth(i18n::localize(Config::getLang("lang"), "filter")+" "+std::to_string(selection+1)+": "+i18n::localize(Config::getLang("lang"), sortText[int(sortTypes[selection])]))+2, (16*(selection)+10));
-		else	setSpritePosition(arrowID, false, 260-boxButton.width+getTextWidth(i18n::localize(Config::getLang("lang"), "sort"))+2, 191-boxButton.height-3);
+		if(selection < (int)sortTypes.size())
+			setSpritePosition(
+				arrowID,
+				false,
+				4 +
+					getTextWidth(i18n::localize(Config::getLang("lang"), "filter") + " " +
+								 std::to_string(selection + 1) + ": " +
+								 i18n::localize(Config::getLang("lang"), sortText[int(sortTypes[selection])])) +
+					2,
+				(16 * (selection) + 10));
+		else
+			setSpritePosition(arrowID,
+							  false,
+							  260 - boxButton.width + getTextWidth(i18n::localize(Config::getLang("lang"), "sort")) + 2,
+							  191 - boxButton.height - 3);
 		updateOam();
 	}
 }

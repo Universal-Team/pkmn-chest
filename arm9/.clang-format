@@ -1,0 +1,25 @@
+﻿---
+AccessModifierOffset: '-4'
+AlignConsecutiveAssignments: 'true'
+AlignEscapedNewlines: DontAlign
+AlignOperands: 'false'
+BinPackArguments: 'false'
+BinPackParameters: 'false'
+ColumnLimit: '120'
+DerivePointerAlignment: 'false'
+FixNamespaceComments: 'false'
+IncludeBlocks: Regroup
+IndentCaseLabels: 'true'
+IndentPPDirectives: BeforeHash
+IndentWidth: '4'
+IndentWrappedFunctionNames: 'true'
+KeepEmptyLinesAtTheStartOfBlocks: 'false'
+NamespaceIndentation: All
+PenaltyReturnTypeOnItsOwnLine: '10000'
+PointerAlignment: Right
+SpaceBeforeParens: Never
+Standard: Cpp11
+TabWidth: '4'
+UseTab: ForContinuationAndIndentation
+
+...

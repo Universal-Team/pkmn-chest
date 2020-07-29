@@ -1,6 +1,6 @@
 #include "aMenu.hpp"
-#include <dirent.h>
 
+#include "PKX.hpp"
 #include "banks.hpp"
 #include "colors.hpp"
 #include "config.hpp"
@@ -13,33 +13,34 @@
 #include "manager.hpp"
 #include "misc.hpp"
 #include "party.hpp"
-#include "PKX.hpp"
 #include "random.hpp"
-#include "summary.hpp"
 #include "sound.hpp"
+#include "summary.hpp"
 
-#define pkmPos(x, y) ((y*(inParty ? 2 : 6))+x)
+#include <dirent.h>
+
+#define pkmPos(x, y) ((y * (inParty ? 2 : 6)) + x)
 
 std::vector<Label> aMenuButtons = {
-	{170,  16,    "move"}, // Move
-	{170,  42,    "edit"}, // Edit
-	{170,  68,    "copy"}, // Copy
-	{170,  94, "release"}, // Release
-	{170, 120,    "dump"}, // Dump
-	{170, 146,    "back"}, // Back
+	{170, 16, "move"},    // Move
+	{170, 42, "edit"},    // Edit
+	{170, 68, "copy"},    // Copy
+	{170, 94, "release"}, // Release
+	{170, 120, "dump"},   // Dump
+	{170, 146, "back"},   // Back
 };
 std::vector<Label> aMenuEmptySlotButtons = {
 	{170, 16, "inject"}, // Inject
 	{170, 42, "create"}, // Create
-	{170, 68,   "back"}, // Back
+	{170, 68, "back"},   // Back
 };
 std::vector<Label> aMenuTopBarButtons = {
-	{170,  16,      "jump"}, // Jump
-	{170,  42,    "rename"}, // Rename
-	{170,  68,      "swap"}, // Swap
-	{170,  94, "wallpaper"}, // Wallpaper
-	{170, 120,   "dumpBox"}, // Dump box
-	{170, 146,      "back"}, // Back
+	{170, 16, "jump"},      // Jump
+	{170, 42, "rename"},    // Rename
+	{170, 68, "swap"},      // Swap
+	{170, 94, "wallpaper"}, // Wallpaper
+	{170, 120, "dumpBox"},  // Dump box
+	{170, 146, "back"},     // Back
 };
 
 constexpr char pathFormat[][51] = {
@@ -52,42 +53,55 @@ constexpr char pathFormat[][51] = {
 std::string getPkxOutputPath(const pksm::PKX &pkm, const std::string &boxName = "", bool insertNewlines = false) {
 	char path[PATH_MAX];
 	if(pkm.alternativeForm()) {
-		snprintf(path, sizeof(path), pathFormat[insertNewlines],
-									 mainDrive().c_str(),
-									 (boxName == "" ? boxName : boxName + (insertNewlines ? "/\n" : "/")).c_str(),
-									 u16(pkm.species()),
-									 pkm.alternativeForm(),
-									 pkm.nickname().c_str(),
-									 pkm.checksum(),
-									 pkm.encryptionConstant(),
-									 pkm.extension().c_str());
+		snprintf(path,
+				 sizeof(path),
+				 pathFormat[insertNewlines],
+				 mainDrive().c_str(),
+				 (boxName == "" ? boxName : boxName + (insertNewlines ? "/\n" : "/")).c_str(),
+				 u16(pkm.species()),
+				 pkm.alternativeForm(),
+				 pkm.nickname().c_str(),
+				 pkm.checksum(),
+				 pkm.encryptionConstant(),
+				 pkm.extension().c_str());
 	} else {
-		snprintf(path, sizeof(path), pathFormat[2+insertNewlines],
-									 mainDrive().c_str(),
-									 (boxName == "" ? boxName : boxName + (insertNewlines ? "/\n" : "/")).c_str(),
-									 u16(pkm.species()),
-									 pkm.nickname().c_str(),
-									 pkm.checksum(),
-									 pkm.encryptionConstant(),
-									 pkm.extension().c_str());
+		snprintf(path,
+				 sizeof(path),
+				 pathFormat[2 + insertNewlines],
+				 mainDrive().c_str(),
+				 (boxName == "" ? boxName : boxName + (insertNewlines ? "/\n" : "/")).c_str(),
+				 u16(pkm.species()),
+				 pkm.nickname().c_str(),
+				 pkm.checksum(),
+				 pkm.encryptionConstant(),
+				 pkm.extension().c_str());
 	}
 
 	return path;
 }
 
-void drawAMenuButtons(std::vector<Label>& buttons, int buttonMode) {
-	for(unsigned i=0;i<buttons.size();i++) {
+void drawAMenuButtons(std::vector<Label> &buttons, int buttonMode) {
+	for(unsigned i = 0; i < buttons.size(); i++) {
 		drawImage(buttons[i].x, buttons[i].y, boxButton, false, true);
-		printTextMaxW(i18n::localize(Config::getLang("lang"), buttons[i].label), 80, 1, buttons[i].x+4, buttons[i].y+4, false, true);
+		printTextMaxW(i18n::localize(Config::getLang("lang"), buttons[i].label),
+					  80,
+					  1,
+					  buttons[i].x + 4,
+					  buttons[i].y + 4,
+					  false,
+					  true);
 	}
 }
 
-int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
-	setSpritePosition(arrowID, false, buttons[0].x+getTextWidthMaxW(i18n::localize(Config::getLang("lang"), buttons[0].label), 80)+4, buttons[0].y);
+int aMenu(int pkmX, int pkmY, std::vector<Label> &buttons, int buttonMode) {
+	setSpritePosition(arrowID,
+					  false,
+					  buttons[0].x + getTextWidthMaxW(i18n::localize(Config::getLang("lang"), buttons[0].label), 80) +
+						  4,
+					  buttons[0].y);
 	setSpritePosition(arrowID, true, -16, -16); // Move top arrow off screen
 	setSpriteVisibility(arrowID, false, true);
 	updateOam();
-
 
 	drawAMenuButtons(buttons, buttonMode);
 
@@ -99,19 +113,22 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 			swiWaitForVBlank();
 			scanKeys();
 			pressed = keysDown();
-			held = keysDownRepeat();
+			held    = keysDownRepeat();
 		} while(!held);
 
 		if(held & KEY_UP) {
-			if(menuSelection > 0)	menuSelection--;
+			if(menuSelection > 0)
+				menuSelection--;
 		} else if(held & KEY_DOWN) {
-			if(menuSelection < (int)buttons.size()-1)	menuSelection++;
+			if(menuSelection < (int)buttons.size() - 1)
+				menuSelection++;
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
 
-			for(unsigned i=0; i<buttons.size();i++) {
-				if(touch.px >= buttons[i].x && touch.px <= buttons[i].x+64 && touch.py >= buttons[i].y && touch.py <= buttons[i].y+25) {
-					menuSelection = i;
+			for(unsigned i = 0; i < buttons.size(); i++) {
+				if(touch.px >= buttons[i].x && touch.px <= buttons[i].x + 64 && touch.py >= buttons[i].y &&
+				   touch.py <= buttons[i].y + 25) {
+					menuSelection  = i;
 					optionSelected = true;
 				}
 			}
@@ -122,7 +139,8 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 			goto back;
 		}
 
-		if(optionSelected) Sound::play(Sound::click);
+		if(optionSelected)
+			Sound::play(Sound::click);
 		if(optionSelected && buttonMode == 0) { // A Pokémon
 			optionSelected = false;
 			if(menuSelection == 0) { // Move
@@ -135,20 +153,26 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 			} else if(menuSelection == 1) { // Edit
 				if(partyShown) {
 					// Hide party Pokémon
-					for(unsigned int i=0;i<partyIconID.size();i++) {
+					for(unsigned int i = 0; i < partyIconID.size(); i++) {
 						setSpriteVisibility(partyIconID[i], false, false);
 					}
 					updateOam();
 				}
-				if(topScreen)	Banks::bank->pkm(showPokemonSummary(*currentPokemon(pkmX, pkmY)), currentBankBox, pkmPos(pkmX, pkmY));
-				else if(inParty)	save->pkm(showPokemonSummary(*currentPokemon(pkmX, pkmY)), pkmPos(pkmX, pkmY));
-				else	save->pkm(showPokemonSummary(*currentPokemon(pkmX, pkmY)), currentSaveBox, pkmPos(pkmX, pkmY), false);
+				if(topScreen)
+					Banks::bank->pkm(
+						showPokemonSummary(*currentPokemon(pkmX, pkmY)), currentBankBox, pkmPos(pkmX, pkmY));
+				else if(inParty)
+					save->pkm(showPokemonSummary(*currentPokemon(pkmX, pkmY)), pkmPos(pkmX, pkmY));
+				else
+					save->pkm(
+						showPokemonSummary(*currentPokemon(pkmX, pkmY)), currentSaveBox, pkmPos(pkmX, pkmY), false);
 
 				// Redraw screen
 				drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
 				drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 				drawBox(false);
-				if(topScreen)	drawBox(topScreen);
+				if(topScreen)
+					drawBox(topScreen);
 				drawPokemonInfo(*currentPokemon(pkmX, pkmY));
 				drawAMenuButtons(buttons, buttonMode);
 				if(partyShown) {
@@ -165,15 +189,19 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 			} else if(menuSelection == 3) { // Release
 				if(partyShown) {
 					// Hide party Pokémon
-					for(unsigned int i=0;i<partyIconID.size();i++) {
+					for(unsigned int i = 0; i < partyIconID.size(); i++) {
 						setSpriteVisibility(partyIconID[i], false, false);
 					}
 					updateOam();
 				}
-				if(Input::getBool(i18n::localize(Config::getLang("lang"), "release"), i18n::localize(Config::getLang("lang"), "cancel"))) {
-					if(topScreen)	Banks::bank->pkm(*save->emptyPkm(), currentBankBox, pkmPos(pkmX, pkmY));
-					else if(inParty)	save->pkm(*save->emptyPkm(), pkmPos(pkmX, pkmY));
-					else	save->pkm(*save->emptyPkm(), currentSaveBox, pkmPos(pkmX, pkmY), false);
+				if(Input::getBool(i18n::localize(Config::getLang("lang"), "release"),
+								  i18n::localize(Config::getLang("lang"), "cancel"))) {
+					if(topScreen)
+						Banks::bank->pkm(*save->emptyPkm(), currentBankBox, pkmPos(pkmX, pkmY));
+					else if(inParty)
+						save->pkm(*save->emptyPkm(), pkmPos(pkmX, pkmY));
+					else
+						save->pkm(*save->emptyPkm(), currentSaveBox, pkmPos(pkmX, pkmY), false);
 					drawPokemonInfo(*save->emptyPkm());
 					drawBox(topScreen);
 
@@ -192,13 +220,13 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 			} else if(menuSelection == 4) { // Dump
 				if(partyShown) {
 					// Hide party Pokémon
-					for(unsigned int i=0;i<partyIconID.size();i++) {
+					for(unsigned int i = 0; i < partyIconID.size(); i++) {
 						setSpriteVisibility(partyIconID[i], false, false);
 					}
 					updateOam();
 				}
 
-				FILE* out = fopen(getPkxOutputPath(*currentPokemon(pkmX, pkmY)).c_str(), "wb");
+				FILE *out = fopen(getPkxOutputPath(*currentPokemon(pkmX, pkmY)).c_str(), "wb");
 				if(out) {
 					fwrite(currentPokemon(pkmX, pkmY)->rawData(), 1, 136, out);
 					fclose(out);
@@ -209,7 +237,10 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 
 				// Get formatted path for prompt
 				char str[PATH_MAX];
-				snprintf(str, sizeof(str), i18n::localize(Config::getLang("lang"), "dumpedTo").c_str(), getPkxOutputPath(*currentPokemon(pkmX, pkmY), "", true).c_str());
+				snprintf(str,
+						 sizeof(str),
+						 i18n::localize(Config::getLang("lang"), "dumpedTo").c_str(),
+						 getPkxOutputPath(*currentPokemon(pkmX, pkmY), "", true).c_str());
 
 				Gui::prompt(str, i18n::localize(Config::getLang("lang"), "ok"));
 
@@ -222,7 +253,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 					fillPartySprites();
 				}
 			} else if(menuSelection == 5) { // Back
-				back:
+			back:
 				if(topScreen) {
 					setSpriteVisibility(arrowID, false, false);
 				}
@@ -242,7 +273,8 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				// Clear mini boxes
 				drawRectangle(170, 0, 86, 192, CLEAR, false, true);
 
-				if(num == -1 || num == (topScreen ? currentBankBox : currentSaveBox)) { // If B was pressed or the box wasn't changed
+				if(num == -1 ||
+				   num == (topScreen ? currentBankBox : currentSaveBox)) { // If B was pressed or the box wasn't changed
 					drawAMenuButtons(buttons, buttonMode);
 				} else { // If a new box was selected
 					(topScreen ? currentBankBox : currentSaveBox) = num;
@@ -255,8 +287,10 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				updateOam();
 				std::string newName = Input::getLine(topScreen ? 16 : 8);
 				if(newName != "") {
-					if(topScreen)	Banks::bank->boxName(newName, currentBankBox);
-					else	save->boxName(currentSaveBox, newName);
+					if(topScreen)
+						Banks::bank->boxName(newName, currentBankBox);
+					else
+						save->boxName(currentSaveBox, newName);
 				}
 
 				// Redraw screen
@@ -268,7 +302,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				std::vector<std::unique_ptr<pksm::PKX>> tempBox;
 				bool shouldCopy[30];
 				// Copy save Pokémon to a buffer
-				for(int i=0;i<30;i++) {
+				for(int i = 0; i < 30; i++) {
 					if(save->pkm(currentSaveBox, i)->species() != pksm::Species::None)
 						tempBox.push_back(save->pkm(currentSaveBox, i));
 					else
@@ -276,7 +310,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				}
 
 				// Copy bank Pokémon to the save and add it to the Pokédex
-				for(int i=0;i<30;i++) {
+				for(int i = 0; i < 30; i++) {
 					if(Banks::bank->pkm(currentBankBox, i)->species() != pksm::Species::None) {
 						if(save->availableSpecies().count(Banks::bank->pkm(currentBankBox, i)->species()) != 0) {
 							save->pkm(*save->transfer(*Banks::bank->pkm(currentBankBox, i)), currentSaveBox, i, false);
@@ -292,7 +326,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				}
 
 				// Copy the save Pokémon from their buffer to the bank
-				for(int i=0;i<30;i++) {
+				for(int i = 0; i < 30; i++) {
 					if(shouldCopy[i]) {
 						Banks::bank->pkm(*tempBox[i], currentBankBox, i);
 					}
@@ -304,13 +338,15 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 			} else if(menuSelection == 3) { // Wallpaper
 				if(!topScreen) {
 					// Hide sprites
-					for(int i=0;i<30;i++)	setSpriteVisibility(i, false, false);
+					for(int i = 0; i < 30; i++)
+						setSpriteVisibility(i, false, false);
 					setSpriteVisibility(arrowID, false, false);
 					updateOam();
 
 					// Get new wallpaper
 					int num = selectWallpaper(save->boxWallpaper(currentSaveBox));
-					if(num != -1)	save->boxWallpaper(currentSaveBox, num);
+					if(num != -1)
+						save->boxWallpaper(currentSaveBox, num);
 
 					// Redraw screen
 					setSpriteVisibility(arrowID, false, true);
@@ -320,13 +356,22 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				}
 			} else if(menuSelection == 4) { // Dump box
 				char path[PATH_MAX];
-				snprintf(path, sizeof(path), "%s:/_nds/pkmn-chest/out/%s", mainDrive().c_str(), topScreen ? Banks::bank->boxName(currentBankBox).c_str() : save->boxName(currentSaveBox).c_str());
+				snprintf(path,
+						 sizeof(path),
+						 "%s:/_nds/pkmn-chest/out/%s",
+						 mainDrive().c_str(),
+						 topScreen ? Banks::bank->boxName(currentBankBox).c_str()
+								   : save->boxName(currentSaveBox).c_str());
 				mkdir(path, 0777);
 
-				for(int y=0;y<5;y++) {
-					for(int x=0;x<6;x++) {
+				for(int y = 0; y < 5; y++) {
+					for(int x = 0; x < 6; x++) {
 						if(currentPokemon(x, y)->species() != pksm::Species::None) {
-							FILE* out = fopen(getPkxOutputPath(*currentPokemon(x, y), topScreen ? Banks::bank->boxName(currentBankBox) : save->boxName(currentSaveBox)).c_str(), "wb");
+							FILE *out = fopen(getPkxOutputPath(*currentPokemon(x, y),
+															   topScreen ? Banks::bank->boxName(currentBankBox)
+																		 : save->boxName(currentSaveBox))
+												  .c_str(),
+											  "wb");
 							if(out) {
 								fwrite(currentPokemon(x, y)->rawData(), 1, 136, out);
 								fclose(out);
@@ -340,7 +385,11 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 
 				// Get formatted path for prompt
 				char outputPath[PATH_MAX], str[PATH_MAX];
-				snprintf(outputPath, sizeof(outputPath), "%s:/_nds/pkmn-chest/\nout/%s", mainDrive().c_str(), (topScreen ? Banks::bank->boxName(currentBankBox) : save->boxName(currentSaveBox)).c_str());
+				snprintf(outputPath,
+						 sizeof(outputPath),
+						 "%s:/_nds/pkmn-chest/\nout/%s",
+						 mainDrive().c_str(),
+						 (topScreen ? Banks::bank->boxName(currentBankBox) : save->boxName(currentSaveBox)).c_str());
 				snprintf(str, sizeof(str), i18n::localize(Config::getLang("lang"), "dumpedTo").c_str(), outputPath);
 
 				Gui::prompt(str, i18n::localize(Config::getLang("lang"), "ok"));
@@ -355,12 +404,12 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 			optionSelected = false;
 			if(menuSelection == 0) { // Inject
 				// Hide sprites
-				for(int i=0;i<30;i++) {
+				for(int i = 0; i < 30; i++) {
 					setSpriteVisibility(i, false, false);
 				}
 				if(partyShown) {
 					// Hide party Pokémon
-					for(unsigned int i=0;i<partyIconID.size();i++) {
+					for(unsigned int i = 0; i < partyIconID.size(); i++) {
 						setSpriteVisibility(partyIconID[i], false, false);
 					}
 				}
@@ -378,7 +427,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				// If the fileName isn't blank, inject the Pokémon
 				if(fileName != "") {
 					pksm::Generation gen;
-					switch(fileName[fileName.size()-1]) {
+					switch(fileName[fileName.size() - 1]) {
 						case '3':
 							gen = pksm::Generation::THREE;
 							break;
@@ -392,7 +441,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 							gen = pksm::Generation::SIX;
 							break;
 						case '7':
-							switch(fileName[fileName.size()-2]) {
+							switch(fileName[fileName.size() - 2]) {
 								case 'k':
 								case 'K':
 									gen = pksm::Generation::SEVEN;
@@ -413,9 +462,9 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 							gen = pksm::Generation::UNUSED;
 							break;
 					}
-					
+
 					if(gen != pksm::Generation::UNUSED) {
-						FILE* in = fopen(fileName.c_str(), "rb");
+						FILE *in = fopen(fileName.c_str(), "rb");
 
 						fseek(in, 0, SEEK_END);
 						int size = ftell(in);
@@ -424,9 +473,16 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 						if(in) {
 							u8 buffer[size];
 							fread(buffer, 1, sizeof(buffer), in);
-							if(topScreen)	Banks::bank->pkm(*save->emptyPkm()->getPKM(gen, buffer), currentBankBox, pkmPos(pkmX, pkmY));
-							else if(inParty)	save->pkm(*save->transfer(*save->emptyPkm()->getPKM(gen, buffer)), pkmPos(pkmX, pkmY));
-							else	save->pkm(*save->transfer(*save->emptyPkm()->getPKM(gen, buffer)), currentSaveBox, pkmPos(pkmX, pkmY), false);
+							if(topScreen)
+								Banks::bank->pkm(
+									*save->emptyPkm()->getPKM(gen, buffer), currentBankBox, pkmPos(pkmX, pkmY));
+							else if(inParty)
+								save->pkm(*save->transfer(*save->emptyPkm()->getPKM(gen, buffer)), pkmPos(pkmX, pkmY));
+							else
+								save->pkm(*save->transfer(*save->emptyPkm()->getPKM(gen, buffer)),
+										  currentSaveBox,
+										  pkmPos(pkmX, pkmY),
+										  false);
 							fclose(in);
 						}
 					}
@@ -437,7 +493,8 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 				drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
 				drawBox(false);
-				if(topScreen)	drawBox(topScreen);
+				if(topScreen)
+					drawBox(topScreen);
 				drawPokemonInfo(*currentPokemon(pkmX, pkmY));
 
 				if(partyShown) {
@@ -445,13 +502,14 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 					fillPartySprites();
 				}
 
-				if(!topScreen)	setSpriteVisibility(arrowID, false, true);
+				if(!topScreen)
+					setSpriteVisibility(arrowID, false, true);
 				updateOam();
 				goto back;
 			} else if(menuSelection == 1) { // Create
 				if(partyShown) {
 					// Hide party Pokémon
-					for(unsigned int i=0;i<partyIconID.size();i++) {
+					for(unsigned int i = 0; i < partyIconID.size(); i++) {
 						setSpriteVisibility(partyIconID[i], false, false);
 					}
 					updateOam();
@@ -465,7 +523,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 				pkm->ball(pksm::Ball::Poke);
 				pkm->encryptionConstant(pksm::randomNumber(1, 0xFFFFFFFF));
 				pkm->version(save->version());
-				switch (pkm->version()) {
+				switch(pkm->version()) {
 					case pksm::GameVersion::R:
 					case pksm::GameVersion::S:
 					case pksm::GameVersion::E:
@@ -516,7 +574,14 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 						break;
 				}
 				pkm->fixMoves();
-				pkm->PID(pksm::PKX::getRandomPID(pkm->species(), pkm->gender(), pkm->version(), pkm->nature(), pkm->alternativeForm(), pkm->abilityNumber(), pkm->PID(), pkm->generation()));
+				pkm->PID(pksm::PKX::getRandomPID(pkm->species(),
+												 pkm->gender(),
+												 pkm->version(),
+												 pkm->nature(),
+												 pkm->alternativeForm(),
+												 pkm->abilityNumber(),
+												 pkm->PID(),
+												 pkm->generation()));
 				pkm->metDate(Date::today());
 				pkm->metLevel(pkm->generation() <= pksm::Generation::THREE ? 5 : 1);
 				if(pkm->generation() == pksm::Generation::THREE) {
@@ -525,15 +590,19 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 					pkm->nickname(StringUtils::toUpper(name));
 				}
 
-				if(topScreen)	Banks::bank->pkm(showPokemonSummary(*pkm), currentBankBox, pkmPos(pkmX, pkmY));
-				else if(inParty)	save->pkm(showPokemonSummary(*pkm), pkmPos(pkmX, pkmY));
-				else	save->pkm(showPokemonSummary(*pkm), currentSaveBox, pkmPos(pkmX, pkmY), false);
+				if(topScreen)
+					Banks::bank->pkm(showPokemonSummary(*pkm), currentBankBox, pkmPos(pkmX, pkmY));
+				else if(inParty)
+					save->pkm(showPokemonSummary(*pkm), pkmPos(pkmX, pkmY));
+				else
+					save->pkm(showPokemonSummary(*pkm), currentSaveBox, pkmPos(pkmX, pkmY), false);
 
 				// Redraw screen
 				drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 				drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
 				drawBox(false);
-				if(topScreen)	drawBox(topScreen);
+				if(topScreen)
+					drawBox(topScreen);
 				drawPokemonInfo(*currentPokemon(pkmX, pkmY));
 				if(partyShown) {
 					save->fixParty();
@@ -546,7 +615,12 @@ int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode) {
 			}
 		}
 
-		setSpritePosition(arrowID, false, buttons[menuSelection].x+getTextWidthMaxW(i18n::localize(Config::getLang("lang"), buttons[menuSelection].label), 80)+4, buttons[menuSelection].y);
+		setSpritePosition(
+			arrowID,
+			false,
+			buttons[menuSelection].x +
+				getTextWidthMaxW(i18n::localize(Config::getLang("lang"), buttons[menuSelection].label), 80) + 4,
+			buttons[menuSelection].y);
 		updateOam();
 	}
 	return false;

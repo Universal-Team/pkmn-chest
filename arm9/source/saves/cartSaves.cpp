@@ -1,4 +1,5 @@
 #include "cartSaves.hpp"
+
 #include "colors.hpp"
 #include "config.hpp"
 #include "graphics.hpp"
@@ -20,35 +21,38 @@ const std::vector<std::string> goodTids = {
 	"BPR", // Fire Red
 };
 
-bool isValidGBATid(char* tid) {
-	for(unsigned i=0;i<goodTids.size(); i++) {
-		if(strncmp(tid, goodTids[i].c_str(), 3) == 0)	return true;
+bool isValidGBATid(char *tid) {
+	for(unsigned i = 0; i < goodTids.size(); i++) {
+		if(strncmp(tid, goodTids[i].c_str(), 3) == 0)
+			return true;
 	}
 	return false;
 }
 
 bool updateCartInfo(void) {
-	strncpy(slot2Name, (char*)0x080000A0, sizeof(slot2Name)-1);
-	slot2Name[sizeof(slot2Name)-1] = '\0';
-	strncpy(slot2ID, (char*)0x080000AC, sizeof(slot2ID)-1);
-	slot2Name[sizeof(slot2Name)-1] = '\0';
+	strncpy(slot2Name, (char *)0x080000A0, sizeof(slot2Name) - 1);
+	slot2Name[sizeof(slot2Name) - 1] = '\0';
+	strncpy(slot2ID, (char *)0x080000AC, sizeof(slot2ID) - 1);
+	slot2Name[sizeof(slot2Name) - 1] = '\0';
 
 	return true;
 }
 
 bool isCorrectType(void) {
 	// Search for a save version string in the ROM
-	u32 *data = (u32*)0x08000000;
+	u32 *data = (u32 *)0x08000000;
 
-	for(int i=0;i<(0x02000000 >> 2); i++, data++) {
+	for(int i = 0; i < (0x02000000 >> 2); i++, data++) {
 		switch(*data) {
 			case MAGIC_EEPR:
 				return false;
 			case MAGIC_SRAM:
 				return false;
 			case MAGIC_FLAS:
-				if(*(data+1) == MAGIC_H1M_)	return true;
-				else return false;
+				if(*(data + 1) == MAGIC_H1M_)
+					return true;
+				else
+					return false;
 			default:
 				break;
 		}
@@ -61,22 +65,22 @@ void dumpSlot2(void) {
 	// Check that its the right save type
 	if(isCorrectType()) {
 		std::shared_ptr<u8[]> buffer = std::shared_ptr<u8[]>(new u8[0x20000]);
-		u8 *dst = buffer.get();
-		for (int bank = 0; bank < 2; bank++) {
+		u8 *dst                      = buffer.get();
+		for(int bank = 0; bank < 2; bank++) {
 			// FLASH - must be opened by register magic, then blind copy
 			// we need to wait a few cycles before the hardware reacts!
-			*(u8*)0x0A005555 = 0xAA;
+			*(u8 *)0x0A005555 = 0xAA;
 			swiDelay(10);
-			*(u8*)0x0A002AAA = 0x55;
+			*(u8 *)0x0A002AAA = 0x55;
 			swiDelay(10);
-			*(u8*)0x0A005555 = 0xB0;
+			*(u8 *)0x0A005555 = 0xB0;
 			swiDelay(10);
-			*(u8*)0x0A000000 = (u8)bank;
+			*(u8 *)0x0A000000 = (u8)bank;
 			swiDelay(10);
 
-			u8* src = (u8*)0x0A000000;
+			u8 *src = (u8 *)0x0A000000;
 			sysSetBusOwners(true, true);
-			for(u32 i=0;i < 0x10000;i++) {
+			for(u32 i = 0; i < 0x10000; i++) {
 				*dst++ = *src++;
 			}
 		}
@@ -101,50 +105,52 @@ bool restoreSlot2(void) {
 			// FIXME: currently, you can only write "all or nothing"
 
 			// Erase save
-			*(u8*)0x0A005555 = 0xAA;
+			*(u8 *)0x0A005555 = 0xAA;
 			swiDelay(10);
-			*(u8*)0x0A002AAA = 0x55;
+			*(u8 *)0x0A002AAA = 0x55;
 			swiDelay(10);
-			*(u8*)0x0A005555 = 0x80; // Erase command
+			*(u8 *)0x0A005555 = 0x80; // Erase command
 			swiDelay(10);
-			*(u8*)0x0A005555 = 0xAA;
+			*(u8 *)0x0A005555 = 0xAA;
 			swiDelay(10);
-			*(u8*)0x0A002AAA = 0x55;
+			*(u8 *)0x0A002AAA = 0x55;
 			swiDelay(10);
-			*(u8*)0x0A005555 = 0x10; // Erase entire chip
+			*(u8 *)0x0A005555 = 0x10; // Erase entire chip
 			swiDelay(10);
-			while (*(u8*)0x0A000000 != 0xFF)
+			while(*(u8 *)0x0A000000 != 0xFF)
 				swiDelay(10);
 
 			// Write new save
-			for (int bank = 0; bank < 2; bank++) {
-				*(u8*)0x0A005555 = 0xAA;
+			for(int bank = 0; bank < 2; bank++) {
+				*(u8 *)0x0A005555 = 0xAA;
 				swiDelay(10);
-				*(u8*)0x0A002AAA = 0x55;
+				*(u8 *)0x0A002AAA = 0x55;
 				swiDelay(10);
-				*(u8*)0x0A005555 = 0xB0;
+				*(u8 *)0x0A005555 = 0xB0;
 				swiDelay(10);
-				*(u8*)0x0A000000 = (u8)bank;
+				*(u8 *)0x0A000000 = (u8)bank;
 				swiDelay(10);
 
-				u8 *dst = (u8*)0x0A000000;
+				u8 *dst = (u8 *)0x0A000000;
 				sysSetBusOwners(true, true);
-				for (u32 i = 0; i < 0x10000; i++, dst++) {
+				for(u32 i = 0; i < 0x10000; i++, dst++) {
 					// We need to wait a few cycles before the hardware reacts!
-					*(u8*)0x0A005555 = 0xAA;
+					*(u8 *)0x0A005555 = 0xAA;
 					swiDelay(10);
-					*(u8*)0x0A002AAA = 0x55;
+					*(u8 *)0x0A002AAA = 0x55;
 					swiDelay(10);
-					*(u8*)0x0A005555 = 0xA0; // Write byte command
+					*(u8 *)0x0A005555 = 0xA0; // Write byte command
 					swiDelay(10);
 
 					u8 src = fgetc(file);
 
 					*dst = src;
-					while(*dst != src)	swiDelay(10);
+					while(*dst != src)
+						swiDelay(10);
 
 					// Draw progress bar
-					drawRectangle((((float)((0x10000*bank)+i)/0x20000)*245)+6, 40, 1, 16, LIGHT_GRAY, false, true);
+					drawRectangle(
+						(((float)((0x10000 * bank) + i) / 0x20000) * 245) + 6, 40, 1, 16, LIGHT_GRAY, false, true);
 				}
 			}
 			fclose(file);

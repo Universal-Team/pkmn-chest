@@ -1,4 +1,6 @@
 #include "filter.hpp"
+
+#include "PKFilter.hpp"
 #include "colors.hpp"
 #include "config.hpp"
 #include "flashcard.hpp"
@@ -9,14 +11,14 @@
 #include "loader.hpp"
 #include "manager.hpp"
 #include "misc.hpp"
-#include "PKFilter.hpp"
 #include "sound.hpp"
 
 std::vector<std::string> filterValues;
 std::vector<bool> filterEnabled;
 std::vector<bool> filterInversed;
-std::array<std::string, 3> genders = {"male", "female", "unknown"};
-std::array<std::string, 10> filterLabels = {"species", "nature", "ability", "gender", "item", "ball", "form", "level", "moves", "shiny"};
+std::array<std::string, 3> genders       = {"male", "female", "unknown"};
+std::array<std::string, 10> filterLabels = {
+	"species", "nature", "ability", "gender", "item", "ball", "form", "level", "moves", "shiny"};
 
 void selectMoves(std::shared_ptr<pksm::PKFilter> filter) {
 	// Clear screen
@@ -24,14 +26,14 @@ void selectMoves(std::shared_ptr<pksm::PKFilter> filter) {
 	printText(i18n::localize(Config::getLang("lang"), "moves"), 4, 0, false, false);
 
 	// Print moves
-	for(int i=0;i<4;i++) {
-		printText(filter->moveEnabled(i) ? "o" : "x", 4, 16+(i*16), false, false);
-		printTextMaxW(i18n::move(Config::getLang("lang"), filter->move(i)), 100, 1, 20, 16+(i*16), false, false);
-		printText(filter->moveInversed(i) ? "≠" : "=", 120, 16+(i*16), false, false);
+	for(int i = 0; i < 4; i++) {
+		printText(filter->moveEnabled(i) ? "o" : "x", 4, 16 + (i * 16), false, false);
+		printTextMaxW(i18n::move(Config::getLang("lang"), filter->move(i)), 100, 1, 20, 16 + (i * 16), false, false);
+		printText(filter->moveInversed(i) ? "≠" : "=", 120, 16 + (i * 16), false, false);
 	}
 
 	// Set arrow position
-	setSpritePosition(arrowID, false, 4+getTextWidth(filter->moveEnabled(0) ? "o" : "x")+2, 15);
+	setSpritePosition(arrowID, false, 4 + getTextWidth(filter->moveEnabled(0) ? "o" : "x") + 2, 15);
 	setSpriteVisibility(arrowID, false, true);
 	updateOam();
 
@@ -43,17 +45,21 @@ void selectMoves(std::shared_ptr<pksm::PKFilter> filter) {
 			swiWaitForVBlank();
 			scanKeys();
 			pressed = keysDown();
-			held = keysDownRepeat();
+			held    = keysDownRepeat();
 		} while(!held);
 
 		if(held & KEY_UP) {
-			if(selection > 0)	selection--;
+			if(selection > 0)
+				selection--;
 		} else if(held & KEY_DOWN) {
-			if(selection < 3)	selection++;
+			if(selection < 3)
+				selection++;
 		} else if(pressed & KEY_LEFT) {
-			if(column > 0)	column--;
+			if(column > 0)
+				column--;
 		} else if(pressed & KEY_RIGHT) {
-			if(column < 2)	column++;
+			if(column < 2)
+				column++;
 		} else if(pressed & KEY_A) {
 			optionSelected = true;
 		} else if(pressed & KEY_B) {
@@ -61,22 +67,26 @@ void selectMoves(std::shared_ptr<pksm::PKFilter> filter) {
 			return;
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
-			for(unsigned i=0;i<4;i++) {
-				if(touch.px >= 4 && touch.px <= 4+getTextWidth(filter->moveEnabled(selection) ? "o" : "x") && touch.py >= 15+(i*16) && touch.py <= 15+((i+1)*16)) {
-					column = 0;
-					selection = i;
+			for(unsigned i = 0; i < 4; i++) {
+				if(touch.px >= 4 && touch.px <= 4 + getTextWidth(filter->moveEnabled(selection) ? "o" : "x") &&
+				   touch.py >= 15 + (i * 16) && touch.py <= 15 + ((i + 1) * 16)) {
+					column         = 0;
+					selection      = i;
 					optionSelected = true;
 					break;
 				}
-				if(touch.px >= 20 && touch.px <= 20+getTextWidth(i18n::move(Config::getLang("lang"), filter->move(selection))) && touch.py >= 15+(i*16) && touch.py <= 15+((i+1)*16)) {
-					column = 1;
-					selection = i;
+				if(touch.px >= 20 &&
+				   touch.px <= 20 + getTextWidth(i18n::move(Config::getLang("lang"), filter->move(selection))) &&
+				   touch.py >= 15 + (i * 16) && touch.py <= 15 + ((i + 1) * 16)) {
+					column         = 1;
+					selection      = i;
 					optionSelected = true;
 					break;
 				}
-				if(touch.px >= 120 && touch.px <= 120+getTextWidth(filter->moveInversed(selection) ? "≠" : "=") && touch.py >= 15+(i*16) && touch.py <= 15+((i+1)*16)) {
-					column = 2;
-					selection = i;
+				if(touch.px >= 120 && touch.px <= 120 + getTextWidth(filter->moveInversed(selection) ? "≠" : "=") &&
+				   touch.py >= 15 + (i * 16) && touch.py <= 15 + ((i + 1) * 16)) {
+					column         = 2;
+					selection      = i;
 					optionSelected = true;
 					break;
 				}
@@ -89,7 +99,10 @@ void selectMoves(std::shared_ptr<pksm::PKFilter> filter) {
 			if(column == 0) {
 				filter->moveEnabled(selection, !filter->moveEnabled(selection));
 			} else if(column == 1) {
-				filter->move(selection, selectItem<int>(filter->move(selection), save->availableMoves(), i18n::rawMoves(Config::getLang("lang"))));
+				filter->move(selection,
+							 selectItem<int>(filter->move(selection),
+											 save->availableMoves(),
+											 i18n::rawMoves(Config::getLang("lang"))));
 			} else if(column == 2) {
 				filter->moveInversed(selection, !filter->moveInversed(selection));
 			}
@@ -99,17 +112,30 @@ void selectMoves(std::shared_ptr<pksm::PKFilter> filter) {
 			printText(i18n::localize(Config::getLang("lang"), "moves"), 4, 0, false, false);
 
 			// Print moves
-			for(int i=0;i<4;i++) {
-				printText(filter->moveEnabled(i) ? "o" : "x", 4, 16+(i*16), false, false);
-				printTextMaxW(i18n::move(Config::getLang("lang"), filter->move(i)), 100, 1, 20, 16+(i*16), false, false);
-				printText(filter->moveInversed(i) ? "≠" : "=", 120, 16+(i*16), false, false);
+			for(int i = 0; i < 4; i++) {
+				printText(filter->moveEnabled(i) ? "o" : "x", 4, 16 + (i * 16), false, false);
+				printTextMaxW(
+					i18n::move(Config::getLang("lang"), filter->move(i)), 100, 1, 20, 16 + (i * 16), false, false);
+				printText(filter->moveInversed(i) ? "≠" : "=", 120, 16 + (i * 16), false, false);
 			}
 		}
 
 		// Move cursor
-		if(column == 0)	setSpritePosition(arrowID, false, 4+getTextWidth(filter->moveEnabled(selection) ? "o" : "x")+2, (16*(selection)+10));
-		else if(column == 1)	setSpritePosition(arrowID, false, 20+getTextWidth(i18n::move(Config::getLang("lang"), filter->move(selection)))+2, (16*(selection)+10));
-		else if(column == 2)	setSpritePosition(arrowID, false, 120+getTextWidth(filter->moveInversed(selection) ? "≠" : "=")+2, (16*(selection)+10));
+		if(column == 0)
+			setSpritePosition(arrowID,
+							  false,
+							  4 + getTextWidth(filter->moveEnabled(selection) ? "o" : "x") + 2,
+							  (16 * (selection) + 10));
+		else if(column == 1)
+			setSpritePosition(arrowID,
+							  false,
+							  20 + getTextWidth(i18n::move(Config::getLang("lang"), filter->move(selection))) + 2,
+							  (16 * (selection) + 10));
+		else if(column == 2)
+			setSpritePosition(arrowID,
+							  false,
+							  120 + getTextWidth(filter->moveInversed(selection) ? "≠" : "=") + 2,
+							  (16 * (selection) + 10));
 		updateOam();
 	}
 }
@@ -130,7 +156,8 @@ void drawFilterMenu(const std::shared_ptr<pksm::PKFilter> filter) {
 	filterValues.push_back(std::to_string(filter->alternativeForm()));
 	filterValues.push_back(std::to_string(filter->level()));
 	filterValues.push_back("……");
-	filterValues.push_back(filter->shiny() ? i18n::localize(Config::getLang("lang"), "yes") : i18n::localize(Config::getLang("lang"), "no"));
+	filterValues.push_back(filter->shiny() ? i18n::localize(Config::getLang("lang"), "yes")
+										   : i18n::localize(Config::getLang("lang"), "no"));
 
 	// Fill filterEnabled
 	filterEnabled.clear();
@@ -142,7 +169,8 @@ void drawFilterMenu(const std::shared_ptr<pksm::PKFilter> filter) {
 	filterEnabled.push_back(filter->ballEnabled());
 	filterEnabled.push_back(filter->alternativeFormEnabled());
 	filterEnabled.push_back(filter->levelEnabled());
-	filterEnabled.push_back(filter->moveEnabled(0) | filter->moveEnabled(1) | filter->moveEnabled(2) | filter->moveEnabled(3));
+	filterEnabled.push_back(filter->moveEnabled(0) | filter->moveEnabled(1) | filter->moveEnabled(2) |
+							filter->moveEnabled(3));
 	filterEnabled.push_back(filter->shinyEnabled());
 
 	// Fill filterInversed
@@ -155,15 +183,17 @@ void drawFilterMenu(const std::shared_ptr<pksm::PKFilter> filter) {
 	filterInversed.push_back(filter->ballInversed());
 	filterInversed.push_back(filter->alternativeFormInversed());
 	filterInversed.push_back(filter->levelInversed());
-	filterInversed.push_back(filter->moveInversed(0) | filter->moveInversed(1) | filter->moveInversed(2) | filter->moveInversed(3));
+	filterInversed.push_back(filter->moveInversed(0) | filter->moveInversed(1) | filter->moveInversed(2) |
+							 filter->moveInversed(3));
 	filterInversed.push_back(filter->shinyInversed());
 
 	// Print items
-	for(unsigned i=0;i<filterLabels.size();i++) {
-		printText(filterEnabled[i] ? "o" : "x", 4, 16+(i*16), false, false);
-		printTextMaxW(i18n::localize(Config::getLang("lang"), filterLabels[i]), 100, 1, 20, 16+(i*16), false, false);
-		printText(filterInversed[i] ? "≠" : "=", 120, 16+(i*16), false, false);
-		printTextMaxW(filterValues[i], 100, 1, 136, 16+(i*16), false, false);
+	for(unsigned i = 0; i < filterLabels.size(); i++) {
+		printText(filterEnabled[i] ? "o" : "x", 4, 16 + (i * 16), false, false);
+		printTextMaxW(
+			i18n::localize(Config::getLang("lang"), filterLabels[i]), 100, 1, 20, 16 + (i * 16), false, false);
+		printText(filterInversed[i] ? "≠" : "=", 120, 16 + (i * 16), false, false);
+		printTextMaxW(filterValues[i], 100, 1, 136, 16 + (i * 16), false, false);
 	}
 }
 
@@ -172,13 +202,12 @@ void changeFilter(std::shared_ptr<pksm::PKFilter> filter) {
 
 	// Set arrow position
 	setSpriteVisibility(arrowID, false, true);
-	setSpritePosition(arrowID, false, 4+getTextWidth(filterEnabled[0] ? "o" : "x")+2, 10);
+	setSpritePosition(arrowID, false, 4 + getTextWidth(filterEnabled[0] ? "o" : "x") + 2, 10);
 	// Hide all Pokémon sprites
-	for(int i=0;i<30;i++) {
+	for(int i = 0; i < 30; i++) {
 		setSpriteVisibility(i, false, false);
 	}
 	updateOam();
-
 
 	bool optionSelected = false;
 	int held, pressed, column = 0, selection = 0;
@@ -188,7 +217,7 @@ void changeFilter(std::shared_ptr<pksm::PKFilter> filter) {
 			swiWaitForVBlank();
 			scanKeys();
 			pressed = keysDown();
-			held = keysDownRepeat();
+			held    = keysDownRepeat();
 		} while(!held);
 
 		if(pressed & KEY_A) {
@@ -198,31 +227,39 @@ void changeFilter(std::shared_ptr<pksm::PKFilter> filter) {
 			Sound::play(Sound::back);
 			break;
 		} else if(held & KEY_UP) {
-			if(selection > 0)	selection--;
+			if(selection > 0)
+				selection--;
 		} else if(held & KEY_DOWN) {
-			if(selection < (int)filterLabels.size()-1)	selection++;
+			if(selection < (int)filterLabels.size() - 1)
+				selection++;
 		} else if(pressed & KEY_LEFT) {
-			if(column > 0)	column--;
+			if(column > 0)
+				column--;
 		} else if(pressed & KEY_RIGHT) {
-			if(column < 2)	column++;
+			if(column < 2)
+				column++;
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
-			for(unsigned i=0;i<filterLabels.size();i++) {
-				if(touch.px >= 4 && touch.px <= 4+getTextWidth(filter->moveEnabled(selection) ? "o" : "x") && touch.py >= 15+(i*16) && touch.py <= 15+((i+1)*16)) {
-					column = 0;
-					selection = i;
+			for(unsigned i = 0; i < filterLabels.size(); i++) {
+				if(touch.px >= 4 && touch.px <= 4 + getTextWidth(filter->moveEnabled(selection) ? "o" : "x") &&
+				   touch.py >= 15 + (i * 16) && touch.py <= 15 + ((i + 1) * 16)) {
+					column         = 0;
+					selection      = i;
 					optionSelected = true;
 					break;
 				}
-				if(touch.px >= 120 && touch.px <= 120+getTextWidth(filter->moveInversed(selection) ? "≠" : "=") && touch.py >= 15+(i*16) && touch.py <= 15+((i+1)*16)) {
-					column = 1;
-					selection = i;
+				if(touch.px >= 120 && touch.px <= 120 + getTextWidth(filter->moveInversed(selection) ? "≠" : "=") &&
+				   touch.py >= 15 + (i * 16) && touch.py <= 15 + ((i + 1) * 16)) {
+					column         = 1;
+					selection      = i;
 					optionSelected = true;
 					break;
 				}
-				if(touch.px >= 136 && touch.px <= 136+getTextWidth(i18n::move(Config::getLang("lang"), filter->move(selection))) && touch.py >= 15+(i*16) && touch.py <= 15+((i+1)*16)) {
-					column = 2;
-					selection = i;
+				if(touch.px >= 136 &&
+				   touch.px <= 136 + getTextWidth(i18n::move(Config::getLang("lang"), filter->move(selection))) &&
+				   touch.py >= 15 + (i * 16) && touch.py <= 15 + ((i + 1) * 16)) {
+					column         = 2;
+					selection      = i;
 					optionSelected = true;
 					break;
 				}
@@ -234,7 +271,7 @@ void changeFilter(std::shared_ptr<pksm::PKFilter> filter) {
 			setSpriteVisibility(arrowID, false, false);
 			updateOam();
 			if(column == 0) {
-				switch (selection) {
+				switch(selection) {
 					case 0:
 						filter->speciesEnabled(!filter->speciesEnabled());
 						break;
@@ -260,10 +297,13 @@ void changeFilter(std::shared_ptr<pksm::PKFilter> filter) {
 						filter->levelEnabled(!filter->levelEnabled());
 						break;
 					case 8:
-						if(filter->moveEnabled(0) | filter->moveEnabled(1) | filter->moveEnabled(2) | filter->moveEnabled(3)) {
-							for(int i=0;i<4;i++)	filter->moveEnabled(i, false);
+						if(filter->moveEnabled(0) | filter->moveEnabled(1) | filter->moveEnabled(2) |
+						   filter->moveEnabled(3)) {
+							for(int i = 0; i < 4; i++)
+								filter->moveEnabled(i, false);
 						} else {
-							for(int i=0;i<4;i++)	filter->moveEnabled(i, true);
+							for(int i = 0; i < 4; i++)
+								filter->moveEnabled(i, true);
 						}
 						break;
 					case 9:
@@ -271,7 +311,7 @@ void changeFilter(std::shared_ptr<pksm::PKFilter> filter) {
 						break;
 				}
 			} else if(column == 1) {
-				switch (selection) {
+				switch(selection) {
 					case 0:
 						filter->speciesInversed(!filter->speciesInversed());
 						break;
@@ -297,10 +337,13 @@ void changeFilter(std::shared_ptr<pksm::PKFilter> filter) {
 						filter->levelInversed(!filter->levelInversed());
 						break;
 					case 8:
-						if(filter->moveInversed(0) | filter->moveInversed(1) | filter->moveInversed(2) | filter->moveInversed(3)) {
-							for(int i=0;i<4;i++)	filter->moveInversed(i, false);
+						if(filter->moveInversed(0) | filter->moveInversed(1) | filter->moveInversed(2) |
+						   filter->moveInversed(3)) {
+							for(int i = 0; i < 4; i++)
+								filter->moveInversed(i, false);
 						} else {
-							for(int i=0;i<4;i++)	filter->moveInversed(i, true);
+							for(int i = 0; i < 4; i++)
+								filter->moveInversed(i, true);
 						}
 						break;
 					case 9:
@@ -310,40 +353,54 @@ void changeFilter(std::shared_ptr<pksm::PKFilter> filter) {
 			} else if(column == 2) {
 				switch(selection) {
 					case 0: { // Species
-						filter->species(selectItem(filter->species(), save->availableSpecies(), i18n::rawSpecies(Config::getLang("lang"))));
+						filter->species(selectItem(
+							filter->species(), save->availableSpecies(), i18n::rawSpecies(Config::getLang("lang"))));
 						break;
-					} case 1: { // Nature
+					}
+					case 1: { // Nature
 						pksm::Nature nature = selectNature(filter->nature());
-						if(nature != pksm::Nature::INVALID)	filter->nature(nature);
+						if(nature != pksm::Nature::INVALID)
+							filter->nature(nature);
 						break;
-					} case 2: { // Ability
-						filter->ability(selectItem(filter->ability(), save->availableAbilities(), i18n::rawAbilities(Config::getLang("lang"))));
+					}
+					case 2: { // Ability
+						filter->ability(selectItem(filter->ability(),
+												   save->availableAbilities(),
+												   i18n::rawAbilities(Config::getLang("lang"))));
 						break;
-					} case 3: { // Gender
+					}
+					case 3: { // Gender
 						std::vector<std::string> genderList(genders.size());
 						for(unsigned int i = 0; i < genders.size(); i++) {
 							genderList[i] = i18n::localize(Config::getLang("lang"), genders[i]);
 						}
 						filter->gender(selectItem(filter->gender(), 0, genderList.size(), genderList));
 						break;
-					} case 4: { // Held item
-						filter->heldItem(selectItem<int>(filter->heldItem(), save->availableItems(), i18n::rawItems(Config::getLang("lang"))));
+					}
+					case 4: { // Held item
+						filter->heldItem(selectItem<int>(
+							filter->heldItem(), save->availableItems(), i18n::rawItems(Config::getLang("lang"))));
 						break;
-					} case 5: { // Ball
+					}
+					case 5: { // Ball
 						pksm::Ball ball = selectPokeball(filter->ball());
 						if(ball != pksm::Ball::INVALID)
 							filter->ball(ball);
 						break;
-					} case 6: { // Alt. form
+					}
+					case 6: { // Alt. form
 						filter->alternativeForm(Input::getInt(28));
 						break;
-					} case 7: { // Level
+					}
+					case 7: { // Level
 						filter->level(Input::getInt(100));
 						break;
-					} case 8: { // Moves
+					}
+					case 8: { // Moves
 						selectMoves(filter);
 						break;
-					} case 9: { // Shiny
+					}
+					case 9: { // Shiny
 						filter->shiny(!filter->shiny());
 						break;
 					}
@@ -355,9 +412,14 @@ void changeFilter(std::shared_ptr<pksm::PKFilter> filter) {
 		}
 
 		// Move cursor
-		if(column == 0)	setSpritePosition(arrowID, false, 4+getTextWidth(filterEnabled[selection] ? "o" : "x")+2, (16*(selection)+10));
-		else if(column == 1)	setSpritePosition(arrowID, false, 120+getTextWidth(filterInversed[selection] ? "≠" : "=")+2, (16*(selection)+10));
-		else if(column == 2)	setSpritePosition(arrowID, false, 136+getTextWidth(filterValues[selection])+2, (16*(selection)+10));
+		if(column == 0)
+			setSpritePosition(
+				arrowID, false, 4 + getTextWidth(filterEnabled[selection] ? "o" : "x") + 2, (16 * (selection) + 10));
+		else if(column == 1)
+			setSpritePosition(
+				arrowID, false, 120 + getTextWidth(filterInversed[selection] ? "≠" : "=") + 2, (16 * (selection) + 10));
+		else if(column == 2)
+			setSpritePosition(arrowID, false, 136 + getTextWidth(filterValues[selection]) + 2, (16 * (selection) + 10));
 		updateOam();
 	}
 }

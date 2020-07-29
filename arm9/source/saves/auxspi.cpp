@@ -25,16 +25,17 @@
  */
 
 #include "auxspi.hpp"
-#include <algorithm>
-#include <stdio.h>
 
 #include "auxspi_core.inc"
 #include "globals.hpp"
 
+#include <algorithm>
+#include <stdio.h>
+
 // ========================================================
 //  local functions
 uint8 jedec_table(uint32 id) {
-	switch (id) {
+	switch(id) {
 		// 256 kB
 		case 0x204012:
 		case 0x621600:
@@ -64,54 +65,55 @@ uint8 jedec_table(uint32 id) {
 }
 
 uint8 type2_size(auxspi_extra extra) {
-	static const uint32 offset0 = (8*1024-1);        //      8KB
-	static const uint32 offset1 = (2*8*1024-1);      //      16KB
-	u8 buf1;     //      +0k data        read -> write
-	u8 buf2;     //      +8k data        read -> read
-	u8 buf3;     //      +0k ~data          write
-	u8 buf4;     //      +8k data new    comp buf2
+	static const uint32 offset0 = (8 * 1024 - 1);     //      8KB
+	static const uint32 offset1 = (2 * 8 * 1024 - 1); //      16KB
+	u8 buf1;                                          //      +0k data        read -> write
+	u8 buf2;                                          //      +8k data        read -> read
+	u8 buf3;                                          //      +0k ~data          write
+	u8 buf4;                                          //      +8k data new    comp buf2
 	auxspi_read_data(offset0, &buf1, 1, 2, extra);
 	auxspi_read_data(offset1, &buf2, 1, 2, extra);
-	buf3=~buf1;
+	buf3 = ~buf1;
 	auxspi_write_data(offset0, &buf3, 1, 2, extra);
-	auxspi_read_data (offset1, &buf4, 1, 2, extra);
+	auxspi_read_data(offset1, &buf4, 1, 2, extra);
 	auxspi_write_data(offset0, &buf1, 1, 2, extra);
-	if(buf4!=buf2)      //      +8k
-		return 0x0d;  //       8KB(64kbit)
+	if(buf4 != buf2) //      +8k
+		return 0x0d; //       8KB(64kbit)
 	else
 		return 0x10; //      64KB(512kbit)
 }
 
 // ========================================================
 uint8 auxspi_save_type(auxspi_extra extra) {
-	uint32 jedec = auxspi_save_jedec_id(extra); // 9f
-	int8 sr = auxspi_save_status_register(extra); // 05
+	uint32 jedec = auxspi_save_jedec_id(extra);        // 9f
+	int8 sr      = auxspi_save_status_register(extra); // 05
 
-	if((sr & 0xfd) == 0xF0 && (jedec == 0x00ffffff)) return 1;
-	if((sr & 0xfd) == 0x00 && (jedec == 0x00ffffff)) return 2;
-	if((sr & 0xfd) == 0x00 && (jedec != 0x00ffffff)) return 3;
+	if((sr & 0xfd) == 0xF0 && (jedec == 0x00ffffff))
+		return 1;
+	if((sr & 0xfd) == 0x00 && (jedec == 0x00ffffff))
+		return 2;
+	if((sr & 0xfd) == 0x00 && (jedec != 0x00ffffff))
+		return 3;
 
 	return 0;
 }
 
-uint32 auxspi_save_size(auxspi_extra extra) {
-	return 1 << auxspi_save_size_log_2(extra);
-}
+uint32 auxspi_save_size(auxspi_extra extra) { return 1 << auxspi_save_size_log_2(extra); }
 
 uint8 auxspi_save_size_log_2(auxspi_extra extra) {
 	uint8 type = auxspi_save_type(extra);
 	switch(type) {
-	case 1:
-		return 0x09; // 512 bytes
-		break;
-	case 2:
-		return type2_size(extra);
-		break;
-	case 3:
-		return jedec_table(auxspi_save_jedec_id(extra));
-		break;
-	default:
-		return 0;
+		case 1:
+			return 0x09; // 512 bytes
+			break;
+		case 2:
+			return type2_size(extra);
+			break;
+		case 3:
+			return jedec_table(auxspi_save_jedec_id(extra));
+			break;
+		default:
+			return 0;
 	}
 }
 
@@ -141,7 +143,7 @@ uint8 auxspi_save_status_register(auxspi_extra extra) {
 	return sr;
 }
 
-void auxspi_read_data(uint32 addr, uint8* buf, uint32 cnt, uint8 type, auxspi_extra extra) {
+void auxspi_read_data(uint32 addr, uint8 *buf, uint32 cnt, uint8 type, auxspi_extra extra) {
 	if(type == 0)
 		type = auxspi_save_type(extra);
 	if(type == 0)
@@ -149,7 +151,7 @@ void auxspi_read_data(uint32 addr, uint8* buf, uint32 cnt, uint8 type, auxspi_ex
 	if(extra)
 		auxspi_disable_extra(extra);
 	auxspi_open(0);
-	auxspi_write(0x03 | ((type == 1) ? addr>>8<<3 : 0));
+	auxspi_write(0x03 | ((type == 1) ? addr >> 8 << 3 : 0));
 	if(type == 3) {
 		auxspi_write((addr >> 16) & 0xFF);
 	}
@@ -173,9 +175,12 @@ void auxspi_write_data(uint32 addr, uint8 *buf, uint32 cnt, uint8 type, auxspi_e
 	uint32 addr_end = addr + cnt;
 	unsigned int i;
 	unsigned int maxblocks = 32;
-	if(type == 1) maxblocks = 16;
-	if(type == 2) maxblocks = 32;
-	if(type == 3) maxblocks = 256;
+	if(type == 1)
+		maxblocks = 16;
+	if(type == 2)
+		maxblocks = 32;
+	if(type == 3)
+		maxblocks = 256;
 
 	// we can only write a finite amount of data at once, so we need a separate loop
 	//  for multiple passes.
@@ -196,22 +201,20 @@ void auxspi_write_data(uint32 addr, uint8 *buf, uint32 cnt, uint8 type, auxspi_e
 		auxspi_open(0);
 		// send initial "write" command
 		if(type == 1) {
-			auxspi_write(0x02 | (addr & BIT(8)) >> (8-3));
+			auxspi_write(0x02 | (addr & BIT(8)) >> (8 - 3));
 			auxspi_write(addr & 0xFF);
-		}
-		else if(type == 2) {
+		} else if(type == 2) {
 			auxspi_write(0x02);
 			auxspi_write((addr >> 8) & 0xff);
 			auxspi_write(addr & 0xFF);
-		}
-		else if(type == 3) {
+		} else if(type == 3) {
 			auxspi_write(0x02);
 			auxspi_write((addr >> 16) & 0xff);
 			auxspi_write((addr >> 8) & 0xff);
 			auxspi_write(addr & 0xFF);
 		}
 
-		for(i=0; addr < addr_end && i < maxblocks; i++, addr++) {
+		for(i = 0; addr < addr_end && i < maxblocks; i++, addr++) {
 			auxspi_write(*buf++);
 		}
 		// iprintf("%d\n",addr);
@@ -222,10 +225,10 @@ void auxspi_write_data(uint32 addr, uint8 *buf, uint32 cnt, uint8 type, auxspi_e
 		// swiWaitForVBlank();
 		// for(int i = 0; i < 30; i++) { swiWaitForVBlank(); }
 		// while(1) {
-				// swiWaitForVBlank();
-				// scanKeys();
-				// if(keysDown()&KEY_A) break;
-			// }
+		// swiWaitForVBlank();
+		// scanKeys();
+		// if(keysDown()&KEY_A) break;
+		// }
 
 		// wait programming to finish
 		if(extra)
@@ -253,16 +256,14 @@ void auxspi_disable_extra(auxspi_extra extra) {
 			break;
 		case AUXSPI_BLUETOOTH:
 			// TODO
-			//auxspi_disable_bluetooth();
+			// auxspi_disable_bluetooth();
 			break;
 		default:;
 	}
 	swiWaitForVBlank();
 }
 
-void auxspi_disable_infrared() {
-	auxspi_disable_infrared_core();
-}
+void auxspi_disable_infrared() { auxspi_disable_infrared_core(); }
 
 void auxspi_disable_big_protection() {
 	static bool doonce = false;

@@ -623,4 +623,4 @@ int getTextWidth(const std::string &text);
  */
 int getTextWidth(const std::u16string &text);
 
-#endif //GRAPHICS_HPP
+#endif

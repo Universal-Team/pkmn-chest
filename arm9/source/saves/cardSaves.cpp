@@ -1,4 +1,5 @@
 #include "cardSaves.hpp"
+
 #include "colors.hpp"
 #include "graphics.hpp"
 #include "gui.hpp"
@@ -21,21 +22,20 @@ const std::vector<std::string> goodTids = {
 };
 
 bool isValidDSTid(char *tid) {
-	for(unsigned i=0;i<goodTids.size(); i++) {
-		if(strncmp(tid, goodTids[i].c_str(), 3) == 0)	return true;
+	for(unsigned i = 0; i < goodTids.size(); i++) {
+		if(strncmp(tid, goodTids[i].c_str(), 3) == 0)
+			return true;
 	}
 	return false;
 }
 
-bool updateCardInfo(void) {
-	return updateCardInfo(&nds, slot1ID, slot1Name, &card_type);
-}
+bool updateCardInfo(void) { return updateCardInfo(&nds, slot1ID, slot1Name, &card_type); }
 
 bool updateCardInfo(sNDSHeader *nds, char *gameid, char *gamename, auxspi_extra *card_type) {
-	cardReadHeader((uint8*)nds);
+	cardReadHeader((uint8 *)nds);
 	*card_type = auxspi_has_extra();
-	int type = cardEepromGetType();
-	int size = cardEepromGetSize();
+	int type   = cardEepromGetType();
+	int size   = cardEepromGetSize();
 	if(type == 999 || size < 1) {
 		return false;
 	}
@@ -59,13 +59,13 @@ void dumpSlot1(void) {
 			else
 				size_blocks = 1 << (size - 16);
 			u32 LEN = std::min(1 << size, 1 << 16);
-			buffer = new unsigned char[LEN*size_blocks];
-			auxspi_read_data(0, buffer, LEN*size_blocks, type, card_type);
-			fwrite(buffer, 1, LEN*size_blocks, out);
+			buffer  = new unsigned char[LEN * size_blocks];
+			auxspi_read_data(0, buffer, LEN * size_blocks, type, card_type);
+			fwrite(buffer, 1, LEN * size_blocks, out);
 		} else {
 			int type = cardEepromGetType();
 			int size = cardEepromGetSize();
-			buffer = new unsigned char[size];
+			buffer   = new unsigned char[size];
 			cardReadEeprom(0, buffer, size, type);
 			fwrite(buffer, 1, size, out);
 		}
@@ -76,7 +76,7 @@ void dumpSlot1(void) {
 
 bool restoreSlot1(void) {
 	bool auxspi = card_type == AUXSPI_INFRARED;
-	FILE *in = fopen(cardSave, "rb");
+	FILE *in    = fopen(cardSave, "rb");
 	if(in) {
 		unsigned char *buffer;
 		int size;
@@ -87,19 +87,19 @@ bool restoreSlot1(void) {
 			size = auxspi_save_size_log_2(card_type);
 			type = auxspi_save_type(card_type);
 			switch(type) {
-			case 1:
-				shift = 4; // 16 bytes
-				break;
-			case 2:
-				shift = 5; // 32 bytes
-				break;
-			case 3:
-				shift = 8; // 256 bytes
-				break;
-			default:
-				return false;
+				case 1:
+					shift = 4; // 16 bytes
+					break;
+				case 2:
+					shift = 5; // 32 bytes
+					break;
+				case 3:
+					shift = 8; // 256 bytes
+					break;
+				default:
+					return false;
 			}
-			LEN = 1 << shift;
+			LEN        = 1 << shift;
 			num_blocks = 1 << (size - shift);
 		} else {
 			type = cardEepromGetType();
@@ -108,7 +108,7 @@ bool restoreSlot1(void) {
 		fseek(in, 0, SEEK_END);
 		length = ftell(in);
 		fseek(in, 0, SEEK_SET);
-		if(length != (auxspi ? (int)(LEN*num_blocks) : size)) {
+		if(length != (auxspi ? (int)(LEN * num_blocks) : size)) {
 			Gui::warn(i18n::localize(Config::getLang("lang"), "wrongSaveCard"));
 			fclose(in);
 			return false;
@@ -119,23 +119,23 @@ bool restoreSlot1(void) {
 			else
 				cardEepromChipErase();
 		}
-		if(auxspi){
+		if(auxspi) {
 			buffer = new unsigned char[LEN];
 			drawOutline(5, 39, 247, 18, DARKERER_GRAY, false, true);
 			for(unsigned int i = 0; i < num_blocks; i++) {
-				drawRectangle((((float)i/num_blocks)*245)+6, 40, 1, 16, LIGHT_GRAY, false, true);
+				drawRectangle((((float)i / num_blocks) * 245) + 6, 40, 1, 16, LIGHT_GRAY, false, true);
 
 				fread(buffer, 1, LEN, in);
 				auxspi_write_data(i << shift, buffer, LEN, type, card_type);
 			}
 			drawRectangle(4, 39, 248, 18, CLEAR, false, true);
 		} else {
-			int blocks = size / 32;
+			int blocks  = size / 32;
 			int written = 0;
-			buffer = new unsigned char[blocks];
+			buffer      = new unsigned char[blocks];
 			drawOutline(5, 39, 247, 18, DARKERER_GRAY, false, true);
 			for(unsigned int i = 0; i < 32; i++) {
-				drawRectangle(((i/32)*245)+6, 40, 8, 16, LIGHT_GRAY, false, true);
+				drawRectangle(((i / 32) * 245) + 6, 40, 8, 16, LIGHT_GRAY, false, true);
 				fread(buffer, 1, blocks, in);
 				cardWriteEeprom(written, buffer, blocks, type);
 				written += blocks;

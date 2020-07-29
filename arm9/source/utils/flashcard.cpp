@@ -1,18 +1,19 @@
 #include "flashcard.hpp"
+
 #include <fat.h>
 #include <nds.h>
 #include <stdio.h>
 #include <sys/stat.h>
 
 static bool sdAccessed = false;
-static bool sdRead = false;
+static bool sdRead     = false;
 
 static bool flashcardAccessed = false;
-static bool flashcardRead = false;
+static bool flashcardRead     = false;
 
 bool sdFound(void) {
-	if (!sdAccessed) {
-		if (access("sd:/", F_OK) == 0) {
+	if(!sdAccessed) {
+		if(access("sd:/", F_OK) == 0) {
 			sdRead = true;
 		} else {
 			sdRead = false;
@@ -23,8 +24,8 @@ bool sdFound(void) {
 }
 
 bool flashcardFound(void) {
-	if (!flashcardAccessed) {
-		if (access("fat:/", F_OK) == 0) {
+	if(!flashcardAccessed) {
+		if(access("fat:/", F_OK) == 0) {
 			flashcardRead = true;
 		} else {
 			flashcardRead = false;
@@ -35,13 +36,11 @@ bool flashcardFound(void) {
 }
 
 bool bothSDandFlashcard(void) {
-	if (sdFound() && flashcardFound()) {
+	if(sdFound() && flashcardFound()) {
 		return true;
 	} else {
 		return false;
 	}
 }
 
-std::string mainDrive(void) {
-	return sdFound() ? "sd" : "fat";
-}
+std::string mainDrive(void) { return sdFound() ? "sd" : "fat"; }

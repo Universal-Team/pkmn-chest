@@ -25,7 +25,7 @@
 
 #include "globals.hpp"
 
-uint8 data[0x8000]  = {0};
+uint8 data[0x8000] = {0};
 
 int ir_delay = 1200;
 

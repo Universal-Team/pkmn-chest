@@ -1,19 +1,20 @@
 #include "loader.hpp"
-#include <dirent.h>
-#include <unistd.h>
 
 #include "config.hpp"
 #include "fileBrowse.hpp"
 #include "flashcard.hpp"
+
+#include <dirent.h>
+#include <unistd.h>
 
 static std::string saveFileName;
 
 std::shared_ptr<pksm::Sav> save;
 
 bool loadSave(std::string savePath) {
-	save = nullptr;
+	save         = nullptr;
 	saveFileName = savePath;
-	FILE* in = fopen(savePath.c_str(), "rb");
+	FILE *in     = fopen(savePath.c_str(), "rb");
 	if(in) {
 		fseek(in, 0, SEEK_END);
 		u32 size = ftell(in);
@@ -35,9 +36,13 @@ bool loadSave(std::string savePath) {
 
 void saveChanges(std::string savePath) {
 	// Make backup
-	std::string saveFile = savePath.substr(savePath.find_last_of("/")+1);
+	std::string saveFile = savePath.substr(savePath.find_last_of("/") + 1);
 	char backupDir[PATH_MAX];
-	snprintf(backupDir, sizeof(backupDir), "%s:/_nds/pkmn-chest/backups/%s", mainDrive().c_str(), saveFile.substr(0, saveFile.find_last_of(".")).c_str());
+	snprintf(backupDir,
+			 sizeof(backupDir),
+			 "%s:/_nds/pkmn-chest/backups/%s",
+			 mainDrive().c_str(),
+			 saveFile.substr(0, saveFile.find_last_of(".")).c_str());
 	mkdir(backupDir, 0777);
 
 	char backupPath[PATH_MAX];
@@ -63,14 +68,15 @@ void saveChanges(std::string savePath) {
 		std::vector<DirEntry> dirContents;
 		getDirectoryContents(dirContents, {"bak"});
 
-		if((int)dirContents.size() > Config::getInt("backupAmount"))	remove(dirContents[1].name.c_str()); // index 0 is '..'
+		if((int)dirContents.size() > Config::getInt("backupAmount"))
+			remove(dirContents[1].name.c_str()); // index 0 is '..'
 
 		chdir(savDir);
 	}
 
 	save->finishEditing();
 
-	FILE* out = fopen(savePath.c_str(), "rb+");
+	FILE *out = fopen(savePath.c_str(), "rb+");
 	fwrite(save->rawData().get(), 1, save->getLength(), out);
 	fclose(out);
 

@@ -8,4 +8,4 @@ bool flashcardFound(void);
 bool bothSDandFlashcard(void);
 std::string mainDrive(void);
 
-#endif //FLASHCARD_HPP
+#endif

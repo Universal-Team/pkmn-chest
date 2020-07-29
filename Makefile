@@ -75,3 +75,6 @@ clean:
 	rm -rf nitrofiles/i18n/*/*.txt
 	$(MAKE) -C sound clean
 	rm -f $(TARGET).nds $(TARGET).arm9
+
+format:
+	make -C arm9 format

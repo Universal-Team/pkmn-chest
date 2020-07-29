@@ -1,5 +1,3 @@
-#include <fat.h>
-
 #include "banks.hpp"
 #include "colors.hpp"
 #include "config.hpp"
@@ -16,21 +14,26 @@
 #include "nitrofs.h"
 #include "sound.hpp"
 
+#include <fat.h>
+
 bool useTwlCfg = false;
 
 extern std::vector<std::string> songs;
 
 void init(int argc, char **argv) {
-	useTwlCfg = (isDSiMode() && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0));
+	useTwlCfg = (isDSiMode() && (*(u8 *)0x02000400 & 0x0F) && (*(u8 *)0x02000401 == 0) && (*(u8 *)0x02000402 == 0) &&
+				 (*(u8 *)0x02000404 == 0));
 	initGraphics();
-	keysSetRepeat(25,5);
+	keysSetRepeat(25, 5);
 	sysSetCardOwner(BUS_OWNER_ARM9); // Set ARM9 as Slot-1 owner (for dumping/injecting DS saves)
 	sysSetCartOwner(BUS_OWNER_ARM9); // Set ARM9 as Slot-2 owner (for dumping/injecting GBA saves)
 	defaultExceptionHandler();
 	scanKeys(); // So it doesn't open the SD if A is held
 	srand(time(NULL));
-	if(!(rand() % 100))	angleChange *= 2;
-	if(!(rand() % 128))	angleChange *= -1;
+	if(!(rand() % 100))
+		angleChange *= 2;
+	if(!(rand() % 128))
+		angleChange *= -1;
 
 	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, true, false);
 	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
@@ -40,7 +43,8 @@ void init(int argc, char **argv) {
 		// Prints error if fatInitDefault() fails
 		consoleDemoInit();
 		printf("fatInitDefault() failed...");
-		while(1)	swiWaitForVBlank();
+		while(1)
+			swiWaitForVBlank();
 	}
 
 	// Make directories
@@ -68,14 +72,16 @@ void init(int argc, char **argv) {
 				printf("      TWiLight Menu++ or HBMenu\n\n\n\n\n");
 				printf("(Note: TWiLight's Acekard\n");
 				printf("        theme needs a copy in ^)\n\n");
-				while(1)	swiWaitForVBlank();
+				while(1)
+					swiWaitForVBlank();
 			} else if(!nitroFSGood()) {
 				// Print error that the NitroFS was out of date
 				consoleDemoInit();
 				printf("NitroFS is out of date!\n\n");
 				printf("Please update pkmn-chest.nds at:\n\n");
 				printf("%s:/_nds/pkmn-chest/\n", mainDrive().c_str());
-				while(1)	swiWaitForVBlank();
+				while(1)
+					swiWaitForVBlank();
 			}
 		}
 	}
@@ -98,9 +104,9 @@ void init(int argc, char **argv) {
 	printTextCentered(i18n::localize(Config::getLang("lang"), "loading"), 0, 32, false, true);
 
 	if(Config::getString("music") == "theme") {
-		Sound::load((Config::getString("themeDir")+"/sound.msl").c_str());
+		Sound::load((Config::getString("themeDir") + "/sound.msl").c_str());
 	} else {
-		Sound::load(("nitro:/sound/"+Config::getString("music")+".msl").c_str());
+		Sound::load(("nitro:/sound/" + Config::getString("music") + ".msl").c_str());
 	}
 
 	Banks::init();
@@ -114,7 +120,8 @@ void init(int argc, char **argv) {
 void mainLoop(void) {
 	while(1) {
 		savePath = browseForSave();
-		if(savePath == "%EXIT%")	break;
+		if(savePath == "%EXIT%")
+			break;
 
 		if(!loadSave(savePath)) {
 			Gui::warn(i18n::localize(Config::getLang("lang"), "invalidSave"));

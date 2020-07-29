@@ -1,11 +1,13 @@
 #include "colors.hpp"
-#include <nds.h>
 
 #include "config.hpp"
 #include "graphics.hpp"
 #include "json.hpp"
 #include "tonccpy.h"
 
+#include <nds.h>
+
+// clang-format off
 const u16 defaultPalette[] = {
 	0x0000, 0xFBDE, 0xE739, 0xCA52, 0xBDEF, 0x98C6, 0x94A5, 0x8842, 0x8000, // Grays
 	0x801E, 0x800F, 0xF800, 0xBC00, 0, 0, 0, // Colors
@@ -23,22 +25,23 @@ const std::string keys[] = {
 	"RED_TEXT_1",   "RED_TEXT_2",   "RED_TEXT_3",   "RED_TEXT_4"
 	"BLUE_TEXT_1",  "BLUE_TEXT_2",  "BLUE_TEXT_3",  "BLUE_TEXT_4"
 };
+// clang-format on
 
 void Colors::load(void) {
 	nlohmann::json themeJson;
 
-	FILE* file = fopen((Config::getString("themeDir")+"/theme.json").c_str(), "r");
+	FILE *file = fopen((Config::getString("themeDir") + "/theme.json").c_str(), "r");
 	if(file) {
 		themeJson = nlohmann::json::parse(file, nullptr, false);
 		fclose(file);
 	}
 
-	u16 palette[sizeof(defaultPalette)/sizeof(defaultPalette[0])];
+	u16 palette[sizeof(defaultPalette) / sizeof(defaultPalette[0])];
 	tonccpy(palette, defaultPalette, sizeof(palette));
 
-	for(uint i=0;i<sizeof(defaultPalette)/sizeof(defaultPalette[0]);i++) {
+	for(uint i = 0; i < sizeof(defaultPalette) / sizeof(defaultPalette[0]); i++) {
 		if(themeJson.contains(keys[i]) && themeJson[keys[i]].is_string()) {
-			palette[i] = stoi(themeJson[keys[i]].get_ref<std::string&>(), nullptr, 0);
+			palette[i] = stoi(themeJson[keys[i]].get_ref<std::string &>(), nullptr, 0);
 		}
 	}
 

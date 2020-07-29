@@ -35,14 +35,24 @@ SOURCES		:=	source \
 				source/graphics \
 				source/menus \
 				source/saves \
-				source/utils
+				source/utils source/utils/bank
 INCLUDES	:=	include \
 				core/memecrypto core/swshcrypto \
 				core/include core/include/enums core/include/i18n core/include/personal core/include/pkx core/include/sav core/include/utils core/include/wcx \
 				include/graphics \
 				include/menus \
 				include/saves \
-				include/utils
+				include/utils include/utils/bank
+FORMAT_SOURCES	:=	source \
+					source/graphics \
+					source/menus \
+					source/saves \
+					source/utils
+FORMAT_INCLUDES	:=	include \
+					include/graphics \
+					include/menus \
+					include/saves \
+					include/utils
 
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -157,3 +167,6 @@ cppcheck:
 	@rm -f ../cppcheck.log
 	@cppcheck . --enable=all $(INCLUDE) -UJSON_CATCH_USER -U_Check_return_ -U_MSC_VER -U_Ret_notnull_ -U__INTEL_COMPILER -U__PGI -U__SUNPRO_CC -UJSON_INTERNAL_CATCH_USER -UJSON_THROW_USER -UJSON_TRY_USER -U__IBMCPP__ -U__SUNPRO_CC -D__GNUC__=9 -D__GNUC_MINOR__=1 -DNULL=nullptr --force 2> ../cppcheck.log
 	@echo build/cppcheck.log file created...
+
+format:
+	clang-format -i -style=file $(foreach dir,$(FORMAT_SOURCES),$(wildcard $(dir)/*.c) $(wildcard $(dir)/*.cpp) $(wildcard $(dir)/*.hpp) $(wildcard $(dir)/*.h)) $(foreach dir,$(FORMAT_INCLUDES),$(wildcard $(dir)/*.h) $(wildcard $(dir)/*.hpp))
