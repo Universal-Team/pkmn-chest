@@ -56,7 +56,6 @@ If you already have the repo without the submodules you can run `git submodule u
 
 ### Compiling
 Simply run `make` in the pkmn-chest source directory
-- (Note: `g++` is also required currently to build the bmp2ds graphics converter)
 
 ## Contact
 The best way to talk to us is to join [our Discord](https://discord.gg/KDJCfGF). If you want to report a bug or request a feature you can do so [in a GitHub Issue](https://github.com/Universal-Team/pkmn-chest/issues/new/choose). You can also talk on the [GBAtemp thread](https://gbatemp.net/threads/release-pkmn-chest-a-pokemon-bank-for-the-nintendo-ds-i.549249/).
