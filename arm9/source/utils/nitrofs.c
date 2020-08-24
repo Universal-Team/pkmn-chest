@@ -48,18 +48,18 @@
 	2018-09-05 v0.9 - modernize devoptab (by RonnChyran)
 		* Updated for libsysbase change in devkitARM r46 and above.
 
+	2020-08-20 v0.10 - modernize GBA SLOT support (by RocketRobz)
+		* Updated GBA SLOT detection to check for game code and header CRC.
+
+	2020-08-24 v0.11 - SDNAND support (by RocketRobz)
+		* Added support for being mounted from SDNAND, if app is launched by hiyaCFW.
 */
 
-#include "nitrofs.h"
-
+#include <string.h>
 #include <errno.h>
 #include <nds.h>
-#include <string.h>
-
-// This seems to be a typo! memory.h has REG_EXEMEMCNT
-#ifndef REG_EXMEMCNT
-	#define REG_EXMEMCNT (*(vuint16 *)0x04000204)
-#endif
+#include "nitrofs.h"
+#include "tonccpy.h"
 
 #define __itcm __attribute__((section(".itcm")))
 
@@ -107,7 +107,7 @@ inline ssize_t nitroSubRead(off_t *npos, void *ptr, size_t len) {
 			fseek(ndsFile, *npos, SEEK_SET); // if we need to, move! (might want to verify this succeed)
 		len = fread(ptr, 1, len, ndsFile);
 	} else { // reading from gbarom
-		memcpy(ptr,
+		tonccpy(ptr,
 			   *npos + (void *)GBAROM,
 			   len); // len isnt checked here because other checks exist in the callers (hopefully)
 	}
@@ -132,6 +132,33 @@ int __itcm nitroFSInit(const char *ndsfile) {
 	chdirpathid    = NITROROOT;
 	ndsFileLastpos = 0;
 	ndsFile        = NULL;
+	if(!isDSiMode() || strncmp((const char*)0x4FFFA00, "no$gba", 6) == 0) {
+		sysSetCartOwner (BUS_OWNER_ARM9); // give us gba slot ownership
+		// We has gba rahm
+		// printf("yes i think this is GBA?!\n");
+		if(strncmp(((const char *)GBAROM) + LOADERSTROFFSET, LOADERSTR, strlen(LOADERSTR)) == 0) { //Look for second magic string, if found its a sc.nds or nds.gba
+			// printf("sc/gba\n");
+			fntOffset = ((u32) * (u32 *)(((const char *)GBAROM) + FNTOFFSET + LOADEROFFSET)) + LOADEROFFSET;
+			fatOffset = ((u32) * (u32 *)(((const char *)GBAROM) + FATOFFSET + LOADEROFFSET)) + LOADEROFFSET;
+			hasLoader = true;
+			AddDevice(&nitroFSdevoptab);
+			return (1);
+		}
+		else if(headerFirst) { // Ok, its not a .gba build, so must be emulator
+			// printf("gba, must be emu\n");
+			fntOffset = ((u32) * (u32 *)(((const char *)GBAROM) + FNTOFFSET));
+			fatOffset = ((u32) * (u32 *)(((const char *)GBAROM) + FATOFFSET));
+			hasLoader = false;
+			AddDevice(&nitroFSdevoptab);
+			return (1);
+		}
+	}
+	if(isDSiMode() && ndsfile == NULL) {
+		// Try SDNAND path
+		char fileName[64];
+		sprintf(fileName, "sd:/title/%08x/%08x/content/000000%02x.app", *(unsigned int*)0x02FFE234, *(unsigned int*)0x02FFE230, *(u8*)0x02FFE01E);
+		ndsfile = fileName;
+	}
 	if(ndsfile != NULL) {
 		if((ndsFile = fopen(ndsfile, "rb"))) {
 			nitroSubRead(&pos, romstr, strlen(LOADERSTR));
