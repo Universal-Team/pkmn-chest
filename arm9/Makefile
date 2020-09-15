@@ -5,6 +5,8 @@ ifeq ($(strip $(DEVKITARM)),)
 $(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>devkitARM")
 endif
 
+include $(DEVKITARM)/ds_rules
+
 # If on a tagged commit, use the tag instead of the commit
 ifneq ($(shell echo $(shell git tag -l --points-at HEAD) | head -c 1),)
 GIT_VER := $(shell git tag -l --points-at HEAD)
@@ -12,14 +14,16 @@ else
 GIT_VER := $(shell git describe --abbrev=0 --tags)-$(shell git rev-parse --short HEAD)
 endif
 
-VER_STRING := \#ifndef VERSION_HPP\n\#define VERSION_HPP\n\#define GIT_VERSION $(GIT_VER)\n\#endif\n
-
-# Why on earth does this change anything
-$(shell mkdir -p "include/utils")
 # Ensure version.hpp exists
-$(shell touch "include/utils/version.hpp")
+ifeq (,$(wildcard include/utils/version.hpp))
+$(shell mkdir -p include/utils)
+$(shell touch include/utils/version.hpp)
+endif
 
-include $(DEVKITARM)/ds_rules
+# Print new version if changed
+ifeq (,$(findstring $(GIT_VER), $(shell cat include/utils/version.hpp)))
+$(shell printf "#ifndef VERSION_HPP\n#define VERSION_HPP\n\n#define VER_NUMBER \"$(GIT_VER)\"\n\n#endif\n" > include/utils/version.hpp)
+endif
 
 #---------------------------------------------------------------------------------
 # BUILD is the directory where object files & intermediate files will be placed
@@ -127,9 +131,6 @@ export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib)
 
 #---------------------------------------------------------------------------------
 $(BUILD):
-ifeq (,$(findstring $(GIT_VER), $(shell cat include/utils/version.hpp)))
-	@printf "#ifndef VERSION_HPP\n#define VERSION_HPP\n\n#define VER_NUMBER \"$(GIT_VER)\"\n\n#endif\n" > include/utils/version.hpp
-endif
 	@[ -d $@ ] || mkdir -p $@
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
 	printf $(GIT_VER) > ../nitrofiles/version.txt
@@ -137,6 +138,7 @@ endif
 #---------------------------------------------------------------------------------
 clean:
 	@echo clean ...
+	@rm -f include/utils/version.hpp
 	@rm -fr $(BUILD) *.elf *.nds* *.bin
 
 #---------------------------------------------------------------------------------
