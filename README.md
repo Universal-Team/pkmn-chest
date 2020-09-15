@@ -80,7 +80,7 @@ If you'd like to help translate pkmn-chest to a language that isn't yet supporte
 - [NightScript](https://github.com/NightYoshi370/): French
 - [R-YaTian](https://github.com/R-YaTian): Chinese
 - [StackZ](https://github.com/SuperSaiyajinStackZ): German
-- [Viktor Varga](https://crowdin.com/profile/viktor.varga): Hungarian
+- [Viktor Varga](https://github.com/vargaviktor): Hungarian
 - [whatter](https://github.com/whatter): Polish
 - [XxPhoenix1996xX](https://github.com/XxPhoenix1996xX): Spanish
 ### Others
