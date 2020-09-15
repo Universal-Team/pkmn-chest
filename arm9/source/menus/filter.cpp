@@ -100,7 +100,7 @@ void selectMoves(std::shared_ptr<pksm::PKFilter> filter) {
 				filter->moveEnabled(selection, !filter->moveEnabled(selection));
 			} else if(column == 1) {
 				filter->move(selection,
-							 selectItem<int>(filter->move(selection),
+							 selectItem(filter->move(selection),
 											 save->availableMoves(),
 											 i18n::rawMoves(Config::getLang("lang"))));
 			} else if(column == 2) {

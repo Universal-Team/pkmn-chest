@@ -411,7 +411,7 @@ void selectMoves(pksm::PKX &pkm) {
 			optionSelected = false;
 			pkm.move(
 				selection,
-				selectItem<int>(pkm.move(selection), save->availableMoves(), i18n::rawMoves(Config::getLang("lang"))));
+				selectItem(pkm.move(selection), save->availableMoves(), i18n::rawMoves(Config::getLang("lang"))));
 
 			// Clear screen
 			drawImageDMA(0, 0, listBg, false, false);
