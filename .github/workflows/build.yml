@@ -105,9 +105,9 @@ jobs:
           git config --global user.name "TWLBot"
           git clone --depth 1 https://${{ secrets.TWLBOT_TOKEN }}@github.com/Universal-Team/extras.git
           mkdir -p extras/builds/pkmn-chest
-          qrencode -o extras/builds/pkmn-chest/pkmn-chest.png https://raw.githubusercontent.com/Universal-Team/extras/v$CURRENT_DATE/builds/pkmn-chest/pkmn-chest.cia
-          qrencode -o extras/builds/pkmn-chest/pkmn-chest-release.png https://github.com/Universal-Team/pkmn-chest/releases/download/$COMMIT_TAG/pkmn-chest.cia
           cd extras/builds/pkmn-chest
+          qrencode -o pkmn-chest.png https://raw.githubusercontent.com/Universal-Team/extras/v$CURRENT_DATE/builds/pkmn-chest/pkmn-chest.cia
+          qrencode -o pkmn-chest-release.png https://github.com/Universal-Team/pkmn-chest/releases/download/$COMMIT_TAG/pkmn-chest.cia
           cp ${{ github.workspace }}/build/* .
           git stage .
           git commit -m "pkmn-chest | $COMMIT_HASH"
@@ -150,7 +150,7 @@ jobs:
         run: |
           curl -o send.sh https://raw.githubusercontent.com/Universal-Team/discord-webhooks/master/send-ghactions.sh
           chmod +x send.sh
-          export IMAGE=https://raw.githubusercontent.com/Universal-Team/extras/v$CURRENT_DATE/builds/Universal-Updater/Universal-Updater.png
+          export IMAGE=https://raw.githubusercontent.com/Universal-Team/extras/v$CURRENT_DATE/builds/pkmn-chest/pkmn-chest.png
           ./send.sh success ${{ secrets.WEBHOOK_URL }}
       - name: Send failure webhook
         if: ${{ failure() }}
