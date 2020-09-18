@@ -95,7 +95,7 @@ jobs:
 
             curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_LENGTH" -H "$CONTENT_TYPE" --upload-file "$file" "$UPLOAD_URL"
           done
-      - name:"Commit and push to Universal-Team/extras
+      - name: Commit and push to Universal-Team/extras
         id: commit
         run: |
           CURRENT_DATE=$(date +"%Y%m%d-%H%M%S")
