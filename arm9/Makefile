@@ -127,19 +127,26 @@ export INCLUDE	:=	$(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
 
 export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib)
 
-.PHONY: $(BUILD) clean
+.PHONY: all $(BUILD) clean
+
+all: $(BUILD)
 
 #---------------------------------------------------------------------------------
-$(BUILD):
+$(BUILD): ../nitrofiles/version.txt
 	@[ -d $@ ] || mkdir -p $@
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
-	printf $(GIT_VER) > ../nitrofiles/version.txt
+
+#---------------------------------------------------------------------------------
+../nitrofiles/version.txt:
+	@echo $$(basename $@)
+	@printf $(GIT_VER) > ../nitrofiles/version.txt
 
 #---------------------------------------------------------------------------------
 clean:
 	@echo clean ...
 	@rm -f include/utils/version.hpp
 	@rm -fr $(BUILD) *.elf *.nds* *.bin
+	@rm -f ../nitrofiles/version.txt
 
 #---------------------------------------------------------------------------------
 else

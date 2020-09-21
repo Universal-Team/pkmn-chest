@@ -1,54 +1,59 @@
-MUSIC		:=	.
 OUT			:=	../nitrofiles/sound
 
-WAVFILES	:=	$(foreach dir,$(notdir $(wildcard $(MUSIC)/*.wav)),$(MUSIC)/$(dir))
-MODFILES	:=	$(foreach dir,$(notdir $(wildcard $(MUSIC)/*.mod)),$(MUSIC)/$(dir))
-MODFILES	+=	$(foreach dir,$(notdir $(wildcard $(MUSIC)/*.s3m)),$(MUSIC)/$(dir))
-MODFILES	+=	$(foreach dir,$(notdir $(wildcard $(MUSIC)/*.it)),$(MUSIC)/$(dir))
-MODFILES	+=	$(foreach dir,$(notdir $(wildcard $(MUSIC)/*.xm)),$(MUSIC)/$(dir))
+WAVFILES	:=	$(foreach file,$(notdir $(wildcard *.wav)),$(file))
 
-TARGETS		:= $(MODFILES:.mod=.msl)
-TARGETS		+= $(MODFILES:.s3m=.msl)
-TARGETS		+= $(MODFILES:.it=.msl)
-TARGETS		+= $(MODFILES:.xm=.msl)
+MODFILES	:=	$(foreach file,$(notdir $(wildcard *.mod)),$(file))
+S3MFILES	:=	$(foreach file,$(notdir $(wildcard *.s3m)),$(file))
+ITFILES		:=	$(foreach file,$(notdir $(wildcard *.it)),$(file))
+XMFILES		:=	$(foreach file,$(notdir $(wildcard *.xm)),$(file))
 
-all	:	sfx.msl $(TARGETS)
-	@echo sound ...
+TARGETS		:= $(foreach file,$(MODFILES:.mod=.msl),$(addprefix $(OUT)/, $(file)))
+TARGETS		+= $(foreach file,$(S3MFILES:.s3m=.msl),$(addprefix $(OUT)/, $(file)))
+TARGETS		+= $(foreach file,$(ITFILES:.it=.msl),$(addprefix $(OUT)/, $(file)))
+TARGETS		+= $(foreach file,$(XMFILES:.xm=.msl),$(addprefix $(OUT)/, $(file)))
+TARGETS		+= $(OUT)/sfx.msl
 
-#---------------------------------------------------------------------------------
-# rule to build soundbank from music files
-#---------------------------------------------------------------------------------
-sfx.msl	:	$(WAVFILES)
-#---------------------------------------------------------------------------------
-	@mkdir -p $(OUT)/$(@D)
-	@mmutil $^ -d -o$(OUT)/sfx.msl
+.PHONY	:	all clean
+
+all	:	$(OUT)/sfx.msl $(TARGETS)
 
 #---------------------------------------------------------------------------------
-%.msl	:	$(WAVFILES) %.mod
+# Rules to build soundbanks from music files
 #---------------------------------------------------------------------------------
-	@mkdir -p $(OUT)/$(@D)
-	@mmutil $^ -d -o$(OUT)/$@
+$(OUT)/%.msl	:	$(WAVFILES) %.mod
+#---------------------------------------------------------------------------------
+	@echo $$(basename $@)
+	@[ -d "$(@D)" ] || mkdir -p "$(@D)"
+	@mmutil $^ -d -o$@ 1>/dev/null
 
 #---------------------------------------------------------------------------------
-%.msl	:	$(WAVFILES) %.s3m
+$(OUT)/%.msl	:	$(WAVFILES) %.s3m
 #---------------------------------------------------------------------------------
-	@mkdir -p $(OUT)/$(@D)
-	@mmutil $^ -d -o$(OUT)/$@
+	@echo $$(basename $@)
+	@[ -d "$(@D)" ] || mkdir -p "$(@D)"
+	@mmutil $^ -d -o$@ 1>/dev/null
 
 #---------------------------------------------------------------------------------
-%.msl	:	$(WAVFILES) %.it
+$(OUT)/%.msl	:	$(WAVFILES) %.it
 #---------------------------------------------------------------------------------
-	@mkdir -p $(OUT)/$(@D)
-	@mmutil $^ -d -o$(OUT)/$@
+	@echo $$(basename $@)
+	@[ -d "$(@D)" ] || mkdir -p "$(@D)"
+	@mmutil $^ -d -o$@ 1>/dev/null
 
 #---------------------------------------------------------------------------------
-%.msl	:	$(WAVFILES) %.xm
+$(OUT)/%.msl	:	$(WAVFILES) %.xm
 #---------------------------------------------------------------------------------
-	@mkdir -p $(OUT)/$(@D)
-	@mmutil $^ -d -o$(OUT)/$@
+	@echo $$(basename $@)
+	@[ -d "$(@D)" ] || mkdir -p "$(@D)"
+	@mmutil $^ -d -o$@ 1>/dev/null
+
+#---------------------------------------------------------------------------------
+$(OUT)/%.msl	:	$(WAVFILES)
+#---------------------------------------------------------------------------------
+	@echo $$(basename $@)
+	@[ -d "$(@D)" ] || mkdir -p "$(@D)"
+	@mmutil $^ -d -o$@ 1>/dev/null
 
 clean	:
 	@echo clean ...
-	@rm -f bmp2ds
-	@rm -rf $(OUT)/sfx.msl
-	@rm -rf $(addprefix $(OUT)/,$(TARGETS))
+	@rm -f $(TARGETS)

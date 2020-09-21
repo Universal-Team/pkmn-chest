@@ -13,20 +13,21 @@ GFX_OUT		:=	../pokemon-gfx
 COMBO_OUT	:=	../../nitrofiles/graphics
 
 INPUTS		:= $(foreach dir,$(GRAPHICS),$(addprefix $(dir)/,$(notdir $(wildcard $(dir)/*.bmp))))
-TARGETS		:= $(INPUTS:.bmp=.gfx)
+TARGETS		:= $(foreach file,$(INPUTS:.bmp=.gfx),$(addprefix $(GFX_OUT)/, $(file)))
 
-.PHONY	:	combo clean all directories
+.PHONY	:	clean all
 
-all	:	$(TARGETS) combo
-	@echo pokemon ...
+all	:	$(TARGETS) $(COMBO_OUT)/pokemon.combo.gfx
 
-combo	:
+$(COMBO_OUT)/pokemon.combo.gfx	:
 	@cat $(GFX_OUT)/*.gfx > $(COMBO_OUT)/pokemon.combo.gfx
 
-%.gfx	:	%.bmp
-	@mkdir -p $(GFX_OUT)/$(@D)
-	@bmp2ds $< $(GFX_OUT)/$@ -c 16
+$(GFX_OUT)/%.gfx	:	%.bmp
+	@echo $$(basename $@)
+	@[ -d "$(@D)" ] || mkdir -p "$(@D)"
+	@bmp2ds $< $@
 
 clean	:
 	@echo clean ...
-	@rm -rf $(addprefix $(GFX_OUT)/,$(TARGETS))
+	@rm -f $(TARGETS)
+	@rm -f $(COMBO_OUT)/pokemon.combo.gfx

@@ -6,7 +6,6 @@ endif
 
 include $(DEVKITARM)/ds_rules
 
-
 GRAPHICS	:=	graphics \
 				graphics/ball \
 				graphics/box graphics/box/b2w2 graphics/box/bw graphics/box/dp graphics/box/e graphics/box/frlg graphics/box/hgss graphics/box/pt graphics/box/rs \
@@ -16,28 +15,28 @@ OUT			:=	../nitrofiles
 
 INPUTS		:= $(foreach dir,$(GRAPHICS),$(addprefix $(dir)/,$(notdir $(wildcard $(dir)/*.bmp))))
 
-TARGETS		:= $(INPUTS:.bmp=.gfx)
+TARGETS		:= $(foreach file,$(INPUTS:.bmp=.gfx),$(addprefix $(OUT)/, $(file)))
 
 .PHONY	:	clean all directories pokemon
 
 all	:	$(TARGETS) pokemon
-	@echo graphics ...
 
 no-pokemon	:	$(TARGETS)
-	@echo graphics ...
 
+$(OUT)/%.gfx	:	%.bmp %.txt
+	@echo $$(basename $@)
+	@[ -d "$(@D)" ] || mkdir -p "$(@D)"
+	@bmp2ds $< $@ -o $(shell cat $(word 2,$^))
 
-%.gfx	:	%.bmp %.txt
-	@mkdir -p $(OUT)/$(@D)
-	@bmp2ds $< $(OUT)/$@ -o $(shell cat $(word 2,$^))
-
-%.gfx	:	%.bmp
-	@mkdir -p $(OUT)/$(@D)
-	@bmp2ds $< $(OUT)/$@
+$(OUT)/%.gfx	:	%.bmp
+	@echo $$(basename $@)
+	@[ -d "$(@D)" ] || mkdir -p "$(@D)"
+	@bmp2ds $< $@
 
 clean	:
 	@echo clean ...
-	@rm -rf $(addprefix $(OUT)/,$(TARGETS))
+	@rm -f $(TARGETS)
+	@make -C pokemon clean
 
 pokemon	:
 	$(MAKE) -C pokemon

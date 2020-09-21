@@ -14,18 +14,6 @@
 				"reveal": "silent"
 			},
 			"problemMatcher": "$gcc"
-		},
-		{
-			"label": "Make (skip graphics & sound)",
-			"command": "make",
-			"args": ["-s", "skip-gs"],
-			"group": {
-				"kind": "build"
-			},
-			"presentation": {
-				"reveal": "silent"
-			},
-			"problemMatcher": "$gcc"
 		}
 	]
 }
