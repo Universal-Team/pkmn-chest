@@ -18,13 +18,13 @@
 A Pokémon Bank for the 3<sup>rd</sup> through 5<sup>th</sup> generation Pokémon games for the Nintendo DS(i).
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Universal-Team/universal-team.github.io/master/images/pkmn-chest/top-menu-1.png" alt="The top menu (top screen)">
-  <img src="https://raw.githubusercontent.com/Universal-Team/universal-team.github.io/master/images/pkmn-chest/box-1.png" alt="In the boxes (top screen)">
-  <img src="https://raw.githubusercontent.com/Universal-Team/universal-team.github.io/master/images/pkmn-chest/box-1.png" alt="Editing a Pokémon (top screen)">
+  <img src="https://universal-team.net/images/pkmn-chest/top-menu-1.png" alt="The top menu (top screen)">
+  <img src="https://universal-team.net/images/pkmn-chest/box-1.png" alt="In the boxes (top screen)">
+  <img src="https://universal-team.net/images/pkmn-chest/box-1.png" alt="Editing a Pokémon (top screen)">
   <br>
-  <img src="https://raw.githubusercontent.com/Universal-Team/universal-team.github.io/master/images/pkmn-chest/top-menu-2.png" alt="The top menu (bottom screen)">
-  <img src="https://raw.githubusercontent.com/Universal-Team/universal-team.github.io/master/images/pkmn-chest/box-2.png" alt="In the boxes (bottom screen)">
-    <img src="https://raw.githubusercontent.com/Universal-Team/universal-team.github.io/master/images/pkmn-chest/summary.png" alt="Editing a Pokémon (bottom screen)">
+  <img src="https://universal-team.net/images/pkmn-chest/top-menu-2.png" alt="The top menu (bottom screen)">
+  <img src="https://universal-team.net/images/pkmn-chest/box-2.png" alt="In the boxes (bottom screen)">
+    <img src="https://universal-team.net/images/pkmn-chest/summary.png" alt="Editing a Pokémon (bottom screen)">
 </p>
 
 ## Table of contents
