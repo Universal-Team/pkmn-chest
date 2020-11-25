@@ -155,21 +155,21 @@ void drawFatText(int i, bool valid) {
 }
 
 void drawSlot1Text(int i, bool valid) {
-	char slot1Text[34];
+	char slot1Text[64];
 	snprintf(slot1Text,
 			 sizeof(slot1Text),
 			 "Slot-1: (%s) [%s]",
-			 REG_SCFG_MC == 0x11 ? "No card inserted" : slot1Name,
+			 REG_SCFG_EXT == 0 ? i18n::localize(Config::getLang("lang"), "installUnlaunch").c_str() : (REG_SCFG_MC == 0x11 ? i18n::localize(Config::getLang("lang"), "noCard").c_str() : slot1Name),
 			 slot1ID);
 	printTextTinted(slot1Text, valid ? TextColor::white : TextColor::red, 10, (i + 1) * 16, false, true);
 }
 
 void drawSlot2Text(int i, bool valid) {
-	char slot2Text[34];
+	char slot2Text[64];
 	snprintf(slot2Text,
 			 sizeof(slot2Text),
 			 "Slot-2: (%s) [%s]",
-			 *(u8 *)(0x080000B2) != 0x96 ? "No cart inserted" : slot2Name,
+			 *(u8 *)(0x080000B2) != 0x96 ? i18n::localize(Config::getLang("lang"), "noCart").c_str() : slot2Name,
 			 slot2ID);
 	printTextTinted(slot2Text, valid ? TextColor::white : TextColor::red, 10, (i + 1) * 16, false, true);
 }
