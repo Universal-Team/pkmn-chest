@@ -45,7 +45,6 @@ $(NITRO_FILES)/i18n/%.txt	:	arm9/core/strings/%.txt
 	@cp -f $< $@
 
 lang	:	$(LANG_TARGETS)
-	echo $(LANG_TARGETS)
 
 #---------------------------------------------------------------------------------
 sound:

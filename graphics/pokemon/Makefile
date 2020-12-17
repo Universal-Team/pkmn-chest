@@ -25,7 +25,7 @@ $(COMBO_OUT)/pokemon.combo.gfx	:
 $(GFX_OUT)/%.gfx	:	%.bmp
 	@echo $$(basename $@)
 	@[ -d "$(@D)" ] || mkdir -p "$(@D)"
-	@bmp2ds $< $@
+	@bmp2ds $< $@ -c 16
 
 clean	:
 	@echo clean ...

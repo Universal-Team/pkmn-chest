@@ -133,13 +133,9 @@ all: $(BUILD)
 
 #---------------------------------------------------------------------------------
 $(BUILD): ../nitrofiles/version.txt
+	@printf $(GIT_VER) > ../nitrofiles/version.txt
 	@[ -d $@ ] || mkdir -p $@
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
-
-#---------------------------------------------------------------------------------
-../nitrofiles/version.txt:
-	@echo $$(basename $@)
-	@printf $(GIT_VER) > ../nitrofiles/version.txt
 
 #---------------------------------------------------------------------------------
 clean:
