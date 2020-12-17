@@ -1083,9 +1083,11 @@ void manageBoxes(void) {
 								if(topScreen) {
 									topScreen = false;
 									setSpritePosition(arrowID, true, -16, -16);
-									setSpritePosition(heldPokemonID, true, -32, -32);
 									setSpriteVisibility(arrowID, false, true);
-									setSpriteVisibility(heldPokemonID, false, true);
+									if(heldPokemon.size() > 0) {
+										setSpritePosition(heldPokemonID, true, -32, -32);
+										setSpriteVisibility(heldPokemonID, false, true);
+									}
 								}
 								inParty = false;
 								arrowX  = x;
