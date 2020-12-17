@@ -51,23 +51,26 @@ sound:
 	$(MAKE) -C sound
 
 #---------------------------------------------------------------------------------
+arm9/$(TARGET).elf:
+	$(MAKE) -C arm9
+
+#---------------------------------------------------------------------------------
 $(TARGET).nds	: graphics sound lang $(NITRO_FILES) arm9/$(TARGET).elf
 	ndstool	-c $(TARGET).nds -9 arm9/$(TARGET).elf \
 			-b1 icon.bmp "$(GAME_TITLE);$(GAME_SUBTITLE1)" $(_ADDFILES) \
 			-g \#\#\#\# 00 "HOMEBREW" 87 -z 80040000 -u 00030004 -a 00000138
 
 #---------------------------------------------------------------------------------
-arm9/$(TARGET).elf:
-	$(MAKE) -C arm9
+$(TARGET).dsi	:	arm9/$(TARGET).elf
+	ndstool	-c $(TARGET).dsi -9 arm9/$(TARGET).elf \
+	-b1 icon.bmp "$(GAME_TITLE);$(GAME_SUBTITLE1)" $(_ADDFILES) \
+	-g WPKA 00 "PKMN-CHEST" 87 -z 80040000 -u 00030004 -a 00000138
 
 #---------------------------------------------------------------------------------
-$(TARGET).cia	:	arm9/$(TARGET).elf
-	ndstool	-c $(TARGET).temp -9 arm9/$(TARGET).elf \
-	-b1 icon.bmp "$(GAME_TITLE);$(GAME_SUBTITLE1)" \
-	-g WPKA 00 "PKMN-CHEST" 87 -z 80040000 -u 00030004 -a 00000138
-	make_cia --srl="pkmn-chest.temp"
-	rm pkmn-chest.temp
+$(TARGET).cia	:	$(TARGET).dsi arm9/$(TARGET).elf
+	make_cia --srl="pkmn-chest.dsi"
 
+dsi	:	$(TARGET).dsi
 cia	:	$(TARGET).cia
 
 #---------------------------------------------------------------------------------

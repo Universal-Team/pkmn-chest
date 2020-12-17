@@ -1,6 +1,7 @@
 /nitrofiles/graphics/grit
 
 */build
+*.dsi
 *.nds
 *.elf
 *.gfx
