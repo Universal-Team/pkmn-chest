@@ -37,8 +37,7 @@ jobs:
       - name: Build
         id: build
         run: |
-          make
-          make dsi
+          make all dsi
 
           sudo mv tools-linux/make_cia /usr/local/bin
           make cia

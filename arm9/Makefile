@@ -132,7 +132,7 @@ export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib)
 all: $(BUILD)
 
 #---------------------------------------------------------------------------------
-$(BUILD): ../nitrofiles/version.txt
+$(BUILD):
 	@printf $(GIT_VER) > ../nitrofiles/version.txt
 	@[ -d $@ ] || mkdir -p $@
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
