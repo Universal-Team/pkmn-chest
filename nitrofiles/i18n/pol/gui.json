@@ -105,7 +105,7 @@
 	"rename": "Zmień nazwę",
 	"reopenIfFrozen": "Jeśli postęp się zawiesi,\nzamknij i ponownie otwórz konsolę.",
 	"rtcElapsed": "Upłynął czas RTC",
-	"rtcInitial": "Czas początkowy RTC",
+	"rtcInitial": "RTC initial time",
 	"save": "Zapisz",
 	"saveMsgCard": "Czy chcesz zapisać zmiany\nna karcie gry?",
 	"saveMsgChest": "Czy chcesz zapisać zmiany\nw skrzyni?",
