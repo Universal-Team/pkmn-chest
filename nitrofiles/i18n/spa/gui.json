@@ -105,7 +105,7 @@
 	"rename": "Renombrar",
 	"reopenIfFrozen": "Si el progreso se congela,\ncierre y vuelva a abrir la consola.",
 	"rtcElapsed": "Tiempo transcurrido RTR",
-	"rtcInitial": "Tiempo inicial de RTR",
+	"rtcInitial": "RTC initial time",
 	"save": "Salvar",
 	"saveMsgCard": "¿Le gustaría guardar los cambios\nen el cartucho?",
 	"saveMsgChest": "¿Le gustaría guardar los cambios\nen el cofre?",
