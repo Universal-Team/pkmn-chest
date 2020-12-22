@@ -105,7 +105,7 @@
 	"rename": "Renommer",
 	"reopenIfFrozen": "Si la progression se bloque,\nferme et reouvre la console.",
 	"rtcElapsed": "Temps RTC de la dernière sauvergarde",
-	"rtcInitial": "Heure de création RTC",
+	"rtcInitial": "RTC initial time",
 	"save": "Sauvegarder",
 	"saveMsgCard": "Voulez vous appliquez les changement\nà la cartouche?",
 	"saveMsgChest": "Voulez vous appliquez les changement\nau coffre?",
