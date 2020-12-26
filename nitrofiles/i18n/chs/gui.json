@@ -105,7 +105,7 @@
 	"rename": "重命名",
 	"reopenIfFrozen": "如果进度条卡住,\n请合盖再开",
 	"rtcElapsed": "RTC 经过时间",
-	"rtcInitial": "RTC initial time",
+	"rtcInitial": "RTC 开始时间",
 	"save": "保存",
 	"saveMsgCard": "你想要保存更改\n到卡带?",
 	"saveMsgChest": "你想要保存更改\n到箱子?",
