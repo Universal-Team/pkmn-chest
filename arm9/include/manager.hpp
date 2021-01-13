@@ -9,10 +9,11 @@
 #define BALL_COUNT 26
 
 extern bool topScreen, inParty;
-extern int arrowID, currentSaveBox, currentBankBox, heldPokemonID, keyboardSpriteID, arrowMode;
-extern std::vector<int> menuIconID, partyIconID;
+extern Sprite arrow[2], heldPokemonSprites[2], keyboardSprite;
+extern std::vector<Sprite> boxSprites[2], menuSprites, partySprites;
+extern int currentSaveBox, currentBankBox, arrowMode, boxTitleX, boxTitleY, pkmnX, pkmnY;
 extern std::string savePath;
-extern Image arrowBlue, arrowRed, arrowYellow, ball[BALL_COUNT], bankBox, boxBgTop, boxButton, infoBox, itemIcon, keyboardKey, listBg, menuBg, menuButton, menuButtonBlue, party, search, setToSelf, shiny;
+extern Image arrowImg[3], ball[BALL_COUNT], bankBox, boxBgTop, boxButton, infoBox, itemIcon, keyboardKey, listBg, menuBg, menuButton, menuButtonBlue, party, search, setToSelf, shiny;
 extern std::vector<Image> types;
 
 // Returns the current box for the cursor's current screen

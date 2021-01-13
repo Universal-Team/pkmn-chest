@@ -5,6 +5,7 @@
 #include "config.hpp"
 #include "flashcard.hpp"
 #include "graphics.hpp"
+#include "gui.hpp"
 #include "i18n.hpp"
 #include "i18n_ext.hpp"
 #include "input.hpp"
@@ -42,48 +43,38 @@ int getMaxItem(int pouchIndex) {
 
 void drawBag(pksm::Sav::Pouch pouch, int maxItem, int screenPos, bool background) {
 	// Clear text
-	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
+	Graphics::drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 
 	// Draw background
 	if(background) {
-		drawImageDMA(0, 0, listBg, false, false);
+		listBg.draw(0, 0, false, 3);
 
 		// Draw search icon
-		drawImage(256 - search.width, 0, search, false, false);
+		search.draw(256 - search.width(), 0, false, 3);
 
 		// Draw pouch buttons
 		for(unsigned i = 0; i < save->pouches().size(); i++) {
-			drawImageScaled(170,
-							(104 - (10 * save->pouches().size())) + i * (20),
-							1,
-							(float)20 / boxButton.height,
-							boxButton,
-							false,
-							false);
-			printTextMaxW(i18n::pouch(Config::getLang("lang"), save->pouches()[i].first),
-						  boxButton.width - 8,
-						  1,
-						  174,
-						  (104 - (10 * save->pouches().size())) + i * (20) + 2,
-						  false,
-						  false);
+			boxButton.drawSpecial(170, (104 - (10 * save->pouches().size())) + i * (20), false, 3, 1.0f,
+								  20.0f / boxButton.height());
+			Gui::font.print(i18n::pouch(Config::getLang("lang"), save->pouches()[i].first), 174,
+							(104 - (10 * save->pouches().size())) + i * (20) + 2, false, 3, Alignment::center);
 		}
 	}
 
-	printText(i18n::pouch(Config::getLang("lang"), pouch), 4, 0, false, true);
+	Gui::font.print(i18n::pouch(Config::getLang("lang"), pouch), 4, 0, false);
 
 	// Print items
 	for(int i = 0; i < std::min(entriesPerScreen, maxItem + 1); i++) {
-		printTextMaxW(itemName(save->item(pouch, screenPos + i)), 127, 1, 30, 16 + (i * 16), false, true);
-		printText(std::to_string(save->item(pouch, screenPos + i)->count()), 4, 16 + (i * 16), false, true);
+		Gui::font.print(itemName(save->item(pouch, screenPos + i)), 30, 16 + (i * 16), false, 2, Alignment::center);
+		Gui::font.print(std::to_string(save->item(pouch, screenPos + i)->count()), 4, 16 + (i * 16), false);
 	}
 }
 
 void editBag(void) {
-	setSpriteVisibility(arrowID, false, true);
-	setSpritePosition(
-		arrowID, false, 4 + getTextWidth(std::to_string(save->item(save->pouches()[0].first, 0)->count())) + 2, 10);
-	updateOam();
+	arrow[false].visibility(true);
+	arrow[false].position(4 + Gui::font.calcWidth(std::to_string(save->item(save->pouches()[0].first, 0)->count())) + 2,
+						  10);
+	arrow[false].update();
 
 	int maxItem = getMaxItem(0);
 	drawBag(save->pouches()[0].first, maxItem, 0, true);
@@ -106,17 +97,16 @@ void editBag(void) {
 			}
 		} else if(pressed & KEY_B) {
 			Sound::play(Sound::back);
-			setSpriteVisibility(arrowID, false, false);
-			updateOam();
-			drawRectangle(0, 0, 256, 192, CLEAR, false, true);
+			arrow[false].visibility(false);
+			arrow[false].update();
+			Graphics::drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 			break;
 		} else if(held & KEY_Y) {
 		search:
 			std::string str = Input::getLine(-1);
 			if(str != "") {
 				for(int i = 0; i < save->pouches()[selectedPouch].second; i++) {
-					if(strncasecmp(str.c_str(),
-								   itemName(save->item(save->pouches()[selectedPouch].first, i)).c_str(),
+					if(strncasecmp(str.c_str(), itemName(save->item(save->pouches()[selectedPouch].first, i)).c_str(),
 								   str.size()) == 0) {
 						selection = i;
 						break;
@@ -169,7 +159,7 @@ void editBag(void) {
 			goto changePouch;
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
-			if(touch.px >= 256 - search.width && touch.py <= search.height) {
+			if(touch.px >= 256 - search.width() && touch.py <= search.height()) {
 				goto search;
 			}
 			for(int i = 0; i < std::min(entriesPerScreen, maxItem + 1); i++) {
@@ -201,8 +191,8 @@ void editBag(void) {
 
 		if(optionSelected) {
 			optionSelected = false;
-			setSpriteVisibility(arrowID, false, false);
-			updateOam();
+			arrow[false].visibility(false);
+			arrow[false].update();
 			if(column == 0) {
 				int num = Input::getInt(save->item(save->pouches()[selectedPouch].first, selection)->maxCount());
 				if(num != -1) {
@@ -231,13 +221,12 @@ void editBag(void) {
 					if(num == 0) {
 						for(int i = selection + 1; i < save->pouches()[selectedPouch].second; i++) {
 							save->item(*save->item(save->pouches()[selectedPouch].first, i),
-									   save->pouches()[selectedPouch].first,
-									   i - 1);
+									   save->pouches()[selectedPouch].first, i - 1);
 						}
 						// And clear the last one
 						pksm::Item4 emptyItem;
-						save->item(
-							emptyItem, save->pouches()[selectedPouch].first, save->pouches()[selectedPouch].second);
+						save->item(emptyItem, save->pouches()[selectedPouch].first,
+								   save->pouches()[selectedPouch].second);
 						maxItem--;
 					} else {
 						// Convert back from the valid item list to the real item list
@@ -257,8 +246,8 @@ void editBag(void) {
 					}
 				}
 			}
-			setSpriteVisibility(arrowID, false, true);
-			updateOam();
+			arrow[false].visibility(true);
+			arrow[false].update();
 			drawBag(save->pouches()[selectedPouch].first, maxItem, screenPos, true);
 		}
 
@@ -272,19 +261,17 @@ void editBag(void) {
 		}
 
 		// Move cursor
-		if(column == 0)
-			setSpritePosition(
-				arrowID,
-				false,
-				4 + getTextWidth(std::to_string(save->item(save->pouches()[selectedPouch].first, selection)->count())) +
-					2,
+		if(column == 0) {
+			arrow[false].position(4 +
+									  Gui::font.calcWidth(std::to_string(
+										  save->item(save->pouches()[selectedPouch].first, selection)->count())) +
+									  2,
+								  (16 * (selection - screenPos) + 10));
+		} else if(column == 1) {
+			arrow[false].position(
+				30 + Gui::font.calcWidth(itemName(save->item(save->pouches()[selectedPouch].first, selection))) + 2,
 				(16 * (selection - screenPos) + 10));
-		else if(column == 1)
-			setSpritePosition(arrowID,
-							  false,
-							  30 + getTextWidth(itemName(save->item(save->pouches()[selectedPouch].first, selection))) +
-								  2,
-							  (16 * (selection - screenPos) + 10));
-		updateOam();
+		}
+		arrow[false].update();
 	}
 }

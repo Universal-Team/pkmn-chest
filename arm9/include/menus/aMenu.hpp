@@ -5,10 +5,11 @@
 #include <vector>
 
 #include "graphics.hpp"
+#include "gui.hpp"
 
 extern std::vector<Label> aMenuButtons, aMenuEmptySlotButtons, aMenuTopBarButtons;
 
 // Shows the A menu
-int aMenu(int pkmX, int pkmY, std::vector<Label>& buttons, int buttonMode);
+int aMenu(int pkmX, int pkmY, std::vector<Label> &buttons, int buttonMode);
 
 #endif

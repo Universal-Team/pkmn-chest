@@ -18,7 +18,7 @@
 #define DARK_BLUE		0xC
 
 // Text
-enum class TextColor {
+enum TextColor : int {
 	white = 4,
 	gray  = 5,
 	red   = 6,

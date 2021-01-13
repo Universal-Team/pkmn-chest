@@ -1,3 +1,4 @@
+
 #include "configMenu.hpp"
 
 #include "banks.hpp"
@@ -37,78 +38,46 @@ std::vector<Label> textChestFile{
 	{12, 80, "change"}, // Change
 };
 
-std::vector<std::string> songs = {
-	"off", "center1", "center3", "center4", "center5", "twinleafTown", "elmLab", "oakLab", "gameCorner", "theme"};
+std::vector<std::string> songs = {"off",          "center1", "center3", "center4",    "center5",
+								  "twinleafTown", "elmLab",  "oakLab",  "gameCorner", "theme"};
 
 std::vector<std::string> optionsText;
 
-const std::vector<std::string> langNames   = {"Bruh",
-                                            "Deutsch",
-                                            "English",
-                                            "Español",
-                                            "Français",
-                                            "Bahasa Indonesia",
-                                            "Italiano",
-                                            "Lietuvių",
-                                            "Magyar",
-                                            "Polski",
-                                            "Português",
-                                            "Русский",
-                                            "中文 (简体)",
-                                            "中文 (繁體)",
-                                            "日本語",
-                                            "한국어"};
-const std::vector<pksm::Language> guiLangs = {pksm::Language::BRH,
-											  pksm::Language::GER,
-											  pksm::Language::ENG,
-											  pksm::Language::SPA,
-											  pksm::Language::FRE,
-											  pksm::Language::IND,
-											  pksm::Language::ITA,
-											  pksm::Language::LIT,
-											  pksm::Language::HUN,
-											  pksm::Language::POL,
-											  pksm::Language::POR,
-											  pksm::Language::RUS,
-											  pksm::Language::CHS,
-											  pksm::Language::CHT,
-											  pksm::Language::JPN,
-											  pksm::Language::KOR};
+const std::vector<std::string> langNames = {
+	"Bruh",   "Deutsch", "English",   "Español", "Français",    "Bahasa Indonesia", "Italiano", "Lietuvių",
+	"Magyar", "Polski",  "Português", "Русский", "中文 (简体)", "中文 (繁體)",      "日本語",   "한국어"};
+const std::vector<pksm::Language> guiLangs = {
+	pksm::Language::BRH, pksm::Language::GER, pksm::Language::ENG, pksm::Language::SPA,
+	pksm::Language::FRE, pksm::Language::IND, pksm::Language::ITA, pksm::Language::LIT,
+	pksm::Language::HUN, pksm::Language::POL, pksm::Language::POR, pksm::Language::RUS,
+	pksm::Language::CHS, pksm::Language::CHT, pksm::Language::JPN, pksm::Language::KOR};
 
 void drawChestFileMenu(void) {
 	// Draw background
-	drawImageDMA(0, 0, listBg, false, false);
-	printText(i18n::localize(Config::getLang("lang"), "options"), 4, 0, false, false);
+	listBg.draw(0, 0, false, 3);
+	Gui::font.print(i18n::localize(Config::getLang("lang"), "options"), 4, 0, false, false);
 
 	// Get bank name
 	optionsText[0] = Banks::bank->name();
 
 	// Print text
-	printText(i18n::localize(Config::getLang("lang"), textCP1Labels[0].label) + ": " + optionsText[0],
-			  textCP1Labels[0].x,
-			  textCP1Labels[0].y,
-			  false,
-			  false);
+	Gui::font.print(i18n::localize(Config::getLang("lang"), textCP1Labels[0].label) + ": " + optionsText[0],
+					textCP1Labels[0].x, textCP1Labels[0].y, false, false);
 	for(unsigned i = 0; i < textChestFile.size(); i++) {
-		printText(i18n::localize(Config::getLang("lang"), textChestFile[i].label),
-				  textChestFile[i].x,
-				  textChestFile[i].y,
-				  false,
-				  false);
+		Gui::font.print(i18n::localize(Config::getLang("lang"), textChestFile[i].label), textChestFile[i].x,
+						textChestFile[i].y, false, false);
 	}
 }
 
 void chestFileMenu(void) {
-	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
+	Graphics::drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 	drawChestFileMenu();
 
-	setSpriteVisibility(arrowID, false, true);
-	setSpritePosition(arrowID,
-					  false,
-					  textChestFile[0].x +
-						  getTextWidth(i18n::localize(Config::getLang("lang"), textChestFile[0].label)),
-					  textChestFile[0].y - 6);
-	updateOam();
+	arrow[false].visibility(true);
+	arrow[false].position(textChestFile[0].x +
+							  Gui::font.calcWidth(i18n::localize(Config::getLang("lang"), textChestFile[0].label)),
+						  textChestFile[0].y - 6);
+	arrow[false].update();
 
 	bool optionSelected = false;
 	int held, pressed, selection = 0;
@@ -130,7 +99,7 @@ void chestFileMenu(void) {
 		} else if(pressed & KEY_A) {
 			optionSelected = true;
 		} else if(pressed & KEY_B) {
-			drawRectangle(0, 0, 256, 192, CLEAR, false, true);
+			Graphics::drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 			Sound::play(Sound::back);
 			return;
 		} else if(pressed & KEY_TOUCH) {
@@ -138,7 +107,7 @@ void chestFileMenu(void) {
 			for(unsigned i = 0; i < textChestFile.size(); i++) {
 				if(touch.px >= textChestFile[i].x &&
 				   touch.px <= textChestFile[i].x +
-						   getTextWidth(i18n::localize(Config::getLang("lang"), textChestFile[i].label)) &&
+						   Gui::font.calcWidth(i18n::localize(Config::getLang("lang"), textChestFile[i].label)) &&
 				   touch.py >= textChestFile[i].y && touch.py <= textChestFile[i].y + 16) {
 					selection      = i;
 					optionSelected = true;
@@ -150,8 +119,8 @@ void chestFileMenu(void) {
 		if(optionSelected) {
 			Sound::play(Sound::click);
 			optionSelected = false;
-			setSpriteVisibility(arrowID, false, false);
-			updateOam();
+			arrow[false].visibility(false);
+			arrow[false].update();
 			switch(selection) {
 				case 0: { // New
 					std::string str = Input::getLine(12);
@@ -184,7 +153,7 @@ void chestFileMenu(void) {
 					else if(str != "") {
 						Gui::warn(i18n::localize(Config::getLang("lang"), "cantDeleteCurrentChest"));
 					}
-					drawRectangle(0, 0, 256, 192, CLEAR, false, true);
+					Graphics::drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 					chdir(path);
 					break;
 				}
@@ -203,27 +172,26 @@ void chestFileMenu(void) {
 					}
 					chdir(path);
 					drawBox(true);
-					drawRectangle(0, 0, 256, 192, CLEAR, false, true);
+					Graphics::drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 					break;
 				}
 			}
 			drawChestFileMenu();
-			setSpriteVisibility(arrowID, false, true);
+			arrow[false].visibility(true);
 		}
 
-		setSpritePosition(arrowID,
-						  false,
-						  textChestFile[selection].x +
-							  getTextWidth(i18n::localize(Config::getLang("lang"), textChestFile[selection].label)),
-						  textChestFile[selection].y - 6);
-		updateOam();
+		arrow[false].position(
+			textChestFile[selection].x +
+				Gui::font.calcWidth(i18n::localize(Config::getLang("lang"), textChestFile[selection].label)),
+			textChestFile[selection].y - 6);
+		arrow[false].update();
 	}
 }
 
 void drawConfigMenu(void) {
 	// Draw background
-	drawImageDMA(0, 0, listBg, false, false);
-	printText(i18n::localize(Config::getLang("lang"), "options"), 4, 0, false, false);
+	listBg.draw(0, 0, false, 3);
+	Gui::font.print(i18n::localize(Config::getLang("lang"), "options"), 4, 0, false, false);
 
 	if(optionsText.size() < textCP1Labels.size()) {
 		optionsText.resize(textCP1Labels.size());
@@ -254,34 +222,27 @@ void drawConfigMenu(void) {
 
 	// Print text
 	for(unsigned i = 0; i < textCP1Labels.size(); i++) {
-		printText(i18n::localize(Config::getLang("lang"), textCP1Labels[i].label) + ":",
-				  textCP1Labels[i].x,
-				  textCP1Labels[i].y,
-				  false,
-				  false);
+		Gui::font.print(i18n::localize(Config::getLang("lang"), textCP1Labels[i].label) + ":", textCP1Labels[i].x,
+						textCP1Labels[i].y, false, false);
 	}
 	for(unsigned i = 0; i < optionsText.size(); i++) {
-		printText(optionsText[i],
-				  textCP1Labels[i].x + getTextWidth(i18n::localize(Config::getLang("lang"), textCP1Labels[i].label)) +
-					  11,
-				  textCP1Labels[i].y,
-				  false,
-				  false);
+		Gui::font.print(optionsText[i],
+						textCP1Labels[i].x +
+							Gui::font.calcWidth(i18n::localize(Config::getLang("lang"), textCP1Labels[i].label)) + 11,
+						textCP1Labels[i].y, false, false);
 	}
 }
 
 void configMenu(void) {
-	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
+	Graphics::drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 	drawConfigMenu();
 
-	setSpriteVisibility(arrowID, false, true);
-	setSpritePosition(arrowID,
-					  false,
-					  textCP1Labels[0].x +
-						  getTextWidth(i18n::localize(Config::getLang("lang"), textCP1Labels[0].label)) + 12 +
-						  getTextWidth(optionsText[0]),
-					  textCP1Labels[0].y - 6);
-	updateOam();
+	arrow[false].visibility(true);
+	arrow[false].position(textCP1Labels[0].x +
+							  Gui::font.calcWidth(i18n::localize(Config::getLang("lang"), textCP1Labels[0].label)) +
+							  12 + Gui::font.calcWidth(optionsText[0]),
+						  textCP1Labels[0].y - 6);
+	arrow[false].update();
 
 	bool optionSelected = false;
 	int held, pressed, selection = 0;
@@ -307,18 +268,18 @@ void configMenu(void) {
 		} else if(pressed & KEY_B) {
 			Sound::play(Sound::back);
 			Config::save();
-			drawRectangle(0, 0, 256, 192, CLEAR, false, true);
-			setSpriteVisibility(arrowID, false, false);
-			updateOam();
+			Graphics::drawRectangle(0, 0, 256, 192, CLEAR, false, true);
+			arrow[false].visibility(false);
+			arrow[false].update();
 			return;
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
 			for(unsigned i = 0; i < optionsText.size(); i++) {
 				if(touch.px >= textCP1Labels[i].x +
-						   getTextWidth(i18n::localize(Config::getLang("lang"), textCP1Labels[i].label)) + 11 &&
+						   Gui::font.calcWidth(i18n::localize(Config::getLang("lang"), textCP1Labels[i].label)) + 11 &&
 				   touch.px < textCP1Labels[i].x +
-						   getTextWidth(i18n::localize(Config::getLang("lang"), textCP1Labels[i].label)) + 11 +
-						   getTextWidth(optionsText[i]) &&
+						   Gui::font.calcWidth(i18n::localize(Config::getLang("lang"), textCP1Labels[i].label)) + 11 +
+						   Gui::font.calcWidth(optionsText[i]) &&
 				   touch.py >= textCP1Labels[i].y && touch.py <= textCP1Labels[i].y + 16) {
 					selection      = i;
 					optionSelected = true;
@@ -330,8 +291,8 @@ void configMenu(void) {
 		if(optionSelected) {
 			Sound::play(Sound::click);
 			optionSelected = false;
-			setSpriteVisibility(arrowID, false, false);
-			updateOam();
+			arrow[false].visibility(false);
+			arrow[false].update();
 			switch(selection) {
 				case 0: { // Chest File
 					chestFileMenu();
@@ -441,27 +402,26 @@ void configMenu(void) {
 						Config::setString("themeDir", mainDrive() + ":/_nds/pkmn-chest/themes/" + themePath);
 						Colors::load();
 						loadGraphics();
-						loadFont();
+						Gui::font = Font({Config::getString("themeDir") + "font.nftr", "nitro:/graphics/font.nftr"});
 						if(Config::getString("music") == "theme") {
 							Sound::load((Config::getString("themeDir") + "/sound.msl").c_str());
 						}
 					}
 					chdir(startPath);
 					// Clear text
-					drawRectangle(0, 0, 256, 192, CLEAR, false, true);
+					Graphics::drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 					break;
 				}
 			}
 			drawConfigMenu();
-			setSpriteVisibility(arrowID, false, true);
+			arrow[false].visibility(true);
 		}
 
-		setSpritePosition(arrowID,
-						  false,
-						  textCP1Labels[selection].x +
-							  getTextWidth(i18n::localize(Config::getLang("lang"), textCP1Labels[selection].label)) +
-							  12 + getTextWidth(optionsText[selection]),
-						  textCP1Labels[selection].y - 6);
-		updateOam();
+		arrow[false].position(
+			textCP1Labels[selection].x +
+				Gui::font.calcWidth(i18n::localize(Config::getLang("lang"), textCP1Labels[selection].label)) + 12 +
+				Gui::font.calcWidth(optionsText[selection]),
+			textCP1Labels[selection].y - 6);
+		arrow[false].update();
 	}
 }

@@ -109,8 +109,7 @@ inline ssize_t nitroSubRead(off_t *npos, void *ptr, size_t len) {
 			fseek(ndsFile, *npos, SEEK_SET); // if we need to, move! (might want to verify this succeed)
 		len = fread(ptr, 1, len, ndsFile);
 	} else { // reading from gbarom
-		tonccpy(ptr,
-				*npos + (void *)GBAROM,
+		tonccpy(ptr, *npos + (void *)GBAROM,
 				len); // len isnt checked here because other checks exist in the callers (hopefully)
 	}
 	if(len > 0)
@@ -159,11 +158,8 @@ int __itcm nitroFSInit(const char *ndsfile) {
 	if(isDSiMode() && ndsfile == NULL) {
 		// Try SDNAND path
 		char fileName[64];
-		sprintf(fileName,
-				"sd:/title/%08x/%08x/content/000000%02x.app",
-				*(unsigned int *)0x02FFE234,
-				*(unsigned int *)0x02FFE230,
-				*(u8 *)0x02FFE01E);
+		sprintf(fileName, "sd:/title/%08x/%08x/content/000000%02x.app", *(unsigned int *)0x02FFE234,
+				*(unsigned int *)0x02FFE230, *(u8 *)0x02FFE01E);
 		ndsfile = fileName;
 	}
 	if(ndsfile != NULL) {
@@ -288,8 +284,7 @@ int nitroFSDirNext(struct _reent *r, DIR_ITER *dirState, char *filename, struct 
 			next &= NITROISDIR ^ 0xff; // invert bits and mask off 0x80
 			nitroSubRead(pos, filename, next);
 			nitroSubRead(
-				&dirStruct->pos,
-				&dirStruct->dir_id,
+				&dirStruct->pos, &dirStruct->dir_id,
 				sizeof(
 					dirStruct->dir_id)); // read the dir_id
 										 // grr cant get the struct member size?, just wanna test it so moving on...
@@ -302,8 +297,7 @@ int nitroFSDirNext(struct _reent *r, DIR_ITER *dirState, char *filename, struct 
 			dirStruct->namepos += next + 1; // now we points to next one :D
 			// read file info to get filesize (and for fileopen)
 			nitroSubSeek(pos, fatOffset + (dirStruct->entry_id * sizeof(struct ROM_FAT)), SEEK_SET);
-			nitroSubRead(pos,
-						 &dirStruct->romfat,
+			nitroSubRead(pos, &dirStruct->romfat,
 						 sizeof(dirStruct->romfat)); // retrieve romfat entry (contains filestart and end positions)
 			dirStruct->entry_id++;                   // advance ROM_FNTStrFile ptr
 			if(st)

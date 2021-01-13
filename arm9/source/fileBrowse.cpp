@@ -7,6 +7,7 @@
 #include "configMenu.hpp"
 #include "flashcard.hpp"
 #include "graphics.hpp"
+#include "gui.hpp"
 #include "i18n.hpp"
 #include "i18n_ext.hpp"
 #include "input.hpp"
@@ -71,7 +72,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
 	DIR *pdir = opendir(".");
 
 	if(pdir == NULL) {
-		printText("Unable to open the directory.", 0, 0, false, true);
+		Gui::font.print("Unable to open the directory.", 0, 0, false);
 	} else {
 		while(true) {
 			DirEntry dirEntry;
@@ -101,27 +102,27 @@ void showDirectoryContents(const std::vector<DirEntry> &dirContents, int startRo
 	getcwd(path, PATH_MAX);
 
 	// Print path
-	drawRectangle(0, 0, 256, 16, CLEAR, false, true);
-	printTextMaxW(path, 250, 1, 4, 0, false, true);
+	Graphics::drawRectangle(0, 0, 256, 16, CLEAR, false, true);
+	Gui::font.print(path, 1, 4, false, 3, Alignment::left, 250);
 
 	// Print directory listing
 	for(int i = 0; i < ENTRIES_PER_SCREEN; i++) {
 		// Clear row
-		drawRectangle(10, (i + 1) * 16, 246, 16, CLEAR, false, true);
+		Graphics::drawRectangle(10, (i + 1) * 16, 246, 16, CLEAR, false, true);
 
 		if(i < ((int)dirContents.size() - startRow)) {
 			std::u16string name = StringUtils::UTF8toUTF16(dirContents[i + startRow].name);
 
 			// Trim to fit on screen
 			bool addEllipsis = false;
-			while(getTextWidth(name) > 227) {
+			while(Gui::font.calcWidth(name) > 227) {
 				name        = name.substr(0, name.length() - 1);
 				addEllipsis = true;
 			}
 			if(addEllipsis)
 				name += StringUtils::UTF8toUTF16("...");
 
-			printText(name, 10, i * 16 + 16, false, true);
+			Gui::font.print(name, 10, i * 16 + 16, false);
 		}
 	}
 }
@@ -144,34 +145,34 @@ void drawSdText(int i, bool valid) {
 	char str[20];
 	updateDriveLabel(false);
 	snprintf(str, sizeof(str), "sd: (%s)", sdLabel[0] == '\0' ? "SD Card" : sdLabel);
-	printTextTinted(str, valid ? TextColor::white : TextColor::red, 10, (i + 1) * 16, false, true);
+	Gui::font.print(str, 10, (i + 1) * 16, false, 3, Alignment::left, 0, valid ? TextColor::white : TextColor::red);
 }
 
 void drawFatText(int i, bool valid) {
 	char str[21];
 	updateDriveLabel(true);
 	snprintf(str, sizeof(str), "fat: (%s)", fatLabel[0] == '\0' ? "Flashcard" : fatLabel);
-	printTextTinted(str, valid ? TextColor::white : TextColor::red, 10, (i + 1) * 16, false, true);
+	Gui::font.print(str, 10, (i + 1) * 16, false, 2, Alignment::left, 0, valid ? TextColor::white : TextColor::red);
 }
 
 void drawSlot1Text(int i, bool valid) {
 	char slot1Text[64];
-	snprintf(slot1Text,
-			 sizeof(slot1Text),
-			 "Slot-1: (%s) [%s]",
-			 REG_SCFG_EXT == 0 ? i18n::localize(Config::getLang("lang"), "installUnlaunch").c_str() : (REG_SCFG_MC == 0x11 ? i18n::localize(Config::getLang("lang"), "noCard").c_str() : slot1Name),
+	snprintf(slot1Text, sizeof(slot1Text), "Slot-1: (%s) [%s]",
+			 REG_SCFG_EXT == 0
+				 ? i18n::localize(Config::getLang("lang"), "installUnlaunch").c_str()
+				 : (REG_SCFG_MC == 0x11 ? i18n::localize(Config::getLang("lang"), "noCard").c_str() : slot1Name),
 			 slot1ID);
-	printTextTinted(slot1Text, valid ? TextColor::white : TextColor::red, 10, (i + 1) * 16, false, true);
+	Gui::font.print(slot1Text, 10, (i + 1) * 16, false, 2, Alignment::left, 0,
+					valid ? TextColor::white : TextColor::red);
 }
 
 void drawSlot2Text(int i, bool valid) {
 	char slot2Text[64];
-	snprintf(slot2Text,
-			 sizeof(slot2Text),
-			 "Slot-2: (%s) [%s]",
+	snprintf(slot2Text, sizeof(slot2Text), "Slot-2: (%s) [%s]",
 			 *(u8 *)(0x080000B2) != 0x96 ? i18n::localize(Config::getLang("lang"), "noCart").c_str() : slot2Name,
 			 slot2ID);
-	printTextTinted(slot2Text, valid ? TextColor::white : TextColor::red, 10, (i + 1) * 16, false, true);
+	Gui::font.print(slot2Text, 10, (i + 1) * 16, false, 2, Alignment::left, 0,
+					valid ? TextColor::white : TextColor::red);
 }
 
 bool updateSlot1Text(int &cardWait, bool valid) {
@@ -179,13 +180,9 @@ bool updateSlot1Text(int &cardWait, bool valid) {
 		disableSlot1();
 		cardWait = 30;
 		if(!noCardMessageSet) {
-			drawRectangle(10, ((tmSlot1Offset - tmScreenOffset) + 1) * 16, 246, 16, CLEAR, false, true);
-			printTextTinted("Slot-1: (No card inserted)",
-							TextColor::red,
-							10,
-							((tmSlot1Offset - tmScreenOffset) + 1) * 16,
-							false,
-							true);
+			Graphics::drawRectangle(10, ((tmSlot1Offset - tmScreenOffset) + 1) * 16, 246, 16, CLEAR, false, true);
+			Gui::font.print("Slot-1: (No card inserted)", 10, ((tmSlot1Offset - tmScreenOffset) + 1) * 16, false, 2,
+							Alignment::left, 0, TextColor::red);
 			noCardMessageSet = true;
 			return false;
 		}
@@ -197,7 +194,7 @@ bool updateSlot1Text(int &cardWait, bool valid) {
 		enableSlot1();
 		if(updateCardInfo()) {
 			valid = isValidDSTid(slot1ID);
-			drawRectangle(10, ((tmSlot1Offset - tmScreenOffset) + 1) * 16, 246, 16, CLEAR, false, true);
+			Graphics::drawRectangle(10, ((tmSlot1Offset - tmScreenOffset) + 1) * 16, 246, 16, CLEAR, false, true);
 			drawSlot1Text(tmSlot1Offset - tmScreenOffset, valid);
 			noCardMessageSet = false;
 			return valid;
@@ -210,13 +207,9 @@ bool updateSlot2Text(int &cardWait, bool valid) {
 	if(*(u8 *)(0x080000B2) != 0x96) {
 		cardWait = 30;
 		if(!noCartMessageSet) {
-			drawRectangle(10, ((tmSlot2Offset - tmScreenOffset) + 1) * 16, 246, 16, CLEAR, false, true);
-			printTextTinted("Slot-2: (No cart inserted)",
-							TextColor::red,
-							10,
-							((tmSlot2Offset - tmScreenOffset) + 1) * 16,
-							false,
-							true);
+			Graphics::drawRectangle(10, ((tmSlot2Offset - tmScreenOffset) + 1) * 16, 246, 16, CLEAR, false, true);
+			Gui::font.print("Slot-2: (No cart inserted)", 10, ((tmSlot2Offset - tmScreenOffset) + 1) * 16, false, 2,
+							Alignment::left, 0, TextColor::red);
 			noCartMessageSet = true;
 			return false;
 		}
@@ -227,7 +220,7 @@ bool updateSlot2Text(int &cardWait, bool valid) {
 		cardWait--;
 		if(updateCartInfo()) {
 			valid = isValidGBATid(slot2ID);
-			drawRectangle(10, ((tmSlot2Offset - tmScreenOffset) + 1) * 16, 246, 16, CLEAR, false, true);
+			Graphics::drawRectangle(10, ((tmSlot2Offset - tmScreenOffset) + 1) * 16, 246, 16, CLEAR, false, true);
 			drawSlot2Text(tmSlot2Offset - tmScreenOffset, valid);
 			noCartMessageSet = false;
 			return valid;
@@ -239,7 +232,7 @@ bool updateSlot2Text(int &cardWait, bool valid) {
 void showTopMenu(std::vector<topMenuItem> topMenuContents) {
 	for(unsigned i = 0; i < ENTRIES_PER_SCREEN; i++) {
 		// Clear row
-		drawRectangle(10, (i + 1) * 16, 246, 16, CLEAR, false, true);
+		Graphics::drawRectangle(10, (i + 1) * 16, 246, 16, CLEAR, false, true);
 
 		if(i < topMenuContents.size()) {
 			if(topMenuContents[i + tmScreenOffset].name == "fat:")
@@ -256,19 +249,15 @@ void showTopMenu(std::vector<topMenuItem> topMenuContents) {
 
 				// Trim to fit on screen
 				bool addEllipsis = false;
-				while(getTextWidth(name) > 227) {
+				while(Gui::font.calcWidth(name) > 227) {
 					name        = name.substr(0, name.length() - 1);
 					addEllipsis = true;
 				}
 				if(addEllipsis)
 					name += StringUtils::UTF8toUTF16("...");
 
-				printTextTinted(name,
-								topMenuContents[i + tmScreenOffset].valid ? TextColor::white : TextColor::red,
-								10,
-								i * 16 + 16,
-								false,
-								true);
+				Gui::font.print(name, 10, i * 16 + 16, false, 2, Alignment::left, 0,
+								topMenuContents[i + tmScreenOffset].valid ? TextColor::white : TextColor::red);
 			}
 		}
 	}
@@ -279,21 +268,15 @@ std::string topMenuSelect(void) {
 	touchPosition touch;
 
 	// Draw backgrounds
-	drawImageDMA(0, 0, boxBgTop, true, false);
-	drawImageDMA(0, 0, listBg, false, false);
+	boxBgTop.draw(0, 0, true, 3);
+	listBg.draw(0, 0, false, 3);
 
 	// Clear text
-	drawRectangle(0, 0, 256, 192, CLEAR, true, true);
-	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
+	Graphics::drawRectangle(0, 0, 256, 192, CLEAR, true, true);
+	Graphics::drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 
 	// Print version number
-	printTextScaled(VER_NUMBER,
-					wideScreen ? 0.8 : 1,
-					1,
-					256 - getTextWidthScaled(VER_NUMBER, wideScreen ? 0.8 : 1) - 1,
-					176,
-					true,
-					true);
+	Gui::font.print(VER_NUMBER, 255, 176, true, 2, Alignment::right, 0, 0, Graphics::wideScreen ? 0.8 : 1, 1);
 
 	if(!flashcardFound())
 		updateCardInfo();
@@ -336,10 +319,10 @@ std::string topMenuSelect(void) {
 
 	while(1) {
 		// Clear old cursors
-		drawRectangle(0, 16, 10, 176, CLEAR, false, true);
+		Graphics::drawRectangle(0, 16, 10, 176, CLEAR, false, true);
 
 		// Draw cursor
-		drawRectangle(3, (tmCurPos - tmScreenOffset) * 16 + 24, 4, 3, LIGHT_GRAY, false, true);
+		Graphics::drawRectangle(3, (tmCurPos - tmScreenOffset) * 16 + 24, 4, 3, LIGHT_GRAY, false, true);
 
 		// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
 		do {
@@ -389,17 +372,19 @@ std::string topMenuSelect(void) {
 				return "";
 			} else if(topMenuContents[tmCurPos].name == "card:" && topMenuContents[tmSlot1Offset].valid) {
 				Sound::play(Sound::click);
-				drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
-				drawRectangle(0, 0, 256, 192, CLEAR, false, true);
-				printTextCentered(i18n::localize(Config::getLang("lang"), "dumpingSave"), 0, 50, false, false);
+				Graphics::drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
+				Graphics::clear(false, 2);
+				Gui::font.print(i18n::localize(Config::getLang("lang"), "dumpingSave"), 0, 50, false, 2,
+								Alignment::center);
 				dumpSlot1();
 				showTopMenuOnExit = 1;
 				return cardSave;
 			} else if(topMenuContents[tmCurPos].name == "cart:" && topMenuContents[tmSlot2Offset].valid) {
 				Sound::play(Sound::click);
-				drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
-				drawRectangle(0, 0, 256, 192, CLEAR, false, true);
-				printTextCentered(i18n::localize(Config::getLang("lang"), "dumpingSave"), 0, 50, false, false);
+				Graphics::drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
+				Graphics::clear(false, 2);
+				Gui::font.print(i18n::localize(Config::getLang("lang"), "dumpingSave"), 0, 50, false, 2,
+								Alignment::center);
 				dumpSlot2();
 				showTopMenuOnExit = 1;
 				return cartSave;
@@ -429,10 +414,8 @@ std::string topMenuSelect(void) {
 						for(int i = 0; i < (int)topMenuContents.size(); i++) {
 							if(topMenuContents[i].name != "fat:" && topMenuContents[i].name != "sd:" &&
 							   topMenuContents[i].name != "card:" && topMenuContents[i].name != "cart:") {
-								fwrite((topMenuContents[i].name + "\n").c_str(),
-									   1,
-									   (topMenuContents[i].name + "\n").size(),
-									   out);
+								fwrite((topMenuContents[i].name + "\n").c_str(), 1,
+									   (topMenuContents[i].name + "\n").size(), out);
 							}
 						}
 						fclose(out);
@@ -448,7 +431,7 @@ std::string topMenuSelect(void) {
 			return "%EXIT%";
 		} else if(pressed & KEY_SELECT) {
 			configMenu();
-			drawImageDMA(0, 0, listBg, false, false);
+			listBg.draw(0, 0, false, 3);
 			showTopMenu(topMenuContents);
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
@@ -471,18 +454,17 @@ std::string topMenuSelect(void) {
 
 		if(held & KEY_UP || held & KEY_DOWN || held & KEY_LEFT || held & KEY_RIGHT || pressed & KEY_X) {
 			// Clear the path area of the screen
-			drawRectangle(0, 0, 256, 16, CLEAR, false, true);
+			Graphics::drawRectangle(0, 0, 256, 16, CLEAR, false, true);
 
 			// Print the path to the currently selected file
 			std::u16string path = StringUtils::UTF8toUTF16(topMenuContents[tmCurPos].name);
 			path = path.substr(0, path.find_last_of(StringUtils::UTF8toUTF16("/")) + 1); // Cut to just the path
-			printTextMaxW(path, 250, 1, 4, 0, false, true);
+			Gui::font.print(path, 4, 0, false, 2, Alignment::center);
 		}
 	}
 }
 
-std::string browseForFile(const std::vector<std::string> &extensionList,
-						  bool accessSubdirectories,
+std::string browseForFile(const std::vector<std::string> &extensionList, bool accessSubdirectories,
 						  bool canChooseDirs) {
 	char startPath[PATH_MAX];
 	if(!accessSubdirectories)
@@ -492,17 +474,17 @@ std::string browseForFile(const std::vector<std::string> &extensionList,
 	std::vector<DirEntry> dirContents;
 
 	// Draw background
-	drawImageDMA(0, 0, listBg, false, false);
+	listBg.draw(0, 0, false, 3);
 
 	getDirectoryContents(dirContents, extensionList);
 	showDirectoryContents(dirContents, screenOffset);
 
 	while(1) {
 		// Clear old cursors
-		drawRectangle(0, 16, 10, 176, CLEAR, false, true);
+		Graphics::drawRectangle(0, 16, 10, 176, CLEAR, false, true);
 
 		// Draw cursor
-		drawRectangle(3, (fileOffset - screenOffset) * 16 + 24, 4, 3, LIGHT_GRAY, false, true);
+		Graphics::drawRectangle(3, (fileOffset - screenOffset) * 16 + 24, 4, 3, LIGHT_GRAY, false, true);
 
 		// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
 		do {
@@ -582,10 +564,8 @@ std::string browseForFile(const std::vector<std::string> &extensionList,
 				FILE *favs = fopen((mainDrive() + ":/_nds/pkmn-chest/favorites.lst").c_str(), "ab");
 
 				if(favs) {
-					fwrite((path + dirContents[fileOffset].name + "\n").c_str(),
-						   1,
-						   (path + dirContents[fileOffset].name + "\n").size(),
-						   favs);
+					fwrite((path + dirContents[fileOffset].name + "\n").c_str(), 1,
+						   (path + dirContents[fileOffset].name + "\n").size(), favs);
 					fclose(favs);
 				}
 			}
@@ -619,21 +599,15 @@ std::string browseForSave(void) {
 	}
 
 	// Draw backgrounds
-	drawImageDMA(0, 0, boxBgTop, true, false);
-	drawImageDMA(0, 0, listBg, false, false);
+	boxBgTop.draw(0, 0, true, 3);
+	listBg.draw(0, 0, false, 3);
 
 	// Clear text
-	drawRectangle(0, 0, 256, 192, CLEAR, true, true);
-	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
+	Graphics::clear(true, 2);
+	Graphics::clear(false, 2);
 
 	// Print version number
-	printTextScaled(VER_NUMBER,
-					wideScreen ? 0.8 : 1,
-					1,
-					256 - getTextWidthScaled(VER_NUMBER, wideScreen ? 0.8 : 1) - 1,
-					176,
-					true,
-					true);
+	Gui::font.print(VER_NUMBER, 255, 176, true, 2, Alignment::right, 0, 0, Graphics::wideScreen ? 0.8 : 1, 1);
 
 	std::vector<std::string> extensionList;
 	extensionList.push_back("sav");
@@ -666,10 +640,10 @@ int fcopy(const char *sourcePath, const char *destinationPath) {
 		fseek(destinationFile, 0, SEEK_SET);
 
 		off_t offset = 0;
-		drawOutline(5, 39, 247, 18, DARKERER_GRAY, false, true);
+		Graphics::drawOutline(5, 39, 247, 18, DARKERER_GRAY, false, true);
 		while(1) {
-			drawRectangle(
-				((offset < fsize ? (float)offset / fsize : 1) * 226) + 6, 40, 19, 16, LIGHT_GRAY, false, true);
+			Graphics::drawRectangle(((offset < fsize ? (float)offset / fsize : 1) * 226) + 6, 40, 19, 16, LIGHT_GRAY,
+									false, true);
 			// Copy file to destination path
 			int numr = fread(copyBuf, 2, copyBufSize, sourceFile);
 			fwrite(copyBuf, 2, numr, destinationFile);
@@ -679,11 +653,11 @@ int fcopy(const char *sourcePath, const char *destinationPath) {
 				fclose(sourceFile);
 				fclose(destinationFile);
 
-				drawRectangle(4, 39, 248, 18, CLEAR, false, true);
+				Graphics::drawRectangle(4, 39, 248, 18, CLEAR, false, true);
 				return 1;
 			}
 		}
-		drawRectangle(4, 39, 248, 18, CLEAR, false, true);
+		Graphics::drawRectangle(4, 39, 248, 18, CLEAR, false, true);
 		return -1;
 	} else {
 		closedir(isDir);

@@ -3,8 +3,6 @@ AccessModifierOffset: '-4'
 AlignConsecutiveAssignments: 'true'
 AlignEscapedNewlines: DontAlign
 AlignOperands: 'false'
-BinPackArguments: 'false'
-BinPackParameters: 'false'
 ColumnLimit: '120'
 DerivePointerAlignment: 'false'
 FixNamespaceComments: 'false'

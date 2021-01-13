@@ -34,6 +34,7 @@ endif
 #---------------------------------------------------------------------------------
 BUILD		:=	build
 SOURCES		:=	source \
+				Universal-Core/source \
 				core/memecrypto core/swshcrypto \
 				core/source core/source/i18n core/source/personal core/source/pkx core/source/sav core/source/utils core/source/wcx \
 				source/graphics \
@@ -41,6 +42,7 @@ SOURCES		:=	source \
 				source/saves \
 				source/utils source/utils/bank
 INCLUDES	:=	include \
+				Universal-Core/include \
 				core/memecrypto core/swshcrypto \
 				core/include core/include/enums core/include/i18n core/include/personal core/include/pkx core/include/sav core/include/utils core/include/wcx \
 				include/graphics \
@@ -122,8 +124,8 @@ export OFILES	:=	$(addsuffix .o,$(BINFILES)) \
 					$(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(SFILES:.s=.o)
 
 export INCLUDE	:=	$(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
-			$(foreach dir,$(LIBDIRS),-I$(dir)/include) \
-			-I$(CURDIR)/$(BUILD)
+					$(foreach dir,$(LIBDIRS),-I$(dir)/include) \
+					-I$(CURDIR)/$(BUILD)
 
 export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib)
 

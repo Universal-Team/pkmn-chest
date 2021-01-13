@@ -9,9 +9,6 @@ void loadingAnimation(void);
 // Loads the spinning chest
 void loadLoadingLogo(void);
 
-// Shows the spinning chest
-void showLoadingLogo(void);
-
 // Hides the spinning chest
 void hideLoadingLogo(void);
 

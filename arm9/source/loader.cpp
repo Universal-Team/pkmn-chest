@@ -38,26 +38,15 @@ void saveChanges(std::string savePath) {
 	// Make backup
 	std::string saveFile = savePath.substr(savePath.find_last_of("/") + 1);
 	char backupDir[PATH_MAX];
-	snprintf(backupDir,
-			 sizeof(backupDir),
-			 "%s:/_nds/pkmn-chest/backups/%s",
-			 mainDrive().c_str(),
+	snprintf(backupDir, sizeof(backupDir), "%s:/_nds/pkmn-chest/backups/%s", mainDrive().c_str(),
 			 saveFile.substr(0, saveFile.find_last_of(".")).c_str());
 	mkdir(backupDir, 0777);
 
 	char backupPath[PATH_MAX];
 	DateTime now = DateTime::now();
-	snprintf(backupPath,
-			 sizeof(backupPath),
-			 "%s:/_nds/pkmn-chest/backups/%s/%.4ld%.2d%.2d-%.2d%.2d%.2d.sav.bak",
-			 mainDrive().c_str(),
-			 saveFile.substr(0, saveFile.find_last_of(".")).c_str(),
-			 now.year(),
-			 now.month(),
-			 now.day(),
-			 now.hour(),
-			 now.minute(),
-			 now.second());
+	snprintf(backupPath, sizeof(backupPath), "%s:/_nds/pkmn-chest/backups/%s/%.4ld%.2d%.2d-%.2d%.2d%.2d.sav.bak",
+			 mainDrive().c_str(), saveFile.substr(0, saveFile.find_last_of(".")).c_str(), now.year(), now.month(),
+			 now.day(), now.hour(), now.minute(), now.second());
 
 	fcopy(savePath.c_str(), backupPath);
 

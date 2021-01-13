@@ -5,6 +5,7 @@
 #include "config.hpp"
 #include "flashcard.hpp"
 #include "graphics.hpp"
+#include "gui.hpp"
 #include "i18n.hpp"
 #include "i18n_ext.hpp"
 #include "input.hpp"
@@ -17,25 +18,26 @@ std::vector<std::string> filterValues;
 std::vector<bool> filterEnabled;
 std::vector<bool> filterInversed;
 std::array<std::string, 3> genders       = {"male", "female", "unknown"};
-std::array<std::string, 10> filterLabels = {
-	"species", "nature", "ability", "gender", "item", "ball", "form", "level", "moves", "shiny"};
+std::array<std::string, 10> filterLabels = {"species", "nature", "ability", "gender", "item",
+											"ball",    "form",   "level",   "moves",  "shiny"};
 
 void selectMoves(std::shared_ptr<pksm::PKFilter> filter) {
 	// Clear screen
-	drawImageDMA(0, 0, listBg, false, false);
-	printText(i18n::localize(Config::getLang("lang"), "moves"), 4, 0, false, false);
+	listBg.draw(0, 0, false, 3);
+	Gui::font.print(i18n::localize(Config::getLang("lang"), "moves"), 4, 0, false, false);
 
 	// Print moves
 	for(int i = 0; i < 4; i++) {
-		printText(filter->moveEnabled(i) ? "o" : "x", 4, 16 + (i * 16), false, false);
-		printTextMaxW(i18n::move(Config::getLang("lang"), filter->move(i)), 100, 1, 20, 16 + (i * 16), false, false);
-		printText(filter->moveInversed(i) ? "≠" : "=", 120, 16 + (i * 16), false, false);
+		Gui::font.print(filter->moveEnabled(i) ? "o" : "x", 4, 16 + (i * 16), false, false);
+		Gui::font.print(i18n::move(Config::getLang("lang"), filter->move(i)), 20, 16 + (i * 16), false, 3,
+						Alignment::center);
+		Gui::font.print(filter->moveInversed(i) ? "≠" : "=", 120, 16 + (i * 16), false, false);
 	}
 
 	// Set arrow position
-	setSpritePosition(arrowID, false, 4 + getTextWidth(filter->moveEnabled(0) ? "o" : "x") + 2, 15);
-	setSpriteVisibility(arrowID, false, true);
-	updateOam();
+	arrow[false].position(4 + Gui::font.calcWidth(filter->moveEnabled(0) ? "o" : "x") + 2, 15);
+	arrow[false].visibility(true);
+	arrow[false].update();
 
 	bool optionSelected = false;
 	int held, pressed, selection = 0, column = 0;
@@ -68,7 +70,7 @@ void selectMoves(std::shared_ptr<pksm::PKFilter> filter) {
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
 			for(unsigned i = 0; i < 4; i++) {
-				if(touch.px >= 4 && touch.px <= 4 + getTextWidth(filter->moveEnabled(selection) ? "o" : "x") &&
+				if(touch.px >= 4 && touch.px <= 4 + Gui::font.calcWidth(filter->moveEnabled(selection) ? "o" : "x") &&
 				   touch.py >= 15 + (i * 16) && touch.py <= 15 + ((i + 1) * 16)) {
 					column         = 0;
 					selection      = i;
@@ -76,14 +78,15 @@ void selectMoves(std::shared_ptr<pksm::PKFilter> filter) {
 					break;
 				}
 				if(touch.px >= 20 &&
-				   touch.px <= 20 + getTextWidth(i18n::move(Config::getLang("lang"), filter->move(selection))) &&
+				   touch.px <= 20 + Gui::font.calcWidth(i18n::move(Config::getLang("lang"), filter->move(selection))) &&
 				   touch.py >= 15 + (i * 16) && touch.py <= 15 + ((i + 1) * 16)) {
 					column         = 1;
 					selection      = i;
 					optionSelected = true;
 					break;
 				}
-				if(touch.px >= 120 && touch.px <= 120 + getTextWidth(filter->moveInversed(selection) ? "≠" : "=") &&
+				if(touch.px >= 120 &&
+				   touch.px <= 120 + Gui::font.calcWidth(filter->moveInversed(selection) ? "≠" : "=") &&
 				   touch.py >= 15 + (i * 16) && touch.py <= 15 + ((i + 1) * 16)) {
 					column         = 2;
 					selection      = i;
@@ -100,50 +103,44 @@ void selectMoves(std::shared_ptr<pksm::PKFilter> filter) {
 				filter->moveEnabled(selection, !filter->moveEnabled(selection));
 			} else if(column == 1) {
 				filter->move(selection,
-							 selectItem(filter->move(selection),
-											 save->availableMoves(),
-											 i18n::rawMoves(Config::getLang("lang"))));
+							 selectItem(filter->move(selection), save->availableMoves(),
+										i18n::rawMoves(Config::getLang("lang"))));
 			} else if(column == 2) {
 				filter->moveInversed(selection, !filter->moveInversed(selection));
 			}
 
 			// Clear screen
-			drawImageDMA(0, 0, listBg, false, false);
-			printText(i18n::localize(Config::getLang("lang"), "moves"), 4, 0, false, false);
+			listBg.draw(0, 0, false, 3);
+			Gui::font.print(i18n::localize(Config::getLang("lang"), "moves"), 4, 0, false, false);
 
 			// Print moves
 			for(int i = 0; i < 4; i++) {
-				printText(filter->moveEnabled(i) ? "o" : "x", 4, 16 + (i * 16), false, false);
-				printTextMaxW(
-					i18n::move(Config::getLang("lang"), filter->move(i)), 100, 1, 20, 16 + (i * 16), false, false);
-				printText(filter->moveInversed(i) ? "≠" : "=", 120, 16 + (i * 16), false, false);
+				Gui::font.print(filter->moveEnabled(i) ? "o" : "x", 4, 16 + (i * 16), false, false);
+				Gui::font.print(i18n::move(Config::getLang("lang"), filter->move(i)), 20, 16 + (i * 16), false, 3,
+								Alignment::center);
+				Gui::font.print(filter->moveInversed(i) ? "≠" : "=", 120, 16 + (i * 16), false, false);
 			}
 		}
 
 		// Move cursor
 		if(column == 0)
-			setSpritePosition(arrowID,
-							  false,
-							  4 + getTextWidth(filter->moveEnabled(selection) ? "o" : "x") + 2,
-							  (16 * (selection) + 10));
+			arrow[false].position(4 + Gui::font.calcWidth(filter->moveEnabled(selection) ? "o" : "x") + 2,
+								  (16 * (selection) + 10));
 		else if(column == 1)
-			setSpritePosition(arrowID,
-							  false,
-							  20 + getTextWidth(i18n::move(Config::getLang("lang"), filter->move(selection))) + 2,
-							  (16 * (selection) + 10));
+			arrow[false].position(
+				20 + Gui::font.calcWidth(i18n::move(Config::getLang("lang"), filter->move(selection))) + 2,
+				(16 * (selection) + 10));
 		else if(column == 2)
-			setSpritePosition(arrowID,
-							  false,
-							  120 + getTextWidth(filter->moveInversed(selection) ? "≠" : "=") + 2,
-							  (16 * (selection) + 10));
-		updateOam();
+			arrow[false].position(120 + Gui::font.calcWidth(filter->moveInversed(selection) ? "≠" : "=") + 2,
+								  (16 * (selection) + 10));
+		arrow[false].update();
 	}
 }
 
 void drawFilterMenu(const std::shared_ptr<pksm::PKFilter> filter) {
 	// Clear screen
-	drawImageDMA(0, 0, listBg, false, false);
-	printText(i18n::localize(Config::getLang("lang"), "filter"), 4, 0, false, false);
+	listBg.draw(0, 0, false, 3);
+	Gui::font.print(i18n::localize(Config::getLang("lang"), "filter"), 4, 0, false, false);
 
 	// Fill filterValues
 	filterValues.clear();
@@ -189,11 +186,11 @@ void drawFilterMenu(const std::shared_ptr<pksm::PKFilter> filter) {
 
 	// Print items
 	for(unsigned i = 0; i < filterLabels.size(); i++) {
-		printText(filterEnabled[i] ? "o" : "x", 4, 16 + (i * 16), false, false);
-		printTextMaxW(
-			i18n::localize(Config::getLang("lang"), filterLabels[i]), 100, 1, 20, 16 + (i * 16), false, false);
-		printText(filterInversed[i] ? "≠" : "=", 120, 16 + (i * 16), false, false);
-		printTextMaxW(filterValues[i], 100, 1, 136, 16 + (i * 16), false, false);
+		Gui::font.print(filterEnabled[i] ? "o" : "x", 4, 16 + (i * 16), false, false);
+		Gui::font.print(i18n::localize(Config::getLang("lang"), filterLabels[i]), 20, 16 + (i * 16), false, 3,
+						Alignment::center);
+		Gui::font.print(filterInversed[i] ? "≠" : "=", 120, 16 + (i * 16), false, false);
+		Gui::font.print(filterValues[i], 136, 16 + (i * 16), false, 3, Alignment::center);
 	}
 }
 
@@ -201,13 +198,13 @@ void changeFilter(std::shared_ptr<pksm::PKFilter> filter) {
 	drawFilterMenu(filter);
 
 	// Set arrow position
-	setSpriteVisibility(arrowID, false, true);
-	setSpritePosition(arrowID, false, 4 + getTextWidth(filterEnabled[0] ? "o" : "x") + 2, 10);
+	arrow[false].visibility(true);
+	arrow[false].position(4 + Gui::font.calcWidth(filterEnabled[0] ? "o" : "x") + 2, 10);
 	// Hide all Pokémon sprites
 	for(int i = 0; i < 30; i++) {
-		setSpriteVisibility(i, false, false);
+		boxSprites[false][i].visibility(false);
 	}
-	updateOam();
+	arrow[false].update();
 
 	bool optionSelected = false;
 	int held, pressed, column = 0, selection = 0;
@@ -241,14 +238,15 @@ void changeFilter(std::shared_ptr<pksm::PKFilter> filter) {
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
 			for(unsigned i = 0; i < filterLabels.size(); i++) {
-				if(touch.px >= 4 && touch.px <= 4 + getTextWidth(filter->moveEnabled(selection) ? "o" : "x") &&
+				if(touch.px >= 4 && touch.px <= 4 + Gui::font.calcWidth(filter->moveEnabled(selection) ? "o" : "x") &&
 				   touch.py >= 15 + (i * 16) && touch.py <= 15 + ((i + 1) * 16)) {
 					column         = 0;
 					selection      = i;
 					optionSelected = true;
 					break;
 				}
-				if(touch.px >= 120 && touch.px <= 120 + getTextWidth(filter->moveInversed(selection) ? "≠" : "=") &&
+				if(touch.px >= 120 &&
+				   touch.px <= 120 + Gui::font.calcWidth(filter->moveInversed(selection) ? "≠" : "=") &&
 				   touch.py >= 15 + (i * 16) && touch.py <= 15 + ((i + 1) * 16)) {
 					column         = 1;
 					selection      = i;
@@ -256,7 +254,8 @@ void changeFilter(std::shared_ptr<pksm::PKFilter> filter) {
 					break;
 				}
 				if(touch.px >= 136 &&
-				   touch.px <= 136 + getTextWidth(i18n::move(Config::getLang("lang"), filter->move(selection))) &&
+				   touch.px <=
+					   136 + Gui::font.calcWidth(i18n::move(Config::getLang("lang"), filter->move(selection))) &&
 				   touch.py >= 15 + (i * 16) && touch.py <= 15 + ((i + 1) * 16)) {
 					column         = 2;
 					selection      = i;
@@ -268,8 +267,8 @@ void changeFilter(std::shared_ptr<pksm::PKFilter> filter) {
 
 		if(optionSelected) {
 			optionSelected = false;
-			setSpriteVisibility(arrowID, false, false);
-			updateOam();
+			arrow[false].visibility(false);
+			arrow[false].update();
 			if(column == 0) {
 				switch(selection) {
 					case 0:
@@ -353,8 +352,8 @@ void changeFilter(std::shared_ptr<pksm::PKFilter> filter) {
 			} else if(column == 2) {
 				switch(selection) {
 					case 0: { // Species
-						filter->species(selectItem(
-							filter->species(), save->availableSpecies(), i18n::rawSpecies(Config::getLang("lang"))));
+						filter->species(selectItem(filter->species(), save->availableSpecies(),
+												   i18n::rawSpecies(Config::getLang("lang"))));
 						break;
 					}
 					case 1: { // Nature
@@ -364,8 +363,7 @@ void changeFilter(std::shared_ptr<pksm::PKFilter> filter) {
 						break;
 					}
 					case 2: { // Ability
-						filter->ability(selectItem(filter->ability(),
-												   save->availableAbilities(),
+						filter->ability(selectItem(filter->ability(), save->availableAbilities(),
 												   i18n::rawAbilities(Config::getLang("lang"))));
 						break;
 					}
@@ -378,8 +376,8 @@ void changeFilter(std::shared_ptr<pksm::PKFilter> filter) {
 						break;
 					}
 					case 4: { // Held item
-						filter->heldItem(selectItem<int>(
-							filter->heldItem(), save->availableItems(), i18n::rawItems(Config::getLang("lang"))));
+						filter->heldItem(selectItem<int>(filter->heldItem(), save->availableItems(),
+														 i18n::rawItems(Config::getLang("lang"))));
 						break;
 					}
 					case 5: { // Ball
@@ -407,19 +405,19 @@ void changeFilter(std::shared_ptr<pksm::PKFilter> filter) {
 				}
 			}
 			drawFilterMenu(filter);
-			setSpriteVisibility(arrowID, false, true);
-			updateOam();
+			arrow[false].visibility(true);
+			arrow[false].update();
 		}
 
 		// Move cursor
 		if(column == 0)
-			setSpritePosition(
-				arrowID, false, 4 + getTextWidth(filterEnabled[selection] ? "o" : "x") + 2, (16 * (selection) + 10));
+			arrow[false].position(4 + Gui::font.calcWidth(filterEnabled[selection] ? "o" : "x") + 2,
+								  (16 * (selection) + 10));
 		else if(column == 1)
-			setSpritePosition(
-				arrowID, false, 120 + getTextWidth(filterInversed[selection] ? "≠" : "=") + 2, (16 * (selection) + 10));
+			arrow[false].position(120 + Gui::font.calcWidth(filterInversed[selection] ? "≠" : "=") + 2,
+								  (16 * (selection) + 10));
 		else if(column == 2)
-			setSpritePosition(arrowID, false, 136 + getTextWidth(filterValues[selection]) + 2, (16 * (selection) + 10));
-		updateOam();
+			arrow[false].position(136 + Gui::font.calcWidth(filterValues[selection]) + 2, (16 * (selection) + 10));
+		arrow[false].update();
 	}
 }

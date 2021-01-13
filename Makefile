@@ -80,7 +80,7 @@ clean:
 	@$(MAKE) -C graphics clean
 	@$(MAKE) -C sound clean
 	@rm -f $(LANG_TARGETS)
-	@rm -f $(TARGET).nds $(TARGET).arm9
+	@rm -f $(TARGET).cia $(TARGET).dsi $(TARGET).nds
 
 format:
 	make -C arm9 format

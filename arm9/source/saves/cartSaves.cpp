@@ -99,7 +99,7 @@ bool restoreSlot2(void) {
 		FILE *file = fopen(cartSave, "rb");
 		if(file) {
 			// Draw progress bar outline
-			drawOutline(5, 39, 247, 18, DARKERER_GRAY, false, true);
+			Graphics::drawOutline(5, 39, 247, 18, DARKERER_GRAY, false, true);
 
 			// FLASH - must be opened by register magic, erased and then rewritten
 			// FIXME: currently, you can only write "all or nothing"
@@ -149,8 +149,8 @@ bool restoreSlot2(void) {
 						swiDelay(10);
 
 					// Draw progress bar
-					drawRectangle(
-						(((float)((0x10000 * bank) + i) / 0x20000) * 245) + 6, 40, 1, 16, LIGHT_GRAY, false, true);
+					Graphics::drawRectangle((((float)((0x10000 * bank) + i) / 0x20000) * 245) + 6, 40, 1, 16,
+											LIGHT_GRAY, false, true);
 				}
 			}
 			fclose(file);

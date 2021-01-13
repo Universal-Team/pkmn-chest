@@ -4,6 +4,7 @@
 #include "colors.hpp"
 #include "config.hpp"
 #include "flashcard.hpp"
+#include "gui.hpp"
 #include "i18n.hpp"
 #include "i18n_ext.hpp"
 #include "input.hpp"
@@ -11,6 +12,7 @@
 #include "manager.hpp"
 #include "misc.hpp"
 #include "sound.hpp"
+#include "utils.hpp"
 
 struct Text {
 	int x;
@@ -19,39 +21,16 @@ struct Text {
 };
 
 Text textC1[]{
-	{64, 16},
-	{64, 32},
-	{64, 48},
-	{64, 64},
-	{64, 80},
-	{64, 96},
-	{64, 112},
-	{96, 128},
-	{96, 144},
-	{96, 160},
-	{96, 176},
+	{64, 16}, {64, 32}, {64, 48}, {64, 64}, {64, 80}, {64, 96}, {64, 112}, {96, 128}, {96, 144}, {96, 160}, {96, 176},
 };
 
 Text textC2[] = {
-	{164, 8},
-	{230, 30},
-	{170, 102},
-	{170, 132},
-	{170, 162},
+	{164, 8}, {230, 30}, {170, 102}, {170, 132}, {170, 162},
 };
 
 int summaryPage                        = 0;
-std::vector<std::string> summaryLabels = {"species",
-										  "level",
-										  "ability",
-										  "nature",
-										  "item",
-										  "shiny",
-										  "pokerus",
-										  "origTrainer",
-										  "trainerID",
-										  "secretID",
-										  "friendship"};
+std::vector<std::string> summaryLabels = {"species", "level",       "ability",   "nature",   "item",      "shiny",
+										  "pokerus", "origTrainer", "trainerID", "secretID", "friendship"};
 
 void changeAbility(pksm::PKX &pkm) {
 	switch(pkm.generation()) {
@@ -132,74 +111,63 @@ void changeAbility(pksm::PKX &pkm) {
 void drawSummaryPage(const pksm::PKX &pkm, bool background) {
 	// Hide sprites
 	for(int i = 0; i < 30; i++) {
-		setSpriteVisibility(i, false, false);
+		boxSprites[false][i].visibility(false);
 	}
-	updateOam();
+	boxSprites[false][0].update();
 
 	if(background) {
 		// Draw background
-		drawImageDMA(0, 0, listBg, false, false);
-		drawImageScaled(145, 1, 1.2, 1, infoBox, false, false);
+		listBg.draw(0, 0, false, 3);
+		infoBox.drawSpecial(145, 1, false, 3, 1.2f);
 		// Draw lines
-		drawOutline(0, 128, 160, 65, LIGHT_GRAY, false, false);
+		Graphics::drawOutline(0, 128, 160, 65, LIGHT_GRAY, false, false);
 		// Draw Pokémon
-		Image image = loadPokemonSprite(getPokemonIndex(pkm));
-		drawImageScaled(169, 22, 2, 2, image, false, false, 0xB0);
+		loadPokemonSprite(getPokemonIndex(pkm)).drawSpecial(169, 22, false, 3, 2.0f, 2.0f, 0xB0);
 		// Draw Poké ball
-		drawImage(148, 7, ball[u8(pkm.ball())], false, false);
+		ball[u8(pkm.ball())].draw(148, 7, false, 3);
 		// Draw types
-		drawImage(150, 25 - ((types[u8(pkm.type1())].height - 12) / 2), types[u8(pkm.type1())], false, false);
+		types[u8(pkm.type1())].draw(150, 25 - ((types[u8(pkm.type1())].height() - 12) / 2), false, 3);
 		if(pkm.type1() != pkm.type2()) {
-			drawImage(186, 25 - ((types[u8(pkm.type2())].height - 12) / 2), types[u8(pkm.type2())], false, false, 4);
+			types[u8(pkm.type2())].draw(186, 25 - ((types[u8(pkm.type2())].height() - 12) / 2), false, false, 4);
 		}
 		// Draw set to self button
-		drawImage(232, 10, setToSelf, false, false, 0, false);
+		setToSelf.drawSpecial(232, 10, false, 3, 1.0f, 1.0f, 0, false);
 
 		// Print title
-		printText(i18n::localize(Config::getLang("lang"), "pokemonInfo"), 4, 0, false, false);
+		Gui::font.print(i18n::localize(Config::getLang("lang"), "pokemonInfo"), 4, 0, false, false);
 	}
-	drawRectangle(0, 0, 256, 192, 0, false, true);
+	Graphics::drawRectangle(0, 0, 256, 192, 0, false, true);
 
 	// Print Pokémon name
 	const std::string &name = pkm.nicknamed() ? pkm.nickname() : i18n::species(Config::getLang("lang"), pkm.species());
-	printTextTintedMaxW(
-		name,
-		65,
-		1,
-		(pkm.gender() ? (pkm.gender() == pksm::Gender::Female ? TextColor::red : TextColor::gray) : TextColor::blue),
-		165,
-		8,
-		false,
-		true);
+	Gui::font.print(
+		name, 165, 8, false, 2, Alignment::left, 65,
+		(pkm.gender() ? (pkm.gender() == pksm::Gender::Female ? TextColor::red : TextColor::gray) : TextColor::blue));
 
 	// Draw/clear shiny star
 	if(pkm.shiny())
-		drawImage(150, 45, shiny, false, true);
+		shiny.draw(150, 45, false, 2);
 	else
-		drawRectangle(150, 45, shiny.width, shiny.height, 0, false, true);
+		Graphics::drawRectangle(150, 45, shiny.width(), shiny.height(), 0, false, true);
 
 	// Print Pokémon and trainer info labels
 	for(unsigned i = 0; i < summaryLabels.size(); i++) {
-		printTextMaxW(
-			i18n::localize(Config::getLang("lang"), summaryLabels[i]), textC1[i].x - 8, 1, 4, textC1[i].y, false, true);
+		Gui::font.print(i18n::localize(Config::getLang("lang"), summaryLabels[i]), 4, textC1[i].y, false, 2,
+						Alignment::center);
 	}
 
 	// Print Pokémon and trainer info
-	snprintf(
-		textC1[0].text, sizeof(textC1[0].text), "%s", i18n::species(Config::getLang("lang"), pkm.species()).c_str());
+	snprintf(textC1[0].text, sizeof(textC1[0].text), "%s",
+			 i18n::species(Config::getLang("lang"), pkm.species()).c_str());
 	snprintf(textC1[1].text, sizeof(textC1[1].text), "%i", pkm.level());
-	snprintf(
-		textC1[2].text, sizeof(textC1[2].text), "%s", i18n::ability(Config::getLang("lang"), pkm.ability()).c_str());
+	snprintf(textC1[2].text, sizeof(textC1[2].text), "%s",
+			 i18n::ability(Config::getLang("lang"), pkm.ability()).c_str());
 	snprintf(textC1[3].text, sizeof(textC1[3].text), "%s", i18n::nature(Config::getLang("lang"), pkm.nature()).c_str());
 	snprintf(textC1[4].text, sizeof(textC1[4].text), "%s", i18n::item(Config::getLang("lang"), pkm.heldItem()).c_str());
-	snprintf(textC1[5].text,
-			 sizeof(textC1[5].text),
-			 "%s",
+	snprintf(textC1[5].text, sizeof(textC1[5].text), "%s",
 			 pkm.shiny() ? i18n::localize(Config::getLang("lang"), "yes").c_str()
 						 : i18n::localize(Config::getLang("lang"), "no").c_str());
-	snprintf(textC1[6].text,
-			 sizeof(textC1[6].text),
-			 "%s",
+	snprintf(textC1[6].text, sizeof(textC1[6].text), "%s",
 			 pkm.pkrs() ? i18n::localize(Config::getLang("lang"), "yes").c_str()
 						: i18n::localize(Config::getLang("lang"), "no").c_str());
 	snprintf(textC1[7].text, sizeof(textC1[7].text), "%s", pkm.otName().c_str());
@@ -209,20 +177,20 @@ void drawSummaryPage(const pksm::PKX &pkm, bool background) {
 	for(unsigned i = 0; i < (sizeof(textC1) / sizeof(textC1[0])); i++) {
 		// OT Name is colored
 		if(i != 7)
-			printTextMaxW(textC1[i].text, 80, 1, textC1[i].x, textC1[i].y, false, true);
+			Gui::font.print(textC1[i].text, textC1[i].x, textC1[i].y, false, 2, Alignment::center);
 	}
-	printTextTinted(
-		textC1[7].text, (pkm.otGender() ? TextColor::red : TextColor::blue), textC1[7].x, textC1[7].y, false, true);
+	Gui::font.print(textC1[7].text, textC1[7].x, textC1[7].y, false, 2, Alignment::left, 0,
+					(pkm.otGender() ? TextColor::red : TextColor::blue));
 
 	// Draw buttons (The first 2 don't have buttons)
 	for(unsigned i = 2; i < sizeof(textC2) / sizeof(textC2[0]); i++) {
-		drawImage(textC2[i].x - 4, textC2[i].y - 4, boxButton, false, true);
+		boxButton.draw(textC2[i].x - 4, textC2[i].y - 4, false, 2);
 	}
 	snprintf(textC2[2].text, sizeof(textC2[2].text), "%s", i18n::localize(Config::getLang("lang"), "moves").c_str());
 	snprintf(textC2[3].text, sizeof(textC2[3].text), "%s", i18n::localize(Config::getLang("lang"), "stats").c_str());
 	snprintf(textC2[4].text, sizeof(textC2[4].text), "%s", i18n::localize(Config::getLang("lang"), "origin").c_str());
 	for(unsigned i = 0; i < (sizeof(textC2) / sizeof(textC2[0])); i++) {
-		printTextMaxW(textC2[i].text, 80, 1, textC2[i].x, textC2[i].y, false, true);
+		Gui::font.print(textC2[i].text, textC2[i].x, textC2[i].y, false, 2, Alignment::center);
 	}
 }
 
@@ -231,9 +199,9 @@ const pksm::PKX &showPokemonSummary(pksm::PKX &pkm) {
 	drawSummaryPage(pkm, true);
 
 	// Move arrow to first option
-	setSpriteVisibility(arrowID, false, true);
-	setSpritePosition(arrowID, false, textC1[0].x + getTextWidthMaxW(textC1[0].text, 80), textC1[0].y - 6);
-	updateOam();
+	arrow[false].visibility(true);
+	arrow[false].position(textC1[0].x + std::min(Gui::font.calcWidth(textC1[0].text), 80), textC1[0].y - 6);
+	arrow[false].update();
 
 	bool optionSelected = false;
 	int held, pressed, selection = 0, column = 0;
@@ -278,7 +246,8 @@ const pksm::PKX &showPokemonSummary(pksm::PKX &pkm) {
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
 			for(unsigned i = 0; i < (sizeof(textC1) / sizeof(textC1[0])); i++) {
-				if(touch.px >= textC1[i].x && touch.px <= textC1[i].x + getTextWidthMaxW(textC1[i].text, 80) &&
+				if(touch.px >= textC1[i].x &&
+				   touch.px <= textC1[i].x + std::min(Gui::font.calcWidth(textC1[i].text), 80) &&
 				   touch.py >= textC1[i].y && touch.py <= textC1[i].y + 16) {
 					column         = 0;
 					selection      = i;
@@ -305,8 +274,8 @@ const pksm::PKX &showPokemonSummary(pksm::PKX &pkm) {
 				optionSelected = true;
 			}
 			for(unsigned i = 2; i < (sizeof(textC2) / sizeof(textC2[0])); i++) { // Buttons
-				if(touch.px >= textC2[i].x - 4 && touch.px <= textC2[i].x - 4 + boxButton.width &&
-				   touch.py >= textC2[i].y - 4 && touch.py <= textC2[i].y - 4 + boxButton.height) {
+				if(touch.px >= textC2[i].x - 4 && touch.px <= textC2[i].x - 4 + boxButton.width() &&
+				   touch.py >= textC2[i].y - 4 && touch.py <= textC2[i].y - 4 + boxButton.height()) {
 					column         = 1;
 					selection      = i;
 					optionSelected = true;
@@ -318,14 +287,14 @@ const pksm::PKX &showPokemonSummary(pksm::PKX &pkm) {
 		if(optionSelected) {
 			Sound::play(Sound::click);
 			optionSelected = false;
-			setSpriteVisibility(arrowID, false, false);
-			updateOam();
+			arrow[false].visibility(false);
+			arrow[false].update();
 			if(column == 0) {
 				switch(selection) {
 					case 0: {
-						pksm::Species species = selectItem<pksm::Species>(
-							pkm.species(), save->availableSpecies(), i18n::rawSpecies(Config::getLang("lang")));
-						bool nicknamed = pkm.nicknamed(); // Gotta check before changing species for G3
+						pksm::Species species = selectItem<pksm::Species>(pkm.species(), save->availableSpecies(),
+																		  i18n::rawSpecies(Config::getLang("lang")));
+						bool nicknamed        = pkm.nicknamed(); // Gotta check before changing species for G3
 						if(species != pksm::Species::INVALID) {
 							pkm.species(species);
 							if(!nicknamed) {
@@ -368,8 +337,8 @@ const pksm::PKX &showPokemonSummary(pksm::PKX &pkm) {
 						break;
 					}
 					case 4: {
-						int num = selectItem<int>(
-							pkm.heldItem(), save->availableItems(), i18n::rawItems(Config::getLang("lang")));
+						int num = selectItem<int>(pkm.heldItem(), save->availableItems(),
+												  i18n::rawItems(Config::getLang("lang")));
 						if(num != -1)
 							pkm.heldItem(num);
 						drawSummaryPage(pkm, true);
@@ -433,13 +402,8 @@ const pksm::PKX &showPokemonSummary(pksm::PKX &pkm) {
 					drawSummaryPage(pkm, false);
 					pkm.gender(pksm::Gender(Input::getBool(i18n::localize(Config::getLang("lang"), "female"),
 														   i18n::localize(Config::getLang("lang"), "male"))));
-					pkm.PID(pksm::PKX::getRandomPID(pkm.species(),
-													pkm.gender(),
-													pkm.version(),
-													pkm.nature(),
-													pkm.alternativeForm(),
-													pkm.abilityNumber(),
-													pkm.PID(),
+					pkm.PID(pksm::PKX::getRandomPID(pkm.species(), pkm.gender(), pkm.version(), pkm.nature(),
+													pkm.alternativeForm(), pkm.abilityNumber(), pkm.PID(),
 													pkm.generation()));
 				}
 				drawSummaryPage(pkm, false);
@@ -463,8 +427,8 @@ const pksm::PKX &showPokemonSummary(pksm::PKX &pkm) {
 					}
 					case 1: {
 						if(save->formCount(pkm.species()) == 1) { // If no alt forms then don't redraw
-							setSpriteVisibility(arrowID, false, true);
-							updateOam();
+							arrow[false].visibility(true);
+							arrow[false].update();
 							continue;
 						}
 						int num = selectForm(pkm);
@@ -489,30 +453,26 @@ const pksm::PKX &showPokemonSummary(pksm::PKX &pkm) {
 					}
 				}
 			}
-			setSpriteVisibility(arrowID, false, true);
+			arrow[false].visibility(true);
 		}
 
 		if(column == 0) {
-			setSpritePosition(arrowID,
-							  false,
-							  textC1[selection].x + getTextWidthMaxW(textC1[selection].text, 80),
-							  textC1[selection].y - 6);
+			arrow[false].position(textC1[selection].x + std::min(Gui::font.calcWidth(textC1[selection].text), 80),
+								  textC1[selection].y - 6);
 		} else if(column == 2 && selection == 0) { // 1, 2, & 3 behave the same after selection 0
-			setSpritePosition(
-				arrowID,
-				false,
+			arrow[false].position(
 				165 +
-					getTextWidthMaxW(
-						pkm.nicknamed() ? pkm.nickname() : i18n::species(Config::getLang("lang"), pkm.species()), 65),
+					std::min(Gui::font.calcWidth(pkm.nicknamed()
+													 ? pkm.nickname()
+													 : i18n::species(Config::getLang("lang"), pkm.species())),
+							 65),
 				2);
 		} else if(column == 3 && selection == 0) {
-			setSpritePosition(arrowID, false, 233 + 16, 2);
+			arrow[false].position(233 + 16, 2);
 		} else {
-			setSpritePosition(arrowID,
-							  false,
-							  textC2[selection].x + getTextWidthMaxW(textC2[selection].text, 80),
-							  textC2[selection].y - 6);
+			arrow[false].position(textC2[selection].x + std::min(Gui::font.calcWidth(textC2[selection].text), 80),
+								  textC2[selection].y - 6);
 		}
-		updateOam();
+		arrow[false].update();
 	}
 }

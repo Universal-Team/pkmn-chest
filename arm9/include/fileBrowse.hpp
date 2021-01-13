@@ -43,8 +43,7 @@ void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<
  * bool canChooseDirs is whether to allow selecting directories as the path (default: false)
  * Returns the selected file
  */
-std::string browseForFile(const std::vector<std::string> &extensionList,
-						  bool directoryNavigation,
+std::string browseForFile(const std::vector<std::string> &extensionList, bool directoryNavigation,
 						  bool canChooseDirs = false);
 
 /*

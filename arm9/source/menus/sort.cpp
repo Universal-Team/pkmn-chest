@@ -7,6 +7,7 @@
 #include "config.hpp"
 #include "flashcard.hpp"
 #include "graphics.hpp"
+#include "gui.hpp"
 #include "i18n.hpp"
 #include "i18n_ext.hpp"
 #include "input.hpp"
@@ -225,27 +226,19 @@ void sortPokemon(bool top) {
 }
 void drawSortMenu(void) {
 	// Clear screen
-	drawImageDMA(0, 0, listBg, false, false);
-	printText(i18n::localize(Config::getLang("lang"), "sort"), 4, 0, false, true);
+	listBg.draw(0, 0, false, 3);
+	Gui::font.print(i18n::localize(Config::getLang("lang"), "sort"), 4, 0, false);
 
 	// Print items
 	for(unsigned i = 0; i < sortTypes.size(); i++) {
-		printText(i18n::localize(Config::getLang("lang"), "filter") + " " + std::to_string(i + 1) + ": " +
-					  i18n::localize(Config::getLang("lang"), sortText[int(sortTypes[i])]),
-				  4,
-				  16 + (i * 16),
-				  false,
-				  true);
+		Gui::font.print(i18n::localize(Config::getLang("lang"), "filter") + " " + std::to_string(i + 1) + ": " +
+							i18n::localize(Config::getLang("lang"), sortText[int(sortTypes[i])]),
+						4, 16 + (i * 16), false, true);
 	}
 
-	drawImage(253 - boxButton.width, 189 - boxButton.height, boxButton, false, false);
-	printTextMaxW(i18n::localize(Config::getLang("lang"), "sort"),
-				  boxButton.width - 8,
-				  1,
-				  260 - boxButton.width,
-				  193 - boxButton.height,
-				  false,
-				  true);
+	boxButton.draw(253 - boxButton.width(), 189 - boxButton.height(), false, 3);
+	Gui::font.print(i18n::localize(Config::getLang("lang"), "sort"), 260 - boxButton.width(), 193 - boxButton.height(),
+					false, 2, Alignment::center);
 }
 
 void sortMenu(bool top) {
@@ -253,19 +246,18 @@ void sortMenu(bool top) {
 	drawSortMenu();
 
 	// Set arrow position
-	setSpriteVisibility(arrowID, false, true);
-	setSpritePosition(arrowID,
-					  false,
-					  4 +
-						  getTextWidth(i18n::localize(Config::getLang("lang"), "filter") + " " + std::to_string(1) +
-									   ": " + i18n::localize(Config::getLang("lang"), sortText[int(sortTypes[0])])) +
-						  2,
-					  10);
+	arrow[false].visibility(true);
+	arrow[false].position(
+		4 +
+			Gui::font.calcWidth(i18n::localize(Config::getLang("lang"), "filter") + " " + std::to_string(1) + ": " +
+								i18n::localize(Config::getLang("lang"), sortText[int(sortTypes[0])])) +
+			2,
+		10);
 	// Hide all Pokémon sprites
 	for(int i = 0; i < 30; i++) {
-		setSpriteVisibility(i, false, false);
+		boxSprites[false][i].visibility(false);
 	}
-	updateOam();
+	arrow[false].update();
 
 	bool optionSelected = false;
 	int held, pressed, selection = 0;
@@ -293,16 +285,16 @@ void sortMenu(bool top) {
 			touchRead(&touch);
 			for(unsigned i = 0; i < sortTypes.size(); i++) {
 				if(touch.px <= 4 +
-						   getTextWidth(i18n::localize(Config::getLang("lang"), "filter") + " " +
-										std::to_string(selection + 1) + ": " +
-										i18n::localize(Config::getLang("lang"), sortText[int(sortTypes[selection])])) &&
+						   Gui::font.calcWidth(
+							   i18n::localize(Config::getLang("lang"), "filter") + " " + std::to_string(selection + 1) +
+							   ": " + i18n::localize(Config::getLang("lang"), sortText[int(sortTypes[selection])])) &&
 				   touch.py >= 16 + (i * 16) && touch.py <= 16 + ((i + 1) * 16)) {
 					selection      = i;
 					optionSelected = true;
 					break;
 				}
 			}
-			if(touch.px >= 253 - boxButton.width && touch.py >= 189 - boxButton.height) {
+			if(touch.px >= 253 - boxButton.width() && touch.py >= 189 - boxButton.height()) {
 				selection      = sortTypes.size();
 				optionSelected = true;
 			}
@@ -325,21 +317,19 @@ void sortMenu(bool top) {
 		}
 
 		// Move cursor
-		if(selection < (int)sortTypes.size())
-			setSpritePosition(
-				arrowID,
-				false,
+		if(selection < (int)sortTypes.size()) {
+			arrow[false].position(
 				4 +
-					getTextWidth(i18n::localize(Config::getLang("lang"), "filter") + " " +
-								 std::to_string(selection + 1) + ": " +
-								 i18n::localize(Config::getLang("lang"), sortText[int(sortTypes[selection])])) +
+					Gui::font.calcWidth(i18n::localize(Config::getLang("lang"), "filter") + " " +
+										std::to_string(selection + 1) + ": " +
+										i18n::localize(Config::getLang("lang"), sortText[int(sortTypes[selection])])) +
 					2,
 				(16 * (selection) + 10));
-		else
-			setSpritePosition(arrowID,
-							  false,
-							  260 - boxButton.width + getTextWidth(i18n::localize(Config::getLang("lang"), "sort")) + 2,
-							  191 - boxButton.height - 3);
-		updateOam();
+		} else {
+			arrow[false].position(260 - boxButton.width() +
+									  Gui::font.calcWidth(i18n::localize(Config::getLang("lang"), "sort")) + 2,
+								  191 - boxButton.height() - 3);
+		}
+		arrow[false].update();
 	}
 }

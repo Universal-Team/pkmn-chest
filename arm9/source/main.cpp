@@ -23,7 +23,7 @@ extern std::vector<std::string> songs;
 void init(int argc, char **argv) {
 	useTwlCfg = (isDSiMode() && (*(u8 *)0x02000400 & 0x0F) && (*(u8 *)0x02000401 == 0) && (*(u8 *)0x02000402 == 0) &&
 				 (*(u8 *)0x02000404 == 0));
-	initGraphics();
+	Graphics::init();
 	keysSetRepeat(25, 5);
 	sysSetCardOwner(BUS_OWNER_ARM9); // Set ARM9 as Slot-1 owner (for dumping/injecting DS saves)
 	sysSetCartOwner(BUS_OWNER_ARM9); // Set ARM9 as Slot-2 owner (for dumping/injecting GBA saves)
@@ -35,8 +35,8 @@ void init(int argc, char **argv) {
 	if(!(rand() % 128))
 		angleChange *= -1;
 
-	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, true, false);
-	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
+	Graphics::drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, true, false);
+	Graphics::drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
 
 	// Init filesystem
 	if(!fatInitDefault()) {
@@ -86,14 +86,13 @@ void init(int argc, char **argv) {
 		}
 	}
 
-	wideScreen = (strcmp(argv[1], "wide") == 0) || keysDown() & KEY_Y;
+	Graphics::wideScreen = (strcmp(argv[1], "wide") == 0) || keysDown() & KEY_Y;
 
 	loadLoadingLogo();
-	showLoadingLogo();
 
 	Config::load();
 	Colors::load();
-	loadFont();
+	Gui::font = Font({Config::getString("themeDir") + "font.nftr", "nitro:/graphics/font.nftr"});
 
 	i18n::addCallbacks(i18n::initGui, i18n::exitGui);
 	i18n::removeCallbacks(i18n::initForm, i18n::exitForm);
@@ -101,7 +100,7 @@ void init(int argc, char **argv) {
 	i18n::removeCallbacks(i18n::initGeo, i18n::exitGeo);
 	i18n::init(Config::getLang("lang"));
 
-	printTextCentered(i18n::localize(Config::getLang("lang"), "loading"), 0, 32, false, true);
+	Gui::font.print(i18n::localize(Config::getLang("lang"), "loading"), 0, 32, false, 2, Alignment::center);
 
 	if(Config::getString("music") == "theme") {
 		Sound::load((Config::getString("themeDir") + "/sound.msl").c_str());

@@ -16,20 +16,20 @@
 #include "party.hpp"
 #include "sort.hpp"
 #include "sound.hpp"
+#include "utils.hpp"
 #include "xMenu.hpp"
 
 #include <dirent.h>
 
-#define WIDE_SCALE (wideScreen ? 0.8 : 1)
+#define WIDE_SCALE (Graphics::wideScreen ? 0.8f : 1)
 
 bool topScreen, inParty;
-int arrowID = 126, currentSaveBox, currentBankBox, heldPokemonID = 125, keyboardSpriteID = 124, arrowMode = 0,
-	boxTitleX = 0, boxTitleY = 0, pkmnX = 0, pkmnY = 0;
-std::vector<int> menuIconID, partyIconID;
+Sprite arrow[2], heldPokemonSprites[2], keyboardSprite;
+std::vector<Sprite> boxSprites[2], menuSprites, partySprites;
+int currentSaveBox, currentBankBox, arrowMode = 0, boxTitleX = 0, boxTitleY = 0, pkmnX = 0, pkmnY = 0;
 std::string savePath;
-Image arrowBlueTop, arrowRedTop, arrowYellowTop, arrowBlue, arrowRed, arrowYellow, ball[BALL_COUNT], bankBox, boxBgTop,
-	boxButton, infoBox, itemIcon, keyboardKey, listBg, menuBg, menuButton, menuButtonBlue, party, search, setToSelf,
-	shiny;
+Image arrowImg[3], ball[BALL_COUNT], bankBox, boxBgTop, boxButton, infoBox, itemIcon, keyboardKey, listBg, menuBg,
+	menuButton, menuButtonBlue, party, search, setToSelf, shiny;
 std::vector<Image> types;
 FILE *pokemonGFX;
 std::shared_ptr<pksm::PKFilter> filter = std::make_shared<pksm::PKFilter>();
@@ -113,21 +113,8 @@ int getPokemonIndex(pksm::Species species, u16 alternativeForm, pksm::Gender gen
 }
 
 Image loadPokemonSprite(int index) {
-	Image image = {0, 0};
-	u16 palCount, palOfs;
-	if(pokemonGFX) {
-		fseek(pokemonGFX, (index * 0x42C) + 4, SEEK_SET);
-		fread(&image.width, 1, 2, pokemonGFX);
-		fread(&image.height, 1, 2, pokemonGFX);
-		image.bitmap = std::vector<u8>(image.width * image.height);
-		fread(image.bitmap.data(), 1, image.width * image.height, pokemonGFX);
-		fread(&palCount, 1, 2, pokemonGFX);
-		fread(&palOfs, 1, 2, pokemonGFX);
-		image.palette = std::vector<u16>(palCount);
-		fread(image.palette.data(), 2, palCount, pokemonGFX);
-	}
-
-	return image;
+	fseek(pokemonGFX, (index * 0x42C) + 4, SEEK_SET);
+	return Image(pokemonGFX);
 }
 
 void resetPokemonSpritesPos(bool top) {
@@ -135,119 +122,99 @@ void resetPokemonSpritesPos(bool top) {
 	for(int y = 0; y < 5; y++) {
 		for(int x = 0; x < 6; x++) {
 			if(top) {
-				setSpritePosition((y * 6) + x, top, wideScreen ? 20 + (x * (24 * 0.8)) : 8 + (x * 24), 32 + (y * 24));
+				boxSprites[top][(y * 6) + x].position(Graphics::wideScreen ? 20 + (x * (24 * 0.8)) : 8 + (x * 24),
+													  32 + (y * 24));
 			} else {
-				setSpritePosition((y * 6) + x, top, pkmnX + (x * 24), pkmnY + (y * 24));
-				setSpriteVisibility((y * 6) + x, top, false);
+				boxSprites[top][(y * 6) + x].position(pkmnX + (x * 24), pkmnY + (y * 24));
 			}
-			setSpritePriority((y * 6) + x, top, 3);
+			boxSprites[top][(y * 6) + x].visibility(false);
+			boxSprites[top][(y * 6) + x].priority(3);
 		}
 	}
 }
 
 void fillArrow(int arrowMode) {
-	if(arrowMode == 0) {
-		fillSpriteImageScaled(arrowID, true, 16, 0, 0, WIDE_SCALE, 1, arrowRed);
-		fillSpriteImage(arrowID, false, 16, 0, 0, arrowRed);
-	} else if(arrowMode == 1) {
-		fillSpriteImageScaled(arrowID, true, 16, 0, 0, WIDE_SCALE, 1, arrowBlue);
-		fillSpriteImage(arrowID, false, 16, 0, 0, arrowBlue);
-	} else {
-		fillSpriteImageScaled(arrowID, true, 16, 0, 0, WIDE_SCALE, 1, arrowYellow);
-		fillSpriteImage(arrowID, false, 16, 0, 0, arrowYellow);
-	}
+	arrow[1].drawImage(0, 0, arrowImg[arrowMode], WIDE_SCALE, 1);
+	arrow[0].drawImage(0, 0, arrowImg[arrowMode]);
 }
 
 void loadTypes(pksm::Language lang) {
-	std::string langStr = i18n::langString(lang);
-	pksm::Language tempLang =
-		(access(("nitro:/i18n/" + StringUtils::toLower(langStr) + "/types/0.gfx").c_str(), F_OK) == 0)
-		? lang
-		: pksm::Language::ENG;
-	langStr = i18n::langString(tempLang);
+	std::string path        = "/i18n/" + StringUtils::toLower(i18n::langString(lang)) + "/types/";
+	pksm::Language tempLang = (access(("nitro:/" + path + "/0.gfx").c_str(), F_OK) == 0) ? lang : pksm::Language::ENG;
+	path                    = "/i18n/" + StringUtils::toLower(i18n::langString(tempLang)) + "/types/";
 	types.clear();
 	for(int i = 0; i < 17; i++) {
-		types.push_back(loadImage("/i18n/" + StringUtils::toLower(langStr) + "/types/" + std::to_string(i) + ".gfx"));
+		types.emplace_back(std::vector<std::string>({Config::getString("themeDir") + path + std::to_string(i) + ".gfx",
+													 "nitro:/" + path + std::to_string(i) + ".gfx"}));
 	}
 }
 
 void initSprites(void) {
-	setSpriteScale(1, true, WIDE_SCALE, 1); // Set rotation index 1 to 80% if widescreen
+	// TODO
+	// Sprite::scale(1, true, WIDE_SCALE, 1); // Set rotation index 1 to 80% if Graphics::wideScreen
 
 	// Pokémon Sprites
 	for(int y = 0; y < 5; y++) {
 		for(int x = 0; x < 6; x++) {
-			initSprite(true, SpriteSize_32x32, -1, 1);
-			initSprite(false, SpriteSize_32x32);
-			prepareSprite((y * 6) + x, true, wideScreen ? 20 + (x * (24 * 0.8)) : 8 + (x * 24), 32 + (y * 24), 3);
-			prepareSprite((y * 6) + x, false, pkmnX + (x * 24), pkmnY + (y * 24), 3);
+			boxSprites[true].emplace_back(true, SpriteSize_16x32, SpriteColorFormat_Bmp,
+										  Graphics::wideScreen ? 20 + (x * (24 * 0.8)) : 8 + (x * 24), 32 + (y * 24), 3,
+										  -1, 1);
+			boxSprites[false].emplace_back(false, SpriteSize_16x32, SpriteColorFormat_Bmp,
+										   Graphics::wideScreen ? 20 + (x * (24 * 0.8)) : 8 + (x * 24), 32 + (y * 24),
+										   3);
 		}
 	}
 
 	// Menu icon sprites
 	for(int i = 0; i < 6; i++) {
-		int id = initSprite(false, SpriteSize_32x32);
-		prepareSprite(id, false, 0, 0, 0);
-		setSpriteVisibility(id, false, false);
-		menuIconID.push_back(id);
+		menuSprites.emplace_back(false, SpriteSize_32x32, SpriteColorFormat_Bmp, 0, 0, 2, -1, 15, false, false);
 	}
 
 	// Party sprites
 	for(int i = 0; i < 6; i++) {
-		int id = initSprite(false, SpriteSize_32x32);
-		prepareSprite(id, false, 0, 0, 2);
-		setSpriteVisibility(id, false, false);
-		partyIconID.push_back(id);
+		Sprite(false, SpriteSize_32x32, SpriteColorFormat_Bmp, 0, 0, 2, -1, 15, false, false);
 	}
 
-	// Bottom arrow sprite
-	initSprite(false, SpriteSize_16x16, arrowID);
-	prepareSprite(arrowID, false, 24, 36, 0);
-	setSpriteVisibility(arrowID, false, false);
+	// Arrow sprites
+	arrow[false] = Sprite(false, SpriteSize_16x16, SpriteColorFormat_Bmp, 24, 36, 0);
+	arrow[true]  = Sprite(true, SpriteSize_16x16, SpriteColorFormat_Bmp, 24, 36, 0);
 
-	// Top arrow sprite
-	initSprite(true, SpriteSize_16x16, arrowID, 1);
-	prepareSprite(arrowID, true, -16, -16, 0);
-
-	// Bottom sprite for moving pokemon
-	initSprite(false, SpriteSize_32x32, heldPokemonID);
-	prepareSprite(heldPokemonID, false, 0, 0, 1);
-	setSpriteVisibility(heldPokemonID, false, false);
-
-	// Top sprite for moving pokemon
-	initSprite(true, SpriteSize_32x32, heldPokemonID, 1);
-	prepareSprite(heldPokemonID, true, -32, -32, 1);
+	// Sprites for held pokemon when moving
+	heldPokemonSprites[false] =
+		Sprite(false, SpriteSize_32x32, SpriteColorFormat_Bmp, 0, 0, 1, -1, 15, -1, false, false);
+	heldPokemonSprites[true] = Sprite(true, SpriteSize_32x32, SpriteColorFormat_Bmp, 0, 0, 1, -1, 15, -1, false, false);
 
 	// Keyboard button sprite
-	initSprite(false, SpriteSize_32x32, keyboardSpriteID);
-	prepareSprite(keyboardSpriteID, false, 0, 0, 0);
-	setSpriteVisibility(keyboardSpriteID, false, false);
+	keyboardSprite = Sprite(true, SpriteSize_32x32, SpriteColorFormat_Bmp, 0, 0, 1, -1, 15, -1, false, false);
 }
 
 void loadGraphics(void) {
-	extern bool wideScreen;
-
 	// Load images into RAM
-	arrowBlue   = loadImage("/graphics/arrowBlue.gfx");
-	arrowRed    = loadImage("/graphics/arrowRed.gfx");
-	arrowYellow = loadImage("/graphics/arrowYellow.gfx");
+	arrowImg[0] = Image({Config::getString("themeDir") + "/graphics/arrowBlue.gfx", "nitro:/graphics/arrowBlue.gfx"});
+	arrowImg[1] = Image({Config::getString("themeDir") + "/graphics/arrowRed.gfx", "nitro:/graphics/arrowRed.gfx"});
+	arrowImg[2] =
+		Image({Config::getString("themeDir") + "/graphics/arrowYellow.gfx", "nitro:/graphics/arrowYellow.gfx"});
 	for(int i = 0; i < BALL_COUNT; i++) {
-		ball[i] = loadImage("/graphics/ball/" + std::to_string(i) + ".gfx");
+		ball[i] = Image({Config::getString("themeDir") + "/graphics/ball/" + std::to_string(i) + ".gfx",
+						 "nitro:/graphics/ball/" + std::to_string(i) + ".gfx"});
 	}
-	boxBgTop            = loadImage(wideScreen ? "/graphics/boxBgTopWide.gfx" : "/graphics/boxBgTop.gfx");
-	boxButton           = loadImage("/graphics/boxButton.gfx");
-	infoBox             = loadImage("/graphics/infoBox.gfx");
-	itemIcon            = loadImage("/graphics/item.gfx");
-	keyboardKey         = loadImage("/graphics/keyboardKey.gfx");
-	listBg              = loadImage("/graphics/listBg.gfx");
-	menuBg              = loadImage("/graphics/menuBg.gfx");
-	menuButton          = loadImage("/graphics/menuButton.gfx");
-	menuButtonBlue      = loadImage("/graphics/menuButtonBlue.gfx");
-	Image menuIconSheet = loadImage("/graphics/menuIconSheet.gfx");
-	party               = loadImage("/graphics/party.gfx");
-	search              = loadImage("/graphics/search.gfx");
-	setToSelf           = loadImage("/graphics/setToSelf.gfx");
-	shiny               = loadImage("/graphics/shiny.gfx");
+	boxBgTop  = Image({Config::getString("themeDir") +
+                          (Graphics::wideScreen ? "/graphics/boxBgTopWide.gfx" : "/graphics/boxBgTop.gfx"),
+                      Graphics::wideScreen ? "nitro:/graphics/boxBgTopWide.gfx" : "nitro:/graphics/boxBgTop.gfx"});
+	boxButton = Image({Config::getString("themeDir") + "/graphics/boxButton.gfx", "nitro:/graphics/boxButton.gfx"});
+	infoBox   = Image({Config::getString("themeDir") + "/graphics/infoBox.gfx", "nitro:/graphics/infoBox.gfx"});
+	itemIcon  = Image({Config::getString("themeDir") + "/graphics/item.gfx", "nitro:/graphics/item.gfx"});
+	keyboardKey =
+		Image({Config::getString("themeDir") + "/graphics/keyboardKey.gfx", "nitro:/graphics/keyboardKey.gfx"});
+	listBg     = Image({Config::getString("themeDir") + "/graphics/listBg.gfx", "nitro:/graphics/listBg.gfx"});
+	menuBg     = Image({Config::getString("themeDir") + "/graphics/menuBg.gfx", "nitro:/graphics/menuBg.gfx"});
+	menuButton = Image({Config::getString("themeDir") + "/graphics/menuButton.gfx", "nitro:/graphics/menuButton.gfx"});
+	menuButtonBlue =
+		Image({Config::getString("themeDir") + "/graphics/menuButtonBlue.gfx", "nitro:/graphics/menuButtonBlue.gfx"});
+	party     = Image({Config::getString("themeDir") + "/graphics/party.gfx", "nitro:/graphics/party.gfx"});
+	search    = Image({Config::getString("themeDir") + "/graphics/search.gfx", "nitro:/graphics/search.gfx"});
+	setToSelf = Image({Config::getString("themeDir") + "/graphics/setToSelf.gfx", "nitro:/graphics/setToSelf.gfx"});
+	shiny     = Image({Config::getString("themeDir") + "/graphics/shiny.gfx", "nitro:/graphics/shiny.gfx"});
 
 	// Open Pokémon combo gfx file
 	if(pokemonGFX)
@@ -258,8 +225,10 @@ void loadGraphics(void) {
 	}
 
 	// Fill menu icon sprites
+	Image menuIconSheet(
+		{Config::getString("themeDir") + "/graphics/menuIconSheet.gfx", "nitro:/graphics/menuIconSheet.gfx"});
 	for(int i = 1; i < 6; i++) { // 0 (party) skiped until I know what to replace it with
-		fillSpriteSegment(menuIconID[i], false, 32, 0, 0, 32, 32, menuIconSheet, 0, i * 32);
+		menuSprites[i].drawImageSegment(0, 0, 0, i * 32, 32, 32, menuIconSheet);
 	}
 
 	// Fill arrows
@@ -268,19 +237,19 @@ void loadGraphics(void) {
 
 void drawBoxScreen(void) {
 	// Draws backgrounds
-	drawImageDMA(0, 0, boxBgTop, true, false);
-	drawImageSegmentScaled(164, 2, infoBox.width, infoBox.height - 16, WIDE_SCALE, 1, infoBox, 0, 0, true, false);
-	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
+	boxBgTop.draw(0, 0, true, 3);
+	infoBox.drawSegmentSpecial(164, 2, 0, 0, infoBox.width(), infoBox.height() - 16, true, 3, WIDE_SCALE, 1.0f);
+	Graphics::drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
 
 	// Clear text
-	drawRectangle(0, 0, 256, 192, CLEAR, true, true);
-	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
+	Graphics::drawRectangle(0, 0, 256, 192, CLEAR, true, true);
+	Graphics::drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 
 	// Show bottom arrow
-	setSpriteVisibility(arrowID, false, true);
+	arrow[topScreen].visibility(true);
 
 	// Move the arrow back to 24, 36
-	setSpritePosition(arrowID, false, pkmnX + 16, pkmnY + 4);
+	arrow[topScreen].position(pkmnX + 16, pkmnY + 4);
 
 	// Draw the boxes and Pokémon
 	drawBox(true);
@@ -292,7 +261,7 @@ void drawBoxScreen(void) {
 
 std::string boxBgPath(bool top, int box) {
 	if(top)
-		return (wideScreen ? "/graphics/box/chestWide.gfx" : "/graphics/box/chest.gfx");
+		return (Graphics::wideScreen ? "/graphics/box/chestWide.gfx" : "/graphics/box/chest.gfx");
 	std::string game;
 	switch(save->version()) {
 		case pksm::GameVersion::S: // Sapphire
@@ -332,131 +301,90 @@ std::string boxBgPath(bool top, int box) {
 
 void drawBox(bool top) {
 	// Load box image
-	bankBox = loadImage(boxBgPath(top));
+	bankBox = Image({Config::getString("themeDir") + boxBgPath(top), "nitro:" + boxBgPath(top)});
 
 	for(int i = 0; i < 30; i++) {
 		// Fill Pokémon Sprites
 		std::unique_ptr<pksm::PKX> tempPkm = (top ? Banks::bank->pkm(currentBankBox, i) : save->pkm(currentSaveBox, i));
 		if(tempPkm->species() != pksm::Species::None) {
-			Image image = loadPokemonSprite(getPokemonIndex(*tempPkm));
-			fillSpriteImage(i, top, 32, 0, 0, image);
-			if(!top)
-				setSpriteVisibility(i, top, true);
+			boxSprites[top][i].drawImage(0, 0, loadPokemonSprite(getPokemonIndex(*tempPkm)));
+			boxSprites[top][i].visibility(true);
 			if(!(partyShown && arrowMode == 0))
-				setSpriteAlpha(i, top, (*tempPkm == *filter) ? 15 : 8);
+				boxSprites[top][i].alpha((*tempPkm == *filter) ? 15 : 8);
 			if(tempPkm->heldItem())
-				fillSpriteImage(i, top, 32, 17, 32 - itemIcon.height, itemIcon, true);
+				boxSprites[top][i].drawImage(17, 32 - itemIcon.height(), itemIcon);
 		} else {
-			if(top) {
-				fillSpriteColor(i, top, CLEAR);
-			} else {
-				setSpriteVisibility(i, top, false);
-			}
+			boxSprites[top][i].visibility(false);
 		}
 	}
-	updateOam();
+	Sprite::update(true);
+	Sprite::update(false);
 
 	// Draw box image
-	drawImage((top && wideScreen) ? 17 : 5, 15, bankBox, top, false);
+	bankBox.draw((top && Graphics::wideScreen) ? 17 : 5, 15, top, 3);
 
 	// Print box name
-	printTextCenteredTintedMaxW((top ? Banks::bank->boxName(currentBankBox) : save->boxName(currentSaveBox)),
-								110 * (top ? WIDE_SCALE : 1),
-								1,
-								TextColor::gray,
-								boxTitleX,
-								top ? 20 : boxTitleY,
-								top,
-								false,
-								top ? WIDE_SCALE : 1);
+	Gui::font.print((top ? Banks::bank->boxName(currentBankBox) : save->boxName(currentSaveBox)), boxTitleX,
+					top ? 20 : boxTitleY, top, 2, Alignment::left, 110 * WIDE_SCALE, WIDE_SCALE);
 
 	if(!top) {
-		drawImage(boxButton.width + 5, 192 - search.height, search, false, false);
-		drawImage(0, 192 - boxButton.height, boxButton, false, false);
-		printTextMaxW(i18n::localize(Config::getLang("lang"), "party"),
-					  boxButton.width - 8,
-					  1,
-					  4,
-					  192 - boxButton.height + 4,
-					  false,
-					  false);
+		search.draw(boxButton.width() + 5, 192 - search.height(), false, 3);
+		boxButton.draw(0, 192 - boxButton.height(), false, 3);
+		Gui::font.print(i18n::localize(Config::getLang("lang"), "party"), 4, 192 - boxButton.height() + 4, false, 3,
+						Alignment::center);
 	}
 }
 
 void drawPokemonInfo(const pksm::PKX &pkm) {
 	// Clear previous draw
-	drawRectangle(164, 2, infoBox.width, infoBox.height - 16, CLEAR, true, true);
+	Graphics::drawRectangle(164, 2, infoBox.width(), infoBox.height() - 16, CLEAR, true, true);
 
 	if(pkm.species() > pksm::Species::None && pkm.species() <= pksm::Species::Genesect) {
 		// Show shiny star if applicable
 		if(pkm.shiny())
-			drawImageScaled(170 + (69 * WIDE_SCALE), 45, WIDE_SCALE, 1, shiny, true, true);
+			shiny.drawSpecial(170 + (69 * WIDE_SCALE), 45, true, 2, WIDE_SCALE);
 		else
-			drawRectangle(170 + (69 * WIDE_SCALE), 45, shiny.width * WIDE_SCALE, shiny.height, 0, true, true);
+			Graphics::drawRectangle(170 + (69 * WIDE_SCALE), 45, shiny.width() * WIDE_SCALE, shiny.height(), 0, true,
+									true);
 
 		// Print Pokédex number
 		char str[9];
-		snprintf(
-			str, sizeof(str), "%s%.3i", i18n::localize(Config::getLang("lang"), "dexNo").c_str(), u16(pkm.species()));
-		printTextTintedScaled(str, WIDE_SCALE, 1, TextColor::gray, 170, 8, true, true);
+		snprintf(str, sizeof(str), "%s%.3i", i18n::localize(Config::getLang("lang"), "dexNo").c_str(),
+				 u16(pkm.species()));
+		Gui::font.print(str, 170, 8, true, 2, Alignment::left, TextColor::gray, WIDE_SCALE);
 
 		// Print name
 		if(pkm.nicknamed())
-			printTextTintedMaxW(pkm.nickname(),
-								80 * WIDE_SCALE,
-								1,
-								(pkm.gender()
-									 ? (pkm.gender() == pksm::Gender::Female ? TextColor::red : TextColor::gray)
-									 : TextColor::blue),
-								170,
-								25,
-								true,
-								true,
-								WIDE_SCALE);
+			Gui::font.print(pkm.nickname(), 170, 25, true, 2, Alignment::left, 80 * WIDE_SCALE,
+							(pkm.gender() ? (pkm.gender() == pksm::Gender::Female ? TextColor::red : TextColor::gray)
+										  : TextColor::blue),
+							WIDE_SCALE);
 		else
-			printTextTintedMaxW(i18n::species(Config::getLang("lang"), pkm.species()),
-								80 * WIDE_SCALE,
-								1,
-								(pkm.gender()
-									 ? (pkm.gender() == pksm::Gender::Female ? TextColor::red : TextColor::gray)
-									 : TextColor::blue),
-								170,
-								25,
-								true,
-								true,
-								WIDE_SCALE);
+			Gui::font.print(i18n::species(Config::getLang("lang"), pkm.species()), 170, 25, true, 2, Alignment::left,
+							80 * WIDE_SCALE,
+							(pkm.gender() ? (pkm.gender() == pksm::Gender::Female ? TextColor::red : TextColor::gray)
+										  : TextColor::blue),
+							WIDE_SCALE);
 
 		// Draw types
-		drawImageScaled(
-			170, 42 - ((types[u8(pkm.type1())].height - 12) / 2), WIDE_SCALE, 1, types[u8(pkm.type1())], true, true);
+		types[u8(pkm.type1())].drawSpecial(170, 42 - ((types[u8(pkm.type1())].height() - 12) / 2), true, 2, WIDE_SCALE);
 		if(pkm.type1() != pkm.type2()) {
-			drawImageScaled(170 + (35 * WIDE_SCALE),
-							42 - ((types[u8(pkm.type2())].height - 12) / 2),
-							WIDE_SCALE,
-							1,
-							types[u8(pkm.type2())],
-							true,
-							true,
-							4);
+			types[u8(pkm.type1())].drawSpecial(170 + (35 * WIDE_SCALE),
+											   42 - ((types[u8(pkm.type2())].height() - 12) / 2), true, 2, WIDE_SCALE,
+											   1.0f, 4);
 		}
 
 		// Print Level
-		printTextTintedScaled(i18n::localize(Config::getLang("lang"), "lv") + std::to_string(pkm.level()),
-							  WIDE_SCALE,
-							  1,
-							  TextColor::gray,
-							  170,
-							  57,
-							  true,
-							  true);
+		Gui::font.print(i18n::localize(Config::getLang("lang"), "lv") + std::to_string(pkm.level()), 170, 57, true, 2,
+						Alignment::left, WIDE_SCALE, TextColor::gray);
 	}
 }
 
 void setHeldPokemon(const pksm::PKX &pkm) {
 	if(pkm.species() != pksm::Species::None) {
 		Image image = loadPokemonSprite(getPokemonIndex(pkm));
-		fillSpriteImage(heldPokemonID, true, 32, 0, 0, image);
-		fillSpriteImage(heldPokemonID, false, 32, 0, 0, image);
+		heldPokemonSprites[true].drawImage(0, 0, image);
+		heldPokemonSprites[false].drawImage(0, 0, image);
 	}
 }
 
@@ -555,11 +483,7 @@ void manageBoxes(void) {
 				drawBox(topScreen);
 				if(!heldMode && currentBox() == heldPokemonBox && topScreen == heldPokemonScreen) {
 					for(unsigned i = 0; i < heldPokemon.size(); i++) {
-						if(heldPokemonScreen) { // Held on top, fill with clear
-							fillSpriteColor(heldPokemon[i].position, heldPokemonScreen, CLEAR);
-						} else { // Held on bottom, hide sprite
-							setSpriteVisibility(heldPokemon[i].position, heldPokemonScreen, false);
-						}
+						boxSprites[heldPokemonScreen][heldPokemon[i].position].visibility(false);
 					}
 				}
 				goto afterInput;
@@ -572,11 +496,7 @@ void manageBoxes(void) {
 				drawBox(topScreen);
 				if(!heldMode && currentBox() == heldPokemonBox && topScreen == heldPokemonScreen) {
 					for(unsigned i = 0; i < heldPokemon.size(); i++) {
-						if(heldPokemonScreen) { // Held on top, fill with clear
-							fillSpriteColor(heldPokemon[i].position, heldPokemonScreen, CLEAR);
-						} else { // Held on bottom, hide sprite
-							setSpriteVisibility(heldPokemon[i].position, heldPokemonScreen, false);
-						}
+						boxSprites[heldPokemonScreen][heldPokemon[i].position].visibility(false);
 					}
 				}
 				goto afterInput;
@@ -656,23 +576,17 @@ void manageBoxes(void) {
 					returnPokemon:
 						for(unsigned i = 0; i < heldPokemon.size(); i++) {
 							if(heldInParty)
-								setSpriteVisibility(partyIconID[heldPokemon[i].position],
-													heldPokemonScreen,
-													heldPokemon[i].pkm->species() != pksm::Species::None);
+								partySprites[heldPokemon[i].position].visibility(heldPokemon[i].pkm->species() !=
+																				 pksm::Species::None);
 							else if(!heldPokemonScreen)
-								setSpriteVisibility(heldPokemon[i].position,
-													heldPokemonScreen,
-													heldPokemon[i].pkm->species() != pksm::Species::None);
+								boxSprites[heldPokemonScreen][heldPokemon[i].position].visibility(
+									heldPokemon[i].pkm->species() != pksm::Species::None);
 							else {
-								Image image = loadPokemonSprite(getPokemonIndex(*heldPokemon[i].pkm));
-								fillSpriteImage(heldPokemon[i].position, heldPokemonScreen, 32, 0, 0, image);
+								boxSprites[heldPokemonScreen][heldPokemon[i].position].drawImage(
+									0, 0, loadPokemonSprite(getPokemonIndex(*heldPokemon[i].pkm)));
 							}
 						}
-						if(topScreen) {
-							setSpritePosition(heldPokemonID, heldPokemonScreen, -32, -32);
-						} else {
-							setSpriteVisibility(heldPokemonID, topScreen, false);
-						}
+						heldPokemonSprites[topScreen].visibility(false);
 						heldPokemon.clear();
 						heldPokemonBox = -1;
 						if(partyShown && !topScreen)
@@ -709,18 +623,15 @@ void manageBoxes(void) {
 										tempPkm = save->emptyPkm();
 									// Write the held Pokémon to the cursor position
 									if(topScreen) {
-										Banks::bank->pkm(*heldPokemon[i].pkm,
-														 currentBox(),
+										Banks::bank->pkm(*heldPokemon[i].pkm, currentBox(),
 														 ((arrowY + heldPokemon[i].y) * 6) + arrowX + heldPokemon[i].x);
 									} else if(inParty) {
 										save->pkm(*save->transfer(*heldPokemon[i].pkm),
 												  ((arrowY + heldPokemon[i].y) * 2) + arrowX + heldPokemon[i].x);
 										save->dex(*heldPokemon[i].pkm);
 									} else {
-										save->pkm(*save->transfer(*heldPokemon[i].pkm),
-												  currentBox(),
-												  ((arrowY + heldPokemon[i].y) * 6) + arrowX + heldPokemon[i].x,
-												  false);
+										save->pkm(*save->transfer(*heldPokemon[i].pkm), currentBox(),
+												  ((arrowY + heldPokemon[i].y) * 6) + arrowX + heldPokemon[i].x, false);
 										save->dex(*heldPokemon[i].pkm);
 									}
 									// If not copying, write the cursor position's previous Pokémon to the held
@@ -732,10 +643,8 @@ void manageBoxes(void) {
 											save->pkm(*save->transfer(*tempPkm), heldPokemon[i].position);
 											save->dex(*tempPkm);
 										} else {
-											save->pkm(*save->transfer(*tempPkm),
-													  heldPokemonBox,
-													  heldPokemon[i].position,
-													  false);
+											save->pkm(*save->transfer(*tempPkm), heldPokemonBox,
+													  heldPokemon[i].position, false);
 											save->dex(*tempPkm);
 										}
 									}
@@ -745,9 +654,9 @@ void manageBoxes(void) {
 
 							// Hide the moving Pokémon
 							if(topScreen) {
-								setSpritePosition(heldPokemonID, topScreen, -32, -32);
+								heldPokemonSprites[topScreen].position(-32, -32);
 							} else {
-								setSpriteVisibility(heldPokemonID, topScreen, false);
+								heldPokemonSprites[topScreen].visibility(false);
 							}
 
 							// Update the box(es) for the moved Pokémon
@@ -768,10 +677,10 @@ void manageBoxes(void) {
 								if(arrowMode == 0 && !inParty) {
 									if(topScreen) {
 										topScreen = false;
-										setSpritePosition(arrowID, true, -16, -16);
-										setSpritePosition(heldPokemonID, true, -32, -32);
-										setSpriteVisibility(arrowID, false, true);
-										setSpriteVisibility(heldPokemonID, false, heldPokemon.size() > 0);
+										arrow[topScreen].position(-16, -16);
+										heldPokemonSprites[topScreen].position(-32, -32);
+										arrow[topScreen].visibility(true);
+										heldPokemonSprites[topScreen].visibility(heldPokemon.size() > 0);
 									}
 									inParty = true;
 									arrowX = 0, arrowY = 0;
@@ -780,26 +689,18 @@ void manageBoxes(void) {
 						}
 					}
 				} else if(arrowMode == 2) {
-					bankBox    = loadImage(boxBgPath(topScreen));
+					bankBox =
+						Image({Config::getString("themeDir") + boxBgPath(topScreen), "nitro:" + boxBgPath(topScreen)});
 					int startX = arrowX, startY = arrowY;
-					int x = topScreen ? (wideScreen ? 22 : 8) : pkmnX, y = topScreen ? 32 : pkmnY;
+					int x = topScreen ? (Graphics::wideScreen ? 22 : 8) : pkmnX, y = topScreen ? 32 : pkmnY;
 					float scale = topScreen ? WIDE_SCALE : 1;
 					if(inParty)
-						drawOutline(PARTY_TRAY_X + (partySpritePos[(startY * 2) + startX].first),
-									PARTY_TRAY_Y + (partySpritePos[(startY * 2) + startX].second) + 8,
-									32,
-									24,
-									DARKER_GRAY,
-									topScreen,
-									true);
+						Graphics::drawOutline(PARTY_TRAY_X + (partySpritePos[(startY * 2) + startX].first),
+											  PARTY_TRAY_Y + (partySpritePos[(startY * 2) + startX].second) + 8, 32, 24,
+											  DARKER_GRAY, topScreen, true);
 					else
-						drawOutline(x + (startX * 24 * scale),
-									y + 8 + (startY * 24),
-									(((arrowX + 1) - startX) * 24) + 8,
-									24,
-									WHITE,
-									topScreen,
-									false);
+						Graphics::drawOutline(x + (startX * 24 * scale), y + 8 + (startY * 24),
+											  (((arrowX + 1) - startX) * 24) + 8, 24, WHITE, topScreen, false);
 					while(1) {
 						do {
 							swiWaitForVBlank();
@@ -819,50 +720,31 @@ void manageBoxes(void) {
 						if(pressed & KEY_A) {
 						yellowSelection:
 							if(inParty)
-								drawImage(PARTY_TRAY_X, PARTY_TRAY_Y, party, false, true);
+								party.draw(PARTY_TRAY_X, PARTY_TRAY_Y, false, 2);
 							else
-								drawImageSegment((wideScreen && topScreen) ? 17 : 5,
-												 15 + 20,
-												 bankBox.width,
-												 bankBox.height - 20,
-												 bankBox,
-												 0,
-												 20,
-												 topScreen,
-												 false);
+								bankBox.drawSegment((Graphics::wideScreen && topScreen) ? 17 : 5, 15 + 20, 0, 20,
+													bankBox.width(), bankBox.height() - 20, topScreen, 3);
 							for(int y = std::min(startY, arrowY); y < std::max(startY, arrowY) + 1; y++) {
 								for(int x = std::min(startX, arrowX); x < std::max(startX, arrowX) + 1; x++) {
-									heldPokemon.push_back({currentPokemon(x, y),
-														   (y * (inParty ? 2 : 6)) + x,
-														   x - std::min(startX, arrowX),
-														   y - std::min(startY, arrowY)});
+									heldPokemon.push_back({currentPokemon(x, y), (y * (inParty ? 2 : 6)) + x,
+														   x - std::min(startX, arrowX), y - std::min(startY, arrowY)});
 									if(inParty)
-										setSpriteVisibility(partyIconID[(y * 2) + x], topScreen, false);
-									else if(!topScreen)
-										setSpriteVisibility((y * 6) + x, topScreen, false);
-									else
-										fillSpriteColor((y * 6) + x, topScreen, CLEAR);
+										partySprites[(y * 2) + x].visibility(false);
+									boxSprites[topScreen][(y * 6) + x].visibility(false);
 								}
 							}
-							fillSpriteColor(heldPokemonID, true, CLEAR); // Fill the sprite with transparency
-							fillSpriteImage(heldPokemonID, true, 32, 16, 16, keyboardKey);
-							fillSpriteText(heldPokemonID,
-										   true,
-										   StringUtils::UTF8toUTF16(std::to_string(heldPokemon.size())),
-										   TextColor::white,
-										   24 - (getTextWidth(std::to_string(heldPokemon.size())) / 2),
-										   16);
-							fillSpriteColor(heldPokemonID, false, CLEAR); // Fill the sprite with transparency
-							fillSpriteImage(heldPokemonID, false, 32, 16, 16, keyboardKey);
-							fillSpriteText(heldPokemonID,
-										   false,
-										   StringUtils::UTF8toUTF16(std::to_string(heldPokemon.size())),
-										   TextColor::white,
-										   24 - (getTextWidth(std::to_string(heldPokemon.size())) / 2),
-										   16);
-							if(!topScreen)
-								setSpriteVisibility(heldPokemonID, topScreen, true);
-							updateOam();
+							heldPokemonSprites[true].clear();
+							heldPokemonSprites[true].drawImage(0, 0, keyboardKey);
+							Gui::font.print(StringUtils::UTF8toUTF16(std::to_string(heldPokemon.size())),
+											24 - (Gui::font.calcWidth(std::to_string(heldPokemon.size())) / 2), 16,
+											heldPokemonSprites[true]);
+							heldPokemonSprites[false].clear();
+							heldPokemonSprites[false].drawImage(0, 0, keyboardKey);
+							Gui::font.print(StringUtils::UTF8toUTF16(std::to_string(heldPokemon.size())),
+											24 - (Gui::font.calcWidth(std::to_string(heldPokemon.size())) / 2), 16,
+											heldPokemonSprites[false]);
+							heldPokemonSprites[topScreen].visibility(true);
+							heldPokemonSprites[topScreen].update();
 							heldPokemonBox    = currentBox();
 							heldPokemonScreen = topScreen;
 							heldInParty       = inParty;
@@ -871,17 +753,10 @@ void manageBoxes(void) {
 							break;
 						} else if(pressed & KEY_B) {
 							if(inParty)
-								drawImage(PARTY_TRAY_X, PARTY_TRAY_Y, party, false, true);
+								party.draw(PARTY_TRAY_X, PARTY_TRAY_Y, false, 2);
 							else
-								drawImageSegment((wideScreen && topScreen) ? 17 : 5,
-												 15 + 20,
-												 bankBox.width,
-												 bankBox.height - 20,
-												 bankBox,
-												 0,
-												 20,
-												 topScreen,
-												 false);
+								bankBox.drawSegment((Graphics::wideScreen && topScreen) ? 17 : 5, 15 + 20, 0, 20,
+													bankBox.width(), bankBox.height() - 20, topScreen, 3);
 							drawPokemonInfo(*currentPokemon(arrowX, arrowY));
 							break;
 						} else if(pressed & KEY_TOUCH) {
@@ -921,8 +796,8 @@ void manageBoxes(void) {
 						}
 
 						if(inParty) {
-							drawImage(PARTY_TRAY_X, PARTY_TRAY_Y, party, false, true);
-							drawOutline(
+							party.draw(PARTY_TRAY_X, PARTY_TRAY_Y, false, 2);
+							Graphics::drawOutline(
 								PARTY_TRAY_X +
 									(partySpritePos[(std::min(startY, arrowY) * 2) + std::min(startX, arrowX)].first),
 								PARTY_TRAY_Y +
@@ -932,37 +807,22 @@ void manageBoxes(void) {
 								((std::max(arrowY - startY, startY - arrowY) + 1) * 24 +
 								 (std::max(arrowY - startY, startY - arrowY)) * 8 +
 								 (std::max(arrowX - startX, startX - arrowX) == 0 ? 0 : 8)),
-								DARKER_GRAY,
-								topScreen,
-								true);
-							setSpritePosition(
-								arrowID,
-								topScreen,
+								DARKER_GRAY, topScreen, true);
+							arrow[topScreen].position(
 								PARTY_TRAY_X + partySpritePos[(arrowY * 2) + (arrowX)].first + partyX + 16,
 								PARTY_TRAY_Y + partySpritePos[(arrowY * 2) + (arrowX)].second + partyY + 4);
 						} else {
-							int x = topScreen ? (wideScreen ? 22 : 8) : pkmnX, y = topScreen ? 32 : pkmnY;
+							int x = topScreen ? (Graphics::wideScreen ? 22 : 8) : pkmnX, y = topScreen ? 32 : pkmnY;
 							float scale = topScreen ? WIDE_SCALE : 1;
-							drawImageSegment((wideScreen && topScreen) ? 17 : 5,
-											 15 + 20,
-											 bankBox.width,
-											 bankBox.height - 22,
-											 bankBox,
-											 0,
-											 20,
-											 topScreen,
-											 false);
-							drawOutline(x + (std::min(startX, arrowX) * (24 * scale)),
-										y + 8 + (std::min(startY, arrowY) * 24),
-										((std::max(arrowX - startX, startX - arrowX) + 1) * (24 * scale)) + 8,
-										((std::max(arrowY - startY, startY - arrowY) + 1) * 24),
-										WHITE,
-										topScreen,
-										false);
-							setSpritePosition(
-								arrowID, topScreen, (arrowX * 24 * scale) + x + 16, (arrowY * 24) + y + 4);
+							bankBox.drawSegment((Graphics::wideScreen && topScreen) ? 17 : 5, 0, 20, 15 + 20,
+												bankBox.width(), bankBox.height() - 22, topScreen, 3);
+							Graphics::drawOutline(
+								x + (std::min(startX, arrowX) * (24 * scale)), y + 8 + (std::min(startY, arrowY) * 24),
+								((std::max(arrowX - startX, startX - arrowX) + 1) * (24 * scale)) + 8,
+								((std::max(arrowY - startY, startY - arrowY) + 1) * 24), WHITE, topScreen, false);
+							arrow[topScreen].position((arrowX * 24 * scale) + x + 16, (arrowY * 24) + y + 4);
 						}
-						updateOam();
+						arrow[topScreen].update();
 					}
 				} else if(currentPokemon(arrowX, arrowY)->species() != pksm::Species::None) {
 					int temp = 1;
@@ -980,14 +840,11 @@ void manageBoxes(void) {
 
 						if(!heldMode) {
 							if(heldInParty)
-								setSpriteVisibility(partyIconID[heldPokemon[0].position], heldPokemonScreen, false);
-							else if(!heldPokemonScreen)
-								setSpriteVisibility(heldPokemon[0].position, heldPokemonScreen, false);
+								partySprites[heldPokemon[0].position].visibility(false);
 							else
-								fillSpriteColor(heldPokemon[0].position, heldPokemonScreen, CLEAR);
+								boxSprites[heldPokemonScreen][heldPokemon[0].position].visibility(false);
 						}
-						if(!topScreen)
-							setSpriteVisibility(heldPokemonID, topScreen, true);
+						heldPokemonSprites[topScreen].visibility(true);
 						drawPokemonInfo(*heldPokemon[0].pkm);
 					}
 				} else if(arrowMode == 0) {
@@ -999,7 +856,7 @@ void manageBoxes(void) {
 				if(partyShown) {
 					if(topScreen) {
 						topScreen = false;
-						setSpritePosition(arrowID, true, -16, -16);
+						arrow[true].visibility(false);
 					}
 					arrowX = 0, arrowY = 0;
 					inParty = true;
@@ -1027,14 +884,10 @@ void manageBoxes(void) {
 					drawBox(topScreen);
 				}
 
-				setSpritePosition(heldPokemonID, true, -32, -32);
-				setSpriteVisibility(heldPokemonID, false, false);
-				if(topScreen) {
-					setSpriteVisibility(arrowID, false, false);
-				} else {
-					setSpriteVisibility(arrowID, false, true);
-					setSpritePosition(arrowID, true, -16, -16);
-				}
+				heldPokemonSprites[true].visibility(false);
+				heldPokemonSprites[false].visibility(false);
+				arrow[!topScreen].visibility(false);
+				arrow[topScreen].visibility(true);
 
 				drawPokemonInfo(*currentPokemon(arrowX, arrowY));
 				goto returnPokemon;
@@ -1044,27 +897,27 @@ void manageBoxes(void) {
 			}
 		} else if(pressed & KEY_X && heldPokemon.size() == 0 && !partyShown) {
 			Sound::play(Sound::click);
-			drawRectangle(0, 0, 256, 192, CLEAR, false, true);
+			Graphics::drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 			if(!xMenu())
 				break;
 		} else if(pressed & KEY_Y && !partyShown) {
 			if(heldPokemon.size() == 0) {
 			filter:
-				setSpriteVisibility(arrowID, false, false);
-				updateOam();
+				arrow[topScreen].visibility(false);
+				arrow[topScreen].update();
 				if(Input::getBool(i18n::localize(Config::getLang("lang"), "filter"),
 								  i18n::localize(Config::getLang("lang"), "sort"))) {
-					drawRectangle(0, 0, 256, 192, CLEAR, false, true);
+					Graphics::drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 					changeFilter(filter);
 				} else {
-					drawRectangle(0, 0, 256, 192, CLEAR, false, true);
+					Graphics::drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 					sortMenu(topScreen);
 				}
 
 				// Redraw
-				setSpriteVisibility(arrowID, false, !topScreen);
-				drawRectangle(0, 0, 256, 192, CLEAR, false, true);
-				drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
+				arrow[topScreen].visibility(!topScreen);
+				Graphics::drawRectangle(0, 0, 256, 192, CLEAR, false, true);
+				Graphics::drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
 				drawBox(false);
 				drawPokemonInfo(*currentPokemon(arrowX, arrowY));
 				if(topScreen)
@@ -1082,11 +935,11 @@ void manageBoxes(void) {
 							else {
 								if(topScreen) {
 									topScreen = false;
-									setSpritePosition(arrowID, true, -16, -16);
-									setSpriteVisibility(arrowID, false, true);
+									arrow[true].visibility(false);
+									arrow[false].visibility(true);
 									if(heldPokemon.size() > 0) {
-										setSpritePosition(heldPokemonID, true, -32, -32);
-										setSpriteVisibility(heldPokemonID, false, true);
+										heldPokemonSprites[true].visibility(false);
+										heldPokemonSprites[false].visibility(true);
 									}
 								}
 								inParty = false;
@@ -1103,8 +956,8 @@ void manageBoxes(void) {
 					goto switchBoxLeft;
 				} else if(touch.px > 141 && touch.px < 161 && touch.py > 19 && touch.py < 37) { // Switch to next box
 					goto switchBoxRight;
-				} else if(touch.px >= boxButton.width + 5 && touch.px <= boxButton.width + 5 + search.width &&
-						  touch.py >= 192 - search.height) { // Filter button
+				} else if(touch.px >= boxButton.width() + 5 && touch.px <= boxButton.width() + 5 + search.width() &&
+						  touch.py >= 192 - search.height()) { // Filter button
 					goto filter;
 				}
 			}
@@ -1119,10 +972,10 @@ void manageBoxes(void) {
 						else {
 							if(topScreen) {
 								topScreen = false;
-								setSpritePosition(arrowID, true, -16, -16);
-								setSpritePosition(heldPokemonID, true, -32, -32);
-								setSpriteVisibility(arrowID, false, true);
-								setSpriteVisibility(heldPokemonID, false, true);
+								arrow[true].visibility(false);
+								arrow[false].visibility(true);
+								heldPokemonSprites[true].visibility(false);
+								heldPokemonSprites[false].visibility(true);
 							}
 							inParty = true;
 							arrowX  = i - ((i / 2) * 2);
@@ -1131,7 +984,7 @@ void manageBoxes(void) {
 					}
 				}
 			}
-			if(touch.px <= boxButton.width && touch.py >= 192 - boxButton.height) {
+			if(touch.px <= boxButton.width() && touch.py >= 192 - boxButton.height()) {
 				goto toggleParty;
 			}
 		}
@@ -1142,19 +995,19 @@ void manageBoxes(void) {
 			// If the Arrow Y is at -2, switch to the top screen
 			arrowY    = 4;
 			topScreen = true;
-			setSpriteVisibility(arrowID, false, false);
+			arrow[topScreen].visibility(false);
 			if(heldPokemon.size()) {
-				setSpriteVisibility(heldPokemonID, false, false);
+				heldPokemonSprites[false].visibility(false);
 			}
 		} else if(arrowY == 5 && topScreen) {
 			// If the Arrow Y is at 5, switch to the bottom screen
 			arrowY    = -1;
 			topScreen = false;
-			setSpriteVisibility(arrowID, false, true);
-			setSpritePosition(arrowID, true, -16, -16);
+			arrow[true].visibility(false);
+			arrow[false].visibility(true);
 			if(heldPokemon.size()) {
-				setSpriteVisibility(heldPokemonID, false, true);
-				setSpritePosition(heldPokemonID, true, -32, -32);
+				heldPokemonSprites[true].visibility(false);
+				heldPokemonSprites[false].visibility(true);
 			}
 		}
 
@@ -1170,10 +1023,10 @@ void manageBoxes(void) {
 				if(arrowMode == 0) {
 					if(topScreen) {
 						topScreen = false;
-						setSpritePosition(arrowID, true, -16, -16);
-						setSpritePosition(heldPokemonID, true, -32, -32);
-						setSpriteVisibility(arrowID, false, true);
-						setSpriteVisibility(heldPokemonID, false, true);
+						arrow[topScreen].position(-16, -16);
+						heldPokemonSprites[topScreen].position(-32, -32);
+						arrow[topScreen].visibility(true);
+						heldPokemonSprites[topScreen].visibility(true);
 					}
 					inParty = true;
 					arrowX = 0, arrowY = 0;
@@ -1192,40 +1045,34 @@ void manageBoxes(void) {
 
 		if(inParty && arrowY < 3) {
 			// Move it to the party tray if there
-			setSpritePosition(arrowID,
-							  topScreen,
-							  PARTY_TRAY_X + partySpritePos[(arrowY * 2) + (arrowX)].first + partyX + 16,
-							  PARTY_TRAY_Y + partySpritePos[(arrowY * 2) + (arrowX)].second + partyY + 4);
+			arrow[topScreen].position(PARTY_TRAY_X + partySpritePos[(arrowY * 2) + (arrowX)].first + partyX + 16,
+									  PARTY_TRAY_Y + partySpritePos[(arrowY * 2) + (arrowX)].second + partyY + 4);
 			if(heldPokemon.size())
-				setSpritePosition(heldPokemonID,
-								  topScreen,
-								  PARTY_TRAY_X + partySpritePos[(arrowY * 2) + (arrowX)].first + partyX + 8,
-								  PARTY_TRAY_Y + partySpritePos[(arrowY * 2) + (arrowX)].second + partyY);
+				heldPokemonSprites[topScreen].position(
+					PARTY_TRAY_X + partySpritePos[(arrowY * 2) + (arrowX)].first + partyX + 8,
+					PARTY_TRAY_Y + partySpritePos[(arrowY * 2) + (arrowX)].second + partyY);
 		} else if(arrowY == -1) {
 			// If the Arrow Y is at -1 (box title), draw it in the middle
-			setSpritePosition(arrowID, topScreen, 90, 16);
+			arrow[topScreen].position(90, 16);
 			if(heldPokemon.size())
-				setSpritePosition(heldPokemonID, topScreen, 82, 12);
+				heldPokemonSprites[topScreen].position(82, 12);
 		} else if(arrowY < 5) {
 			int x = topScreen ? 8 : pkmnX, y = topScreen ? 32 : pkmnY;
 			// If in the main box, move it to the spot in the box it's at
 			float scale = topScreen ? WIDE_SCALE : 1;
 			int offset  = scale == 1 ? 0 : 12;
-			setSpritePosition(arrowID, topScreen, (arrowX * 24 * scale) + x + 16 + offset, (arrowY * 24) + y + 4);
+			arrow[topScreen].position((arrowX * 24 * scale) + x + 16 + offset, (arrowY * 24) + y + 4);
 			if(heldPokemon.size())
-				setSpritePosition(heldPokemonID, topScreen, (arrowX * 24 * scale) + x + 8 + offset, (arrowY * 24) + y);
+				heldPokemonSprites[topScreen].position((arrowX * 24 * scale) + x + 8 + offset, (arrowY * 24) + y);
 		} else {
 			// Or move it to Party button
-			setSpritePosition(arrowID,
-							  topScreen,
-							  getTextWidth(i18n::localize(Config::getLang("lang"), "party")) + 6,
-							  191 - boxButton.height);
+			arrow[topScreen].position(Gui::font.calcWidth(i18n::localize(Config::getLang("lang"), "party")) + 6,
+									  191 - boxButton.height());
 			if(heldPokemon.size())
-				setSpritePosition(heldPokemonID,
-								  topScreen,
-								  getTextWidth(i18n::localize(Config::getLang("lang"), "party")) - 2,
-								  191 - boxButton.height - 4);
+				heldPokemonSprites[topScreen].position(
+					Gui::font.calcWidth(i18n::localize(Config::getLang("lang"), "party")) - 2,
+					191 - boxButton.height() - 4);
 		}
-		updateOam();
+		arrow[topScreen].update();
 	}
 }
