@@ -154,13 +154,13 @@ int selectForm(const pksm::PKX &pkm) {
 	// Draw forms
 	for(int i = 0; i < save->formCount(pkm.species()); i++) {
 		Image image = loadPokemonSprite(getPokemonIndex(pkm.species(), i, pkm.gender(), pkm.egg()));
-		boxSprites[false][i].drawImage(0, 0, image);
-		boxSprites[false][i].position((i * 32) + (128 - ((32 * save->formCount(pkm.species())) / 2)), 80);
-		boxSprites[false][i].priority(1);
-		boxSprites[false][i].visibility(true);
-		boxSprites[false][i].alpha(15);
+		boxSprites[false][i]->drawImage(0, 0, image);
+		boxSprites[false][i]->position((i * 32) + (128 - ((32 * save->formCount(pkm.species())) / 2)), 80);
+		boxSprites[false][i]->priority(1);
+		boxSprites[false][i]->visibility(true);
+		boxSprites[false][i]->alpha(15);
 	}
-	boxSprites[false][0].update();
+	boxSprites[false][0]->update();
 
 	// Move arrow to current form
 	arrow[false].visibility(true);
@@ -529,14 +529,14 @@ pksm::Ball selectPokeball(pksm::Ball currentBall) {
 	// Draw Pokéballs
 	for(int y = 0; y < 5; y++) {
 		for(int x = 0; x < 5; x++) {
-			boxSprites[false][(y * 5) + x].clear();
-			boxSprites[false][(y * 5) + x].drawImage(0, 0, ball[(y * 5) + x + 1]);
-			boxSprites[false][(y * 5) + x].position((x * 48) + 24, (y * 32) + 23);
-			boxSprites[false][(y * 5) + x].visibility(true);
-			boxSprites[false][(y * 5) + x].alpha(15);
+			boxSprites[false][(y * 5) + x]->clear();
+			boxSprites[false][(y * 5) + x]->drawImage(0, 0, ball[(y * 5) + x + 1]);
+			boxSprites[false][(y * 5) + x]->position((x * 48) + 24, (y * 32) + 23);
+			boxSprites[false][(y * 5) + x]->visibility(true);
+			boxSprites[false][(y * 5) + x]->alpha(15);
 		}
 	}
-	boxSprites[false][0].update();
+	boxSprites[false][0]->update();
 
 	u8 ball    = u8(currentBall) - 1;
 	int arrowX = ball - ((ball / 5) * 5), selection = ball / 5, pressed, held;
@@ -616,11 +616,11 @@ int selectWallpaper(int currentWallpaper) {
 		for(int x = 0; x < 6; x++) {
 			Image image(boxBgPath(false, (y * 6) + x));
 			if(!(image.width() == 0 || image.height() == 0)) {
-				boxSprites[false][(y * 6) + x].drawImage(0, 0, image, 32.0f / std::max(image.width(), image.height()),
-														 32.0f / std::max(image.width(), image.height()));
-				boxSprites[false][(y * 6) + x].position((x * 40) + 12, (y * 38) + 24);
-				boxSprites[false][(y * 6) + x].visibility(true);
-				boxSprites[false][(y * 6) + x].alpha(15);
+				boxSprites[false][(y * 6) + x]->drawImage(0, 0, image, 32.0f / std::max(image.width(), image.height()),
+														  32.0f / std::max(image.width(), image.height()));
+				boxSprites[false][(y * 6) + x]->position((x * 40) + 12, (y * 38) + 24);
+				boxSprites[false][(y * 6) + x]->visibility(true);
+				boxSprites[false][(y * 6) + x]->alpha(15);
 			}
 		}
 	}
@@ -1078,12 +1078,12 @@ pksm::Type selectHPType(pksm::Type type) {
 	// Draw types
 	for(int y = 0; y < 4; y++) {
 		for(int x = 0; x < 4; x++) {
-			boxSprites[false][(y * 4) + x].clear();
-			boxSprites[false][(y * 4) + x].drawImage(0, 0, types[(y * 4) + x + 1]);
-			boxSprites[false][(y * 4) + x].position((x * 52) + 34 + ((32 - types[0].width()) / 2),
-													(y * 32) + 42 + ((12 - types[0].height()) / 2));
-			boxSprites[false][(y * 4) + x].visibility(true);
-			boxSprites[false][(y * 4) + x].alpha(15);
+			boxSprites[false][(y * 4) + x]->clear();
+			boxSprites[false][(y * 4) + x]->drawImage(0, 0, types[(y * 4) + x + 1]);
+			boxSprites[false][(y * 4) + x]->position((x * 52) + 34 + ((32 - types[0].width()) / 2),
+													 (y * 32) + 42 + ((12 - types[0].height()) / 2));
+			boxSprites[false][(y * 4) + x]->visibility(true);
+			boxSprites[false][(y * 4) + x]->alpha(15);
 		}
 	}
 	arrow[false].update();

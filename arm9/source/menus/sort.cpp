@@ -255,7 +255,7 @@ void sortMenu(bool top) {
 		10);
 	// Hide all Pokémon sprites
 	for(int i = 0; i < 30; i++) {
-		boxSprites[false][i].visibility(false);
+		boxSprites[false][i]->visibility(false);
 	}
 	arrow[false].update();
 

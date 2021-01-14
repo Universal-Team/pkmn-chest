@@ -88,15 +88,15 @@ void drawXMenuButtons(unsigned menuSelection) {
 			Gui::font.print((i == 3) ? xMenuButtons[i].label
 									 : i18n::localize(Config::getLang("lang"), xMenuButtons[i].label),
 							xMenuButtons[i].x + 47, xMenuButtons[i].y + 14, false, true);
-		menuSprites[i].alpha(menuSelection == i ? 8 : 15);
+		menuSprites[i]->alpha(menuSelection == i ? 8 : 15);
 	}
-	menuSprites[0].update();
+	menuSprites[0]->update();
 }
 
 bool xMenu(void) {
 	// Hide bottom sprites
 	for(unsigned i = 0; i < 30; i++) {
-		boxSprites[false][i].visibility(false);
+		boxSprites[false][i]->visibility(false);
 	}
 	arrow[false].visibility(false);
 	arrow[false].update();
@@ -109,10 +109,10 @@ bool xMenu(void) {
 
 	// Enable sprites and set positions
 	for(unsigned i = 0; i < menuSprites.size(); i++) {
-		menuSprites[i].position(xMenuButtons[i].x + 3, xMenuButtons[i].y + 6);
-		menuSprites[i].visibility(true);
+		menuSprites[i]->position(xMenuButtons[i].x + 3, xMenuButtons[i].y + 6);
+		menuSprites[i]->visibility(true);
 	}
-	menuSprites[0].update();
+	menuSprites[0]->update();
 
 	drawXMenuButtons(-1);
 
@@ -139,9 +139,9 @@ bool xMenu(void) {
 						iconDirection = true;
 				}
 				if(iconOffset < 7) {
-					menuSprites[menuSelection].position(xMenuButtons[menuSelection].x + 3,
-														xMenuButtons[menuSelection].y + 6 - (iconOffset / 3));
-					menuSprites[menuSelection].update();
+					menuSprites[menuSelection]->position(xMenuButtons[menuSelection].x + 3,
+														 xMenuButtons[menuSelection].y + 6 - (iconOffset / 3));
+					menuSprites[menuSelection]->update();
 				}
 			}
 		} while(!pressed);
@@ -150,8 +150,8 @@ bool xMenu(void) {
 			menuSelection = 0;
 		} else if(pressed & KEY_UP) {
 			if(menuSelection > 1) {
-				menuSprites[menuSelection].position(xMenuButtons[menuSelection].x + 3,
-													xMenuButtons[menuSelection].y + 6);
+				menuSprites[menuSelection]->position(xMenuButtons[menuSelection].x + 3,
+													 xMenuButtons[menuSelection].y + 6);
 				iconOffset    = 0;
 				iconDirection = true;
 
@@ -159,8 +159,8 @@ bool xMenu(void) {
 			}
 		} else if(pressed & KEY_DOWN) {
 			if(menuSelection < (int)xMenuButtons.size() - 2) {
-				menuSprites[menuSelection].position(xMenuButtons[menuSelection].x + 3,
-													xMenuButtons[menuSelection].y + 6);
+				menuSprites[menuSelection]->position(xMenuButtons[menuSelection].x + 3,
+													 xMenuButtons[menuSelection].y + 6);
 				iconOffset    = 0;
 				iconDirection = true;
 
@@ -168,8 +168,8 @@ bool xMenu(void) {
 			}
 		} else if(pressed & KEY_LEFT) {
 			if(menuSelection % 2) {
-				menuSprites[menuSelection].position(xMenuButtons[menuSelection].x + 3,
-													xMenuButtons[menuSelection].y + 6);
+				menuSprites[menuSelection]->position(xMenuButtons[menuSelection].x + 3,
+													 xMenuButtons[menuSelection].y + 6);
 				iconOffset    = 0;
 				iconDirection = true;
 
@@ -177,8 +177,8 @@ bool xMenu(void) {
 			}
 		} else if(pressed & KEY_RIGHT) {
 			if(!(menuSelection % 2)) {
-				menuSprites[menuSelection].position(xMenuButtons[menuSelection].x + 3,
-													xMenuButtons[menuSelection].y + 6);
+				menuSprites[menuSelection]->position(xMenuButtons[menuSelection].x + 3,
+													 xMenuButtons[menuSelection].y + 6);
 				iconOffset    = 0;
 				iconDirection = true;
 
@@ -193,8 +193,8 @@ bool xMenu(void) {
 				}
 			}
 			if(menuSelection != -1) {
-				menuSprites[menuSelection].position(xMenuButtons[menuSelection].x + 3,
-													xMenuButtons[menuSelection].y + 6);
+				menuSprites[menuSelection]->position(xMenuButtons[menuSelection].x + 3,
+													 xMenuButtons[menuSelection].y + 6);
 				iconOffset    = 0;
 				iconDirection = true;
 
@@ -212,9 +212,9 @@ bool xMenu(void) {
 				arrow[false].visibility(true);
 			// Hide menu icons
 			for(int i = 0; i < 6; i++) {
-				menuSprites[i].visibility(false);
+				menuSprites[i]->visibility(false);
 			}
-			menuSprites[0].update();
+			menuSprites[0]->update();
 			Graphics::drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
 			Graphics::drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 			drawBox(false);
@@ -226,9 +226,9 @@ bool xMenu(void) {
 			iconOffset    = 0;
 			iconDirection = true;
 			for(int i = 0; i < 6; i++) {
-				menuSprites[i].visibility(false);
+				menuSprites[i]->visibility(false);
 			}
-			menuSprites[0].update();
+			menuSprites[0]->update();
 			Sound::play(Sound::click);
 			switch(selectedOption) {
 				case 1: // Options
@@ -251,8 +251,8 @@ bool xMenu(void) {
 					savePrompt();
 					// Hide remaining sprites
 					for(unsigned i = 0; i < boxSprites[true].size(); i++) {
-						boxSprites[false][i].visibility(false);
-						boxSprites[true][i].visibility(false);
+						boxSprites[false][i]->visibility(false);
+						boxSprites[true][i]->visibility(false);
 					}
 					Sprite::update(true);
 					Sprite::update(false);
@@ -262,10 +262,10 @@ bool xMenu(void) {
 			// Redraw menu
 			menuBg.draw(0, 0, false, 3);
 			for(unsigned i = 0; i < menuSprites.size(); i++) {
-				menuSprites[i].position(xMenuButtons[i].x + 3, xMenuButtons[i].y + 6);
-				menuSprites[i].visibility(true);
+				menuSprites[i]->position(xMenuButtons[i].x + 3, xMenuButtons[i].y + 6);
+				menuSprites[i]->visibility(true);
 			}
-			menuSprites[0].update();
+			menuSprites[0]->update();
 			drawXMenuButtons(menuSelection);
 
 			selectedOption = -1;

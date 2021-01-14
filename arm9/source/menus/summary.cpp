@@ -111,9 +111,9 @@ void changeAbility(pksm::PKX &pkm) {
 void drawSummaryPage(const pksm::PKX &pkm, bool background) {
 	// Hide sprites
 	for(int i = 0; i < 30; i++) {
-		boxSprites[false][i].visibility(false);
+		boxSprites[false][i]->visibility(false);
 	}
-	boxSprites[false][0].update();
+	boxSprites[false][0]->update();
 
 	if(background) {
 		// Draw background
