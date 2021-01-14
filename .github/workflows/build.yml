@@ -31,7 +31,7 @@ jobs:
           submodules: recursive
       - name: Install tools
         run: |
-          curl -L https://github.com/Universal-Team/bmp2ds/releases/download/v1.0.0/bmp2ds-linux -o bmp2ds
+          curl -L https://github.com/Universal-Team/bmp2ds/releases/latest/download/bmp2ds-linux -o bmp2ds
           chmod +x bmp2ds
           mv bmp2ds /usr/local/bin
       - name: Build
