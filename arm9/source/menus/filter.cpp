@@ -202,7 +202,7 @@ void changeFilter(std::shared_ptr<pksm::PKFilter> filter) {
 	arrow[false].position(4 + Gui::font.calcWidth(filterEnabled[0] ? "o" : "x") + 2, 10);
 	// Hide all Pokémon sprites
 	for(int i = 0; i < 30; i++) {
-		boxSprites[false][i]->visibility(false);
+		boxSprites[false][i].visibility(false);
 	}
 	arrow[false].update();
 

@@ -10,7 +10,7 @@
 
 extern bool topScreen, inParty;
 extern Sprite arrow[2], heldPokemonSprites[2], keyboardSprite;
-extern std::vector<std::unique_ptr<Sprite>> boxSprites[2], menuSprites, partySprites;
+extern std::vector<Sprite> boxSprites[2], menuSprites, partySprites;
 extern int currentSaveBox, currentBankBox, arrowMode, boxTitleX, boxTitleY, pkmnX, pkmnY;
 extern std::string savePath;
 extern Image arrowImg[3], ball[BALL_COUNT], bankBox, boxBgTop, boxButton, infoBox, itemIcon, keyboardKey, listBg, menuBg, menuButton, menuButtonBlue, party, search, setToSelf, shiny;

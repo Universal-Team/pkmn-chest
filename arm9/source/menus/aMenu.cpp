@@ -135,9 +135,9 @@ int aMenu(int pkmX, int pkmY, std::vector<Label> &buttons, int buttonMode) {
 				if(partyShown) {
 					// Hide party Pokémon
 					for(unsigned int i = 0; i < partySprites.size(); i++) {
-						partySprites[i]->visibility(false);
+						partySprites[i].visibility(false);
 					}
-					partySprites[0]->update();
+					partySprites[0].update();
 				}
 				if(topScreen)
 					Banks::bank->pkm(showPokemonSummary(*currentPokemon(pkmX, pkmY)), currentBankBox,
@@ -171,9 +171,9 @@ int aMenu(int pkmX, int pkmY, std::vector<Label> &buttons, int buttonMode) {
 				if(partyShown) {
 					// Hide party Pokémon
 					for(unsigned int i = 0; i < partySprites.size(); i++) {
-						partySprites[i]->visibility(false);
+						partySprites[i].visibility(false);
 					}
-					partySprites[0]->update();
+					partySprites[0].update();
 				}
 				if(Input::getBool(i18n::localize(Config::getLang("lang"), "release"),
 								  i18n::localize(Config::getLang("lang"), "cancel"))) {
@@ -202,9 +202,9 @@ int aMenu(int pkmX, int pkmY, std::vector<Label> &buttons, int buttonMode) {
 				if(partyShown) {
 					// Hide party Pokémon
 					for(unsigned int i = 0; i < partySprites.size(); i++) {
-						partySprites[i]->visibility(false);
+						partySprites[i].visibility(false);
 					}
-					partySprites[0]->update();
+					partySprites[0].update();
 				}
 
 				FILE *out = fopen(getPkxOutputPath(*currentPokemon(pkmX, pkmY)).c_str(), "wb");
@@ -318,7 +318,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label> &buttons, int buttonMode) {
 				if(!topScreen) {
 					// Hide sprites
 					for(int i = 0; i < 30; i++)
-						boxSprites[false][i]->visibility(false);
+						boxSprites[false][i].visibility(false);
 					arrow[false].visibility(false);
 					arrow[false].update();
 
@@ -378,12 +378,12 @@ int aMenu(int pkmX, int pkmY, std::vector<Label> &buttons, int buttonMode) {
 			if(menuSelection == 0) { // Inject
 				// Hide sprites
 				for(int i = 0; i < 30; i++) {
-					boxSprites[false][i]->visibility(false);
+					boxSprites[false][i].visibility(false);
 				}
 				if(partyShown) {
 					// Hide party Pokémon
 					for(unsigned int i = 0; i < partySprites.size(); i++) {
-						partySprites[i]->visibility(false);
+						partySprites[i].visibility(false);
 					}
 				}
 				arrow[false].visibility(false);
@@ -481,7 +481,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label> &buttons, int buttonMode) {
 				if(partyShown) {
 					// Hide party Pokémon
 					for(unsigned int i = 0; i < partySprites.size(); i++) {
-						partySprites[i]->visibility(false);
+						partySprites[i].visibility(false);
 					}
 					arrow[false].update();
 				}

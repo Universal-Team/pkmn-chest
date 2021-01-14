@@ -21,8 +21,6 @@ bool useTwlCfg = false;
 extern std::vector<std::string> songs;
 
 void init(int argc, char **argv) {
-	consoleDebugInit(DebugDevice_NOCASH);
-
 	useTwlCfg = (isDSiMode() && (*(u8 *)0x02000400 & 0x0F) && (*(u8 *)0x02000401 == 0) && (*(u8 *)0x02000402 == 0) &&
 				 (*(u8 *)0x02000404 == 0));
 	Graphics::init();

@@ -50,13 +50,11 @@ INCLUDES	:=	include \
 				include/saves \
 				include/utils include/utils/bank
 FORMAT_SOURCES	:=	source \
-					Universal-Core/source \
 					source/graphics \
 					source/menus \
 					source/saves \
 					source/utils
 FORMAT_INCLUDES	:=	include \
-					Universal-Core/include \
 					include/graphics \
 					include/menus \
 					include/saves \

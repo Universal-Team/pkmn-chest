@@ -15,21 +15,21 @@ int partyX = 0, partyY = 0;
 void fillPartySprites(void) {
 	for(unsigned i = 0; i < partySprites.size(); i++) {
 		if(save->pkm(i)->species() == pksm::Species::None) {
-			partySprites[i]->visibility(false);
+			partySprites[i].visibility(false);
 		} else {
 			Image image = loadPokemonSprite(getPokemonIndex(*save->pkm(i)));
-			partySprites[i]->drawImage(0, 0, image);
-			partySprites[i]->visibility(true);
+			partySprites[i].drawImage(0, 0, image);
+			partySprites[i].visibility(true);
 			if(save->pkm(i)->heldItem())
-				partySprites[i]->drawImage(17, 32 - itemIcon.height(), itemIcon);
+				partySprites[i].drawImage(17, 32 - itemIcon.height(), itemIcon);
 		}
 	}
-	partySprites[0]->update();
+	partySprites[0].update();
 }
 
 void fadeSprites(int alpha) {
 	for(int i = 0; i < 30; i++) {
-		boxSprites[false][i]->alpha(alpha);
+		boxSprites[false][i].alpha(alpha);
 	}
 }
 
@@ -63,10 +63,10 @@ void showParty(void) {
 		partyY -= 6;
 		bgSetScroll(6, -partyX, -partyY);
 		for(int j = 0; j < 6; j++) {
-			partySprites[j]->position(PARTY_TRAY_X + partySpritePos[j].first + partyX,
-									  std::min(PARTY_TRAY_Y + partySpritePos[j].second + partyY, 192));
+			partySprites[j].position(PARTY_TRAY_X + partySpritePos[j].first + partyX,
+									 std::min(PARTY_TRAY_Y + partySpritePos[j].second + partyY, 192));
 		}
-		partySprites[0]->update();
+		partySprites[0].update();
 		bgUpdate();
 		swiWaitForVBlank();
 	}
@@ -74,8 +74,8 @@ void showParty(void) {
 	// Align to y = 0
 	partyY = 0;
 	for(int j = 0; j < 6; j++) {
-		partySprites[j]->position(PARTY_TRAY_X + partySpritePos[j].first + partyX,
-								  PARTY_TRAY_Y + partySpritePos[j].second + partyY);
+		partySprites[j].position(PARTY_TRAY_X + partySpritePos[j].first + partyX,
+								 PARTY_TRAY_Y + partySpritePos[j].second + partyY);
 	}
 	bgSetScroll(6, -partyX, -partyY);
 	bgUpdate();
@@ -90,10 +90,10 @@ void hideParty(void) {
 		partyY += 6;
 		bgSetScroll(6, -partyX, -partyY);
 		for(int j = 0; j < 6; j++) {
-			partySprites[j]->position(PARTY_TRAY_X + partySpritePos[j].first + partyX,
-									  std::min(PARTY_TRAY_Y + partySpritePos[j].second + partyY, 192));
+			partySprites[j].position(PARTY_TRAY_X + partySpritePos[j].first + partyX,
+									 std::min(PARTY_TRAY_Y + partySpritePos[j].second + partyY, 192));
 		}
-		partySprites[0]->update();
+		partySprites[0].update();
 		bgUpdate();
 		swiWaitForVBlank();
 	}
@@ -111,9 +111,9 @@ void hideParty(void) {
 
 	// Hide party sprites
 	for(int i = 0; i < 6; i++) {
-		partySprites[i]->visibility(false);
+		partySprites[i].visibility(false);
 	}
-	partySprites[0]->update();
+	partySprites[0].update();
 }
 
 void toggleParty(void) {
@@ -137,10 +137,10 @@ void moveParty(int arrowMode, bool holdingPokemon) {
 			partyX -= 8;
 			bgSetScroll(6, -partyX, -partyY);
 			for(int j = 0; j < 6; j++) {
-				partySprites[j]->position(PARTY_TRAY_X + partySpritePos[j].first + partyX,
-										  PARTY_TRAY_Y + partySpritePos[j].second);
+				partySprites[j].position(PARTY_TRAY_X + partySpritePos[j].first + partyX,
+										 PARTY_TRAY_Y + partySpritePos[j].second);
 			}
-			partySprites[0]->update();
+			partySprites[0].update();
 			bgUpdate();
 			swiWaitForVBlank();
 		}
@@ -149,10 +149,10 @@ void moveParty(int arrowMode, bool holdingPokemon) {
 			partyX += 8;
 			bgSetScroll(6, -partyX, -partyY);
 			for(int j = 0; j < 6; j++) {
-				partySprites[j]->position(PARTY_TRAY_X + partySpritePos[j].first + partyX,
-										  PARTY_TRAY_Y + partySpritePos[j].second);
+				partySprites[j].position(PARTY_TRAY_X + partySpritePos[j].first + partyX,
+										 PARTY_TRAY_Y + partySpritePos[j].second);
 			}
-			partySprites[0]->update();
+			partySprites[0].update();
 			bgUpdate();
 			swiWaitForVBlank();
 		}
