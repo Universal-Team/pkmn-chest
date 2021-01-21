@@ -117,7 +117,7 @@ void init(int argc, char **argv) {
 	hideLoadingLogo();
 }
 
-void mainLoop(void) {
+void mainLoop(int argc, char **argv) {
 	while(1) {
 		savePath = browseForSave();
 		if(savePath == "%EXIT%")
@@ -139,7 +139,23 @@ void mainLoop(void) {
 int main(int argc, char **argv) {
 	try {
 		init(argc, argv);
-		mainLoop();
+
+		bool foundInArgv = false;
+		for(int i = 1; i < argc; i++) {
+			if(!loadSave(argv[i])) {
+				continue;
+			}
+			foundInArgv = true;
+			currentSaveBox = save->currentBox();
+			currentBankBox = 0;
+			// Decrypt the box data
+			save->cryptBoxData(true);
+
+			manageBoxes();
+		}
+
+		if(!foundInArgv)
+			mainLoop(argc, argv);
 	} catch(std::exception &e) {
 		Gui::warn(e.what());
 	}
