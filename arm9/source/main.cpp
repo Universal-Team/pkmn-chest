@@ -117,7 +117,7 @@ void init(int argc, char **argv) {
 	hideLoadingLogo();
 }
 
-void mainLoop(int argc, char **argv) {
+void mainLoop() {
 	while(1) {
 		savePath = browseForSave();
 		if(savePath == "%EXIT%")
@@ -155,7 +155,7 @@ int main(int argc, char **argv) {
 		}
 
 		if(!foundInArgv)
-			mainLoop(argc, argv);
+			mainLoop();
 	} catch(std::exception &e) {
 		Gui::warn(e.what());
 	}
