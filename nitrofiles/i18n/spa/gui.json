@@ -3,7 +3,7 @@
 	"attack": "Ataque",
 	"attackIV": "IV Ataque",
 	"back": "Volver",
-	"BACKUP_FAIL_SAVE": "¡La copia de seguridad del cofre ha\nfallado!\n¿Guardar el cofre de\ntodos modos?",
+	"BACKUP_FAIL_SAVE": "¡El respaldo del cofre ha\nfallado!\n¿Guardar el cofre de\ntodos modos?",
 	"backupAmount": "Respaldos",
 	"badges": "Medallas",
 	"bag": "Bolsa",
