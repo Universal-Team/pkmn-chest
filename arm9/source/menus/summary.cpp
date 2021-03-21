@@ -161,16 +161,10 @@ void drawSummaryPage(const pksm::PKX &pkm, bool background) {
 	drawRectangle(0, 0, 256, 192, 0, false, true);
 
 	// Print Pokémon name
-	const std::string &name = pkm.nicknamed() ? pkm.nickname() : i18n::species(Config::getLang("lang"), pkm.species());
-	printTextTintedMaxW(
-		name,
-		65,
-		1,
-		(pkm.gender() ? (pkm.gender() == pksm::Gender::Female ? TextColor::red : TextColor::gray) : TextColor::blue),
-		165,
-		8,
-		false,
-		true);
+	// const std::string &name = pkm.nicknamed() ? pkm.nickname() : i18n::species(Config::getLang("lang"), pkm.species());
+	const std::string &name = pkm.nickname();
+	if(pkm.language() != Config::getLang("lang"))
+	printTextTintedMaxW(name, 65, 1, (pkm.gender() ? (pkm.gender() == pksm::Gender::Female ? TextColor::red : TextColor::gray) : TextColor::blue), 165, 8, false, true);
 
 	// Draw/clear shiny star
 	if(pkm.shiny())
@@ -325,7 +319,7 @@ const pksm::PKX &showPokemonSummary(pksm::PKX &pkm) {
 					case 0: {
 						pksm::Species species = selectItem<pksm::Species>(
 							pkm.species(), save->availableSpecies(), i18n::rawSpecies(Config::getLang("lang")));
-						bool nicknamed = pkm.nicknamed(); // Gotta check before changing species for G3
+						bool nicknamed = false; // pkm.nicknamed(); // Gotta check before changing species for G3
 						if(species != pksm::Species::INVALID) {
 							pkm.species(species);
 							if(!nicknamed) {
@@ -498,13 +492,9 @@ const pksm::PKX &showPokemonSummary(pksm::PKX &pkm) {
 							  textC1[selection].x + getTextWidthMaxW(textC1[selection].text, 80),
 							  textC1[selection].y - 6);
 		} else if(column == 2 && selection == 0) { // 1, 2, & 3 behave the same after selection 0
-			setSpritePosition(
-				arrowID,
-				false,
-				165 +
-					getTextWidthMaxW(
-						pkm.nicknamed() ? pkm.nickname() : i18n::species(Config::getLang("lang"), pkm.species()), 65),
-				2);
+			setSpritePosition(arrowID, false,
+							  165 + getTextWidthMaxW(pkm.nickname(), 65),
+							  2);
 		} else if(column == 3 && selection == 0) {
 			setSpritePosition(arrowID, false, 233 + 16, 2);
 		} else {

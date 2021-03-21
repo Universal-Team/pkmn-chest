@@ -401,30 +401,10 @@ void drawPokemonInfo(const pksm::PKX &pkm) {
 		printTextTintedScaled(str, WIDE_SCALE, 1, TextColor::gray, 170, 8, true, true);
 
 		// Print name
-		if(pkm.nicknamed())
-			printTextTintedMaxW(pkm.nickname(),
-								80 * WIDE_SCALE,
-								1,
-								(pkm.gender()
-									 ? (pkm.gender() == pksm::Gender::Female ? TextColor::red : TextColor::gray)
-									 : TextColor::blue),
-								170,
-								25,
-								true,
-								true,
-								WIDE_SCALE);
-		else
-			printTextTintedMaxW(i18n::species(Config::getLang("lang"), pkm.species()),
-								80 * WIDE_SCALE,
-								1,
-								(pkm.gender()
-									 ? (pkm.gender() == pksm::Gender::Female ? TextColor::red : TextColor::gray)
-									 : TextColor::blue),
-								170,
-								25,
-								true,
-								true,
-								WIDE_SCALE);
+		// if(pkm.nicknamed())
+			// printTextTintedMaxW(pkm.nickname(), 80 * WIDE_SCALE, 1, (pkm.gender() ? (pkm.gender() == pksm::Gender::Female ? TextColor::red : TextColor::gray) : TextColor::blue), 170, 25, true, true, WIDE_SCALE);
+		// else
+			printTextTintedMaxW(i18n::species(Config::getLang("lang"), pkm.species()), 80 * WIDE_SCALE, 1, (pkm.gender() ? (pkm.gender() == pksm::Gender::Female ? TextColor::red : TextColor::gray) : TextColor::blue), 170, 25, true, true, WIDE_SCALE);
 
 		// Draw types
 		drawImageScaled(
