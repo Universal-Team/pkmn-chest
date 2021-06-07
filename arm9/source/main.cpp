@@ -70,8 +70,6 @@ void init(int argc, char **argv) {
 				printf("                  pkmn-chest.nds\n\n");
 				printf("or launch pkmn-chest using\n\n");
 				printf("      TWiLight Menu++ or HBMenu\n\n\n\n\n");
-				printf("(Note: TWiLight's Acekard\n");
-				printf("        theme needs a copy in ^)\n\n");
 				while(1)
 					swiWaitForVBlank();
 			} else if(!nitroFSGood()) {
