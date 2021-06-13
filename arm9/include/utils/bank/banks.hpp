@@ -30,6 +30,7 @@
 #include <nds/ndstypes.h>
 
 #include "Bank.hpp"
+#include <optional>
 
 #define BANKS_VERSION 1
 #define BANK_DEFAULT_SIZE 50
