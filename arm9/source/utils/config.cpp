@@ -10,7 +10,8 @@ nlohmann::json configJson;
 
 pksm::Language sysLang() {
 	extern bool useTwlCfg;
-	switch(useTwlCfg ? *(u8 *)0x02000406 : PersonalData->language) {
+	extern u8* twlCfgAddr;
+	switch(useTwlCfg ? twlCfgAddr[6] : PersonalData->language) {
 		case 0:
 			return pksm::Language::JPN;
 		case 1:

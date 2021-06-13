@@ -11,18 +11,25 @@
 #include "loading.hpp"
 #include "manager.hpp"
 #include "miscUtils.hpp"
+#include "myDSiMode.h"
 #include "nitrofs.h"
 #include "sound.hpp"
 
 #include <fat.h>
 
 bool useTwlCfg = false;
+u8* twlCfgAddr = (u8*)0x02FFFDFC;
 
 extern std::vector<std::string> songs;
 
 void init(int argc, char **argv) {
-	useTwlCfg = (isDSiMode() && (*(u8 *)0x02000400 & 0x0F) && (*(u8 *)0x02000401 == 0) && (*(u8 *)0x02000402 == 0) &&
-				 (*(u8 *)0x02000404 == 0));
+	if (dsiFeatures()) {
+		if (twlCfgAddr < 0x02000000 || twlCfgAddr >= 0x03000000) {
+			twlCfgAddr = 0x02000400;
+		}
+		useTwlCfg = ((twlCfgAddr[0] & 0x0F) && (twlCfgAddr[1] == 0) && (twlCfgAddr[2] == 0) &&
+					 (twlCfgAddr[4] == 0));
+	}
 	initGraphics();
 	keysSetRepeat(25, 5);
 	sysSetCardOwner(BUS_OWNER_ARM9); // Set ARM9 as Slot-1 owner (for dumping/injecting DS saves)

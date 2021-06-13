@@ -26,8 +26,9 @@ void loadLoadingLogo(void) {
 	logo = loadImage("/graphics/icon.gfx");
 
 	extern bool useTwlCfg;
-	int birthMonth = (useTwlCfg ? *(u8 *)0x02000446 : PersonalData->birthMonth);
-	int birthDay   = (useTwlCfg ? *(u8 *)0x02000447 : PersonalData->birthDay);
+	extern u8* twlCfgAddr;
+	int birthMonth = (useTwlCfg ? twlCfgAddr[0x46] : PersonalData->birthMonth);
+	int birthDay   = (useTwlCfg ? twlCfgAddr[0x47] : PersonalData->birthDay);
 	Date today     = Date::today();
 
 	if(today.month() == birthMonth && today.day() == birthDay) {
