@@ -18,14 +18,14 @@
 #include <fat.h>
 
 bool useTwlCfg = false;
-u8* twlCfgAddr = (u8*)0x02FFFDFC;
+u8** twlCfgAddr = (u8**)0x02FFFDFC;
 
 extern std::vector<std::string> songs;
 
 void init(int argc, char **argv) {
 	if (dsiFeatures()) {
-		if (twlCfgAddr < 0x02000000 || twlCfgAddr >= 0x03000000) {
-			twlCfgAddr = 0x02000400;
+		if (*(u32*)0x02FFFDFC < 0x02000000 || *(u32*)0x02FFFDFC >= 0x03000000) {
+			*(u32*)0x02FFFDFC = 0x02000400;
 		}
 		useTwlCfg = ((twlCfgAddr[0] & 0x0F) && (twlCfgAddr[1] == 0) && (twlCfgAddr[2] == 0) &&
 					 (twlCfgAddr[4] == 0));
