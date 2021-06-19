@@ -33,7 +33,7 @@
 	"defense": "Defense",
 	"defenseIV": "Defense IV",
 	"delete": "Delete",
-	"dexNo": "No. %.3i",
+	"dexNo": "No. %03d",
 	"discard": "Discard",
 	"DO_NOT_DOWNGRADE": "Do not downgrade pkmn-chest!",
 	"dPadDirections": "D-Pad typing directions",
