@@ -1,3 +1,7 @@
+project_id_env: PKMN_CHEST_CROWDIN_ID
+api_token_env: CROWDIN_TOKEN
+preserve_hierarchy: true
+
 files:
   - source: /nitrofiles/i18n/eng/gui.json
     translation: /nitrofiles/i18n/%three_letters_code%/gui.json
