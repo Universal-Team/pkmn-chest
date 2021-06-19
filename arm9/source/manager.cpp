@@ -396,8 +396,7 @@ void drawPokemonInfo(const pksm::PKX &pkm) {
 
 		// Print Pokédex number
 		char str[9];
-		snprintf(
-			str, sizeof(str), "%s%.3i", i18n::localize(Config::getLang("lang"), "dexNo").c_str(), u16(pkm.species()));
+		snprintf(str, sizeof(str), i18n::localize(Config::getLang("lang"), "dexNo").c_str(), u16(pkm.species()));
 		printTextTintedScaled(str, WIDE_SCALE, 1, TextColor::gray, 170, 8, true, true);
 
 		// Print name
