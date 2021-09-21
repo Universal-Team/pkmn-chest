@@ -63,7 +63,7 @@ std::string getPkxOutputPath(const pksm::PKX &pkm, const std::string &boxName = 
 				 pkm.nickname().c_str(),
 				 pkm.checksum(),
 				 pkm.encryptionConstant(),
-				 pkm.extension().c_str());
+				 pkm.extension().data());
 	} else {
 		snprintf(path,
 				 sizeof(path),
@@ -74,7 +74,7 @@ std::string getPkxOutputPath(const pksm::PKX &pkm, const std::string &boxName = 
 				 pkm.nickname().c_str(),
 				 pkm.checksum(),
 				 pkm.encryptionConstant(),
-				 pkm.extension().c_str());
+				 pkm.extension().data());
 	}
 
 	return path;
@@ -422,12 +422,18 @@ int aMenu(int pkmX, int pkmY, std::vector<Label> &buttons, int buttonMode) {
 				chdir((mainDrive() + ":/_nds/pkmn-chest/in").c_str());
 
 				// Get a pk4/5
-				std::string fileName = browseForFile({"pk3", "pk4", "pk5", "pk6", "pk7"}, false);
+				std::string fileName = browseForFile({"pk1", "pk2", "pk3", "pk4", "pk5", "pk6", "pk7"}, false);
 
 				// If the fileName isn't blank, inject the Pokémon
 				if(fileName != "") {
 					pksm::Generation gen;
 					switch(fileName[fileName.size() - 1]) {
+						case '1':
+							gen = pksm::Generation::ONE;
+							break;
+						case '2':
+							gen = pksm::Generation::TWO;
+							break;	
 						case '3':
 							gen = pksm::Generation::THREE;
 							break;
@@ -435,7 +441,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label> &buttons, int buttonMode) {
 							gen = pksm::Generation::FOUR;
 							break;
 						case '5':
-							gen = pksm::Generation::FOUR;
+							gen = pksm::Generation::FIVE;
 							break;
 						case '6':
 							gen = pksm::Generation::SIX;
@@ -475,11 +481,11 @@ int aMenu(int pkmX, int pkmY, std::vector<Label> &buttons, int buttonMode) {
 							fread(buffer, 1, sizeof(buffer), in);
 							if(topScreen)
 								Banks::bank->pkm(
-									*save->emptyPkm()->getPKM(gen, buffer), currentBankBox, pkmPos(pkmX, pkmY));
+									*save->emptyPkm()->getPKM(gen, buffer, size), currentBankBox, pkmPos(pkmX, pkmY));
 							else if(inParty)
-								save->pkm(*save->transfer(*save->emptyPkm()->getPKM(gen, buffer)), pkmPos(pkmX, pkmY));
+								save->pkm(*save->transfer(*save->emptyPkm()->getPKM(gen, buffer, size)), pkmPos(pkmX, pkmY));
 							else
-								save->pkm(*save->transfer(*save->emptyPkm()->getPKM(gen, buffer)),
+								save->pkm(*save->transfer(*save->emptyPkm()->getPKM(gen, buffer, size)),
 										  currentSaveBox,
 										  pkmPos(pkmX, pkmY),
 										  false);
@@ -524,6 +530,11 @@ int aMenu(int pkmX, int pkmY, std::vector<Label> &buttons, int buttonMode) {
 				pkm->encryptionConstant(pksm::randomNumber(1, 0xFFFFFFFF));
 				pkm->version(save->version());
 				switch(pkm->version()) {
+					case pksm::GameVersion::GD:
+					case pksm::GameVersion::SV:
+					case pksm::GameVersion::C:
+						pkm->metLocation(0x02);   // Route 29 (GSC)
+						break;
 					case pksm::GameVersion::R:
 					case pksm::GameVersion::S:
 					case pksm::GameVersion::E:
@@ -584,7 +595,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label> &buttons, int buttonMode) {
 												 pkm->generation()));
 				pkm->metDate(Date::today());
 				pkm->metLevel(pkm->generation() <= pksm::Generation::THREE ? 5 : 1);
-				if(pkm->generation() == pksm::Generation::THREE) {
+				if(pkm->generation() <= pksm::Generation::THREE) {
 					pkm->level(5); // There was no level 1 before gen 4
 					std::string name = i18n::species(Config::getLang("lang"), pkm->species());
 					pkm->nickname(StringUtils::toUpper(name));

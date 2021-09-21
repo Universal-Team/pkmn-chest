@@ -35,6 +35,8 @@
 #include "io.hpp"
 #include "json.hpp"
 #include "pkx/PB7.hpp"
+#include "pkx/PK1.hpp"
+#include "pkx/PK2.hpp"
 #include "pkx/PK3.hpp"
 #include "pkx/PK4.hpp"
 #include "pkx/PK5.hpp"
@@ -318,14 +320,45 @@ void Bank::resize(int boxes)
 std::unique_ptr<pksm::PKX> Bank::pkm(int box, int slot) const
 {
     int index = box * 30 + slot;
-    auto ret  = pksm::PKX::getPKM(entries[index].gen, entries[index].data, false);
+    std::unique_ptr<pksm::PKX> ret;
+    switch (entries[index].gen)
+    {
+        case pksm::Generation::ONE:
+            ret = pksm::PKX::getPKM(entries[index].gen, entries[index].data, entries[index].data[pksm::PK1::INT_LENGTH_WITH_NAMES - 1] == 0xFF ? pksm::PK1::JP_LENGTH_WITH_NAMES : pksm::PK1::INT_LENGTH_WITH_NAMES);
+            break;
+        case pksm::Generation::TWO:
+            ret = pksm::PKX::getPKM(entries[index].gen, entries[index].data, entries[index].data[pksm::PK2::INT_LENGTH_WITH_NAMES - 1] == 0xFF ? pksm::PK2::JP_LENGTH_WITH_NAMES : pksm::PK2::INT_LENGTH_WITH_NAMES);
+            break;
+        case pksm::Generation::THREE:
+            ret = pksm::PKX::getPKM(entries[index].gen, entries[index].data, pksm::PK3::BOX_LENGTH);
+            break;
+        case pksm::Generation::FOUR:
+            ret = pksm::PKX::getPKM(entries[index].gen, entries[index].data, pksm::PK4::BOX_LENGTH);
+            break;
+        case pksm::Generation::FIVE:
+            ret = pksm::PKX::getPKM(entries[index].gen, entries[index].data, pksm::PK5::BOX_LENGTH);
+            break;
+        case pksm::Generation::SIX:
+            ret = pksm::PKX::getPKM(entries[index].gen, entries[index].data, pksm::PK6::BOX_LENGTH);
+            break;
+        case pksm::Generation::SEVEN:
+            ret = pksm::PKX::getPKM(entries[index].gen, entries[index].data, pksm::PK7::BOX_LENGTH);
+            break;
+        case pksm::Generation::LGPE:
+            ret = pksm::PKX::getPKM(entries[index].gen, entries[index].data, pksm::PB7::BOX_LENGTH);
+            break;
+        case pksm::Generation::EIGHT:
+            ret = pksm::PKX::getPKM(entries[index].gen, entries[index].data, pksm::PK8::BOX_LENGTH);
+            break;
+        case pksm::Generation::UNUSED:
+        default:
+            ret = pksm::PKX::getPKM<pksm::Generation::SEVEN>(nullptr, 0);
+            break;
+    }
+    
     if (ret)
     {
         return ret;
-    }
-    else if (entries[index].gen == pksm::Generation::UNUSED)
-    {
-        return pksm::PKX::getPKM<pksm::Generation::SEVEN>(nullptr);
     }
 
     throw BankException(u32(entries[index].gen));

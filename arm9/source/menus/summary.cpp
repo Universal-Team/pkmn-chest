@@ -55,6 +55,9 @@ std::vector<std::string> summaryLabels = {"species",
 
 void changeAbility(pksm::PKX &pkm) {
 	switch(pkm.generation()) {
+		case pksm::Generation::ONE:
+		case pksm::Generation::TWO:
+			break;
 		case pksm::Generation::THREE:
 		case pksm::Generation::FOUR: {
 			pksm::Ability setAbility = pkm.ability();
@@ -324,7 +327,7 @@ const pksm::PKX &showPokemonSummary(pksm::PKX &pkm) {
 							pkm.species(species);
 							if(!nicknamed) {
 								std::string speciesName = i18n::species(Config::getLang("lang"), species);
-								if(pkm.generation() == pksm::Generation::THREE)
+								if(pkm.generation() <= pksm::Generation::THREE)
 									speciesName = StringUtils::toUpper(speciesName);
 								pkm.nickname(speciesName);
 							}

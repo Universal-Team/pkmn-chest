@@ -18,17 +18,31 @@
 #define entriesPerScreen 11
 
 u16 itemID(std::unique_ptr<pksm::Item> item) {
-	if(item->generation() == pksm::Generation::THREE)
-		return ((pksm::Item3 *)item.get())->id3();
-	else
-		return item->id();
+	switch (item->generation())
+	{
+		case pksm::Generation::ONE:
+			return ((pksm::Item1 *)item.get())->id1();
+		case pksm::Generation::TWO:
+			return ((pksm::Item2 *)item.get())->id2();
+		case pksm::Generation::THREE:
+			return ((pksm::Item3 *)item.get())->id3();
+		default:
+			return item->id();
+	}
 }
 
 const std::string &itemName(std::unique_ptr<pksm::Item> item) {
-	if(item->generation() == pksm::Generation::THREE)
-		return i18n::item3(Config::getLang("lang"), ((pksm::Item3 *)item.get())->id3());
-	else
-		return i18n::item(Config::getLang("lang"), item->id());
+	switch (item->generation())
+	{
+		case pksm::Generation::ONE:
+			return i18n::item1(Config::getLang("lang"), ((pksm::Item1 *)item.get())->id1());
+		case pksm::Generation::TWO:
+			return i18n::item2(Config::getLang("lang"), ((pksm::Item2 *)item.get())->id2());
+		case pksm::Generation::THREE:
+			return i18n::item3(Config::getLang("lang"), ((pksm::Item3 *)item.get())->id3());
+		default:
+			return i18n::item(Config::getLang("lang"), item->id());
+	}
 }
 
 int getMaxItem(int pouchIndex) {

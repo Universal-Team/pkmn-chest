@@ -5,7 +5,7 @@
 
 #include "Sav.hpp"
 
-extern std::shared_ptr<pksm::Sav> save;
+extern std::unique_ptr<pksm::Sav> save;
 
 bool loadSave(std::string savePath);
 

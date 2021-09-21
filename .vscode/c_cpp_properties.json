@@ -29,22 +29,22 @@
             "name": "NDS | Windows",
             "includePath": [
                 "${workspaceFolder}/**",
-                "/devkitpro/libnds/include/**",
-                "/devkitpro/devkitARM/include/**",
-                "/devkitpro/devkitARM/arm-none-eabi/include/**"
+                "C:/devkitpro/libnds/include/**",
+                "C:/devkitpro/devkitARM/include/**",
+                "C:/devkitpro/devkitARM/arm-none-eabi/include/**"
             ],
             "defines": [
                 "ARM9",
                 "VER_NUMBER=\"vX.X\""
             ],
             "macFrameworkPath": [],
-            "compilerPath": "/devkitpro/devkitARM/bin/arm-none-eabi-g++.exe",
+            "compilerPath": "C:/devkitpro/devkitARM/bin/arm-none-eabi-g++.exe",
             "cStandard": "c11",
             "cppStandard": "c++20",
             "intelliSenseMode": "gcc-x64",
             "forcedInclude": [
-                "/devkitpro/libnds/include/nds/arm9/input.h",
-                "/devkitpro/devkitARM/arm-none-eabi/include/sys/unistd.h"
+                "C:/devkitpro/libnds/include/nds/arm9/input.h",
+                "C:/devkitpro/devkitARM/arm-none-eabi/include/sys/unistd.h"
             ],
             "browse": {
                 "path": [],
