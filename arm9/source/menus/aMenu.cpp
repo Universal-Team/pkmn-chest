@@ -228,7 +228,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label> &buttons, int buttonMode) {
 
 				FILE *out = fopen(getPkxOutputPath(*currentPokemon(pkmX, pkmY)).c_str(), "wb");
 				if(out) {
-					fwrite(currentPokemon(pkmX, pkmY)->rawData(), 1, 136, out);
+					fwrite(currentPokemon(pkmX, pkmY)->rawData(), 1, currentPokemon(pkmX, pkmY)->getLength(), out);
 					fclose(out);
 				}
 
@@ -373,7 +373,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label> &buttons, int buttonMode) {
 												  .c_str(),
 											  "wb");
 							if(out) {
-								fwrite(currentPokemon(x, y)->rawData(), 1, 136, out);
+								fwrite(currentPokemon(x, y)->rawData(), 1, currentPokemon(x, y)->getLength(), out);
 								fclose(out);
 							}
 						}

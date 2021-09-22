@@ -48,7 +48,7 @@ const std::string &itemName(std::unique_ptr<pksm::Item> item) {
 int getMaxItem(int pouchIndex) {
 	for(int i = save->pouches()[pouchIndex].second - 1; i > 0; i--) {
 		if(itemID(save->item(save->pouches()[pouchIndex].first, i)) != 0) {
-			return std::min(i + 1, save->pouches()[pouchIndex].second);
+			return std::min(i + 1, save->pouches()[pouchIndex].second - 1);
 		}
 	}
 	return 0;
@@ -251,8 +251,9 @@ void editBag(void) {
 						// And clear the last one
 						pksm::Item4 emptyItem;
 						save->item(
-							emptyItem, save->pouches()[selectedPouch].first, save->pouches()[selectedPouch].second);
-						maxItem--;
+							emptyItem, save->pouches()[selectedPouch].first, save->pouches()[selectedPouch].second - 1);
+						maxItem = getMaxItem(selectedPouch);
+						// BUG: showing multiple Nones when deleting with None on bottom
 					} else {
 						// Convert back from the valid item list to the real item list
 						for(unsigned i = 0; i < i18n::rawItems(Config::getLang("lang")).size(); i++) {
@@ -267,7 +268,7 @@ void editBag(void) {
 							item->count(1);
 						save->item(*item, save->pouches()[selectedPouch].first, selection);
 						if(selection == maxItem)
-							maxItem = std::min(maxItem + 1, save->pouches()[selectedPouch].second);
+							maxItem = std::min(maxItem + 1, save->pouches()[selectedPouch].second - 1);
 					}
 				}
 			}
