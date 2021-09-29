@@ -29,7 +29,7 @@ void init(int argc, char **argv) {
 			*twlCfgPointer = 0x02000400;
 		}
 		twlCfgAddr = (u8*)*twlCfgPointer;
-		useTwlCfg = ((twlCfgAddr[0] & 0x0F) && (twlCfgAddr[1] == 0) && (twlCfgAddr[2] == 0) &&
+		useTwlCfg = ((twlCfgAddr[0] != 0) && (twlCfgAddr[1] == 0) && (twlCfgAddr[2] == 0) &&
 					 (twlCfgAddr[4] == 0));
 	}
 	initGraphics();
