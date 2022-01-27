@@ -894,6 +894,8 @@ void selectOrigin(pksm::PKX &pkm) {
 							metDate.day(30);
 						}
 
+						metDate.month(num);
+
 						pkm.metDate(metDate);
 					}
 					break;
