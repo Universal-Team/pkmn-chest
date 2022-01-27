@@ -18,7 +18,7 @@
 
 #define getChestFile() (Config::getString("chestFile") == "" ? "pkmn-chest_1" : Config::getString("chestFile"))
 
-std::vector<Label> textCP1Labels{
+std::vector<Label> textCP1Labels = {
 	{4, 16, "chestFile"},       // Chest file
 	{4, 32, "chestSize"},       // Chest size
 	{4, 48, "language"},        // Language
@@ -30,7 +30,7 @@ std::vector<Label> textCP1Labels{
 	{4, 144, "theme"},          // Theme
 };
 
-std::vector<Label> textChestFile{
+std::vector<Label> textChestFile = {
 	{12, 32, "new"},    // New
 	{12, 48, "rename"}, // Rename
 	{12, 64, "delete"}, // Delete

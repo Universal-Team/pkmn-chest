@@ -63,7 +63,7 @@ std::string getPkxOutputPath(const pksm::PKX &pkm, const std::string &boxName = 
 				 pkm.nickname().c_str(),
 				 pkm.checksum(),
 				 pkm.encryptionConstant(),
-				 pkm.extension().c_str());
+				 pkm.extension().data());
 	} else {
 		snprintf(path,
 				 sizeof(path),
@@ -74,7 +74,7 @@ std::string getPkxOutputPath(const pksm::PKX &pkm, const std::string &boxName = 
 				 pkm.nickname().c_str(),
 				 pkm.checksum(),
 				 pkm.encryptionConstant(),
-				 pkm.extension().c_str());
+				 pkm.extension().data());
 	}
 
 	return path;
@@ -435,7 +435,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label> &buttons, int buttonMode) {
 							gen = pksm::Generation::FOUR;
 							break;
 						case '5':
-							gen = pksm::Generation::FOUR;
+							gen = pksm::Generation::FIVE;
 							break;
 						case '6':
 							gen = pksm::Generation::SIX;
