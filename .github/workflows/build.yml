@@ -41,6 +41,9 @@ jobs:
       - name: Build
         id: build
         run: |
+          export DEVKITPRO=/opt/devkitpro
+          export DEVKITARM=$DEVKITPRO/devkitARM
+
           make all dsi
 
           sudo mv tools-osx/make_cia /usr/local/bin
