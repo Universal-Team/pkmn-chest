@@ -34,7 +34,7 @@ jobs:
           chmod +x bmp2ds
           mv bmp2ds /usr/local/bin
 
-          curl -LO https://github.com/devkitPro/pacman/releases/download/devkitpro-pacman-1.0.1/devkitpro-pacman-installer.pkg
+          curl -LO https://github.com/devkitPro/pacman/releases/lastest/download/devkitpro-pacman-installer.pkg
           sudo installer -pkg devkitpro-pacman-installer.pkg -target /
           sudo dkp-pacman -Sy
           sudo dkp-pacman -S nds-dev --noconfirm
