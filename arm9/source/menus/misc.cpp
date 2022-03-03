@@ -53,9 +53,11 @@ struct Text {
 	};
 
 std::vector<std::string> statsLabels = {
-	"hp", "attack", "defense", "spAtk", "spDef", "speed", "base", "iv", "ev", "total"};
+	"hp", "attack", "defense", "spAtk", "spDef", "speed", "base", "iv", "ev", "total"
+};
 std::vector<std::string> originLabels = {
-	"metLevel", "metYear", "metMonth", "metDay", "metLocation", "originGame", "fatefulEncounter"};
+	"metLevel", "metYear", "metMonth", "metDay", "metLocation", "originGame", "fatefulEncounter", "egg"
+};
 
 static constexpr pksm::Stat statOrder[] = {
 	pksm::Stat::HP, pksm::Stat::ATK, pksm::Stat::DEF, pksm::Stat::SPATK, pksm::Stat::SPDEF, pksm::Stat::SPD};
@@ -799,6 +801,8 @@ void drawOriginPage(const pksm::PKX &pkm, std::vector<std::string> &varText) {
 		i18n::game(Config::getLang("lang"), pkm.version()),
 		pkm.fatefulEncounter() ? i18n::localize(Config::getLang("lang"), "yes")
 							   : i18n::localize(Config::getLang("lang"), "no"),
+		pkm.egg() ? i18n::localize(Config::getLang("lang"), "yes")
+				  : i18n::localize(Config::getLang("lang"), "no"),
 	};
 	printText(i18n::localize(Config::getLang("lang"), "origin"), 4, 0, false, true);
 	for(unsigned i = 0; i < originLabels.size(); i++) {
@@ -844,7 +848,7 @@ void selectOrigin(pksm::PKX &pkm) {
 			touchPosition touch;
 			touchRead(&touch);
 			for(unsigned i = 0; i < originLabels.size(); i++) {
-				if(touch.py > 4 + (i * 20) && touch.py < 4 + (i + 1) * 20) {
+				if(touch.py > 16 + (i * 16) && touch.py < 16 + (i + 1) * 16) {
 					selection      = i;
 					optionSelected = true;
 				}
@@ -960,6 +964,11 @@ void selectOrigin(pksm::PKX &pkm) {
 				}
 				case 6: { // Fateful encounter
 					pkm.fatefulEncounter(!pkm.fatefulEncounter());
+					break;
+				}
+				case 7: { // Egg
+					pkm.egg(!pkm.egg());
+					break;
 				}
 			}
 			drawOriginPage(pkm, varText);
