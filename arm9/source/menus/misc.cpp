@@ -801,8 +801,7 @@ void drawOriginPage(const pksm::PKX &pkm, std::vector<std::string> &varText) {
 		i18n::game(Config::getLang("lang"), pkm.version()),
 		pkm.fatefulEncounter() ? i18n::localize(Config::getLang("lang"), "yes")
 							   : i18n::localize(Config::getLang("lang"), "no"),
-		pkm.egg() ? i18n::localize(Config::getLang("lang"), "yes")
-				  : i18n::localize(Config::getLang("lang"), "no"),
+		pkm.egg() ? i18n::localize(Config::getLang("lang"), "yes") : i18n::localize(Config::getLang("lang"), "no"),
 	};
 	printText(i18n::localize(Config::getLang("lang"), "origin"), 4, 0, false, true);
 	for(unsigned i = 0; i < originLabels.size(); i++) {

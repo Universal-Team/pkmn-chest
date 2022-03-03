@@ -17,20 +17,19 @@
 
 #include <fat.h>
 
-bool useTwlCfg = false;
-u32* twlCfgPointer = (u32*)0x02FFFDFC;
-u8* twlCfgAddr = (u8*)0;
+bool useTwlCfg     = false;
+u32 *twlCfgPointer = (u32 *)0x02FFFDFC;
+u8 *twlCfgAddr     = (u8 *)0;
 
 extern std::vector<std::string> songs;
 
 void init(int argc, char **argv) {
-	if (dsiFeatures()) {
-		if (*twlCfgPointer < 0x02000000 || *twlCfgPointer >= 0x03000000) {
+	if(dsiFeatures()) {
+		if(*twlCfgPointer < 0x02000000 || *twlCfgPointer >= 0x03000000) {
 			*twlCfgPointer = 0x02000400;
 		}
-		twlCfgAddr = (u8*)*twlCfgPointer;
-		useTwlCfg = ((twlCfgAddr[0] != 0) && (twlCfgAddr[1] == 0) && (twlCfgAddr[2] == 0) &&
-					 (twlCfgAddr[4] == 0));
+		twlCfgAddr = (u8 *)*twlCfgPointer;
+		useTwlCfg  = ((twlCfgAddr[0] != 0) && (twlCfgAddr[1] == 0) && (twlCfgAddr[2] == 0) && (twlCfgAddr[4] == 0));
 	}
 	initGraphics();
 	keysSetRepeat(25, 5);
@@ -152,7 +151,7 @@ int main(int argc, char **argv) {
 			if(!loadSave(argv[i])) {
 				continue;
 			}
-			foundInArgv = true;
+			foundInArgv    = true;
 			currentSaveBox = save->currentBox();
 			currentBankBox = 0;
 			// Decrypt the box data
