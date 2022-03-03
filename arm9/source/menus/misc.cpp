@@ -358,10 +358,17 @@ void selectMoves(pksm::PKX &pkm) {
 	drawImageDMA(0, 0, listBg, false, false);
 	drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 	printText(i18n::localize(Config::getLang("lang"), "moves"), 4, 0, false, true);
+	printText(i18n::localize(Config::getLang("lang"), "pp"), 100, 0, false, true);
+	printText(i18n::localize(Config::getLang("lang"), "ppUps"), 152, 0, false, true);
+	printText(i18n::localize(Config::getLang("lang"), "ppMax"), 204, 0, false, true);
 
 	// Print moves
 	for(int i = 0; i < 4; i++) {
 		printText(i18n::move(Config::getLang("lang"), pkm.move(i)), 4, 16 + (i * 16), false, true);
+
+		printText(std::to_string(pkm.PP(i)), 100, 16 + (i * 16), false, true);
+		printText(std::to_string(pkm.PPUp(i)), 152, 16 + (i * 16), false, true);
+		printText(std::to_string(pkm.maxPP(i)), 204, 16 + (i * 16), false, true);
 	}
 
 	// Set arrow position
@@ -370,7 +377,7 @@ void selectMoves(pksm::PKX &pkm) {
 	updateOam();
 
 	bool optionSelected = false;
-	int held, pressed, selection = 0;
+	int held, pressed, selection = 0, column = 0;
 	touchPosition touch;
 	while(1) {
 		do {
@@ -387,9 +394,11 @@ void selectMoves(pksm::PKX &pkm) {
 			if(selection < 3)
 				selection++;
 		} else if(held & KEY_LEFT) {
-			selection = 0;
+			if(column > 0)
+				column--;
 		} else if(held & KEY_RIGHT) {
-			selection = 3;
+			if(column < 2)
+				column++;
 		} else if(pressed & KEY_A) {
 			Sound::play(Sound::click);
 			optionSelected = true;
@@ -400,8 +409,8 @@ void selectMoves(pksm::PKX &pkm) {
 		} else if(pressed & KEY_TOUCH) {
 			touchRead(&touch);
 			for(unsigned i = 0; i < 4; i++) {
-				if(touch.px >= 4 && touch.px <= 4 + getTextWidth(i18n::move(Config::getLang("lang"), pkm.move(i))) &&
-				   touch.py >= 16 + (i * 16) && touch.py <= 16 + ((i + 1) * 16)) {
+				if(touch.py >= 16 + (i * 16) && touch.py <= 16 + ((i + 1) * 16)) {
+					column         = touch.px < 100 ? 0 : (touch.px < 152 ? 1 : 2);
 					selection      = i;
 					optionSelected = true;
 					break;
@@ -411,25 +420,51 @@ void selectMoves(pksm::PKX &pkm) {
 
 		if(optionSelected) {
 			optionSelected = false;
-			pkm.move(
-				selection,
-				selectItem(pkm.move(selection), save->availableMoves(), i18n::rawMoves(Config::getLang("lang"))));
+
+			if(column == 0) {
+				pkm.move(
+					selection,
+					selectItem(pkm.move(selection), save->availableMoves(), i18n::rawMoves(Config::getLang("lang"))));
+			} else if(column == 1) {
+				int i = Input::getInt(pkm.maxPP(selection));
+				if(i != -1)
+					pkm.PP(selection, i);
+			} else if(column == 2) {
+				int i = Input::getInt(3);
+				if(i != -1)
+					pkm.PPUp(selection, i);
+			}
 
 			// Clear screen
 			drawImageDMA(0, 0, listBg, false, false);
 			drawRectangle(0, 0, 256, 192, CLEAR, false, true);
 			printText(i18n::localize(Config::getLang("lang"), "moves"), 4, 0, false, true);
+			printText(i18n::localize(Config::getLang("lang"), "pp"), 100, 0, false, true);
+			printText(i18n::localize(Config::getLang("lang"), "ppUps"), 152, 0, false, true);
+			printText(i18n::localize(Config::getLang("lang"), "ppMax"), 204, 0, false, true);
 
 			// Print moves
 			for(int i = 0; i < 4; i++) {
 				printText(i18n::move(Config::getLang("lang"), pkm.move(i)), 4, 16 + (i * 16), false, true);
+
+				printText(std::to_string(pkm.PP(i)), 100, 16 + (i * 16), false, true);
+				printText(std::to_string(pkm.PPUp(i)), 152, 16 + (i * 16), false, true);
+				printText(std::to_string(pkm.maxPP(i)), 204, 16 + (i * 16), false, true);
 			}
 		}
 
-		setSpritePosition(arrowID,
-						  false,
-						  4 + getTextWidth(i18n::move(Config::getLang("lang"), pkm.move(selection))),
-						  (selection * 16) + 10);
+		if(column == 0) {
+			setSpritePosition(arrowID,
+							  false,
+							  4 + getTextWidth(i18n::move(Config::getLang("lang"), pkm.move(selection))),
+							  (selection * 16) + 10);
+		} else if(column == 1) {
+			setSpritePosition(
+				arrowID, false, 100 + getTextWidth(std::to_string(pkm.PP(selection))), (selection * 16) + 10);
+		} else if(column == 2) {
+			setSpritePosition(
+				arrowID, false, 152 + getTextWidth(std::to_string(pkm.PPUp(selection))), (selection * 16) + 10);
+		}
 		updateOam();
 	}
 }
