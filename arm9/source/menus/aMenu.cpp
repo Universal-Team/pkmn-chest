@@ -474,12 +474,11 @@ int aMenu(int pkmX, int pkmY, std::vector<Label> &buttons, int buttonMode) {
 							u8 buffer[size];
 							fread(buffer, 1, sizeof(buffer), in);
 							if(topScreen)
-								Banks::bank->pkm(
-									*save->emptyPkm()->getPKM(gen, buffer), currentBankBox, pkmPos(pkmX, pkmY));
+								Banks::bank->pkm(*pksm::PKX::getPKM(gen, buffer), currentBankBox, pkmPos(pkmX, pkmY));
 							else if(inParty)
-								save->pkm(*save->transfer(*save->emptyPkm()->getPKM(gen, buffer)), pkmPos(pkmX, pkmY));
+								save->pkm(*save->transfer(*pksm::PKX::getPKM(gen, buffer)), pkmPos(pkmX, pkmY));
 							else
-								save->pkm(*save->transfer(*save->emptyPkm()->getPKM(gen, buffer)),
+								save->pkm(*save->transfer(*pksm::PKX::getPKM(gen, buffer)),
 										  currentSaveBox,
 										  pkmPos(pkmX, pkmY),
 										  false);
