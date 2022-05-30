@@ -161,7 +161,7 @@ void loadFont() {
 		fclose(file);
 	}
 
-	questionMark = getCharIndex('?');
+	questionMark = getCharIndex(u'�');
 }
 
 Image loadImage(const std::string &path) {

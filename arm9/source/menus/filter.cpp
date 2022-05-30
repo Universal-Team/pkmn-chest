@@ -101,8 +101,8 @@ void selectMoves(std::shared_ptr<pksm::PKFilter> filter) {
 			} else if(column == 1) {
 				filter->move(selection,
 							 selectItem(filter->move(selection),
-											 save->availableMoves(),
-											 i18n::rawMoves(Config::getLang("lang"))));
+										save->availableMoves(),
+										i18n::rawMoves(Config::getLang("lang"))));
 			} else if(column == 2) {
 				filter->moveInversed(selection, !filter->moveInversed(selection));
 			}

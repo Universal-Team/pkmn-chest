@@ -18,7 +18,7 @@
 
 #define getChestFile() (Config::getString("chestFile") == "" ? "pkmn-chest_1" : Config::getString("chestFile"))
 
-std::vector<Label> textCP1Labels{
+std::vector<Label> textCP1Labels = {
 	{4, 16, "chestFile"},       // Chest file
 	{4, 32, "chestSize"},       // Chest size
 	{4, 48, "language"},        // Language
@@ -30,7 +30,7 @@ std::vector<Label> textCP1Labels{
 	{4, 144, "theme"},          // Theme
 };
 
-std::vector<Label> textChestFile{
+std::vector<Label> textChestFile = {
 	{12, 32, "new"},    // New
 	{12, 48, "rename"}, // Rename
 	{12, 64, "delete"}, // Delete
@@ -42,33 +42,37 @@ std::vector<std::string> songs = {
 
 std::vector<std::string> optionsText;
 
-const std::vector<std::string> langNames   = {"Bruh",
+const std::vector<std::string> langNames   = {"Bahasa Indonesia",
+                                            "Bruh",
                                             "Deutsch",
                                             "English",
                                             "Español",
                                             "Français",
-                                            "Bahasa Indonesia",
                                             "Italiano",
                                             "Lietuvių",
                                             "Magyar",
                                             "Polski",
                                             "Português",
+                                            "Română",
+                                            "Türkçe",
                                             "Русский",
                                             "中文 (简体)",
                                             "中文 (繁體)",
                                             "日本語",
                                             "한국어"};
-const std::vector<pksm::Language> guiLangs = {pksm::Language::BRH,
+const std::vector<pksm::Language> guiLangs = {pksm::Language::IND,
+											  pksm::Language::BRH,
 											  pksm::Language::GER,
 											  pksm::Language::ENG,
 											  pksm::Language::SPA,
 											  pksm::Language::FRE,
-											  pksm::Language::IND,
 											  pksm::Language::ITA,
 											  pksm::Language::LIT,
 											  pksm::Language::HUN,
 											  pksm::Language::POL,
 											  pksm::Language::POR,
+											  pksm::Language::RON,
+											  pksm::Language::TUR,
 											  pksm::Language::RUS,
 											  pksm::Language::CHS,
 											  pksm::Language::CHT,
