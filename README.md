@@ -70,7 +70,7 @@ If you'd like to help translate pkmn-chest to a language that isn't yet supporte
 - [Pk11](https://github.com/Epicpkmn11): Main developer
 ### Translators
 - [antoine62](https://github.com/antoine62): French
-- [Chips](https://github.com/Ch1p5): Portuguese, some Spanish and French
+- [5antos](https://github.com/5antos): Portuguese, some Spanish and French
 - [cimo95](https://github.com/cimo95): Indonesian
 - [David Pires](https://github.com/DavidPires): Portuguese
 - [edo9300](https://github.com/edo9300): Italian
