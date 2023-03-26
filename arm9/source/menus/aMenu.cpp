@@ -228,7 +228,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label> &buttons, int buttonMode) {
 
 				FILE *out = fopen(getPkxOutputPath(*currentPokemon(pkmX, pkmY)).c_str(), "wb");
 				if(out) {
-					fwrite(currentPokemon(pkmX, pkmY)->rawData(), 1, currentPokemon(pkmX, pkmY)->getLength(), out);
+					fwrite(currentPokemon(pkmX, pkmY)->rawData().data(), 1, currentPokemon(pkmX, pkmY)->getLength(), out);
 					fclose(out);
 				}
 
@@ -373,7 +373,7 @@ int aMenu(int pkmX, int pkmY, std::vector<Label> &buttons, int buttonMode) {
 												  .c_str(),
 											  "wb");
 							if(out) {
-								fwrite(currentPokemon(x, y)->rawData(), 1, currentPokemon(x, y)->getLength(), out);
+								fwrite(currentPokemon(x, y)->rawData().data(), 1, currentPokemon(x, y)->getLength(), out);
 								fclose(out);
 							}
 						}
@@ -590,6 +590,8 @@ int aMenu(int pkmX, int pkmY, std::vector<Label> &buttons, int buttonMode) {
 												 pkm->nature(),
 												 pkm->alternativeForm(),
 												 pkm->abilityNumber(),
+												 pkm->shiny(),
+												 pkm->TSV(),
 												 pkm->PID(),
 												 pkm->generation()));
 				pkm->metDate(Date::today());

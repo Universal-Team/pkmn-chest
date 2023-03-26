@@ -231,9 +231,9 @@ void Bank::load(int maxBoxes)
         }
         else
         {
-            prevHash             = pksm::crypto::sha256((u8*)entries, sizeof(BankEntry) * boxes() * 30);
+            prevHash             = pksm::crypto::sha256({(u8*)entries, sizeof(BankEntry) * boxes() * 30});
             std::string nameData = boxNames->dump(2);
-            prevNameHash         = pksm::crypto::sha256((u8*)nameData.data(), nameData.size());
+            prevNameHash         = pksm::crypto::sha256({(u8*)nameData.data(), nameData.size()});
         }
     }
 }
@@ -258,8 +258,8 @@ bool Bank::saveWithoutBackup() const
         if (out)
         {
             fwrite(jsonData.data(), 1, jsonData.size(), out);
-            prevHash     = pksm::crypto::sha256((u8*)entries, sizeof(BankEntry) * boxes() * 30);
-            prevNameHash = pksm::crypto::sha256((u8*)jsonData.data(), jsonData.size());
+            prevHash     = pksm::crypto::sha256({(u8*)entries, sizeof(BankEntry) * boxes() * 30});
+            prevNameHash = pksm::crypto::sha256({(u8*)jsonData.data(), jsonData.size()});
             fclose(out);
         }
         else
@@ -376,7 +376,7 @@ void Bank::pkm(const pksm::PKX& pkm, int box, int slot)
         return;
     }
     newEntry.gen = pkm.generation();
-    std::copy(pkm.rawData(), pkm.rawData() + std::min((u32)sizeof(BankEntry::data), pkm.getLength()), newEntry.data);
+    std::copy(pkm.rawData().data(), pkm.rawData().data() + std::min((u32)sizeof(BankEntry::data), pkm.getLength()), newEntry.data);
     if (pkm.getLength() < sizeof(BankEntry::data))
     {
         std::fill_n(newEntry.data + pkm.getLength(), sizeof(BankEntry::data) - pkm.getLength(), 0xFF);
@@ -443,13 +443,13 @@ bool Bank::hasChanged() const
     {
         return false;
     }
-    auto hash = pksm::crypto::sha256((u8*)entries, sizeof(BankEntry) * boxes() * 30);
+    auto hash = pksm::crypto::sha256({(u8*)entries, sizeof(BankEntry) * boxes() * 30});
     if (hash != prevHash)
     {
         return true;
     }
     std::string jsonData = boxNames->dump(2);
-    hash                 = pksm::crypto::sha256((u8*)jsonData.data(), jsonData.size());
+    hash                 = pksm::crypto::sha256({(u8*)jsonData.data(), jsonData.size()});
     if (hash != prevNameHash)
     {
         return true;

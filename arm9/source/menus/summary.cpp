@@ -434,6 +434,8 @@ const pksm::PKX &showPokemonSummary(pksm::PKX &pkm) {
 													pkm.nature(),
 													pkm.alternativeForm(),
 													pkm.abilityNumber(),
+													pkm.shiny(),
+													pkm.TSV(),
 													pkm.PID(),
 													pkm.generation()));
 				}
