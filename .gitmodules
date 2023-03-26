@@ -1,3 +1,3 @@
 [submodule "arm9/core"]
 	path = arm9/core
-	url = https://github.com/SNBeast/PKSM-Core.git
+	url = https://github.com/FlagBrew/PKSM-Core.git
