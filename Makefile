@@ -18,7 +18,7 @@ GAME_SUBTITLE1	:= Universal-Team
 
 include $(DEVKITARM)/ds_rules
 
-.PHONY	:	all skip-gs checkarm9 graphics lang cia sound clean format
+.PHONY	:	all skip-gs checkarm9 graphics lang personal cia sound clean format
 
 #---------------------------------------------------------------------------------
 # main targets
@@ -46,6 +46,18 @@ $(NITRO_FILES)/i18n/%.txt	:	arm9/core/strings/%.txt
 
 lang	:	$(LANG_TARGETS)
 
+PERSONAL_DIRS		:= personals
+PERSONAL_FILES		:= personal*
+PERSONAL_SOURCES	:= $(foreach pdir,$(PERSONAL_DIRS),$(foreach file,$(PERSONAL_FILES),$(wildcard arm9/core/$(pdir)/$(file))))
+PERSONAL_TARGETS	:= $(subst arm9/core,$(NITRO_FILES),$(PERSONAL_SOURCES))
+
+$(NITRO_FILES)/personals/%	:	arm9/core/personals/%
+	@echo $$(basename $<)
+	@[ -d "$(@D)" ] || mkdir -p "$(@D)"
+	@cp -f $< $@
+
+personal	:	$(PERSONAL_TARGETS)
+
 #---------------------------------------------------------------------------------
 sound:
 	$(MAKE) -C sound
@@ -55,7 +67,7 @@ arm9/$(TARGET).elf:
 	$(MAKE) -C arm9
 
 #---------------------------------------------------------------------------------
-$(TARGET).nds	: graphics sound lang $(NITRO_FILES) arm9/$(TARGET).elf
+$(TARGET).nds	: graphics sound lang personal $(NITRO_FILES) arm9/$(TARGET).elf
 	ndstool	-c $(TARGET).nds -9 arm9/$(TARGET).elf \
 			-b1 icon.bmp "$(GAME_TITLE);$(GAME_SUBTITLE1)" $(_ADDFILES) \
 			-g \#\#\#\# 00 "HOMEBREW" 87 -z 80040000 -a 00000138
@@ -80,6 +92,7 @@ clean:
 	@$(MAKE) -C graphics clean
 	@$(MAKE) -C sound clean
 	@rm -f $(LANG_TARGETS)
+	@rm -f $(PERSONAL_TARGETS)
 	@rm -f $(TARGET).nds $(TARGET).arm9
 
 format:
