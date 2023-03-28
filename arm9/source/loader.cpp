@@ -9,7 +9,7 @@
 
 static std::string saveFileName;
 
-std::shared_ptr<pksm::Sav> save;
+std::unique_ptr<pksm::Sav> save;
 
 bool loadSave(std::string savePath) {
 	save         = nullptr;

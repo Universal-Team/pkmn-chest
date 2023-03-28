@@ -18,23 +18,37 @@
 #define entriesPerScreen 11
 
 u16 itemID(std::unique_ptr<pksm::Item> item) {
-	if(item->generation() == pksm::Generation::THREE)
-		return ((pksm::Item3 *)item.get())->id3();
-	else
-		return item->id();
+	switch (item->generation())
+	{
+		case pksm::Generation::ONE:
+			return ((pksm::Item1 *)item.get())->id1();
+		case pksm::Generation::TWO:
+			return ((pksm::Item2 *)item.get())->id2();
+		case pksm::Generation::THREE:
+			return ((pksm::Item3 *)item.get())->id3();
+		default:
+			return item->id();
+	}
 }
 
 const std::string &itemName(std::unique_ptr<pksm::Item> item) {
-	if(item->generation() == pksm::Generation::THREE)
-		return i18n::item3(Config::getLang("lang"), ((pksm::Item3 *)item.get())->id3());
-	else
-		return i18n::item(Config::getLang("lang"), item->id());
+	switch (item->generation())
+	{
+		case pksm::Generation::ONE:
+			return i18n::item1(Config::getLang("lang"), ((pksm::Item1 *)item.get())->id1());
+		case pksm::Generation::TWO:
+			return i18n::item2(Config::getLang("lang"), ((pksm::Item2 *)item.get())->id2());
+		case pksm::Generation::THREE:
+			return i18n::item3(Config::getLang("lang"), ((pksm::Item3 *)item.get())->id3());
+		default:
+			return i18n::item(Config::getLang("lang"), item->id());
+	}
 }
 
 int getMaxItem(int pouchIndex) {
 	for(int i = save->pouches()[pouchIndex].second - 1; i > 0; i--) {
 		if(itemID(save->item(save->pouches()[pouchIndex].first, i)) != 0) {
-			return std::min(i + 1, save->pouches()[pouchIndex].second);
+			return std::min(i + 1, save->pouches()[pouchIndex].second - 1);
 		}
 	}
 	return 0;
@@ -237,8 +251,9 @@ void editBag(void) {
 						// And clear the last one
 						pksm::Item4 emptyItem;
 						save->item(
-							emptyItem, save->pouches()[selectedPouch].first, save->pouches()[selectedPouch].second);
-						maxItem--;
+							emptyItem, save->pouches()[selectedPouch].first, save->pouches()[selectedPouch].second - 1);
+						maxItem = getMaxItem(selectedPouch);
+						// BUG: showing multiple Nones when deleting with None on bottom
 					} else {
 						// Convert back from the valid item list to the real item list
 						for(unsigned i = 0; i < i18n::rawItems(Config::getLang("lang")).size(); i++) {
@@ -253,7 +268,7 @@ void editBag(void) {
 							item->count(1);
 						save->item(*item, save->pouches()[selectedPouch].first, selection);
 						if(selection == maxItem)
-							maxItem = std::min(maxItem + 1, save->pouches()[selectedPouch].second);
+							maxItem = std::min(maxItem + 1, save->pouches()[selectedPouch].second - 1);
 					}
 				}
 			}

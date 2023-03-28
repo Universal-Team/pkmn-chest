@@ -35,6 +35,8 @@
 #include "io.hpp"
 #include "json.hpp"
 #include "pkx/PB7.hpp"
+#include "pkx/PK1.hpp"
+#include "pkx/PK2.hpp"
 #include "pkx/PK3.hpp"
 #include "pkx/PK4.hpp"
 #include "pkx/PK5.hpp"
@@ -229,9 +231,9 @@ void Bank::load(int maxBoxes)
         }
         else
         {
-            prevHash             = pksm::crypto::sha256((u8*)entries, sizeof(BankEntry) * boxes() * 30);
+            prevHash             = pksm::crypto::sha256({(u8*)entries, sizeof(BankEntry) * boxes() * 30});
             std::string nameData = boxNames->dump(2);
-            prevNameHash         = pksm::crypto::sha256((u8*)nameData.data(), nameData.size());
+            prevNameHash         = pksm::crypto::sha256({(u8*)nameData.data(), nameData.size()});
         }
     }
 }
@@ -256,8 +258,8 @@ bool Bank::saveWithoutBackup() const
         if (out)
         {
             fwrite(jsonData.data(), 1, jsonData.size(), out);
-            prevHash     = pksm::crypto::sha256((u8*)entries, sizeof(BankEntry) * boxes() * 30);
-            prevNameHash = pksm::crypto::sha256((u8*)jsonData.data(), jsonData.size());
+            prevHash     = pksm::crypto::sha256({(u8*)entries, sizeof(BankEntry) * boxes() * 30});
+            prevNameHash = pksm::crypto::sha256({(u8*)jsonData.data(), jsonData.size()});
             fclose(out);
         }
         else
@@ -318,14 +320,45 @@ void Bank::resize(int boxes)
 std::unique_ptr<pksm::PKX> Bank::pkm(int box, int slot) const
 {
     int index = box * 30 + slot;
-    auto ret  = pksm::PKX::getPKM(entries[index].gen, entries[index].data, false);
+    std::unique_ptr<pksm::PKX> ret;
+    switch (entries[index].gen)
+    {
+        case pksm::Generation::ONE:
+            ret = pksm::PKX::getPKM(entries[index].gen, entries[index].data, entries[index].data[pksm::PK1::INT_LENGTH_WITH_NAMES - 1] == 0xFF ? pksm::PK1::JP_LENGTH_WITH_NAMES : pksm::PK1::INT_LENGTH_WITH_NAMES);
+            break;
+        case pksm::Generation::TWO:
+            ret = pksm::PKX::getPKM(entries[index].gen, entries[index].data, entries[index].data[pksm::PK2::INT_LENGTH_WITH_NAMES - 1] == 0xFF ? pksm::PK2::JP_LENGTH_WITH_NAMES : pksm::PK2::INT_LENGTH_WITH_NAMES);
+            break;
+        case pksm::Generation::THREE:
+            ret = pksm::PKX::getPKM(entries[index].gen, entries[index].data, pksm::PK3::BOX_LENGTH);
+            break;
+        case pksm::Generation::FOUR:
+            ret = pksm::PKX::getPKM(entries[index].gen, entries[index].data, pksm::PK4::BOX_LENGTH);
+            break;
+        case pksm::Generation::FIVE:
+            ret = pksm::PKX::getPKM(entries[index].gen, entries[index].data, pksm::PK5::BOX_LENGTH);
+            break;
+        case pksm::Generation::SIX:
+            ret = pksm::PKX::getPKM(entries[index].gen, entries[index].data, pksm::PK6::BOX_LENGTH);
+            break;
+        case pksm::Generation::SEVEN:
+            ret = pksm::PKX::getPKM(entries[index].gen, entries[index].data, pksm::PK7::BOX_LENGTH);
+            break;
+        case pksm::Generation::LGPE:
+            ret = pksm::PKX::getPKM(entries[index].gen, entries[index].data, pksm::PB7::BOX_LENGTH);
+            break;
+        case pksm::Generation::EIGHT:
+            ret = pksm::PKX::getPKM(entries[index].gen, entries[index].data, pksm::PK8::BOX_LENGTH);
+            break;
+        case pksm::Generation::UNUSED:
+        default:
+            ret = pksm::PKX::getPKM<pksm::Generation::SEVEN>(nullptr, 0);
+            break;
+    }
+    
     if (ret)
     {
         return ret;
-    }
-    else if (entries[index].gen == pksm::Generation::UNUSED)
-    {
-        return pksm::PKX::getPKM<pksm::Generation::SEVEN>(nullptr);
     }
 
     throw BankException(u32(entries[index].gen));
@@ -343,7 +376,7 @@ void Bank::pkm(const pksm::PKX& pkm, int box, int slot)
         return;
     }
     newEntry.gen = pkm.generation();
-    std::copy(pkm.rawData(), pkm.rawData() + std::min((u32)sizeof(BankEntry::data), pkm.getLength()), newEntry.data);
+    std::copy(pkm.rawData().data(), pkm.rawData().data() + std::min((u32)sizeof(BankEntry::data), pkm.getLength()), newEntry.data);
     if (pkm.getLength() < sizeof(BankEntry::data))
     {
         std::fill_n(newEntry.data + pkm.getLength(), sizeof(BankEntry::data) - pkm.getLength(), 0xFF);
@@ -410,13 +443,13 @@ bool Bank::hasChanged() const
     {
         return false;
     }
-    auto hash = pksm::crypto::sha256((u8*)entries, sizeof(BankEntry) * boxes() * 30);
+    auto hash = pksm::crypto::sha256({(u8*)entries, sizeof(BankEntry) * boxes() * 30});
     if (hash != prevHash)
     {
         return true;
     }
     std::string jsonData = boxNames->dump(2);
-    hash                 = pksm::crypto::sha256((u8*)jsonData.data(), jsonData.size());
+    hash                 = pksm::crypto::sha256({(u8*)jsonData.data(), jsonData.size()});
     if (hash != prevNameHash)
     {
         return true;
