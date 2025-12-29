@@ -1,6 +1,10 @@
 #ifndef PKSMCORE_CONFIG
 #define PKSMCORE_CONFIG
 
+// Fixes build error
+#include <algorithm>
+
+
 #define _PKSMCORE_LANG_FOLDER "nitro:/i18n/"
 #define _PKSMCORE_GETLINE_FUNC __getline
 #define _PKSMCORE_DISABLE_THREAD_SAFETY
