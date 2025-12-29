@@ -57,6 +57,28 @@ If you already have the repo without the submodules you can run `git submodule u
 ### Compiling
 Simply run `make` in the pkmn-chest source directory
 
+### Important notes (10/05/2025)
+Some recent major refactorings to the devkitPro toolchain for the nds family of systems have made it impossible to compile this app with the most recent versions of devkitARM and libnds.
+
+Fortunately, there are some archives of legacy compiling environments that can be run through Docker, an engine that isolates library-level dependencies. **This is currently the most straightforward way for compiling the app until it is ported to the newer version of these libraries.**
+
+The latest environment that can compile the app is the one from the 04 of November of 2025, [and can be accessed through Dockerhub](https://hub.docker.com/layers/devkitpro/devkitarm/20241104/images/sha256-847dcaaa096a8c0b5a24f23ab81dedd94d4ad07c714cc5b0f09fe78d2c42ceef).
+
+On the Docker CLI, the following command template may be used to obtain and run the compiling environment:
+```bash
+sudo docker run -it\
+  --name pkmnchest\
+  --rm\
+  -v /path/to/repo:/pkmn-chest:rw\
+  -v /path/to/bmp2ds-linux:/usr/bin/bmp2ds:ro\
+  devkitpro/devkitarm:20241104\
+  bash
+```
+
+Alternatively to mounting the bmp2ds binary directly (in which case it would need to be the linux binary), you can also install the program inside the environment through the terminal.
+
+There might be some other issues when compiling depending on the C/C++ version you have installed, but changing the source code according to the compiler's suggestions (e.g.: changing every instance of 'std::find_if' to 'std::ranges::find_if') seems to work for now.
+
 ## Contact
 The best way to talk to us is to join [our Discord](https://discord.gg/KDJCfGF). If you want to report a bug or request a feature you can do so [in a GitHub Issue](https://github.com/Universal-Team/pkmn-chest/issues/new/choose). You can also talk on the [GBAtemp thread](https://gbatemp.net/threads/release-pkmn-chest-a-pokemon-bank-for-the-nintendo-ds-i.549249/).
 
