@@ -11,7 +11,7 @@ include $(DEVKITARM)/ds_rules
 ifneq ($(shell echo $(shell git tag -l --points-at HEAD) | head -c 1),)
 GIT_VER := $(shell git tag -l --points-at HEAD)
 else
-GIT_VER := $(shell git describe --abbrev=0 --tags)-$(shell git rev-parse --short=7 HEAD)
+GIT_VER := $(shell git describe --tags --exclude git)
 endif
 
 # Ensure version.hpp exists
