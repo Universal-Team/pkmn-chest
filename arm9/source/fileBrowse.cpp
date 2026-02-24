@@ -308,7 +308,7 @@ std::string topMenuSelect(void) {
 		topMenuContents.push_back({"card:", false});
 	if(!flashcardFound())
 		tmSlot1Offset = topMenuContents.size() - 1;
-	if(flashcardFound())
+	if(!isDSiMode() && flashcardFound())
 		topMenuContents.push_back({"cart:", false});
 	if(flashcardFound())
 		tmSlot2Offset = topMenuContents.size() - 1;
@@ -328,7 +328,7 @@ std::string topMenuSelect(void) {
 	int cardWait = 0;
 	if(!flashcardFound())
 		topMenuContents[tmSlot1Offset].valid = updateSlot1Text(cardWait, topMenuContents[tmSlot1Offset].valid);
-	if(flashcardFound())
+	else if(!isDSiMode() && flashcardFound())
 		topMenuContents[tmSlot2Offset].valid = updateSlot2Text(cardWait, topMenuContents[tmSlot2Offset].valid);
 
 	// Show topMenuContents
@@ -353,7 +353,7 @@ std::string topMenuSelect(void) {
 					topMenuContents[tmSlot1Offset].valid =
 						updateSlot1Text(cardWait, topMenuContents[tmSlot1Offset].valid);
 				}
-			} else if(flashcardFound()) {
+			} else if(!isDSiMode()) {
 				if(tmScreenOffset <= tmSlot2Offset) {
 					topMenuContents[tmSlot2Offset].valid =
 						updateSlot2Text(cardWait, topMenuContents[tmSlot2Offset].valid);
