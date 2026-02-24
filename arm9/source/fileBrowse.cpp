@@ -304,14 +304,14 @@ std::string topMenuSelect(void) {
 		topMenuContents.push_back({"fat:", true});
 	if(sdFound())
 		topMenuContents.push_back({"sd:", true});
-	if(!flashcardFound())
+	if(!flashcardFound()) {
 		topMenuContents.push_back({"card:", false});
-	if(!flashcardFound())
 		tmSlot1Offset = topMenuContents.size() - 1;
-	if(!isDSiMode() && flashcardFound())
+	}
+	if(!isDSiMode() && flashcardFound()) {
 		topMenuContents.push_back({"cart:", false});
-	if(flashcardFound())
 		tmSlot2Offset = topMenuContents.size() - 1;
+	}
 
 	FILE *favs = fopen((mainDrive() + ":/_nds/pkmn-chest/favorites.lst").c_str(), "rb");
 
