@@ -81,7 +81,6 @@ bool Banks::saveJson()
     }
     else
     {
-        fclose(out);
         return false;
     }
 }
