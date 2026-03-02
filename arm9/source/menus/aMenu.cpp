@@ -18,6 +18,8 @@
 #include "summary.hpp"
 
 #include <dirent.h>
+#include <limits.h>
+#include <sys/stat.h>
 
 #define pkmPos(x, y) ((y * (inParty ? 2 : 6)) + x)
 

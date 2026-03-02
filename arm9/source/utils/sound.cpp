@@ -3,6 +3,7 @@
 #include "config.hpp"
 
 #include <dirent.h>
+#include <limits.h>
 #include <maxmod9.h>
 #include <nds.h>
 

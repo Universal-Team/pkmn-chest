@@ -15,6 +15,7 @@
 #include "xMenu.hpp"
 
 #include <dirent.h>
+#include <limits.h>
 
 #define getChestFile() (Config::getString("chestFile") == "" ? "pkmn-chest_1" : Config::getString("chestFile"))
 
