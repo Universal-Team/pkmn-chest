@@ -541,6 +541,7 @@ void printTextTinted(const std::u16string &text, TextColor palette, int xPos, in
 
 		int t       = getCharIndex(text[c]);
 		Image image = {tileWidth, tileHeight, {}, {}, 0};
+		image.bitmap.resize(tileSize * 4);
 		for(int i = 0; i < tileSize; i++) {
 			image.bitmap[(i * 4)]     = (fontTiles[i + (t * tileSize)] >> 6 & 3);
 			image.bitmap[(i * 4) + 1] = (fontTiles[i + (t * tileSize)] >> 4 & 3);

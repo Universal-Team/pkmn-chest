@@ -92,7 +92,7 @@ void init(int argc, char **argv) {
 		}
 	}
 
-	wideScreen = (strcmp(argv[1], "wide") == 0) || keysDown() & KEY_Y;
+	wideScreen = (argc > 1 && strcmp(argv[1], "wide") == 0) || keysDown() & KEY_Y;
 
 	loadLoadingLogo();
 	showLoadingLogo();
