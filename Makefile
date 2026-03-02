@@ -42,7 +42,7 @@ include $(BLOCKSDS)/sys/default_makefiles/rom_arm9/Makefile
 
 CXXFLAGS += -fexceptions
 
-SPECS		:= $(BLOCKSDS)/sys/crts/ds_arm9.specs
+SPECS		:= arm9/ds_arm9_pkch.specs
 
 # If on a tagged commit, use just the tag
 ifneq ($(shell echo $(shell git tag -l --points-at HEAD) | head -c 1),)
