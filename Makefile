@@ -36,7 +36,7 @@ INCLUDEDIRS	:= arm9/include \
 LIBS		:= -lnds9 -lmm9
 LIBDIRS		:= $(BLOCKSDS)/libs/maxmod
 
-CXXFLAGS := -fexceptions -g -std=gnu++23
+CXXFLAGS := -fexceptions -g -std=gnu++23 -Wno-psabi -Wno-deprecated-literal-operator
 
 include $(BLOCKSDS)/sys/default_makefiles/rom_arm9/Makefile
 
