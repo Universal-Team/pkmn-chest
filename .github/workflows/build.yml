@@ -44,9 +44,9 @@ jobs:
       - name: Build
         id: build
         run: |
-          make
+          make -j $(nproc)
 
-          sudo mv tools-linux/make_cia /usr/local/bin
+          mv tools-linux/make_cia /usr/local/bin
           make cia
 
           mkdir -p ~/artifacts
