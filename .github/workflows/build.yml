@@ -19,8 +19,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: devkitpro/devkitarm:20241104
-    name: Build with Docker using devkitARM
+    container: skylyrac/blocksds:slim-v1.18.0
+    name: Build with Docker using blocksds
     outputs:
       commit_tag: ${{ steps.build.outputs.commit_tag }}
       commit_hash: ${{ steps.build.outputs.commit_hash }}
