@@ -19,8 +19,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: devkitpro/devkitarm:20241104
-    name: Build with Docker using devkitARM
+    container: skylyrac/blocksds:slim-v1.18.0
+    name: Build with Docker using blocksds
     outputs:
       commit_tag: ${{ steps.build.outputs.commit_tag }}
       commit_hash: ${{ steps.build.outputs.commit_hash }}
@@ -44,9 +44,9 @@ jobs:
       - name: Build
         id: build
         run: |
-          make
+          make -j $(nproc)
 
-          sudo mv tools-linux/make_cia /usr/local/bin
+          mv tools-linux/make_cia /usr/local/bin
           make cia
 
           mkdir -p ~/artifacts

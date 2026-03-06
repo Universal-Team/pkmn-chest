@@ -19,7 +19,9 @@
 #include <algorithm>
 #include <dirent.h>
 #include <fat.h>
+#include <limits.h>
 #include <strings.h>
+#include <sys/stat.h>
 #include <unistd.h>
 
 #define ENTRIES_PER_SCREEN 11
@@ -319,7 +321,7 @@ std::string topMenuSelect(void) {
 		char *line = NULL;
 		size_t len = 0;
 
-		while(__getline(&line, &len, favs) != -1) {
+		while(getline(&line, &len, favs) != -1) {
 			line[strlen(line) - 1] = '\0'; // Remove newline
 			topMenuContents.push_back({line, (access(line, F_OK) == 0)});
 		}

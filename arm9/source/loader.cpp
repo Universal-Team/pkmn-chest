@@ -5,6 +5,8 @@
 #include "flashcard.hpp"
 
 #include <dirent.h>
+#include <limits.h>
+#include <sys/stat.h>
 #include <unistd.h>
 
 static std::string saveFileName;

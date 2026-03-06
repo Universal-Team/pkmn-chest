@@ -42,10 +42,7 @@ A Pokémon Bank for the 3<sup>rd</sup> through 5<sup>th</sup> generation Pokémo
 
 ## Building
 ### Setting up your environment
-Compiling this app requires [devkitPro](https://devkitpro.org)'s devkitARM and libnds.
-These can be installed by getting [devkitPro pacman](https://devkitpro.org/wiki/devkitPro_pacman), then running:
-`sudo dkp-pacman -S nds-dev`<br>
-<sup>(command may be slightly different depending on your OS)</sup>
+Compiling this app requires [blocksds](https://blocksds.skylyrac.net/docs/setup/).
 
 You will also need the [bmp2ds](https://github.com/Universal-Team/bmp2ds/releases/latest) graphics converter in your PATH named `bmp2ds`.
 
@@ -84,7 +81,7 @@ If you'd like to help translate pkmn-chest to a language that isn't yet supporte
 - [whatter](https://github.com/whatter): Polish
 - [XxPhoenix1996xX](https://github.com/XxPhoenix1996xX): Spanish
 ### Others
-- [devkitPro](https://github.com/devkitPro), [WinterMute](https://github.com/WinterMute): devkitARM, libnds, and libfat.
+- [AntonioND](https://codeberg.org/SkyLyrac): [blocksds](https://blocksds.skylyrac.net)
 - [edo9300](https://github.com/edo9300): [ndsi-savedumper](https://github.com/edo9300/ndsi-savedumper)'s gamecard save dumping and injecting code
 - [Flagbrew](https://github.com/FlagBrew), [piepie62](https://github.com/piepie62): [PKSM](https://github.com/FlagBrew/PKSM), [PKSM-Core](https://github.com/FlagBrew/PKSM-Core)'s save and bank management code
 - [Kurt](https://github.com/kwsch): [PKHeX](https://github.com/kwsch/PKHeX) which was a major reference for the generation 3 code

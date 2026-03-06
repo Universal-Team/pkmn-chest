@@ -1,3 +1,5 @@
+BLOCKSDS	?= /opt/blocksds/core
+
 OUT			:=	../nitrofiles/sound
 
 WAVFILES	:=	$(foreach file,$(notdir $(wildcard *.wav)),$(file))
@@ -13,6 +15,8 @@ TARGETS		+= $(foreach file,$(ITFILES:.it=.msl),$(addprefix $(OUT)/, $(file)))
 TARGETS		+= $(foreach file,$(XMFILES:.xm=.msl),$(addprefix $(OUT)/, $(file)))
 TARGETS		+= $(OUT)/sfx.msl
 
+MMUTIL := $(BLOCKSDS)/tools/mmutil/mmutil
+
 .PHONY	:	all clean
 
 all	:	$(OUT)/sfx.msl $(TARGETS)
@@ -24,35 +28,35 @@ $(OUT)/%.msl	:	$(WAVFILES) %.mod
 #---------------------------------------------------------------------------------
 	@echo $$(basename $@)
 	@[ -d "$(@D)" ] || mkdir -p "$(@D)"
-	@mmutil $^ -d -o$@ 1>/dev/null
+	@$(MMUTIL) $^ -d -o$@ 1>/dev/null
 
 #---------------------------------------------------------------------------------
 $(OUT)/%.msl	:	$(WAVFILES) %.s3m
 #---------------------------------------------------------------------------------
 	@echo $$(basename $@)
 	@[ -d "$(@D)" ] || mkdir -p "$(@D)"
-	@mmutil $^ -d -o$@ 1>/dev/null
+	@$(MMUTIL) $^ -d -o$@ 1>/dev/null
 
 #---------------------------------------------------------------------------------
 $(OUT)/%.msl	:	$(WAVFILES) %.it
 #---------------------------------------------------------------------------------
 	@echo $$(basename $@)
 	@[ -d "$(@D)" ] || mkdir -p "$(@D)"
-	@mmutil $^ -d -o$@ 1>/dev/null
+	@$(MMUTIL) $^ -d -o$@ 1>/dev/null
 
 #---------------------------------------------------------------------------------
 $(OUT)/%.msl	:	$(WAVFILES) %.xm
 #---------------------------------------------------------------------------------
 	@echo $$(basename $@)
 	@[ -d "$(@D)" ] || mkdir -p "$(@D)"
-	@mmutil $^ -d -o$@ 1>/dev/null
+	@$(MMUTIL) $^ -d -o$@ 1>/dev/null
 
 #---------------------------------------------------------------------------------
 $(OUT)/%.msl	:	$(WAVFILES)
 #---------------------------------------------------------------------------------
 	@echo $$(basename $@)
 	@[ -d "$(@D)" ] || mkdir -p "$(@D)"
-	@mmutil $^ -d -o$@ 1>/dev/null
+	@$(MMUTIL) $^ -d -o$@ 1>/dev/null
 
 clean	:
 	@echo clean ...

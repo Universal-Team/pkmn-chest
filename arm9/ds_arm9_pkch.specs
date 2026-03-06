@@ -1,8 +1,23 @@
-%rename link                old_link
+%include <picolibc.specs>
+
+%rename cc1plus blocksds_cc1plus
+%rename cpp blocksds_cpp
+%rename link blocksds_link
+
+*cpp:
+-D__NDS__ -D__BLOCKSDS__ -DARM9 %(blocksds_cpp)
+
+*cc1_cpu:
+-mcpu=arm946e-s+nofp
+
+*cc1plus:
+%(cpp) %(blocksds_cc1plus)
 
 *link:
-%(old_link) -T ../ds_arm9_pkch.mem%s -T ds_arm9.ld%s --gc-sections
+%(blocksds_link) -T arm9/ds_arm9_pkch.mem%s -T %:getenv(BLOCKSDS /sys/crts/ds_arm9.ld) --gc-sections --no-warn-rwx-segments --use-blx --defsym=__sync_synchronize=__sync_synchronize_none
 
 *startfile:
-ds_arm9_crt0%O%s crti%O%s crtbegin%O%s
+%:getenv(BLOCKSDS /sys/crts/ds_arm9_crt0%O)
 
+*lib:
+%(libgcc)

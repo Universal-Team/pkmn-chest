@@ -12,10 +12,11 @@
 #include "manager.hpp"
 #include "miscUtils.hpp"
 #include "myDSiMode.h"
-#include "nitrofs.h"
 #include "sound.hpp"
 
 #include <fat.h>
+#include <filesystem.h>
+#include <sys/stat.h>
 
 bool useTwlCfg     = false;
 u32 *twlCfgPointer = (u32 *)0x02FFFDFC;
@@ -65,7 +66,7 @@ void init(int argc, char **argv) {
 	mkdir((mainDrive() + ":/_nds/pkmn-chest/backups").c_str(), 0777);
 
 	// Try to init NitroFS from argv provided to the app when it was launched
-	if(!nitroFSInit(argv[0])) {
+	if(!nitroFSInit(nullptr)) {
 		// If that fails, try to init NitroFS on 'pkmn-chest.nds'
 		if(!nitroFSInit("pkmn-chest.nds") || !nitroFSGood()) {
 			// If that fails, try '/_nds/pkmn-chest/pkmn-chest.nds'

@@ -1,11 +1,3 @@
-
-
-ifeq ($(strip $(DEVKITARM)),)
-$(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>devkitARM")
-endif
-
-include $(DEVKITARM)/ds_rules
-
 GRAPHICS	:=	graphics \
 				graphics/ball \
 				graphics/box graphics/box/b2w2 graphics/box/bw graphics/box/dp graphics/box/e graphics/box/frlg graphics/box/hgss graphics/box/pt graphics/box/rs \
