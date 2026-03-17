@@ -429,6 +429,7 @@ void fillSpriteText(int id, bool top, const std::u16string &text, TextColor pale
 	for(unsigned c = 0; c < text.size(); c++) {
 		int t       = getCharIndex(text[c]);
 		Image image = {tileWidth, tileHeight, {}, {0, 0, 0, 0}, 0};
+		image.bitmap.reserve(tileSize * 4);
 		for(int i = 0; i < tileSize; i++) {
 			image.bitmap.push_back(fontTiles[i + (t * tileSize)] >> 6 & 3);
 			image.bitmap.push_back(fontTiles[i + (t * tileSize)] >> 4 & 3);
@@ -738,6 +739,7 @@ void printTextTintedScaled(const std::u16string &text,
 
 		int t       = getCharIndex(text[c]);
 		Image image = {tileWidth, tileHeight, {}, {}, 0};
+		image.bitmap.resize(tileSize * 4);
 		for(int i = 0; i < tileSize; i++) {
 			image.bitmap[(i * 4)]     = (fontTiles[i + (t * tileSize)] >> 6 & 3);
 			image.bitmap[(i * 4) + 1] = (fontTiles[i + (t * tileSize)] >> 4 & 3);
